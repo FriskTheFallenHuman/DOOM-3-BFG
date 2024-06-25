@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include "win_local.h"
 
@@ -343,8 +343,8 @@ LogicalProcPerPhysicalProc
 ================
 */
 #define NUM_LOGICAL_BITS   0x00FF0000     // EBX[23:16] Bit 16-23 in ebx contains the number of logical
-                                          // processors per physical processor when execute cpuid with 
-                                          // eax set to 1
+										  // processors per physical processor when execute cpuid with 
+										  // eax set to 1
 static unsigned char LogicalProcPerPhysicalProc() {
 	unsigned int regebx = 0;
 	__asm {
@@ -361,8 +361,8 @@ GetAPIC_ID
 ================
 */
 #define INITIAL_APIC_ID_BITS  0xFF000000  // EBX[31:24] Bits 24-31 (8 bits) return the 8-bit unique 
-                                          // initial APIC ID for the processor this code is running on.
-                                          // Default value = 0xff if HT is not supported
+										  // initial APIC ID for the processor this code is running on.
+										  // Default value = 0xff if HT is not supported
 static unsigned char GetAPIC_ID() {
 	unsigned int regebx = 0;
 	__asm {
@@ -378,7 +378,7 @@ static unsigned char GetAPIC_ID() {
 CPUCount
 
 	logicalNum is the number of logical CPU per physical CPU
-    physicalNum is the total number of physical processor
+	physicalNum is the total number of physical processor
 	returns one of the HT_* flags
 ================
 */
@@ -420,7 +420,7 @@ int CPUCount( int &logicalNum, int &physicalNum ) {
 
 		while( i < logicalNum ) {
 			i *= 2;
- 			PHY_ID_MASK  <<= 1;
+			PHY_ID_MASK  <<= 1;
 			PHY_ID_SHIFT++;
 		}
 		
@@ -455,10 +455,10 @@ int CPUCount( int &logicalNum, int &physicalNum ) {
 			}
 			dwAffinityMask = dwAffinityMask << 1;
 		}
-	        
+			
 		// Reset the processor affinity
 		SetProcessAffinityMask( hCurrentProcessHandle, dwProcessAffinity );
-	    
+		
 		if ( logicalNum == 1 ) {  // Normal P4 : HT is disabled in hardware
 			statusFlag = HT_DISABLED;
 		} else {
@@ -558,9 +558,9 @@ DWORD CountSetBits( ULONG_PTR bitMask ) {
 typedef BOOL (WINAPI *LPFN_GLPI)( PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD );
 
 enum LOGICAL_PROCESSOR_RELATIONSHIP_LOCAL {
-    localRelationProcessorCore,
-    localRelationNumaNode,
-    localRelationCache,
+	localRelationProcessorCore,
+	localRelationNumaNode,
+	localRelationCache,
 	localRelationProcessorPackage
 };
 

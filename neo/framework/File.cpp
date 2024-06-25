@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Unzip.h"
@@ -265,10 +265,10 @@ int idFile::Printf( const char *fmt, ... ) {
 	va_end( argptr );
 
 	// so notepad formats the lines correctly
-  	idStr	work( buf );
- 	work.Replace( "\n", "\r\n" );
+	idStr	work( buf );
+	work.Replace( "\n", "\r\n" );
   
-  	return Write( work.c_str(), work.Length() );
+	return Write( work.c_str(), work.Length() );
 }
 
 /*
@@ -544,7 +544,7 @@ int idFile::WriteBool( const bool value ) {
 int idFile::WriteString( const char *value ) {
 	int len = strlen( value );
 	WriteInt( len );
-    return Write( value, len );
+	return Write( value, len );
 }
 
 /*

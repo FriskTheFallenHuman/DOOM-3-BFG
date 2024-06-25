@@ -30,7 +30,10 @@ If you have questions concerning this license or the applicable additional terms
 Contains the DxtEncoder implementation for SSE2.
 ================================================================================================
 */
+
+#include "precompiled.h"
 #pragma hdrstop
+
 #include "DXTCodec_local.h"
 #include "DXTCodec.h"
 
@@ -2636,43 +2639,43 @@ idDxtEncoder::InsetNormalsBBoxDXT5_SSE2
 void idDxtEncoder::InsetNormalsBBoxDXT5_SSE2( byte *minNormal, byte *maxNormal ) const {
 #if ( defined( ID_WIN_X86_ASM ) || defined( ID_MAC_X86_ASM ) )
 	__asm {
-        mov         esi, minNormal
-        mov         edi, maxNormal
-        movd        xmm0, dword ptr [esi]							// xmm0 = minNormal
-        movd        xmm1, dword ptr [edi]							// xmm1 = maxNormal
-        punpcklbw   xmm0, SIMD_SSE2_byte_0
-        punpcklbw   xmm1, SIMD_SSE2_byte_0
-        movdqa      xmm2, xmm1
-        psubw       xmm2, xmm0
-        psubw       xmm2, SIMD_SSE2_word_insetNormalDXT5Round
-        pand        xmm2, SIMD_SSE2_word_insetNormalDXT5Mask		// xmm2 = inset (1 & 3)
+		mov         esi, minNormal
+		mov         edi, maxNormal
+		movd        xmm0, dword ptr [esi]							// xmm0 = minNormal
+		movd        xmm1, dword ptr [edi]							// xmm1 = maxNormal
+		punpcklbw   xmm0, SIMD_SSE2_byte_0
+		punpcklbw   xmm1, SIMD_SSE2_byte_0
+		movdqa      xmm2, xmm1
+		psubw       xmm2, xmm0
+		psubw       xmm2, SIMD_SSE2_word_insetNormalDXT5Round
+		pand        xmm2, SIMD_SSE2_word_insetNormalDXT5Mask		// xmm2 = inset (1 & 3)
 
-        pmullw      xmm0, SIMD_SSE2_word_insetNormalDXT5ShiftUp
-        pmullw      xmm1, SIMD_SSE2_word_insetNormalDXT5ShiftUp
+		pmullw      xmm0, SIMD_SSE2_word_insetNormalDXT5ShiftUp
+		pmullw      xmm1, SIMD_SSE2_word_insetNormalDXT5ShiftUp
 		paddw		xmm0, xmm2
 		psubw		xmm1, xmm2
 		pmulhw      xmm0, SIMD_SSE2_word_insetNormalDXT5ShiftDown	// xmm0 = mini
-        pmulhw      xmm1, SIMD_SSE2_word_insetNormalDXT5ShiftDown	// xmm1 = maxi
+		pmulhw      xmm1, SIMD_SSE2_word_insetNormalDXT5ShiftDown	// xmm1 = maxi
 
 		// mini and maxi must be >= 0 and <= 255
-        pmaxsw      xmm0, SIMD_SSE2_word_0
-        pmaxsw      xmm1, SIMD_SSE2_word_0
-        pminsw      xmm0, SIMD_SSE2_word_255
-        pminsw      xmm1, SIMD_SSE2_word_255
+		pmaxsw      xmm0, SIMD_SSE2_word_0
+		pmaxsw      xmm1, SIMD_SSE2_word_0
+		pminsw      xmm0, SIMD_SSE2_word_255
+		pminsw      xmm1, SIMD_SSE2_word_255
 
-        movdqa      xmm2, xmm0
-        movdqa      xmm3, xmm1
-        pand        xmm0, SIMD_SSE2_word_insetNormalDXT5QuantMask
-        pand        xmm1, SIMD_SSE2_word_insetNormalDXT5QuantMask
-        pmulhw      xmm2, SIMD_SSE2_word_insetNormalDXT5Rep
-        pmulhw      xmm3, SIMD_SSE2_word_insetNormalDXT5Rep
-        por         xmm0, xmm2
-        por         xmm1, xmm3
-        packuswb    xmm0, xmm0
-        packuswb    xmm1, xmm1
-        movd        dword ptr [esi], xmm0
-        movd        dword ptr [edi], xmm1
-    }
+		movdqa      xmm2, xmm0
+		movdqa      xmm3, xmm1
+		pand        xmm0, SIMD_SSE2_word_insetNormalDXT5QuantMask
+		pand        xmm1, SIMD_SSE2_word_insetNormalDXT5QuantMask
+		pmulhw      xmm2, SIMD_SSE2_word_insetNormalDXT5Rep
+		pmulhw      xmm3, SIMD_SSE2_word_insetNormalDXT5Rep
+		por         xmm0, xmm2
+		por         xmm1, xmm3
+		packuswb    xmm0, xmm0
+		packuswb    xmm1, xmm1
+		movd        dword ptr [esi], xmm0
+		movd        dword ptr [edi], xmm1
+	}
 #elif defined ( ID_WIN_X86_SSE2_INTRIN )
 	__m128i temp0, temp1, temp2, temp3;
 

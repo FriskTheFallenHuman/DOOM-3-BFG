@@ -31,7 +31,7 @@ Various utility objects and functions.
 
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -3274,7 +3274,7 @@ void idPhantomObjects::Event_Activate( idEntity *activator ) {
 
 	const idVec3 &toPos = target.GetEntity()->GetEyePosition();
 
-    // calculate the relative times of all the objects
+	// calculate the relative times of all the objects
 	time = 0.0f;
 	for( i = 0; i < targetTime.Num(); i++ ) {
 		targetTime[ i ] = SEC2MS( time );

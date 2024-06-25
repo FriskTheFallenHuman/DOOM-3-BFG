@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -249,7 +249,7 @@ void idInventory::GetPersistantData( idDict &dict ) {
 	// armor
 	dict.SetInt( "armor", armor );
 
-    // don't bother with powerups, maxhealth, maxarmor, or the clip
+	// don't bother with powerups, maxhealth, maxarmor, or the clip
 
 	// ammo
 	for( i = 0; i < AMMO_NUMTYPES; i++ ) {
@@ -2658,7 +2658,7 @@ void idPlayer::PrepareForRestart() {
 	forceRespawn = true;
 	
 	// Confirm reset hud states
-    DropFlag();
+	DropFlag();
 
 	if ( hud ) {
 		hud->SetFlagState( 0, 0 );
@@ -5713,7 +5713,7 @@ void idPlayer::UpdateFocus() {
 			// clamp the mouse to the corner
 			ev = sys->GenerateMouseMoveEvent( -2000, -2000 );
 			command = focusUI->HandleEvent( &ev, gameLocal.time );
- 			HandleGuiCommands( focusGUIent, command );
+			HandleGuiCommands( focusGUIent, command );
 
 			// move to an absolute position
 			ev = sys->GenerateMouseMoveEvent( pt.x * SCREEN_WIDTH, pt.y * SCREEN_HEIGHT );
@@ -6164,7 +6164,7 @@ void idPlayer::AdjustHeartRate( int target, float timeInSecs, float delay, bool 
 		return;
 	}
 
-    lastHeartAdjust = gameLocal.time;
+	lastHeartAdjust = gameLocal.time;
 
 	heartInfo.Init( gameLocal.time + delay * 1000, timeInSecs * 1000, heartRate, target );
 }
@@ -6786,7 +6786,7 @@ void idPlayer::AdjustBodyAngles() {
 		upBlend			= -frac;
 	}
 
-    animator.CurrentAnim( ANIMCHANNEL_TORSO )->SetSyncedAnimWeight( 0, downBlend );
+	animator.CurrentAnim( ANIMCHANNEL_TORSO )->SetSyncedAnimWeight( 0, downBlend );
 	animator.CurrentAnim( ANIMCHANNEL_TORSO )->SetSyncedAnimWeight( 1, forwardBlend );
 	animator.CurrentAnim( ANIMCHANNEL_TORSO )->SetSyncedAnimWeight( 2, upBlend );
 
@@ -7111,7 +7111,7 @@ void idPlayer::Move() {
 
 	if ( AI_JUMP ) {
 		// bounce the view weapon
- 		loggedAccel_t	*acc = &loggedAccel[currentLoggedAccel&(NUM_LOGGED_ACCELS-1)];
+		loggedAccel_t	*acc = &loggedAccel[currentLoggedAccel&(NUM_LOGGED_ACCELS-1)];
 		currentLoggedAccel++;
 		acc->time = gameLocal.time;
 		acc->dir[2] = 200;
@@ -7641,7 +7641,7 @@ void idPlayer::Think() {
 
 		// service animations
 		if ( !spectating && !af.IsActive() && !gameLocal.inCinematic ) {
-    		UpdateConditions();
+			UpdateConditions();
 			UpdateAnimState();
 			CheckBlink();
 		}
@@ -7734,7 +7734,7 @@ void idPlayer::Think() {
 	if ( !g_stopTime.GetBool() ) {
 		UpdateAnimation();
 
-        Present();
+		Present();
 
 		UpdateDamageEffects();
 
@@ -8138,14 +8138,14 @@ void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damag
 	damage *= PowerUpModifier( BERSERK );
 	if ( damage && ( victim != this ) && ( victim->IsType( idActor::Type ) || victim->IsType( idDamagable::Type ) ) ) {
 
-        idPlayer *victimPlayer = NULL;
-        
-        /* No damage feedback sound for hitting friendlies in CTF */
+		idPlayer *victimPlayer = NULL;
+		
+		/* No damage feedback sound for hitting friendlies in CTF */
 		if ( victim->IsType( idPlayer::Type ) ) {
-            victimPlayer = static_cast<idPlayer*>(victim);
+			victimPlayer = static_cast<idPlayer*>(victim);
 		}
 
-        if ( gameLocal.mpGame.IsGametypeFlagBased() && victimPlayer && this->team == victimPlayer->team ) {
+		if ( gameLocal.mpGame.IsGametypeFlagBased() && victimPlayer && this->team == victimPlayer->team ) {
 			/* Do nothing ... */ 
 		} else {
 			SetLastHitTime( gameLocal.time );
@@ -9961,8 +9961,8 @@ void idPlayer::WriteToSnapshot( idBitMsg &msg ) const {
 	msg.WriteShort( team  );
 	WriteToBitMsg( respawn_netEvent, msg );
 
-    /* Needed for the scoreboard */
-    msg.WriteBits( carryingFlag, 1 ); 
+	/* Needed for the scoreboard */
+	msg.WriteBits( carryingFlag, 1 ); 
 	msg.WriteBits( enviroSuitLight.GetSpawnId(), 32 );
 
 	msg.WriteBits( AI_CROUCH, 1 );
@@ -10540,10 +10540,10 @@ void idPlayer::DrawPlayerIcons() {
 		return;
 	}
 
-    // Never draw icons for hidden players.
-    if ( this->IsHidden() )
-        return;
-    
+	// Never draw icons for hidden players.
+	if ( this->IsHidden() )
+		return;
+	
 	playerIcon.Draw( this, headJoint );
 }
 
@@ -10579,7 +10579,7 @@ void idPlayer::DropFlag() {
 	idEntity * entity = gameLocal.mpGame.GetTeamFlag( 1 - team );
 	if ( entity ) {
 		idItemTeam * item = static_cast<idItemTeam*>(entity);
-        
+		
 		if ( item->carried && !item->dropped ) {
 			item->Drop( health <= 0 );
 			carryingFlag = false;

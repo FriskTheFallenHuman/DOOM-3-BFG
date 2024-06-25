@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -524,7 +524,7 @@ idMover::FindGuiTargets
 ================
 */
 void idMover::FindGuiTargets() {
-   	gameLocal.GetTargets( spawnArgs, guiTargets, "guiTarget" );
+	gameLocal.GetTargets( spawnArgs, guiTargets, "guiTarget" );
 }
 
 /*
@@ -2925,7 +2925,7 @@ idMover_Binary::FindGuiTargets
 ================
 */
 void idMover_Binary::FindGuiTargets() {
-   	gameLocal.GetTargets( spawnArgs, guiTargets, "guiTarget" );
+	gameLocal.GetTargets( spawnArgs, guiTargets, "guiTarget" );
 }
 
 /*
@@ -3971,13 +3971,13 @@ void idDoor::Event_Activate( idEntity *activator ) {
 		}
 	}
 
-  	if ( syncLock.Length() ) {
+	if ( syncLock.Length() ) {
 		idEntity *sync = gameLocal.FindEntity( syncLock );
 		if ( sync != NULL && sync->IsType( idDoor::Type ) ) {
 			if ( static_cast<idDoor *>( sync )->IsOpen() ) {
-  				return;
-  			}
-  		}
+				return;
+			}
+		}
 	}
 
 	ActivateTargets( activator );

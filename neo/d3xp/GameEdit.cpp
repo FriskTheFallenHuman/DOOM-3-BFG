@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -176,7 +176,7 @@ void idDragEntity::Update( idPlayer *player ) {
 	player->GetViewPos( viewPoint, viewAxis );
 
 	// if no entity selected for dragging
-    if ( !dragEnt.GetEntity() ) {
+	if ( !dragEnt.GetEntity() ) {
 
 		if ( player->usercmd.buttons & BUTTON_ATTACK ) {
 
@@ -470,7 +470,7 @@ idEditEntities::RemoveSelectedEntity
 ==============
 */
 void idEditEntities::RemoveSelectedEntity( idEntity *ent ) {
-    if ( selectedEntities.Find( ent ) ) {
+	if ( selectedEntities.Find( ent ) ) {
 		selectedEntities.Remove( ent );
 	}
 }
@@ -876,7 +876,7 @@ void idGameEdit::EntityChangeSpawnArgs( idEntity *ent, const idDict *newArgs ) {
 	if ( ent ) {
 		for ( int i = 0 ; i < newArgs->GetNumKeyVals () ; i ++ ) {
 			const idKeyValue *kv = newArgs->GetKeyVal( i );
-	        
+			
 			if ( kv->GetValue().Length() > 0 ) {
 				ent->spawnArgs.Set ( kv->GetKey() ,kv->GetValue() );
 			} else {

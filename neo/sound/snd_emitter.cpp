@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "snd_local.h"
 
@@ -759,11 +759,11 @@ int idSoundEmitterLocal::StartSound( const idSoundShader * shader, const s_chann
 	// a hardware voice will be allocated next update if the volume is high enough to be audible
 	if ( channels.Num() == channels.Max() ) {
 		CheckForCompletion( currentTime );	// as a last chance try to release finished sounds here
- 		if ( channels.Num() == channels.Max() ) {
+		if ( channels.Num() == channels.Max() ) {
 			if ( showStartSound ) {
 				idLib::Printf( S_COLOR_RED "No free emitter channels!\n" );
 			}
- 			return 0;
+			return 0;
 		}
 	}
 	idSoundChannel * chan = soundWorld->AllocSoundChannel();

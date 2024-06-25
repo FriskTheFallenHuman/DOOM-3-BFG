@@ -35,8 +35,9 @@ If you have questions concerning this license or the applicable additional terms
 ** QGL_Init() - loads libraries, assigns function pointers, etc.
 ** QGL_Shutdown() - unloads libraries, NULLs function pointers
 */
+
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include <float.h>
 #include "win_local.h"
@@ -61,14 +62,14 @@ BOOL  ( WINAPI * qwglShareLists)(HGLRC, HGLRC);
 BOOL  ( WINAPI * qwglUseFontBitmaps)(HDC, DWORD, DWORD, DWORD);
 
 BOOL  ( WINAPI * qwglUseFontOutlines)(HDC, DWORD, DWORD, DWORD, FLOAT,
-                                           FLOAT, int, LPGLYPHMETRICSFLOAT);
+										   FLOAT, int, LPGLYPHMETRICSFLOAT);
 
 BOOL ( WINAPI * qwglDescribeLayerPlane)(HDC, int, int, UINT,
-                                            LPLAYERPLANEDESCRIPTOR);
+											LPLAYERPLANEDESCRIPTOR);
 int  ( WINAPI * qwglSetLayerPaletteEntries)(HDC, int, int, int,
-                                                CONST COLORREF *);
+												CONST COLORREF *);
 int  ( WINAPI * qwglGetLayerPaletteEntries)(HDC, int, int, int,
-                                                COLORREF *);
+												COLORREF *);
 BOOL ( WINAPI * qwglRealizeLayerPalette)(HDC, int, BOOL);
 BOOL ( WINAPI * qwglSwapLayerBuffers)(HDC, UINT);
 

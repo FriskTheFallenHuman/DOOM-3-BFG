@@ -26,13 +26,12 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
-#include "TypeInfo.h"
+#include "NoGameTypeInfo.h"
 
 /*
 ==================
@@ -600,20 +599,20 @@ static void Cmd_Say( bool team, const idCmdArgs &args ) {
 	} else {
 		name = session->GetActingGameStateLobbyBase().GetLobbyUserName( gameLocal.lobbyUserIDs[ gameLocal.GetLocalClientNum() ] );
 
-	    // Append the player's location to team chat messages in CTF
+		// Append the player's location to team chat messages in CTF
 		idPlayer * player = static_cast<idPlayer *>( gameLocal.entities[ gameLocal.GetLocalClientNum() ] );
-        if ( gameLocal.mpGame.IsGametypeFlagBased() && team && player ) {
-            idLocationEntity *locationEntity = gameLocal.LocationForPoint( player->GetEyePosition() );
-            
-            if ( locationEntity ) {
-                idStr temp = "[";
-                temp += locationEntity->GetLocation();
-                temp += "] ";
-                temp += text;
-                text = temp;
-            }
-            
-        }
+		if ( gameLocal.mpGame.IsGametypeFlagBased() && team && player ) {
+			idLocationEntity *locationEntity = gameLocal.LocationForPoint( player->GetEyePosition() );
+			
+			if ( locationEntity ) {
+				idStr temp = "[";
+				temp += locationEntity->GetLocation();
+				temp += "] ";
+				temp += text;
+				text = temp;
+			}
+			
+		}
 	}
 
 	if ( common->IsClient() ) {

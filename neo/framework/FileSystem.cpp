@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Unzip.h"
@@ -2815,7 +2815,7 @@ idFile *idFileSystemLocal::OpenFileReadFlags( const char *relativePath, int sear
 		if ( rf != NULL ) {
 			return rf;
 		}
- 	}
+	}
 
 	//
 	// search through the path, one element at a time

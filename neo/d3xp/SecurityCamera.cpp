@@ -33,7 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -446,7 +446,7 @@ void idSecurityCamera::StartSweep() {
 	sweepStart = gameLocal.time;
 	speed = SEC2MS( SweepSpeed() );
 	sweepEnd = sweepStart + speed;
-   	PostEventMS( &EV_SecurityCam_Pause, speed );
+	PostEventMS( &EV_SecurityCam_Pause, speed );
 	StartSound( "snd_moving", SND_CHANNEL_BODY, 0, false, NULL );
 }
 
@@ -463,7 +463,7 @@ void idSecurityCamera::Event_ContinueSweep() {
 	sweepStart = f;
 	speed = MS2SEC( SweepSpeed() );
 	sweepEnd = sweepStart + speed;
-   	PostEventMS( &EV_SecurityCam_Pause, speed * (1.0 - pct));
+	PostEventMS( &EV_SecurityCam_Pause, speed * (1.0 - pct));
 	StartSound( "snd_moving", SND_CHANNEL_BODY, 0, false, NULL );
 	SetAlertMode(SCANNING);
 	sweeping = true;
@@ -510,7 +510,7 @@ void idSecurityCamera::Event_Pause() {
 	sweeping = false;
 	StopSound( SND_CHANNEL_ANY, false );
 	StartSound( "snd_stop", SND_CHANNEL_BODY, 0, false, NULL );
-   	PostEventSec( &EV_SecurityCam_ReverseSweep, sweepWait );
+	PostEventSec( &EV_SecurityCam_ReverseSweep, sweepWait );
 }
 
 /*

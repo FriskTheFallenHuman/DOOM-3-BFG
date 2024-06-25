@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -627,7 +627,7 @@ void idActor::Spawn() {
 	int headAnim = headAnimator->GetAnim( "def_head" );
 	if ( headAnim ) {
 		if ( headEnt ) {
-            headAnimator->CycleAnim( ANIMCHANNEL_ALL, headAnim, gameLocal.time, 0 );
+			headAnimator->CycleAnim( ANIMCHANNEL_ALL, headAnim, gameLocal.time, 0 );
 		} else {
 			headAnimator->CycleAnim( ANIMCHANNEL_HEAD, headAnim, gameLocal.time, 0 );
 		}
@@ -1383,7 +1383,7 @@ void idActor::UpdateScript() {
 		if ( scriptThread->IsWaiting() ) {
 			break;
 		}
-        
+		
 		scriptThread->Execute();
 		if ( idealState == state ) {
 			break;
@@ -3344,7 +3344,7 @@ void idActor::Event_NextEnemy( idEntity *ent ) {
 		}
 	}
 
-    idThread::ReturnEntity( NULL );
+	idThread::ReturnEntity( NULL );
 }
 
 /*

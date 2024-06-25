@@ -25,9 +25,9 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
-#pragma hdrstop
+
 #include "PlayerProfile.h"
 
 // After releasing a version to the market, here are limitations for compatibility:

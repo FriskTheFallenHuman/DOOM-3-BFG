@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "DeviceContext.h"
 #include "Window.h"
@@ -219,9 +219,9 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 			return "";
 		}
 
-   		//
-   		// ignore any non printable chars (except enter when wrap is enabled)
-   		//
+		//
+		// ignore any non printable chars (except enter when wrap is enabled)
+		//
 		if ( wrap && (key == K_ENTER || key == K_KP_ENTER) ) {
 		} else if ( !idStr::CharIsPrintable( key ) ) {
 			return "";
@@ -229,17 +229,17 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 
 		if ( numeric ) {
 			if ( ( key < '0' || key > '9' ) && key != '.' ) {
-	       		return "";
+				return "";
 			}
 		}
 
 		if ( dc->GetOverStrike() ) {
 			if ( maxChars && cursorPos >= maxChars ) {
-	       		return "";
+				return "";
 			}
 		} else {
 			if ( ( len == MAX_EDITFIELD - 1 ) || ( maxChars && len >= maxChars ) ) {
-	       		return "";
+				return "";
 			}
 			memmove( &buffer[ cursorPos + 1 ], &buffer[ cursorPos ], len + 1 - cursorPos );
 		}
@@ -278,7 +278,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 			if ( readonly ) {
 				return "";
 			}
-   			if ( cursorPos > 0 ) {
+			if ( cursorPos > 0 ) {
 				if ( cursorPos >= len ) {
 					buffer[len - 1] = 0;
 					cursorPos = len - 1;
@@ -293,7 +293,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 			}
 
 			return "";
-   		}
+		}
 		if ( key == K_RIGHTARROW )  {
 			if ( cursorPos < len ) {
 				if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
@@ -340,7 +340,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 
 		if ( key == K_HOME ) {
 			if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) || cursorLine <= 0 || ( cursorLine >= breaks.Num() ) ) {
-                cursorPos = 0;
+				cursorPos = 0;
 			} else {
 				cursorPos = breaks[cursorLine];
 			}

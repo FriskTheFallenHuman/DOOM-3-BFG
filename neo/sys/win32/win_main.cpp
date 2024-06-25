@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include <errno.h>
 #include <float.h>
@@ -129,7 +129,7 @@ int Sys_AllocHook( int nAllocType, void *pvData, size_t nSize, int nBlockUse, lo
 
 	if ( nBlockUse == _CRT_BLOCK )
 	{
-      return( TRUE );
+	  return( TRUE );
 	}
 
 	// get a pointer to memory block header
@@ -177,8 +177,8 @@ Sys_DebugMemory_f
 ==================
 */
 void Sys_DebugMemory_f() {
-  	common->Printf( "Total allocation %8dk in %d blocks\n", debug_total_alloc / 1024, debug_total_alloc_count );
-  	common->Printf( "Current allocation %8dk in %d blocks\n", debug_current_alloc / 1024, debug_current_alloc_count );
+	common->Printf( "Total allocation %8dk in %d blocks\n", debug_total_alloc / 1024, debug_total_alloc_count );
+	common->Printf( "Current allocation %8dk in %d blocks\n", debug_current_alloc / 1024, debug_current_alloc_count );
 }
 
 /*
@@ -218,7 +218,7 @@ Show the early console as an error dialog
 void Sys_Error( const char *error, ... ) {
 	va_list		argptr;
 	char		text[4096];
-    MSG        msg;
+	MSG        msg;
 
 	va_start( argptr, error );
 	vsprintf( text, error, argptr );
@@ -874,7 +874,7 @@ void Sys_DLL_Unload( int dllHandle ) {
 		LPVOID lpMsgBuf;
 		FormatMessage(
 			FORMAT_MESSAGE_ALLOCATE_BUFFER,
-		    NULL,
+			NULL,
 			lastError,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 			(LPTSTR) &lpMsgBuf,
@@ -938,7 +938,7 @@ This allows windows to be moved during renderbump
 =============
 */
 void Sys_PumpEvents() {
-    MSG msg;
+	MSG msg;
 
 	// pump the message loop
 	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) {
@@ -955,7 +955,7 @@ void Sys_PumpEvents() {
 		}
  
 		TranslateMessage (&msg);
-      	DispatchMessage (&msg);
+		DispatchMessage (&msg);
 	}
 }
 
@@ -1124,9 +1124,9 @@ void Sys_Init() {
 			}
 		} else if( win32.osversion.dwMajorVersion == 4 && win32.osversion.dwMinorVersion == 90 ) {
 			// WinMe
-		  	win32.sys_arch.SetString( "WinMe (95)" );
+			win32.sys_arch.SetString( "WinMe (95)" );
 		} else {
-		  	win32.sys_arch.SetString( "Unknown 95 variant" );
+			win32.sys_arch.SetString( "Unknown 95 variant" );
 		}
 	} else {
 		win32.sys_arch.SetString( "unknown Windows variant" );
@@ -1165,7 +1165,7 @@ void Sys_Init() {
 			string += "SSE & ";
 		}
 		if ( win32.cpuid & CPUID_SSE2 ) {
-            string += "SSE2 & ";
+			string += "SSE2 & ";
 		}
 		if ( win32.cpuid & CPUID_SSE3 ) {
 			string += "SSE3 & ";
@@ -1235,7 +1235,7 @@ Sys_GetProcessorId
 ================
 */
 cpuid_t Sys_GetProcessorId() {
-    return win32.cpuid;
+	return win32.cpuid;
 }
 
 /*
@@ -1440,8 +1440,8 @@ EXCEPTION_DISPOSITION __cdecl _except_handler( struct _EXCEPTION_RECORD *Excepti
 	EmailCrashReport( msg );
 	common->FatalError( msg );
 
-    // Tell the OS to restart the faulting instruction
-    return ExceptionContinueExecution;
+	// Tell the OS to restart the faulting instruction
+	return ExceptionContinueExecution;
 }
 
 #define TEST_FPU_EXCEPTIONS	/*	FPU_EXCEPTION_INVALID_OPERATION |		*/	\
@@ -1466,13 +1466,13 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	Sys_GetCurrentMemoryStatus( exeLaunchMemoryStats );
 
 #if 0
-    DWORD handler = (DWORD)_except_handler;
-    __asm
-    {                           // Build EXCEPTION_REGISTRATION record:
-        push    handler         // Address of handler function
-        push    FS:[0]          // Address of previous handler
-        mov     FS:[0],ESP      // Install new EXECEPTION_REGISTRATION
-    }
+	DWORD handler = (DWORD)_except_handler;
+	__asm
+	{                           // Build EXCEPTION_REGISTRATION record:
+		push    handler         // Address of handler function
+		push    FS:[0]          // Address of previous handler
+		mov     FS:[0],ESP      // Install new EXECEPTION_REGISTRATION
+	}
 #endif
 
 	win32.hInstance = hInstance;
@@ -1529,7 +1529,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	::SetFocus( win32.hWnd );
 
-    // main game loop
+	// main game loop
 	while( 1 ) {
 
 		Win_Frame();
@@ -1561,27 +1561,27 @@ __declspec( naked ) void clrstk() {
 	// eax = bytes to add to stack
 	__asm {
 		mov		[parmBytes],eax
-        neg     eax                     ; compute new stack pointer in eax
-        add     eax,esp
-        add     eax,4
-        xchg    eax,esp
-        mov     eax,dword ptr [eax]		; copy the return address
-        push    eax
-        
-        ; clear to zero
-        push	edi
-        push	ecx
-        mov		edi,esp
-        add		edi,12
-        mov		ecx,[parmBytes]
+		neg     eax                     ; compute new stack pointer in eax
+		add     eax,esp
+		add     eax,4
+		xchg    eax,esp
+		mov     eax,dword ptr [eax]		; copy the return address
+		push    eax
+		
+		; clear to zero
+		push	edi
+		push	ecx
+		mov		edi,esp
+		add		edi,12
+		mov		ecx,[parmBytes]
 		shr		ecx,2
-        xor		eax,eax
+		xor		eax,eax
 		cld
-        rep	stosd
-        pop		ecx
-        pop		edi
-        
-        ret
+		rep	stosd
+		pop		ecx
+		pop		edi
+		
+		ret
 	}
 }
 
@@ -1633,8 +1633,8 @@ void idSysLocal::StartProcess( const char *exePath, bool doexit ) {
 	strncpy( szPathOrig, exePath, _MAX_PATH );
 
 	if( !CreateProcess( NULL, szPathOrig, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi ) ) {
-        common->Error( "Could not start process: '%s' ", szPathOrig );
-	    return;
+		common->Error( "Could not start process: '%s' ", szPathOrig );
+		return;
 	}
 
 	if ( doexit ) {

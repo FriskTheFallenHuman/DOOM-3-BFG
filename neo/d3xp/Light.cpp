@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -123,10 +123,10 @@ void idGameEdit::ParseSpawnArgsToRenderLight( const idDict *args, renderLight_t 
 	idMat3 mat;
 	if ( !args->GetMatrix( "light_rotation", "1 0 0 0 1 0 0 0 1", mat ) ) {
 		if ( !args->GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", mat ) ) {
-	   		args->GetFloat( "angle", "0", angles[ 1 ] );
-   			angles[ 0 ] = 0;
+			args->GetFloat( "angle", "0", angles[ 1 ] );
+			angles[ 0 ] = 0;
 			angles[ 1 ] = idMath::AngleNormalize360( angles[ 1 ] );
-	   		angles[ 2 ] = 0;
+			angles[ 2 ] = 0;
 			mat = angles.ToMat3();
 		}
 	}
@@ -360,11 +360,11 @@ void idLight::Spawn() {
 		Off();
 	}
 
-    // Midnight CTF
-    if ( gameLocal.mpGame.IsGametypeFlagBased() && gameLocal.serverInfo.GetBool("si_midnight") && !spawnArgs.GetBool("midnight_override") ) {
-        Off();
-    }
-    
+	// Midnight CTF
+	if ( gameLocal.mpGame.IsGametypeFlagBased() && gameLocal.serverInfo.GetBool("si_midnight") && !spawnArgs.GetBool("midnight_override") ) {
+		Off();
+	}
+	
 	health = spawnArgs.GetInt( "health", "0" );
 	spawnArgs.GetString( "broken", "", brokenModel );
 	spawnArgs.GetBool( "break", "0", breakOnTrigger );

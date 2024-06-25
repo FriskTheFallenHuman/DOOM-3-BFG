@@ -26,9 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
@@ -796,7 +795,7 @@ void idVarDef::PrintInfo( idFile *file, int instructionPointer ) const {
 				break;
 
 			case ev_float :
-                file->Printf( "%f", *value.floatPtr );
+				file->Printf( "%f", *value.floatPtr );
 				break;
 
 			case ev_virtualfunction :

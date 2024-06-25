@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 
@@ -1232,27 +1232,27 @@ void R_DeriveTangentsWithoutNormals( srfTriangles_t *tri ) {
 #ifdef USE_INVA
 		float inva = ( area < 0.0f ) ? -1.0f : 1.0f;		// was = 1.0f / area;
 
-        temp[0] = ( d0[0] * d1[4] - d0[4] * d1[0] ) * inva;
-        temp[1] = ( d0[1] * d1[4] - d0[4] * d1[1] ) * inva;
-        temp[2] = ( d0[2] * d1[4] - d0[4] * d1[2] ) * inva;
+		temp[0] = ( d0[0] * d1[4] - d0[4] * d1[0] ) * inva;
+		temp[1] = ( d0[1] * d1[4] - d0[4] * d1[1] ) * inva;
+		temp[2] = ( d0[2] * d1[4] - d0[4] * d1[2] ) * inva;
 		temp.Normalize();
 		triangleTangents[i / 3] = temp;
-        
-        temp[0] = ( d0[3] * d1[0] - d0[0] * d1[3] ) * inva;
-        temp[1] = ( d0[3] * d1[1] - d0[1] * d1[3] ) * inva;
-        temp[2] = ( d0[3] * d1[2] - d0[2] * d1[3] ) * inva;
+		
+		temp[0] = ( d0[3] * d1[0] - d0[0] * d1[3] ) * inva;
+		temp[1] = ( d0[3] * d1[1] - d0[1] * d1[3] ) * inva;
+		temp[2] = ( d0[3] * d1[2] - d0[2] * d1[3] ) * inva;
 		temp.Normalize();
 		triangleBitangents[i / 3] = temp;
 #else
-        temp[0] = ( d0[0] * d1[4] - d0[4] * d1[0] );
-        temp[1] = ( d0[1] * d1[4] - d0[4] * d1[1] );
-        temp[2] = ( d0[2] * d1[4] - d0[4] * d1[2] );
+		temp[0] = ( d0[0] * d1[4] - d0[4] * d1[0] );
+		temp[1] = ( d0[1] * d1[4] - d0[4] * d1[1] );
+		temp[2] = ( d0[2] * d1[4] - d0[4] * d1[2] );
 		temp.Normalize();
 		triangleTangents[i / 3] = temp;
-        
-        temp[0] = ( d0[3] * d1[0] - d0[0] * d1[3] );
-        temp[1] = ( d0[3] * d1[1] - d0[1] * d1[3] );
-        temp[2] = ( d0[3] * d1[2] - d0[2] * d1[3] );
+		
+		temp[0] = ( d0[3] * d1[0] - d0[0] * d1[3] );
+		temp[1] = ( d0[3] * d1[1] - d0[1] * d1[3] );
+		temp[2] = ( d0[3] * d1[2] - d0[2] * d1[3] );
 		temp.Normalize();
 		triangleBitangents[i / 3] = temp;
 #endif
@@ -1414,7 +1414,7 @@ void R_BuildDominantTris( srfTriangles_t *tri ) {
 				len = 0.001f;
 			}
 			dt[vertNum].normalizationScale[0] = ( area > 0 ? 1 : -1 ) / len;	// tangents[0]
-	        
+			
 			bitangent[0] = ( d0[3] * d1[0] - d0[0] * d1[3] );
 			bitangent[1] = ( d0[3] * d1[1] - d0[1] * d1[3] );
 			bitangent[2] = ( d0[3] * d1[2] - d0[2] * d1[3] );

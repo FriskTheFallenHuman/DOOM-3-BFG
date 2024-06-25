@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 
@@ -511,10 +511,10 @@ static void R_CheckPortableExtensions() {
 	}
 
 	// GL_EXT_depth_bounds_test
- 	glConfig.depthBoundsTestAvailable = R_CheckExtension( "GL_EXT_depth_bounds_test" );
- 	if ( glConfig.depthBoundsTestAvailable ) {
- 		qglDepthBoundsEXT = (PFNGLDEPTHBOUNDSEXTPROC)GLimp_ExtensionPointer( "glDepthBoundsEXT" );
- 	}
+	glConfig.depthBoundsTestAvailable = R_CheckExtension( "GL_EXT_depth_bounds_test" );
+	if ( glConfig.depthBoundsTestAvailable ) {
+		qglDepthBoundsEXT = (PFNGLDEPTHBOUNDSEXTPROC)GLimp_ExtensionPointer( "glDepthBoundsEXT" );
+	}
 
 	// GL_ARB_sync
 	glConfig.syncAvailable = R_CheckExtension( "GL_ARB_sync" ) &&
@@ -867,8 +867,8 @@ GL_CheckErrors
 ==================
 */
 void GL_CheckErrors() {
-    int		err;
-    char	s[64];
+	int		err;
+	char	s[64];
 	int		i;
 
 	// check for up to 10 errors pending

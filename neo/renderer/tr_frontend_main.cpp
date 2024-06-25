@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 
@@ -189,7 +189,7 @@ R_StaticAlloc
 void *R_StaticAlloc( int bytes, const memTag_t tag ) {
 	tr.pc.c_alloc++;
 
-    void * buf = Mem_Alloc( bytes, tag );
+	void * buf = Mem_Alloc( bytes, tag );
 
 	// don't exit on failure on zero length allocations since the old code didn't
 	if ( buf == NULL && bytes != 0 ) {
@@ -216,7 +216,7 @@ R_StaticFree
 */
 void R_StaticFree( void *data ) {
 	tr.pc.c_free++;
-    Mem_Free( data );
+	Mem_Free( data );
 }
 
 /*

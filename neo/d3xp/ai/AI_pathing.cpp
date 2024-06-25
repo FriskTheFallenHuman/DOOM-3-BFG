@@ -26,9 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
@@ -428,7 +427,7 @@ int GetObstacles( const idPhysics *physics, const idAAS *aas, const idEntity *ig
 		lastEdgeNormal.Zero();
 		nextVerts[0] = nextVerts[1] = 0;
 		for ( i = 0; i < numWallEdges && numObstacles < MAX_OBSTACLES; i++ ) {
-            aas->GetEdge( wallEdges[i], start, end );
+			aas->GetEdge( wallEdges[i], start, end );
 			aas->GetEdgeVertexNumbers( wallEdges[i], verts );
 			edgeDir = end.ToVec2() - start.ToVec2();
 			edgeDir.Normalize();

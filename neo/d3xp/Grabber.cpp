@@ -25,9 +25,8 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
-
 
 #include "Game_local.h"
 #include "Misc.h"
@@ -455,7 +454,7 @@ int idGrabber::Update( idPlayer *player, bool hide ) {
 		if ( !common->IsMultiplayer() && !abort && ( player->usercmd.impulseSequence != oldImpulseSequence ) && (player->usercmd.impulse == IMPULSE_13) ) {
 			abort = true;
 		}
-        
+		
 		if ( abort ) {
 			StopDrag( true );
 			return 3;
@@ -465,7 +464,7 @@ int idGrabber::Update( idPlayer *player, bool hide ) {
 	owner = player;
 
 	// if no entity selected for dragging
-    if ( !dragEnt.GetEntity() ) {
+	if ( !dragEnt.GetEntity() ) {
 		idBounds bounds;
 		idVec3 end = player->firstPersonViewOrigin + player->firstPersonViewAxis[0] * dragTraceDist;
 

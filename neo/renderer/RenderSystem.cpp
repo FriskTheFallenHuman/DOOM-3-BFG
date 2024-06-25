@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 
@@ -679,7 +679,7 @@ void idRenderSystemLocal::SwapCommandBuffers_FinishRendering(
 	// check for dynamic changes that require some initialization
 	R_CheckCvars();
 
-    // check for errors
+	// check for errors
 	GL_CheckErrors();
 }
 

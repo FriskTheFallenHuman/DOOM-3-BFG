@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -2416,7 +2416,7 @@ void idEntity::JoinTeam( idEntity *teammember ) {
 			ent->teamChain->teamMaster = master;
 		}
 
-    	prev->teamChain = this;
+		prev->teamChain = this;
 		ent->teamChain = next;
 	}
 
@@ -4681,9 +4681,9 @@ void idEntity::Event_RestorePosition() {
 	if ( spawnArgs.GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", axis ) ) {
 		angles = axis.ToAngles();
 	} else {
-   		angles[ 0 ] = 0;
-   		angles[ 1 ] = spawnArgs.GetFloat( "angle" );
-   		angles[ 2 ] = 0;
+		angles[ 0 ] = 0;
+		angles[ 1 ] = spawnArgs.GetFloat( "angle" );
+		angles[ 2 ] = 0;
 	}
 
 	Teleport( org, angles, NULL );

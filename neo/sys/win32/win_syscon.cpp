@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include <errno.h>
 #include <float.h>
@@ -183,9 +183,9 @@ static LONG WINAPI ConWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				}
 			}
 			break;
-    }
+	}
 
-    return DefWindowProc( hWnd, uMsg, wParam, lParam );
+	return DefWindowProc( hWnd, uMsg, wParam, lParam );
 }
 
 LONG WINAPI InputLineWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {

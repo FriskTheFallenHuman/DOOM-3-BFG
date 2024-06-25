@@ -26,9 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
-
 
 #include "tr_local.h"
 
@@ -514,13 +513,13 @@ static void LoadJPG( const char *filename, unsigned char **pic, int *width, int 
    * loop counter, so that we don't have to keep track ourselves.
    */
   while (cinfo.output_scanline < cinfo.output_height) {
-    /* jpeg_read_scanlines expects an array of pointers to scanlines.
-     * Here the array is only one element long, but you could ask for
-     * more than one scanline at a time if that's more convenient.
-     */
+	/* jpeg_read_scanlines expects an array of pointers to scanlines.
+	 * Here the array is only one element long, but you could ask for
+	 * more than one scanline at a time if that's more convenient.
+	 */
 	bbuf = ((out+(row_stride*cinfo.output_scanline)));
 	buffer = &bbuf;
-    (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+	(void) jpeg_read_scanlines(&cinfo, buffer, 1);
   }
 
   // clear all the alphas to 255

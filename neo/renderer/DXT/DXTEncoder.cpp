@@ -31,7 +31,9 @@ Contains the DxtEncoder implementation.
 ================================================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
+
 #include "DXTCodec_local.h"
 #include "DXTCodec.h"
 
@@ -4259,30 +4261,30 @@ idDxtEncoder::InsetNormalsBBox3Dc
 ========================
 */
 void idDxtEncoder::InsetNormalsBBox3Dc( byte *minNormal, byte *maxNormal ) const {
-    int inset[4];
-    int mini[4];
-    int maxi[4];
+	int inset[4];
+	int mini[4];
+	int maxi[4];
 
-    inset[0] = ( maxNormal[0] - minNormal[0] ) - ((1<<(INSET_ALPHA_SHIFT-1))-1);
-    inset[1] = ( maxNormal[1] - minNormal[1] ) - ((1<<(INSET_ALPHA_SHIFT-1))-1);
+	inset[0] = ( maxNormal[0] - minNormal[0] ) - ((1<<(INSET_ALPHA_SHIFT-1))-1);
+	inset[1] = ( maxNormal[1] - minNormal[1] ) - ((1<<(INSET_ALPHA_SHIFT-1))-1);
 
-    mini[0] = ( ( minNormal[0] << INSET_ALPHA_SHIFT ) + inset[0] ) >> INSET_ALPHA_SHIFT;
-    mini[1] = ( ( minNormal[1] << INSET_ALPHA_SHIFT ) + inset[1] ) >> INSET_ALPHA_SHIFT;
+	mini[0] = ( ( minNormal[0] << INSET_ALPHA_SHIFT ) + inset[0] ) >> INSET_ALPHA_SHIFT;
+	mini[1] = ( ( minNormal[1] << INSET_ALPHA_SHIFT ) + inset[1] ) >> INSET_ALPHA_SHIFT;
 
-    maxi[0] = ( ( maxNormal[0] << INSET_ALPHA_SHIFT ) - inset[0] ) >> INSET_ALPHA_SHIFT;
-    maxi[1] = ( ( maxNormal[1] << INSET_ALPHA_SHIFT ) - inset[1] ) >> INSET_ALPHA_SHIFT;
+	maxi[0] = ( ( maxNormal[0] << INSET_ALPHA_SHIFT ) - inset[0] ) >> INSET_ALPHA_SHIFT;
+	maxi[1] = ( ( maxNormal[1] << INSET_ALPHA_SHIFT ) - inset[1] ) >> INSET_ALPHA_SHIFT;
 
-    mini[0] = ( mini[0] >= 0 ) ? mini[0] : 0;
-    mini[1] = ( mini[1] >= 0 ) ? mini[1] : 0;
+	mini[0] = ( mini[0] >= 0 ) ? mini[0] : 0;
+	mini[1] = ( mini[1] >= 0 ) ? mini[1] : 0;
 
-    maxi[0] = ( maxi[0] <= 255 ) ? maxi[0] : 255;
-    maxi[1] = ( maxi[1] <= 255 ) ? maxi[1] : 255;
+	maxi[0] = ( maxi[0] <= 255 ) ? maxi[0] : 255;
+	maxi[1] = ( maxi[1] <= 255 ) ? maxi[1] : 255;
 
-    minNormal[0] = (byte)mini[0];
-    minNormal[1] = (byte)mini[1];
+	minNormal[0] = (byte)mini[0];
+	minNormal[1] = (byte)mini[1];
 
-    maxNormal[0] = (byte)maxi[0];
-    maxNormal[1] = (byte)maxi[1];
+	maxNormal[0] = (byte)maxi[0];
+	maxNormal[1] = (byte)maxi[1];
 }
 
 /*

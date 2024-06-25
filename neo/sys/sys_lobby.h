@@ -855,8 +855,11 @@ public:		// Turning this on for now, for the sake of getting this up and running
 idSessionCallbacks
 ========================
 */
-class idSessionCallbacks { 
+class idSessionCallbacks {
 public:
+									idSessionCallbacks() {}
+	virtual							~idSessionCallbacks() {}
+
 	virtual idLobby &				GetPartyLobby() = 0;
 	virtual idLobby &				GetGameLobby() = 0;
 	virtual idLobby &				GetActingGameStateLobby() = 0;

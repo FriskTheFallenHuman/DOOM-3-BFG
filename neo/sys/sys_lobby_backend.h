@@ -214,8 +214,9 @@ public:
 		TYPE_INVALID	= 0xff,
 	};
 
-	idLobbyBackend() : type( TYPE_INVALID ), isHost( false ), isLocal( false ) {}
-	idLobbyBackend( lobbyBackendType_t lobbyType ) : type( lobbyType ), isHost( false ), isLocal( false ) {}
+							idLobbyBackend() : type( TYPE_INVALID ), isHost( false ), isLocal( false ) {}
+							idLobbyBackend( lobbyBackendType_t lobbyType ) : type( lobbyType ), isHost( false ), isLocal( false ) {}
+	virtual					~idLobbyBackend() {}
 
 	virtual void			StartHosting( const idMatchParameters & p, float skillLevel, lobbyBackendType_t type ) = 0;
 	virtual void			StartFinding( const idMatchParameters & p, int numPartyUsers, float skillLevel ) = 0;

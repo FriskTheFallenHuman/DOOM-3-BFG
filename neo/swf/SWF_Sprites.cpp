@@ -25,8 +25,9 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 /*
 ========================
@@ -148,7 +149,7 @@ void idSWFSprite::Load( idSWFBitStream & bitstream, bool parseDictionary ) {
 
 			idSWFBitStream &initaction = doInitActions.Alloc();
 			initaction.Load( tagStream.ReadData( recordLength - 2 ), recordLength - 2, true );
- 		    }
+			}
 			break;
 
 		case Tag_DoAction:

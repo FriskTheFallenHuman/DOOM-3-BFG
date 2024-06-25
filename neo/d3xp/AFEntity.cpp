@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -3105,7 +3105,7 @@ idRenderModel *idGameEdit::AF_CreateMesh( const idDict &args, idVec3 &meshOrigin
 			modifiedAxis[ jointNum ] = ( bodyAxis[i] * originalJoints[jointNum].ToMat3().Transpose() ).Transpose() * ( newBodyAxis[i] * meshAxis.Transpose() );
 			// FIXME: calculate correct modifiedOrigin
 			modifiedOrigin[ jointNum ] = originalJoints[ jointNum ].ToVec3();
- 		}
+		}
 	}
 
 	// apply joint modifications to the skeleton

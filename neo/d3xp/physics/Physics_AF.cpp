@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include "../Game_local.h"
 
@@ -1301,12 +1301,12 @@ void idAFConstraint_UniversalJoint::DebugDraw() {
 	d1 = axis1 * body1->GetWorldAxis();
 
 	if ( master ) {
-        a2 = master->GetWorldOrigin() + anchor2 * master->GetWorldAxis();
+		a2 = master->GetWorldOrigin() + anchor2 * master->GetWorldAxis();
 		s2 = shaft2 * master->GetWorldAxis();
 		d2 = axis2 * master->GetWorldAxis();
 	}
 	else {
-        a2 = anchor2;
+		a2 = anchor2;
 		s2 = shaft2;
 		d2 = axis2;
 	}

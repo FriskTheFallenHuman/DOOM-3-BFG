@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "DeviceContext.h"
 #include "Window.h"
@@ -1355,7 +1355,7 @@ void idWindow::CalcClientRect(float xofs, float yofs) {
 
 		textRect = clientRect;
 		textRect.x += 2.0;
-	 	textRect.w -= 2.0;
+		textRect.w -= 2.0;
 		textRect.y += 2.0;
 		textRect.h -= 2.0;
 
@@ -2187,9 +2187,9 @@ bool idWindow::Parse( idTokenParser *src, bool rebuild) {
 		} 
 		else if ( token == "editDef" ) {
 			idEditWindow *win = new (TAG_OLD_UI) idEditWindow(gui);
-		  	SaveExpressionParseState();
+			SaveExpressionParseState();
 			win->Parse(src, rebuild);	
-		  	RestoreExpressionParseState();
+			RestoreExpressionParseState();
 			AddChild(win);
 			win->SetParent(this);
 			dwt.simp = NULL;
@@ -2198,9 +2198,9 @@ bool idWindow::Parse( idTokenParser *src, bool rebuild) {
 		}
 		else if ( token == "choiceDef" ) {
 			idChoiceWindow *win = new (TAG_OLD_UI) idChoiceWindow(gui);
-		  	SaveExpressionParseState();
+			SaveExpressionParseState();
 			win->Parse(src, rebuild);	
-		  	RestoreExpressionParseState();
+			RestoreExpressionParseState();
 			AddChild(win);
 			win->SetParent(this);
 			dwt.simp = NULL;
@@ -2209,9 +2209,9 @@ bool idWindow::Parse( idTokenParser *src, bool rebuild) {
 		}
 		else if ( token == "sliderDef" ) {
 			idSliderWindow *win = new (TAG_OLD_UI) idSliderWindow(gui);
-		  	SaveExpressionParseState();
+			SaveExpressionParseState();
 			win->Parse(src, rebuild);	
-		  	RestoreExpressionParseState();
+			RestoreExpressionParseState();
 			AddChild(win);
 			win->SetParent(this);
 			dwt.simp = NULL;
@@ -2220,9 +2220,9 @@ bool idWindow::Parse( idTokenParser *src, bool rebuild) {
 		}
 		else if ( token == "bindDef" ) {
 			idBindWindow *win = new (TAG_OLD_UI) idBindWindow(gui);
-		  	SaveExpressionParseState();
+			SaveExpressionParseState();
 			win->Parse(src, rebuild);	
-		  	RestoreExpressionParseState();
+			RestoreExpressionParseState();
 			AddChild(win);
 			win->SetParent(this);
 			dwt.simp = NULL;
@@ -2231,9 +2231,9 @@ bool idWindow::Parse( idTokenParser *src, bool rebuild) {
 		}
 		else if ( token == "listDef" ) {
 			idListWindow *win = new (TAG_OLD_UI) idListWindow(gui);
-		  	SaveExpressionParseState();
+			SaveExpressionParseState();
 			win->Parse(src, rebuild);	
-		  	RestoreExpressionParseState();
+			RestoreExpressionParseState();
 			AddChild(win);
 			win->SetParent(this);
 			dwt.simp = NULL;
@@ -2242,9 +2242,9 @@ bool idWindow::Parse( idTokenParser *src, bool rebuild) {
 		}
 		else if ( token == "fieldDef" ) {
 			idFieldWindow *win = new (TAG_OLD_UI) idFieldWindow(gui);
-		  	SaveExpressionParseState();
+			SaveExpressionParseState();
 			win->Parse(src, rebuild);	
-		  	RestoreExpressionParseState();
+			RestoreExpressionParseState();
 			AddChild(win);
 			win->SetParent(this);
 			dwt.simp = NULL;
@@ -2256,9 +2256,9 @@ bool idWindow::Parse( idTokenParser *src, bool rebuild) {
 			// GUI for the main menus, but we have cut that ability so
 			// we don't need to deal with offset viewports on all platforms.
 			idRenderWindow *win = new (TAG_OLD_UI) idRenderWindow(gui);
-		  	SaveExpressionParseState();
+			SaveExpressionParseState();
 			win->Parse(src, rebuild);	
-		  	RestoreExpressionParseState();
+			RestoreExpressionParseState();
 			AddChild(win);
 			win->SetParent(this);
 			dwt.simp = NULL;
@@ -3215,7 +3215,7 @@ void idWindow::WriteToDemoFile( class idDemoFile *f ) {
 	idStr work;
 	f->SetLog(true, work);
 
- 	int i, c;
+	int i, c;
 
 	f->SetLog(true, (work + "-transitions"));
 	c = transitions.Num();

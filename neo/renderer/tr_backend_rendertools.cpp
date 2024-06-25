@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 #include "simplex.h"	// line font definition
@@ -420,7 +420,7 @@ static void RB_ShowIntensity() {
 	GL_State( GLS_DEPTHFUNC_ALWAYS );
 	qglPushMatrix();
 	qglLoadIdentity(); 
-    qglOrtho( 0, 1, 0, 1, -1, 1 );
+	qglOrtho( 0, 1, 0, 1, -1, 1 );
 	qglRasterPos2f( 0, 0 );
 	qglPopMatrix();
 	GL_Color( 1, 1, 1 );
@@ -452,7 +452,7 @@ static void RB_ShowDepthBuffer() {
 	qglMatrixMode( GL_PROJECTION );
 	qglPushMatrix();
 	qglLoadIdentity(); 
-    qglOrtho( 0, 1, 0, 1, -1, 1 );
+	qglOrtho( 0, 1, 0, 1, -1, 1 );
 	qglRasterPos2f( 0, 0 );
 	qglPopMatrix();
 	qglMatrixMode( GL_MODELVIEW );
@@ -1381,7 +1381,7 @@ static void RB_ShowTextureVectors( drawSurf_t **drawSurfs, int numDrawSurfs ) {
 			temp[2] = (d0[2] * d1[4] - d0[4] * d1[2]) * inva;
 			temp.Normalize();
 			tangents[0] = temp;
-        
+		
 			temp[0] = (d0[3] * d1[0] - d0[0] * d1[3]) * inva;
 			temp[1] = (d0[3] * d1[1] - d0[1] * d1[3]) * inva;
 			temp[2] = (d0[3] * d1[2] - d0[2] * d1[3]) * inva;
@@ -2254,7 +2254,7 @@ void RB_TestGamma() {
 	qglPushMatrix();
 	qglLoadIdentity(); 
 	qglDisable( GL_TEXTURE_2D );
-    qglOrtho( 0, 1, 0, 1, -1, 1 );
+	qglOrtho( 0, 1, 0, 1, -1, 1 );
 	qglRasterPos2f( 0.01f, 0.01f );
 	qglDrawPixels( G_WIDTH, G_HEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, image );
 	qglPopMatrix();
@@ -2303,7 +2303,7 @@ static void RB_TestGammaBias() {
 	qglPushMatrix();
 	qglLoadIdentity(); 
 	qglDisable( GL_TEXTURE_2D );
-    qglOrtho( 0, 1, 0, 1, -1, 1 );
+	qglOrtho( 0, 1, 0, 1, -1, 1 );
 	qglRasterPos2f( 0.01f, 0.01f );
 	qglDrawPixels( G_WIDTH, G_HEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, image );
 	qglPopMatrix();

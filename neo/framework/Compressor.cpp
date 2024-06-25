@@ -25,9 +25,8 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
-
 
 /*
 =================================================================================
@@ -1020,7 +1019,7 @@ void idCompressor_Huffman::Swap( huffmanNode_t *node1, huffmanNode_t *node2 ) {
 		if ( par1->left == node1 ) {
 			par1->left = node2;
 		} else {
-	      par1->right = node2;
+		  par1->right = node2;
 		}
 	} else {
 		tree = node2;
@@ -1091,7 +1090,7 @@ void idCompressor_Huffman::Increment( huffmanNode_t *node ) {
 	}
 
 	if ( node->next != NULL && node->next->weight == node->weight ) {
-	    lnode = *node->head;
+		lnode = *node->head;
 		if ( lnode != node->parent ) {
 			Swap( lnode, node );
 		}
@@ -1100,7 +1099,7 @@ void idCompressor_Huffman::Increment( huffmanNode_t *node ) {
 	if ( node->prev && node->prev->weight == node->weight ) {
 		*node->head = node->prev;
 	} else {
-	    *node->head = NULL;
+		*node->head = NULL;
 		Free_ppnode( node->head );
 	}
 	node->weight++;
@@ -1161,7 +1160,7 @@ void idCompressor_Huffman::AddRef( byte ch ) {
 				/* this should never happen */
 				tnode->head = Get_ppnode();
 				*tnode->head = tnode2;
-		    }
+			}
 		} else {
 			/* this should never happen */
 			tnode->head = Get_ppnode();
@@ -1186,7 +1185,7 @@ void idCompressor_Huffman::AddRef( byte ch ) {
  
 		tnode2->parent = lhead->parent;
 		lhead->parent = tnode->parent = tnode2;
-     
+	 
 		loc[ch] = tnode;
  
 		Increment( tnode2->parent );
@@ -1334,7 +1333,7 @@ int idCompressor_Huffman::Read( void *outData, int outLength ) {
 				ch = ( ch << 1 ) + Get_bit();
 			}
 		}
-    
+	
 		((byte *)outData)[i] = ch;			/* Write symbol */
 		AddRef( (byte) ch );				/* Increment node */
 	}
@@ -1482,7 +1481,7 @@ idCompressor_Arithmetic::GetCurrentCount
 ================
 */
 int idCompressor_Arithmetic::GetCurrentCount() {
-    return (unsigned int) ( ( ( ( (long) code - low ) + 1 ) * scale - 1 ) / ( ( (long) high - low ) + 1 ) );
+	return (unsigned int) ( ( ( ( (long) code - low ) + 1 ) * scale - 1 ) / ( ( (long) high - low ) + 1 ) );
 }
 
 /*
@@ -1520,10 +1519,10 @@ int idCompressor_Arithmetic::ProbabilityForCount( unsigned int count ) {
 	int j;
 
 	for( j = 0; j < (1<<AC_WORD_LENGTH); j++ ) {
-        if ( count >= probabilities[ j ].low && count < probabilities[ j ].high ) {
+		if ( count >= probabilities[ j ].low && count < probabilities[ j ].high ) {
 			return j;
-        }
-    }
+		}
+	}
 
 	assert( false );
 
@@ -1539,10 +1538,10 @@ idCompressor_Arithmetic::SymbolFromCount
 */
 int idCompressor_Arithmetic::SymbolFromCount( unsigned int count, acSymbol_t* symbol ) {
 	int p = ProbabilityForCount( count );
-    symbol->low = probabilities[ p ].low;
-    symbol->high = probabilities[ p ].high;
+	symbol->low = probabilities[ p ].low;
+	symbol->high = probabilities[ p ].high;
 	symbol->position = p;
-    return p;
+	return p;
 }
 
 /*
@@ -1551,31 +1550,31 @@ idCompressor_Arithmetic::RemoveSymbolFromStream
 ================
 */
 void idCompressor_Arithmetic::RemoveSymbolFromStream( acSymbol_t* symbol ) {
-    long range;
+	long range;
 
 	range	= ( long )( high - low ) + 1;
 	high	= low + ( unsigned short )( ( range * symbol->high ) / scale - 1 );
 	low		= low + ( unsigned short )( ( range * symbol->low ) / scale );
 
-    while( true ) {
+	while( true ) {
 
-        if ( ( high & AC_MSB_MASK ) == ( low & AC_MSB_MASK ) ) {
+		if ( ( high & AC_MSB_MASK ) == ( low & AC_MSB_MASK ) ) {
 
 		} else if( ( low & AC_MSB2_MASK ) == AC_MSB2_MASK && ( high & AC_MSB2_MASK ) == 0 ) {
-            code	^= AC_MSB2_MASK;
-            low		&= AC_MSB2_MASK - 1;
-            high	|= AC_MSB2_MASK;
+			code	^= AC_MSB2_MASK;
+			low		&= AC_MSB2_MASK - 1;
+			high	|= AC_MSB2_MASK;
 		} else {
 			UpdateProbabilities( symbol );
-            return;
+			return;
 		}
 
-        low <<= 1;
-        high <<= 1;
-        high |= 1;
-        code <<= 1;
-        code |= ReadBits( 1 );
-    }
+		low <<= 1;
+		high <<= 1;
+		high |= 1;
+		code <<= 1;
+		code |= ReadBits( 1 );
+	}
 }
 
 /*
@@ -1618,26 +1617,26 @@ void idCompressor_Arithmetic::EncodeSymbol( acSymbol_t* symbol ) {
 			// the high digits of low and high have converged, and can be written to the stream
 			WriteBits( high >> AC_MSB_SHIFT, 1 );
 
-            while( underflowBits > 0 ) {
+			while( underflowBits > 0 ) {
 
 				WriteBits( ~high >> AC_MSB_SHIFT, 1 );
 
 				underflowBits--;
-            }
-        } else if ( ( low & AC_MSB2_MASK ) && !( high & AC_MSB2_MASK ) ) {
+			}
+		} else if ( ( low & AC_MSB2_MASK ) && !( high & AC_MSB2_MASK ) ) {
 			// underflow is in danger of happening, 2nd digits are converging but 1st digits don't match
 			underflowBits	+= 1;
 			low				&= AC_MSB2_MASK - 1;
 			high			|= AC_MSB2_MASK;
 		} else {
 			UpdateProbabilities( symbol );
-            return;
+			return;
 		}
 
-        low <<= 1;
-        high <<= 1;
-        high |=	1;
-    }
+		low <<= 1;
+		high <<= 1;
+		high |=	1;
+	}
 }
 
 /*

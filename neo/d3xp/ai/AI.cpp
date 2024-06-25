@@ -26,9 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
@@ -2147,7 +2146,7 @@ bool idAI::StepDirection( float dir ) {
 			if ( z <= ceilingPos.z ) {
 				start.x = org.x;
 				start.y = org.y;
-                start.z = z;
+				start.z = z;
 			} else {
 				start = ceilingPos;
 			}
@@ -2234,7 +2233,7 @@ bool idAI::NewWanderDir( const idVec3 &dest ) {
 	if ( gameLocal.random.RandomInt() & 1 ) {
 		for( tdir = 0; tdir <= 315; tdir += 45 ) {
 			if ( tdir != turnaround && StepDirection( tdir ) ) {
-                return true;
+				return true;
 			}
 		}
 	} else {
@@ -3024,7 +3023,7 @@ void idAI::AdjustFlyHeight( idVec3 &vel, const idVec3 &goalPos ) {
 			vel.z += addVel.z;
 			goLower = true;
 		}
-        
+		
 		if ( ai_debugMove.GetBool() ) {
 			gameRenderWorld->DebugBounds( goLower ? colorRed : colorGreen, physicsObj.GetBounds(), path.endPos, 1 );
 		}
@@ -3612,7 +3611,7 @@ void idAI::Activate( idEntity *activator ) {
 
 		// update the script in cinematics so that entities don't start anims or show themselves a frame late.
 		if ( cinematic ) {
-            UpdateAIScript();
+			UpdateAIScript();
 
 			// make sure our model gets updated
 			animator.ForceUpdate();
@@ -5005,7 +5004,7 @@ bool idAI::UpdateAnimationControllers() {
 
 	idEntity *focusEnt = focusEntity.GetEntity();
 	if ( !allowJointMod || !allowEyeFocus || ( gameLocal.time >= focusTime ) ) {
-	    focusPos = GetEyePosition() + orientationJointAxis[ 0 ] * 512.0f;
+		focusPos = GetEyePosition() + orientationJointAxis[ 0 ] * 512.0f;
 	} else if ( focusEnt == NULL ) {
 		// keep looking at last position until focusTime is up
 		focusPos = currentFocusPos;

@@ -26,9 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
@@ -1190,7 +1189,7 @@ void idAnimBlend::Reset( const idDeclModelDef *_modelDef ) {
 
 	blendStartValue = 0.0f;
 	blendEndValue	= 0.0f;
-    blendStartTime	= 0;
+	blendStartTime	= 0;
 	blendDuration	= 0;
 }
 
@@ -1290,7 +1289,7 @@ idAnimBlend::SetWeight
 void idAnimBlend::SetWeight( float newweight, int currentTime, int blendTime ) {
 	blendStartValue = GetWeight( currentTime );
 	blendEndValue = newweight;
-    blendStartTime = currentTime - 1;
+	blendStartTime = currentTime - 1;
 	blendDuration = blendTime;
 
 	if ( !newweight ) {
@@ -1916,7 +1915,7 @@ bool idAnimBlend::BlendAnim( int currentTime, int channel, int numJoints, idJoin
 				blendFrame[j].q = jointFrame[j].q;
 			}
 		}
-    } else {
+	} else {
 		blendWeight += weight;
 		lerp = weight / blendWeight;
 		SIMDProcessor->BlendJoints( blendFrame, jointFrame, lerp, modelDef->GetChannelJoints( channel ), modelDef->NumJointsOnChannel( channel ) );
@@ -3640,7 +3639,7 @@ void idAnimator::SyncAnimChannels( int channelNum, int fromChannelNum, int curre
 		toBlend.blendStartValue = 0.0f;
 		toBlend.blendEndValue = 0.0f;
 	}
-    toBlend.SetWeight( weight, currentTime - 1, blendTime );
+	toBlend.SetWeight( weight, currentTime - 1, blendTime );
 
 	// disable framecommands on the current channel so that commands aren't called twice
 	toBlend.AllowFrameCommands( false );
@@ -4292,7 +4291,7 @@ bool idAnimator::CreateFrame( int currentTime, bool force ) {
 	if ( entity && ( ( g_debugAnim.GetInteger() == entity->entityNumber ) || ( g_debugAnim.GetInteger() == -2 ) ) ) {
 		debugInfo = true;
 		gameLocal.Printf( "---------------\n%d: entity '%s':\n", gameLocal.time, entity->GetName() );
- 		gameLocal.Printf( "model '%s':\n", modelDef->GetModelName() );
+		gameLocal.Printf( "model '%s':\n", modelDef->GetModelName() );
 	} else {
 		debugInfo = false;
 	}

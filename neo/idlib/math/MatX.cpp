@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../precompiled.h"
 
 //===============================================================
 //
@@ -759,9 +759,9 @@ idMatX::Update_RowColumn
 
   Updates the matrix to obtain the matrix:
 
-      [ 0  a  0 ]
+	  [ 0  a  0 ]
   A + [ d  b  e ]
-      [ 0  c  0 ]
+	  [ 0  c  0 ]
 
   where: a = v[0,r-1], b = v[r], c = v[r+1,numRows-1], d = w[0,r-1], w[r] = 0.0f, e = w[r+1,numColumns-1]
 ============
@@ -787,9 +787,9 @@ idMatX::Update_RowColumnSymmetric
 
   Updates the matrix to obtain the matrix:
 
-      [ 0  a  0 ]
+	  [ 0  a  0 ]
   A + [ a  b  c ]
-      [ 0  c  0 ]
+	  [ 0  c  0 ]
 
   where: a = v[0,r-1], b = v[r], c = v[r+1,numRows-1]
 ============
@@ -1012,9 +1012,9 @@ idMatX::Inverse_UpdateRowColumn
 
   Updates the in-place inverse to obtain the inverse for the matrix:
 
-      [ 0  a  0 ]
+	  [ 0  a  0 ]
   A + [ d  b  e ]
-      [ 0  c  0 ]
+	  [ 0  c  0 ]
 
   where: a = v[0,r-1], b = v[r], c = v[r+1,numRows-1], d = w[0,r-1], w[r] = 0.0f, e = w[r+1,numColumns-1]
 ============
@@ -1281,9 +1281,9 @@ idMatX::LU_UpdateRowColumn
 
   Updates the in-place LU factorization to obtain the factors for the matrix:
 
-       [ 0  a  0 ]
+	   [ 0  a  0 ]
   LU + [ d  b  e ]
-       [ 0  c  0 ]
+	   [ 0  c  0 ]
 
   where: a = v[0,r-1], b = v[r], c = v[r+1,numRows-1], d = w[0,r-1], w[r] = 0.0f, e = w[r+1,numColumns-1]
 ============
@@ -1857,9 +1857,9 @@ idMatX::QR_UpdateRowColumn
 
   Updates the unpacked QR factorization to obtain the factors for the matrix:
 
-       [ 0  a  0 ]
+	   [ 0  a  0 ]
   QR + [ d  b  e ]
-       [ 0  c  0 ]
+	   [ 0  c  0 ]
 
   where: a = v[0,r-1], b = v[r], c = v[r+1,numRows-1], d = w[0,r-1], w[r] = 0.0f, e = w[r+1,numColumns-1]
 ============
@@ -2651,9 +2651,9 @@ idMatX::Cholesky_UpdateRowColumn
 
   Updates the in-place Cholesky factorization to obtain the factors for the matrix:
 
-        [ 0  a  0 ]
+		[ 0  a  0 ]
   LL' + [ a  b  c ]
-        [ 0  c  0 ]
+		[ 0  c  0 ]
 
   where: a = v[0,r-1], b = v[r], c = v[r+1,numRows-1]
 ============
@@ -3030,8 +3030,8 @@ bool idMatX::LDLT_Factor() {
 		sum = (*this)[i][i];
 		for ( j = 0; j < i; j++ ) {
 			d = (*this)[i][j];
-		    v[j] = (*this)[j][j] * d;
-		    sum -= v[j] * d;
+			v[j] = (*this)[j][j] * d;
+			sum -= v[j] * d;
 		}
 
 		if ( sum == 0.0f ) {
@@ -3042,11 +3042,11 @@ bool idMatX::LDLT_Factor() {
 		d = 1.0f / sum;
 
 		for ( j = i + 1; j < numRows; j++ ) {
-		    sum = (*this)[j][i];
+			sum = (*this)[j][i];
 			for ( k = 0; k < i; k++ ) {
 				sum -= (*this)[j][k] * v[k];
 			}
-		    (*this)[j][i] = sum * d;
+			(*this)[j][i] = sum * d;
 		}
 	}
 
@@ -3106,9 +3106,9 @@ idMatX::LDLT_UpdateRowColumn
 
   Updates the in-place LDL' factorization to obtain the factors for the matrix:
 
-         [ 0  a  0 ]
+		 [ 0  a  0 ]
   LDL' + [ a  b  c ]
-         [ 0  c  0 ]
+		 [ 0  c  0 ]
 
   where: a = v[0,r-1], b = v[r], c = v[r+1,numRows-1]
 ============
@@ -3660,7 +3660,7 @@ void idMatX::HouseholderReduction( idVecX &diag, idVecX &subd ) {
 						(*this)[i1][i2] -= f * subd[i2] + g * (*this)[i0][i2];
 					}
 				}
-            }
+			}
 		} else {
 			subd[i0] = (*this)[i0][i3];
 		}
@@ -3709,7 +3709,7 @@ idMatX::QL
 ============
 */
 bool idMatX::QL( idVecX &diag, idVecX &subd ) {
-    const int maxIter = 32;
+	const int maxIter = 32;
 	int i0, i1, i2, i3;
 	float a, b, f, g, r, p, s, c;
 
@@ -4333,7 +4333,7 @@ idMatX::Eigen_Solve
 ============
 */
 bool idMatX::Eigen_Solve( idVecX &realEigenValues, idVecX &imaginaryEigenValues ) {
-    idMatX H;
+	idMatX H;
 
 	assert( numRows == numColumns );
 
@@ -4342,11 +4342,11 @@ bool idMatX::Eigen_Solve( idVecX &realEigenValues, idVecX &imaginaryEigenValues 
 
 	H = *this;
 
-    // reduce to Hessenberg form
-    HessenbergReduction( H );
+	// reduce to Hessenberg form
+	HessenbergReduction( H );
 
-    // reduce Hessenberg to real Schur form
-    return HessenbergToRealSchur( H, realEigenValues, imaginaryEigenValues );
+	// reduce Hessenberg to real Schur form
+	return HessenbergToRealSchur( H, realEigenValues, imaginaryEigenValues );
 }
 
 /*

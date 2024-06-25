@@ -33,9 +33,8 @@ Vagary specific AI code
 
 ***********************************************************************/
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
@@ -113,7 +112,7 @@ void idAI_Vagary::Event_ChooseObjectToThrow( const idVec3 &mins, const idVec3 &m
 		if ( PredictTrajectory( entPhys->GetOrigin() + offsetVec, enemyEyePos, speed, entPhys->GetGravity(), 
 			entPhys->GetClipModel(), entPhys->GetClipMask(), MAX_WORLD_SIZE, NULL, enemyEnt, ai_debugTrajectory.GetBool() ? 4000 : 0, vel ) ) {
 			idThread::ReturnEntity( ent );
-            return;
+			return;
 		}
 	}
 

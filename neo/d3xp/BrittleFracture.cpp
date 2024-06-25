@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -384,7 +384,7 @@ bool idBrittleFracture::UpdateRenderEntity( renderEntity_s *renderEntity, const 
 
 		packedColor = PackColor( idVec4( renderEntity->shaderParms[ SHADERPARM_RED ] * fade,
 										renderEntity->shaderParms[ SHADERPARM_GREEN ] * fade,
-                                        renderEntity->shaderParms[ SHADERPARM_BLUE ] * fade,
+										renderEntity->shaderParms[ SHADERPARM_BLUE ] * fade,
 										fade ) );
 
 		const idWinding &winding = shards[i]->winding;
@@ -926,7 +926,7 @@ void idBrittleFracture::DropFloatingIslands( const idVec3 &point, const idVec3 &
 			continue;
 		}
 
-        queueStart = 0;
+		queueStart = 0;
 		queueEnd = 1;
 		queue[0] = shards[i];
 		shards[i]->islandNum = numIslands+1;

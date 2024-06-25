@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../precompiled.h"
 
 /*
 =================
@@ -617,7 +617,7 @@ bool idSurface::IsConnected() const {
 			continue;
 		}
 
-        queueStart = 0;
+		queueStart = 0;
 		queueEnd = 1;
 		queue[0] = i;
 		islandNum[i] = numIslands;

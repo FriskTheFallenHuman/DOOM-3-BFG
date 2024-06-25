@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include "../Game_local.h"
 
@@ -1394,7 +1394,7 @@ float idPush::ClipPush( trace_t &results, idEntity *pusher, const int flags,
 	idRotation rotation;
 	float mass;
 
-    mass = 0.0f;
+	mass = 0.0f;
 
 	results.fraction = 1.0f;
 	results.endpos = newOrigin;

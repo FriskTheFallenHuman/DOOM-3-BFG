@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../precompiled.h"
 
 //===============================================================
 //
@@ -109,16 +109,16 @@ idODE_Midpoint::~Evaluate
 */
 float idODE_Midpoint::Evaluate( const float *state, float *newState, float t0, float t1 ) {
 	double delta, halfDelta;
-    int i;
+	int i;
 
 	delta = t1 - t0;
 	halfDelta = delta * 0.5;
-    // first step
+	// first step
 	derive( t0, userData, state, derivatives );
 	for ( i = 0; i < dimension; i++ ) {
 		tmpState[i] = state[i] + halfDelta * derivatives[i];
 	}
-    // second step
+	// second step
 	derive( t0 + halfDelta, userData, tmpState, derivatives );
 
 	for ( i = 0; i < dimension; i++ ) {
@@ -333,16 +333,16 @@ float idODE_RK4Adaptive::Evaluate( const float *state, float *newState, float t0
 		}
 
 		// get max estimated error
-        max = 0.0;
+		max = 0.0;
 		for ( i = 0; i < dimension; i++ ) {
 			error = idMath::Fabs( (newState[i] - tmpState[i]) / (delta * d1[i] + 1e-10) );
 			if ( error > max ) {
 				max = error;
 			}
-        }
+		}
 		error = max / maxError;
 
-        if ( error <= 1.0f ) {
+		if ( error <= 1.0f ) {
 			return delta * 4.0;
 		}
 		if ( delta <= 1e-7 ) {

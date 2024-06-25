@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../precompiled.h"
 
 const int SMALLEST_NON_DENORMAL					= 1<<IEEE_FLT_MANTISSA_BITS;
 const int NAN_VALUE								= 0x7f800000;
@@ -73,14 +73,14 @@ idMath::Init
 ===============
 */
 void idMath::Init() {
-    union _flint fi, fo;
+	union _flint fi, fo;
 
-    for ( int i = 0; i < SQRT_TABLE_SIZE; i++ ) {
-        fi.i	 = ((EXP_BIAS-1) << EXP_POS) | (i << LOOKUP_POS);
-        fo.f	 = (float)( 1.0 / sqrt( fi.f ) );
-        iSqrt[i] = ((dword)(((fo.i + (1<<(SEED_POS-2))) >> SEED_POS) & 0xFF))<<SEED_POS;
-    }
-    
+	for ( int i = 0; i < SQRT_TABLE_SIZE; i++ ) {
+		fi.i	 = ((EXP_BIAS-1) << EXP_POS) | (i << LOOKUP_POS);
+		fo.f	 = (float)( 1.0 / sqrt( fi.f ) );
+		iSqrt[i] = ((dword)(((fo.i + (1<<(SEED_POS-2))) >> SEED_POS) & 0xFF))<<SEED_POS;
+	}
+	
 	iSqrt[SQRT_TABLE_SIZE / 2] = ((dword)(0xFF))<<(SEED_POS); 
 
 	initialized = true;

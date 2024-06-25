@@ -25,8 +25,9 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #define SAVEGAME_PROFILE_FILENAME			"profile.bin"
 
@@ -176,7 +177,7 @@ idProfileMgr::LoadSettingsAsync
 ========================
 */
 void idProfileMgr::LoadSettingsAsync() {
- 	if ( profile != NULL && saveGame_enable.GetBool() ) {
+	if ( profile != NULL && saveGame_enable.GetBool() ) {
 		if ( profileLoadProcessor->InitLoadProfile( profile, "" ) ) {
 			// Skip the not found error because this might be the first time to play the game!
 			profileLoadProcessor->SetSkipSystemErrorDialogMask( SAVEGAME_E_FOLDER_NOT_FOUND | SAVEGAME_E_FILE_NOT_FOUND );

@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -1418,7 +1418,7 @@ void idWeapon::UpdateFlashPosition() {
 // 		static idVec3 baseAdjustPos = vec3_zero;	//idVec3( 0.0f, 10.0f, 0.0f );
 // 		idVec3 adjustPos = baseAdjustPos;
 //		muzzleFlash.origin += adjustPos.x * muzzleFlash.axis[1] + adjustPos.y * muzzleFlash.axis[0] + adjustPos.z * muzzleFlash.axis[2];
- 		muzzleFlash.origin += owner->GetViewBob();
+		muzzleFlash.origin += owner->GetViewBob();
 
 //		static idAngles baseAdjustAng = ang_zero;	//idAngles( 0.0f, 10.0f, 0.0f );
 		idAngles adjustAng = /*baseAdjustAng +*/ idAngles( fraccos * yscale, 0.0f, fraccos2 * pscale );
@@ -2907,10 +2907,10 @@ void idWeapon::ReadFromSnapshot( const idBitMsg &msg ) {
 			idealState = "Fire";
 		}
 
-        // immediately switch back to idle
-        if ( WEAPON_NETFIRING && !isFiring ) {
-            idealState = "Idle";
-        }
+		// immediately switch back to idle
+		if ( WEAPON_NETFIRING && !isFiring ) {
+			idealState = "Idle";
+		}
 
 		WEAPON_NETFIRING = isFiring;
 		WEAPON_ATTACK = isFiring;
@@ -4017,8 +4017,8 @@ void idWeapon::Event_Melee() {
 				&& !owner->PowerUpActive( BERSERK )
 				&& ( (gameLocal.gameType != GAME_TDM ) || gameLocal.serverInfo.GetBool( "si_teamDamage" ) || ( owner->team != static_cast< idPlayer * >( ent )->team ) )
 				) {
-                
-                if ( !gameLocal.mpGame.IsGametypeFlagBased() ) {
+				
+				if ( !gameLocal.mpGame.IsGametypeFlagBased() ) {
 					owner->StealWeapon( static_cast< idPlayer * >( ent ) );
 				}
 			}

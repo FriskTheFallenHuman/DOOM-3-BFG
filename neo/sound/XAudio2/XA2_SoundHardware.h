@@ -41,15 +41,15 @@ public:
 	idSoundHardware_XAudio2 * hardware;
 
 private:
-	    // Called by XAudio2 just before an audio processing pass begins.
-    STDMETHOD_( void, OnProcessingPassStart ) ( THIS ) {}
+		// Called by XAudio2 just before an audio processing pass begins.
+	STDMETHOD_( void, OnProcessingPassStart ) ( THIS ) {}
 
-    // Called just after an audio processing pass ends.
-    STDMETHOD_( void, OnProcessingPassEnd ) ( THIS ) {}
+	// Called just after an audio processing pass ends.
+	STDMETHOD_( void, OnProcessingPassEnd ) ( THIS ) {}
 
-    // Called in the event of a critical system error which requires XAudio2
-    // to be closed down and restarted.  The error code is given in Error.
-    STDMETHOD_( void, OnCriticalError ) ( THIS_ HRESULT Error );
+	// Called in the event of a critical system error which requires XAudio2
+	// to be closed down and restarted.  The error code is given in Error.
+	STDMETHOD_( void, OnCriticalError ) ( THIS_ HRESULT Error );
 };
 
 /*

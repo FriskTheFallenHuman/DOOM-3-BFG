@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "DeviceContext.h"
 #include "../renderer/GuiModel.h"
@@ -677,7 +677,7 @@ void idDeviceContext::DrawEditCursor( float x, float y, float scale ) {
 	char cursorChar = (overStrikeMode) ? '_' : '|';
 	scaledGlyphInfo_t glyphInfo;
 	activeFont->GetScaledGlyph( scale, cursorChar, glyphInfo );
- 	PaintChar( x, y, glyphInfo );
+	PaintChar( x, y, glyphInfo );
 }
 
 int idDeviceContext::DrawText( const char *text, float textScale, int textAlign, idVec4 color, idRectangle rectDraw, bool wrap, int cursor, bool calcOnly, idList<int> *breaks, int limit ) {

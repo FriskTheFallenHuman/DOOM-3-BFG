@@ -40,8 +40,9 @@ If you have questions concerning this license or the applicable additional terms
 ** Note that the GLW_xxx functions are Windows specific GL-subsystem
 ** related functions that are relevant ONLY to win_glimp.c
 */
+
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include "win_local.h"
 #include "rc/doom_resource.h"
@@ -205,17 +206,17 @@ Only used to get wglExtensions
 ====================
 */
 LONG WINAPI FakeWndProc (
-    HWND    hWnd,
-    UINT    uMsg,
-    WPARAM  wParam,
-    LPARAM  lParam) {
+	HWND    hWnd,
+	UINT    uMsg,
+	WPARAM  wParam,
+	LPARAM  lParam) {
 
 	if ( uMsg == WM_DESTROY ) {
-        PostQuitMessage(0);
+		PostQuitMessage(0);
 	}
 
 	if ( uMsg != WM_CREATE ) {
-	    return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
 	const static PIXELFORMATDESCRIPTOR pfd = {
@@ -239,20 +240,20 @@ LONG WINAPI FakeWndProc (
 	HDC hDC;
 	HGLRC hGLRC;
 
-    hDC = GetDC(hWnd);
+	hDC = GetDC(hWnd);
 
-    // Set up OpenGL
-    pixelFormat = ChoosePixelFormat(hDC, &pfd);
-    SetPixelFormat(hDC, pixelFormat, &pfd);
-    hGLRC = qwglCreateContext(hDC);
-    qwglMakeCurrent(hDC, hGLRC);
+	// Set up OpenGL
+	pixelFormat = ChoosePixelFormat(hDC, &pfd);
+	SetPixelFormat(hDC, pixelFormat, &pfd);
+	hGLRC = qwglCreateContext(hDC);
+	qwglMakeCurrent(hDC, hGLRC);
 
 	// free things
-    wglMakeCurrent(NULL, NULL);
-    wglDeleteContext(hGLRC);
-    ReleaseDC(hWnd, hDC);
+	wglMakeCurrent(NULL, NULL);
+	wglDeleteContext(hGLRC);
+	ReleaseDC(hWnd, hDC);
 
-    return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 
@@ -293,32 +294,32 @@ GLW_GetWGLExtensionsWithFakeWindow
 */
 static void GLW_GetWGLExtensionsWithFakeWindow() {
 	HWND	hWnd;
-    MSG		msg;
+	MSG		msg;
 
-    // Create a window for the sole purpose of getting
+	// Create a window for the sole purpose of getting
 	// a valid context to get the wglextensions
-    hWnd = CreateWindow(WIN32_FAKE_WINDOW_CLASS_NAME, GAME_NAME,
-        WS_OVERLAPPEDWINDOW,
-        40, 40,
-        640,
-        480,
-        NULL, NULL, win32.hInstance, NULL );
-    if ( !hWnd ) {
-        common->FatalError( "GLW_GetWGLExtensionsWithFakeWindow: Couldn't create fake window" );
-    }
+	hWnd = CreateWindow(WIN32_FAKE_WINDOW_CLASS_NAME, GAME_NAME,
+		WS_OVERLAPPEDWINDOW,
+		40, 40,
+		640,
+		480,
+		NULL, NULL, win32.hInstance, NULL );
+	if ( !hWnd ) {
+		common->FatalError( "GLW_GetWGLExtensionsWithFakeWindow: Couldn't create fake window" );
+	}
 
-    HDC hDC = GetDC( hWnd );
+	HDC hDC = GetDC( hWnd );
 	HGLRC gRC = wglCreateContext( hDC );
 	wglMakeCurrent( hDC, gRC );
 	GLW_CheckWGLExtensions( hDC );
 	wglDeleteContext( gRC );
 	ReleaseDC( hWnd, hDC );
 
-    DestroyWindow( hWnd );
-    while ( GetMessage( &msg, NULL, 0, 0 ) ) {
-        TranslateMessage( &msg );
-        DispatchMessage( &msg );
-    }
+	DestroyWindow( hWnd );
+	while ( GetMessage( &msg, NULL, 0, 0 ) ) {
+		TranslateMessage( &msg );
+		DispatchMessage( &msg );
+	}
 }
 
 //=============================================================================
@@ -418,7 +419,7 @@ shown, and create the rendering context
 ====================
 */
 static bool GLW_InitDriver( glimpParms_t parms ) {
-    PIXELFORMATDESCRIPTOR src = 
+	PIXELFORMATDESCRIPTOR src = 
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),	// size of this pfd
 		1,								// version number
@@ -438,7 +439,7 @@ static bool GLW_InitDriver( glimpParms_t parms ) {
 		PFD_MAIN_PLANE,					// main layer
 		0,								// reserved
 		0, 0, 0							// layer masks ignored
-    };
+	};
 
 	common->Printf( "Initializing OpenGL driver\n" );
 

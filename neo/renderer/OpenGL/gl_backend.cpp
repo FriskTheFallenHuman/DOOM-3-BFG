@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include "../tr_local.h"
 #include "../../framework/Common_local.h"
@@ -116,7 +116,7 @@ We want to exit this with the GPU idle, right at vsync
 =============
 */
 const void GL_BlockingSwapBuffers() {
-    RENDERLOG_PRINTF( "***************** GL_BlockingSwapBuffers *****************\n\n\n" );
+	RENDERLOG_PRINTF( "***************** GL_BlockingSwapBuffers *****************\n\n\n" );
 
 	const int beforeFinish = Sys_Milliseconds();
 

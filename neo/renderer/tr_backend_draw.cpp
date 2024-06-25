@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 
@@ -960,7 +960,7 @@ static void RB_DrawSingleInteraction( drawInteraction_t * din ) {
 	SetFragmentParm( RENDERPARM_SPECULARMODIFIER, din->specularColor.ToFloatPtr() );
 
 	// texture 0 will be the per-surface bump map
- 	GL_SelectTexture( INTERACTION_TEXUNIT_BUMP );
+	GL_SelectTexture( INTERACTION_TEXUNIT_BUMP );
 	din->bumpImage->Bind();
 
 	// texture 3 is the per-surface diffuse map

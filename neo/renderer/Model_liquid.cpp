@@ -26,9 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
-
 
 #include "tr_local.h"
 #include "Model_local.h"
@@ -51,7 +50,7 @@ idRenderModelLiquid::idRenderModelLiquid() {
 	drop_height = 4;
 	drop_radius = 4;
 	drop_delay	= 1000;
-    shader		= declManager->FindMaterial( NULL );
+	shader		= declManager->FindMaterial( NULL );
 	update_tics	= 33;  // ~30 hz
 	time		= 0;
 	seed		= 0;

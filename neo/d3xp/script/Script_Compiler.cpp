@@ -26,9 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
@@ -86,7 +85,7 @@ opcode_t idCompiler::opcodes[] = {
 	{ "!=", "NE_F", 5, false, &def_float, &def_float, &def_float },
 	{ "!=", "NE_V", 5, false, &def_vector, &def_vector, &def_float },
 	{ "!=", "NE_S", 5, false, &def_string, &def_string, &def_float },
-    { "!=", "NE_E", 5, false, &def_entity, &def_entity, &def_float },
+	{ "!=", "NE_E", 5, false, &def_entity, &def_entity, &def_float },
 	{ "!=", "NE_EO", 5, false, &def_entity, &def_object, &def_float },
 	{ "!=", "NE_OE", 5, false, &def_object, &def_entity, &def_float },
 	{ "!=", "NE_OO", 5, false, &def_object, &def_object, &def_float },
@@ -289,7 +288,7 @@ ID_INLINE idVarDef *idCompiler::VirtualFunctionConstant( idVarDef *func ) {
 	if ( eval._int < 0 ) {
 		Error( "Function '%s' not found in scope '%s'", func->Name(), func->scope->Name() );
 	}
-    
+	
 	return GetImmediate( &type_virtualfunction, &eval, "" );
 }
 
@@ -1198,7 +1197,7 @@ idVarDef *idCompiler::LookupDef( const char *name, const idVarDef *baseobj ) {
 					type_c = field->TypeDef()->ReturnType()->Type();
 				} else {
 					type_c = field->TypeDef()->FieldType()->Type();	// field access gets type from field
-	                if ( CheckToken( "++" ) ) {
+					if ( CheckToken( "++" ) ) {
 						if ( type_c != ev_float ) {
 							Error( "Invalid type for ++" );
 						}
@@ -1744,7 +1743,7 @@ void idCompiler::ParseWhileStatement() {
 		EmitOpcode( OP_GOTO, JumpTo( patch2 ), 0 );
 	} else {
 		patch1 = gameLocal.program.NumStatements();
-        EmitOpcode( OP_IFNOT, e, 0 );
+		EmitOpcode( OP_IFNOT, e, 0 );
 		ParseStatement();
 		EmitOpcode( OP_GOTO, JumpTo( patch2 ), 0 );
 		gameLocal.program.GetStatement( patch1 ).b = JumpFrom( patch1 );
@@ -2499,7 +2498,7 @@ void idCompiler::ParseDefs() {
 		ParseEventDef( type, name );
 		return;
 	}
-    
+	
 	ParseName( name );
 
 	if ( type == &type_namespace ) {

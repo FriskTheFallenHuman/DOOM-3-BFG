@@ -25,8 +25,10 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
+
 #include "tr_local.h"
 
 const int AUTO_RENDER_STACK_SIZE = 256 * 1024;

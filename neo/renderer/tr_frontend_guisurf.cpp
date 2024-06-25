@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 #include "Model_local.h"
@@ -99,13 +99,13 @@ void R_SurfaceToTextureAxis( const srfTriangles_t *tri, idVec3 &origin, idVec3 a
 	}
 	const float inva = 1.0f / area;
 
-    axis[0][0] = ( d0[0] * d1[4] - d0[4] * d1[0] ) * inva;
-    axis[0][1] = ( d0[1] * d1[4] - d0[4] * d1[1] ) * inva;
-    axis[0][2] = ( d0[2] * d1[4] - d0[4] * d1[2] ) * inva;
-    
-    axis[1][0] = ( d0[3] * d1[0] - d0[0] * d1[3] ) * inva;
-    axis[1][1] = ( d0[3] * d1[1] - d0[1] * d1[3] ) * inva;
-    axis[1][2] = ( d0[3] * d1[2] - d0[2] * d1[3] ) * inva;
+	axis[0][0] = ( d0[0] * d1[4] - d0[4] * d1[0] ) * inva;
+	axis[0][1] = ( d0[1] * d1[4] - d0[4] * d1[1] ) * inva;
+	axis[0][2] = ( d0[2] * d1[4] - d0[4] * d1[2] ) * inva;
+	
+	axis[1][0] = ( d0[3] * d1[0] - d0[0] * d1[3] ) * inva;
+	axis[1][1] = ( d0[3] * d1[1] - d0[1] * d1[3] ) * inva;
+	axis[1][2] = ( d0[3] * d1[2] - d0[2] * d1[3] ) * inva;
 
 	idPlane plane;
 	plane.FromPoints( aXYZ, bXYZ, cXYZ );

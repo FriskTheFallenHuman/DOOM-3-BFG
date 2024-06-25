@@ -48,9 +48,8 @@ move around it to view it from different angles.
 =============================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
-
 
 #include "../Game_local.h"
 
@@ -415,7 +414,7 @@ void idTestModel::NextAnim( const idCmdArgs &args ) {
 	headAnim = 0;
 	if ( headAnimator ) {
 		headAnimator->ClearAllAnims( gameLocal.time, 0 );
-        headAnim = headAnimator->GetAnim( animname );
+		headAnim = headAnimator->GetAnim( animname );
 		if ( !headAnim ) {
 			headAnim = headAnimator->GetAnim( "idle" );
 		}
@@ -456,7 +455,7 @@ void idTestModel::PrevAnim( const idCmdArgs &args ) {
 	headAnim = 0;
 	if ( headAnimator ) {
 		headAnimator->ClearAllAnims( gameLocal.time, 0 );
-        headAnim = headAnimator->GetAnim( animname );
+		headAnim = headAnimator->GetAnim( animname );
 		if ( !headAnim ) {
 			headAnim = headAnimator->GetAnim( "idle" );
 		}
@@ -549,7 +548,7 @@ void idTestModel::TestAnim( const idCmdArgs &args ) {
 	headAnim = 0;
 	if ( headAnimator ) {
 		headAnimator->ClearAllAnims( gameLocal.time, 0 );
-        headAnim = headAnimator->GetAnim( animname );
+		headAnim = headAnimator->GetAnim( animname );
 		if ( !headAnim ) {
 			headAnim = headAnimator->GetAnim( "idle" );
 			if ( !headAnim ) {

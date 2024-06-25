@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -1262,7 +1262,7 @@ void idAF::RemoveBindConstraints() {
 		name.Strip( "bindConstraint " );
 
 		if ( physicsObj.GetConstraint( name ) ) {
-            physicsObj.DeleteConstraint( name );
+			physicsObj.DeleteConstraint( name );
 		}
 
 		kv = args.MatchPrefix( "bindConstraint ", kv );

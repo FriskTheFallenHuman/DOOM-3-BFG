@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 #include "../Game_local.h"
 
@@ -502,7 +502,7 @@ bool idPhysics_Monster::Evaluate( int timeStepMSec, int endTimeMSec ) {
 		delta = current.velocity * timeStep;
 		if ( delta != vec3_origin ) {
 			moveResult = idPhysics_Monster::SlideMove( current.origin, current.velocity, delta );
-            delta.Zero();
+			delta.Zero();
 		}
 
 		if ( !fly ) {

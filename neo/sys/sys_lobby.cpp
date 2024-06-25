@@ -25,8 +25,10 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
+
 #include "sys_lobby.h"
 
 extern idCVar net_connectTimeoutInSeconds;
@@ -843,7 +845,7 @@ void idLobby::State_Connect_Hello_Wait() {
 	if ( connectionAttempts < MAX_CONNECT_ATTEMPTS ) {
 		assert( connectionAttempts >= 1 );		// Should have at least the initial connection attempt
 
- 		// See if we need to send another hello request
+		// See if we need to send another hello request
 		// (keep getting more frequent to increase chance due to possible packet loss, but clamp to MIN_CONNECT_FREQUENCY seconds)
 		// TODO: We could eventually make timing out a function of actual number of attempts rather than just plain time.
 		int resendTime = Max( MIN_CONNECT_FREQUENCY_IN_SECONDS, CONNECT_REQUEST_FREQUENCY_IN_SECONDS / connectionAttempts ) * 1000;

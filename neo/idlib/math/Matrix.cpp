@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../precompiled.h"
 
 //===============================================================
 //
@@ -244,7 +244,7 @@ idRotation idMat3::ToRotation() const {
 
 		t = trace + 1.0f;
 		s = idMath::InvSqrt( t ) * 0.5f;
-    
+	
 		r.angle = s * t;
 		r.vec[0] = ( mat[ 2 ][ 1 ] - mat[ 1 ][ 2 ] ) * s;
 		r.vec[1] = ( mat[ 0 ][ 2 ] - mat[ 2 ][ 0 ] ) * s;
@@ -261,10 +261,10 @@ idRotation idMat3::ToRotation() const {
 		}
 		j = next[ i ];  
 		k = next[ j ];
-    
+	
 		t = ( mat[ i ][ i ] - ( mat[ j ][ j ] + mat[ k ][ k ] ) ) + 1.0f;
 		s = idMath::InvSqrt( t ) * 0.5f;
-    
+	
 		r.vec[i]	= s * t;
 		r.angle		= ( mat[ k ][ j ] - mat[ j ][ k ] ) * s;
 		r.vec[j]	= ( mat[ j ][ i ] + mat[ i ][ j ] ) * s;
@@ -620,7 +620,7 @@ idMat4 idMat4::Transpose() const {
 	for( i = 0; i < 4; i++ ) {
 		for( j = 0; j < 4; j++ ) {
 			transpose[ i ][ j ] = mat[ j ][ i ];
-        }
+		}
 	}
 	return transpose;
 }
@@ -639,7 +639,7 @@ idMat4 &idMat4::TransposeSelf() {
 			temp = mat[ i ][ j ];
 			mat[ i ][ j ] = mat[ j ][ i ];
 			mat[ j ][ i ] = temp;
-        }
+		}
 	}
 	return *this;
 }
@@ -1055,7 +1055,7 @@ idMat5 idMat5::Transpose() const {
 	for( i = 0; i < 5; i++ ) {
 		for( j = 0; j < 5; j++ ) {
 			transpose[ i ][ j ] = mat[ j ][ i ];
-        }
+		}
 	}
 	return transpose;
 }
@@ -1074,7 +1074,7 @@ idMat5 &idMat5::TransposeSelf() {
 			temp = mat[ i ][ j ];
 			mat[ i ][ j ] = mat[ j ][ i ];
 			mat[ j ][ i ] = temp;
-        }
+		}
 	}
 	return *this;
 }
@@ -1748,7 +1748,7 @@ idMat6 idMat6::Transpose() const {
 	for( i = 0; i < 6; i++ ) {
 		for( j = 0; j < 6; j++ ) {
 			transpose[ i ][ j ] = mat[ j ][ i ];
-        }
+		}
 	}
 	return transpose;
 }
@@ -1767,7 +1767,7 @@ idMat6 &idMat6::TransposeSelf() {
 			temp = mat[ i ][ j ];
 			mat[ i ][ j ] = mat[ j ][ i ];
 			mat[ j ][ i ] = temp;
-        }
+		}
 	}
 	return *this;
 }

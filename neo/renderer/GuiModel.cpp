@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 
@@ -145,7 +145,7 @@ void idGuiModel::EmitSurfaces( float modelMatrix[16], float modelViewMatrix[16],
 		drawSurf->ambientCache = vertexBlock;
 		// build a vertCacheHandle_t that points inside the allocated block
 		drawSurf->indexCache = indexBlock + ( (int64)(guiSurf.firstIndex*sizeof(triIndex_t)) << VERTCACHE_OFFSET_SHIFT );
- 		drawSurf->shadowCache = 0;
+		drawSurf->shadowCache = 0;
 		drawSurf->jointCache = 0;
 		drawSurf->frontEndGeo = NULL;
 		drawSurf->space = guiSpace;

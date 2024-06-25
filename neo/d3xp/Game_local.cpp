@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -2071,7 +2071,7 @@ bool idGameLocal::InPlayerPVS( idEntity *ent ) const {
 	if ( playerPVS.i == -1 ) {
 		return false;
 	}
-    return pvs.InCurrentPVS( playerPVS, ent->GetPVSAreas(), ent->GetNumPVSAreas() );
+	return pvs.InCurrentPVS( playerPVS, ent->GetPVSAreas(), ent->GetNumPVSAreas() );
 }
 
 /*
@@ -2085,7 +2085,7 @@ bool idGameLocal::InPlayerConnectedArea( idEntity *ent ) const {
 	if ( playerConnectedAreas.i == -1 ) {
 		return false;
 	}
-    return pvs.InCurrentPVS( playerConnectedAreas, ent->GetPVSAreas(), ent->GetNumPVSAreas() );
+	return pvs.InCurrentPVS( playerConnectedAreas, ent->GetPVSAreas(), ent->GetNumPVSAreas() );
 }
 
 /*
@@ -2100,7 +2100,7 @@ void idGameLocal::UpdateGravity() {
 		if ( g_gravity.GetFloat() == 0.0f ) {
 			g_gravity.SetFloat( 1.0f );
 		}
-        gravity.Set( 0, 0, -g_gravity.GetFloat() );
+		gravity.Set( 0, 0, -g_gravity.GetFloat() );
 
 		// update all physics objects
 		for( ent = spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next() ) {
@@ -3545,7 +3545,7 @@ int idGameLocal::GetTargets( const idDict &args, idList< idEntityPtr<idEntity> >
 			ent = FindEntity( arg->GetValue() );
 			if ( ent ) {
 				idEntityPtr<idEntity> &entityPtr = list.Alloc();
-                entityPtr = ent;
+				entityPtr = ent;
 			}
 		}
 	}
@@ -4346,7 +4346,7 @@ void idGameLocal::RandomizeInitialSpawns() {
 	spawnSpot_t	spot;
 	int i, j;
 	int k;
-    
+	
 	idEntity *ent;
 
 	if ( !common->IsServer() ) {
@@ -4358,7 +4358,7 @@ void idGameLocal::RandomizeInitialSpawns() {
 	teamSpawnSpots[1].Clear();
 	teamInitialSpots[0].Clear();
 	teamInitialSpots[1].Clear();
-    
+	
 	spot.dist = 0;
 	spot.ent = FindEntityUsingDef( NULL, "info_player_deathmatch" );
 	while( spot.ent ) {
@@ -4378,7 +4378,7 @@ void idGameLocal::RandomizeInitialSpawns() {
 				assert( spot.team == 0 || spot.team == 1 );
 				teamInitialSpots[ spot.team ].Append( spot.ent );
 			}
-           
+		   
 			initialSpots.Append( spot.ent );
 		}
 		spot.ent = FindEntityUsingDef( spot.ent, "info_player_deathmatch" );
@@ -4393,7 +4393,7 @@ void idGameLocal::RandomizeInitialSpawns() {
 		if ( !teamSpawnSpots[0].Num() || !teamSpawnSpots[1].Num() )
 			return;
 	}
-    
+	
 	if ( !spawnSpots.Num() ) {
 		common->Warning( "no info_player_deathmatch in map" );
 		return;
@@ -4418,7 +4418,7 @@ void idGameLocal::RandomizeInitialSpawns() {
 			}
 		}
 	}
-    
+	
 	common->Printf( "%d spawns (%d initials)\n", spawnSpots.Num(), initialSpots.Num() );
 	// if there are no initial spots in the map, consider they can all be used as initial
 	if ( !initialSpots.Num() ) {
@@ -4436,7 +4436,7 @@ void idGameLocal::RandomizeInitialSpawns() {
 			teamInitialSpots[ k ][ j ] = ent;
 		}
 	}
-    
+	
 	for ( i = 0; i < initialSpots.Num(); i++ ) {
 		j = random.RandomInt( initialSpots.Num() );
 		ent = initialSpots[ i ];
@@ -4481,7 +4481,7 @@ idEntity *idGameLocal::SelectInitialSpawnPoint( idPlayer *player ) {
 	} else {
 		useInitialSpots = player->useInitialSpawns && currentInitialSpot < initialSpots.Num();
 	}
-    
+	
 	if ( player->spectating ) {
 		// plain random spot, don't bother
 		return spawnSpots[ random.RandomInt( spawnSpots.Num() ) ].ent;
@@ -4551,7 +4551,7 @@ idEntity *idGameLocal::SelectInitialSpawnPoint( idPlayer *player ) {
 
 			return spot.ent;
 		}
-        
+		
 		// find the distance to the closest active player for each spawn spot
 		for( i = 0; i < spawnSpots.Num(); i++ ) {
 			pos = spawnSpots[ i ].ent->GetPhysics()->GetOrigin();
