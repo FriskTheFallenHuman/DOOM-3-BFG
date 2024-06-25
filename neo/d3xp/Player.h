@@ -266,9 +266,6 @@ public:
 
 	class idPlayerView		playerView;			// handles damage kicks and effects
 
-	renderEntity_t			laserSightRenderEntity;	// replace crosshair for 3DTV
-	qhandle_t				laserSightHandle;
-
 	bool					noclip;
 	bool					godmode;
 
@@ -385,7 +382,7 @@ public:
 	int						spawnedTime;		// when client first enters the game
 
 	bool					carryingFlag;		// is the player carrying the flag?
-    
+	
 	idEntityPtr<idEntity>	teleportEntity;		// while being teleported, this is set to the entity we'll use for exit
 	int						teleportKiller;		// entity number of an entity killing us at teleporter exit
 	bool					lastManOver;		// can't respawn in last man anymore (srv only)
@@ -426,8 +423,6 @@ public:
 
 	void					Spawn();
 	void					Think();
-
-	void					UpdateLaserSight();
 
 	// save games
 	void					Save( idSaveGame *savefile ) const;					// archives object for save game file

@@ -129,19 +129,19 @@ Box definition
 */
 
 /*
-            4----{E}---5
+			4----{E}---5
  +         /|         /|
  Z      {H} {I}    {F} |
  -     /    |     /   {J}
-      7--{G}-----6     |
-      |     |    |     |
-     {L}    0----|-{A}-1
-      |    /    {K}   /       -
-      | {D}      | {B}       Y
-      |/         |/         +
-      3---{C}----2
+	  7--{G}-----6     |
+	  |     |    |     |
+	 {L}    0----|-{A}-1
+	  |    /    {K}   /       -
+	  | {D}      | {B}       Y
+	  |/         |/         +
+	  3---{C}----2
 
-	    - X +
+		- X +
 */
 
 static const short boxPolygonVertices[6][4] = {
@@ -709,7 +709,6 @@ void idRenderMatrix::CreateProjectionMatrix( float xMin, float xMax, float yMin,
 idRenderMatrix::CreateProjectionMatrixFov
 
 xOffset and yOffset should be in the -1 to 1 range for sub-pixel accumulation jitter.
-xOffset can also be used for eye separation when rendering stereo.
 ========================
 */
 void idRenderMatrix::CreateProjectionMatrixFov( float xFovDegrees, float yFovDegrees, float zNear, float zFar, float xOffset, float yOffset, idRenderMatrix & out ) {
@@ -2379,19 +2378,19 @@ completely branchless SIMD.
 */
 void idRenderMatrix::ProjectedNearClippedBounds( idBounds & projected, const idRenderMatrix & mvp, const idBounds & bounds, bool windowSpace ) {
 /*
-            4----{E}---5
+			4----{E}---5
  +         /|         /|
  Z      {H} {I}    {F} |
  -     /    |     /   {J}
-      7--{G}-----6     |
-      |     |    |     |
-     {L}    0----|-{A}-1
-      |    /    {K}   /       -
-      | {D}      | {B}       Y
-      |/         |/         +
-      3---{C}----2
+	  7--{G}-----6     |
+	  |     |    |     |
+	 {L}    0----|-{A}-1
+	  |    /    {K}   /       -
+	  | {D}      | {B}       Y
+	  |/         |/         +
+	  3---{C}----2
 
-	    - X +
+		- X +
 */
 
 #ifdef ID_WIN_X86_SSE2_INTRIN
@@ -3612,7 +3611,7 @@ void idRenderMatrix::DepthBoundsForBounds( float & min, float & max, const idRen
 	if ( windowSpace ) {
 		// convert to window coords
 #if !defined( CLIP_SPACE_D3D )	// the D3D clip space Z is already in the range [0,1]
- 		min = localMin * 0.5f + 0.5f;
+		min = localMin * 0.5f + 0.5f;
 		max = localMax * 0.5f + 0.5f;
 #endif
 		// clamp to the [0, 1] range
@@ -3639,7 +3638,7 @@ void idRenderMatrix::DepthBoundsForExtrudedBounds( float & min, float & max, con
 
 #ifdef ID_WIN_X86_SSE2_INTRIN
 
- 	__m128 mvp2 = _mm_loadu_ps( mvp[2] );
+	__m128 mvp2 = _mm_loadu_ps( mvp[2] );
 	__m128 mvp3 = _mm_loadu_ps( mvp[3] );
 
 	__m128 b0 = _mm_loadu_bounds_0( bounds );
@@ -4420,9 +4419,9 @@ frustumCull_t idRenderMatrix::CullFrustumCornersToPlane( const frustumCorners_t 
 	for ( int i = 0; i < 8; i++ ) {
 		const float d = corners.x[i] * plane[0] + corners.y[i] * plane[1] + corners.z[i] * plane[2] + plane[3];
 		if ( d >= 0.0f ) {
-		    front = true;
+			front = true;
 		} else if ( d <= 0.0f ) {
-		    back = true;
+			back = true;
 		}
 		if ( back && front ) {
 			return FRUSTUM_CULL_CROSS;

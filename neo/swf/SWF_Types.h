@@ -233,7 +233,6 @@ struct swfRenderState_t {
 	int activeMasks;
 	uint8 blendMode;
 	float ratio;
-	stereoDepthType_t stereoDepth;
 };
 
 ID_INLINE swfRect_t::swfRect_t() :
@@ -277,12 +276,12 @@ ID_INLINE swfMatrix_t swfMatrix_t::Inverse() const {
 
 ID_INLINE swfMatrix_t swfMatrix_t::Multiply( const swfMatrix_t & a ) const {
 	swfMatrix_t result;
-    result.xx = xx * a.xx + yx * a.xy;
-    result.yx = xx * a.yx + yx * a.yy;
-    result.xy = xy * a.xx + yy * a.xy;
-    result.yy = xy * a.yx + yy * a.yy;
-    result.tx = tx * a.xx + ty * a.xy + a.tx;
-    result.ty = tx * a.yx + ty * a.yy + a.ty;
+	result.xx = xx * a.xx + yx * a.xy;
+	result.yx = xx * a.yx + yx * a.yy;
+	result.xy = xy * a.xx + yy * a.xy;
+	result.yy = xy * a.yx + yy * a.yy;
+	result.tx = tx * a.xx + ty * a.xy + a.tx;
+	result.ty = tx * a.yx + ty * a.yy + a.ty;
 	return result;
 }
 
@@ -337,7 +336,7 @@ add( 0.0f, 0.0f, 0.0f, 0.0f )
 
 ID_INLINE swfColorXform_t swfColorXform_t::Multiply( const swfColorXform_t & a ) const {
 	swfColorXform_t result;
-    result.mul = mul.Multiply( a.mul );
+	result.mul = mul.Multiply( a.mul );
 	result.add = ( add.Multiply( a.mul ) ) + a.add;
 	return result;
 }
@@ -359,8 +358,7 @@ materialWidth( 0 ),
 materialHeight( 0 ),
 activeMasks( 0 ),
 blendMode( 0 ),
-ratio( 0.0f ),
-stereoDepth( STEREO_DEPTH_TYPE_NONE )
+ratio( 0.0f )
 {
 }
 

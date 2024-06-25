@@ -120,7 +120,6 @@ void idSWF::Render( idRenderSystem * gui, int time, bool isSplitscreen ) {
 	float scale = swfScale * sysHeight / (float)frameHeight;
 
 	swfRenderState_t renderState;
-	renderState.stereoDepth = (stereoDepthType_t)mainspriteInstance->GetStereoDepth();
 	renderState.matrix.xx = scale;
 	renderState.matrix.yy = scale;
 	renderState.matrix.tx = 0.5f * ( sysWidth - ( frameWidth * scale ) );
@@ -170,7 +169,6 @@ idSWF::RenderMask
 */
 void idSWF::RenderMask( idRenderSystem * gui, const swfDisplayEntry_t * mask, const swfRenderState_t & renderState, const int stencilMode ) {
 	swfRenderState_t renderState2;
-	renderState2.stereoDepth = renderState.stereoDepth;
 	renderState2.matrix = mask->matrix.Multiply( renderState.matrix );
 	renderState2.cxf = mask->cxf.Multiply( renderState.cxf );
 	renderState2.ratio = mask->ratio;
@@ -226,12 +224,6 @@ void idSWF::RenderSprite( idRenderSystem * gui, idSWFSpriteInstance * spriteInst
 		}
 
 		swfRenderState_t renderState2;
-
-		if ( spriteInstance->stereoDepth != STEREO_DEPTH_TYPE_NONE ) {
-			renderState2.stereoDepth = ( stereoDepthType_t )spriteInstance->stereoDepth; 
-		} else if ( renderState.stereoDepth != STEREO_DEPTH_TYPE_NONE ) {
-			renderState2.stereoDepth = renderState.stereoDepth;
-		}
 
 		renderState2.matrix = display.matrix.Multiply( renderState.matrix );
 		renderState2.cxf = display.cxf.Multiply( renderState.cxf );
@@ -483,7 +475,7 @@ void idSWF::RenderMorphShape( idRenderSystem * gui, const idSWFShape * shape, co
 
 		gui->SetGLState( GLStateForRenderState( renderState ) );
 
-		idDrawVert * verts = gui->AllocTris( fill.startVerts.Num(), fill.indices.Ptr(), fill.indices.Num(), material, renderState.stereoDepth );	
+		idDrawVert * verts = gui->AllocTris( fill.startVerts.Num(), fill.indices.Ptr(), fill.indices.Num(), material );	
 		if ( verts == NULL ) {
 			continue;
 		}
@@ -581,7 +573,7 @@ void idSWF::RenderShape( idRenderSystem * gui, const idSWFShape * shape, const s
 
 		gui->SetGLState( GLStateForRenderState( renderState ) );
 
-		idDrawVert * verts = gui->AllocTris( fill.startVerts.Num(), fill.indices.Ptr(), fill.indices.Num(), material, renderState.stereoDepth );	
+		idDrawVert * verts = gui->AllocTris( fill.startVerts.Num(), fill.indices.Ptr(), fill.indices.Num(), material );	
 		if ( verts == NULL ) {
 			continue;
 		}
@@ -645,7 +637,7 @@ void idSWF::RenderShape( idRenderSystem * gui, const idSWFShape * shape, const s
 
 		gui->SetGLState( GLStateForRenderState( renderState ) | GLS_POLYMODE_LINE );
 
-		idDrawVert * verts = gui->AllocTris( line.startVerts.Num(), line.indices.Ptr(), line.indices.Num(), white, renderState.stereoDepth );	
+		idDrawVert * verts = gui->AllocTris( line.startVerts.Num(), line.indices.Ptr(), line.indices.Num(), white );	
 		if ( verts == NULL ) {
 			continue;
 		}

@@ -31,15 +31,12 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "tr_local.h"
 
-idCVar r_drawEyeColor( "r_drawEyeColor", "0", CVAR_RENDERER | CVAR_BOOL, "Draw a colored box, red = left eye, blue = right eye, grey = non-stereo" );
 idCVar r_motionBlur( "r_motionBlur", "0", CVAR_RENDERER | CVAR_INTEGER | CVAR_ARCHIVE, "1 - 5, log2 of the number of motion blur samples" );
 idCVar r_forceZPassStencilShadows( "r_forceZPassStencilShadows", "0", CVAR_RENDERER | CVAR_BOOL, "force Z-pass rendering for performance testing" );
 idCVar r_useStencilShadowPreload( "r_useStencilShadowPreload", "1", CVAR_RENDERER | CVAR_BOOL, "use stencil shadow preload algorithm instead of Z-fail" );
 idCVar r_skipShaderPasses( "r_skipShaderPasses", "0", CVAR_RENDERER | CVAR_BOOL, "" );
 idCVar r_skipInteractionFastPath( "r_skipInteractionFastPath", "1", CVAR_RENDERER | CVAR_BOOL, "" );
 idCVar r_useLightStencilSelect( "r_useLightStencilSelect", "0", CVAR_RENDERER | CVAR_BOOL, "use stencil select pass" );
-
-extern idCVar stereoRender_swapEyes;
 
 backEndState_t	backEnd;
 
@@ -79,18 +76,6 @@ RB_SetMVP
 */
 void RB_SetMVP( const idRenderMatrix & mvp ) { 
 	SetVertexParms( RENDERPARM_MVPMATRIX_X, mvp[0], 4 );
-}
-
-/*
-================
-RB_SetMVPWithStereoOffset
-================
-*/
-static void RB_SetMVPWithStereoOffset( const idRenderMatrix & mvp, const float stereoOffset ) { 
-	idRenderMatrix offset = mvp;
-	offset[0][3] += stereoOffset;
-
-	SetVertexParms( RENDERPARM_MVPMATRIX_X, offset[0], 4 );
 }
 
 static const float zero[4] = { 0, 0, 0, 0 };
@@ -1814,8 +1799,7 @@ If we are rendering Guis, the drawSurf_t::sort value is a depth offset that can
 be multiplied by guiEye for polarity and screenSeparation for scale.
 =====================
 */
-static int RB_DrawShaderPasses( const drawSurf_t * const * const drawSurfs, const int numDrawSurfs, 
-									const float guiStereoScreenOffset, const int stereoEye ) {
+static int RB_DrawShaderPasses( const drawSurf_t * const * const drawSurfs, const int numDrawSurfs ) {
 	// only obey skipAmbient if we are rendering a view
 	if ( backEnd.viewDef->viewEntitys && r_skipAmbient.GetBool() ) {
 		return numDrawSurfs;
@@ -1829,7 +1813,6 @@ static int RB_DrawShaderPasses( const drawSurf_t * const * const drawSurfs, cons
 	GL_SelectTexture( 0 );
 
 	backEnd.currentSpace = (const viewEntity_t *)1;	// using NULL makes /analyze think surf->space needs to be checked...
-	float currentGuiStereoOffset = 0.0f;
 
 	int i = 0;
 	for ( ; i < numDrawSurfs; i++ ) {
@@ -1864,34 +1847,15 @@ static int RB_DrawShaderPasses( const drawSurf_t * const * const drawSurfs, cons
 			break;
 		}
 
-		// if we are rendering a 3D view and the surface's eye index doesn't match 
-		// the current view's eye index then we skip the surface
-		// if the stereoEye value of a surface is 0 then we need to draw it for both eyes.
-		const int shaderStereoEye = shader->GetStereoEye();
-		const bool isEyeValid = stereoRender_swapEyes.GetBool() ? ( shaderStereoEye == stereoEye ) : ( shaderStereoEye != stereoEye );
-		if ( ( stereoEye != 0 ) && ( shaderStereoEye != 0 ) && ( isEyeValid ) ) {
-			continue;
-		}
-
 		renderLog.OpenBlock( shader->GetName() );
 
-		// determine the stereoDepth offset 
-		// guiStereoScreenOffset will always be zero for 3D views, so the !=
-		// check will never force an update due to the current sort value.
-		const float thisGuiStereoOffset = guiStereoScreenOffset * surf->sort;
-
 		// change the matrix and other space related vars if needed
-		if ( surf->space != backEnd.currentSpace || thisGuiStereoOffset != currentGuiStereoOffset ) {
+		if ( surf->space != backEnd.currentSpace ) {
 			backEnd.currentSpace = surf->space;
-			currentGuiStereoOffset = thisGuiStereoOffset;
 
 			const viewEntity_t *space = backEnd.currentSpace;
 
-			if ( guiStereoScreenOffset != 0.0f ) {
-				RB_SetMVPWithStereoOffset( space->mvp, currentGuiStereoOffset );
-			} else {
-				RB_SetMVP( space->mvp );
-			}
+			RB_SetMVP( space->mvp );
 
 			// set eye position in local space
 			idVec4 localViewOrigin( 1.0f );
@@ -2454,7 +2418,7 @@ BACKEND COMMANDS
 RB_DrawViewInternal
 ==================
 */
-void RB_DrawViewInternal( const viewDef_t * viewDef, const int stereoEye ) {
+void RB_DrawViewInternal( const viewDef_t * viewDef ) {
 	renderLog.OpenBlock( "RB_DrawViewInternal" );
 
 	//-------------------------------------------------
@@ -2560,14 +2524,7 @@ void RB_DrawViewInternal( const viewDef_t * viewDef, const int stereoEye ) {
 	int processed = 0;
 	if ( !r_skipShaderPasses.GetBool() ) {
 		renderLog.OpenMainBlock( MRB_DRAW_SHADER_PASSES );
-		float guiScreenOffset;
-		if ( viewDef->viewEntitys != NULL ) {
-			// guiScreenOffset will be 0 in non-gui views
-			guiScreenOffset = 0.0f;
-		} else {
-			guiScreenOffset = stereoEye * viewDef->renderView.stereoScreenSeparation;
-		}
-		processed = RB_DrawShaderPasses( drawSurfs, numDrawSurfs, guiScreenOffset, stereoEye );
+		processed = RB_DrawShaderPasses( drawSurfs, numDrawSurfs );
 		renderLog.CloseMainBlock();
 	}
 
@@ -2623,7 +2580,7 @@ void RB_DrawViewInternal( const viewDef_t * viewDef, const int stereoEye ) {
 
 		// render the remaining surfaces
 		renderLog.OpenMainBlock( MRB_DRAW_SHADER_PASSES_POST );
-		RB_DrawShaderPasses( drawSurfs + processed, numDrawSurfs - processed, 0.0f /* definitely not a gui */, stereoEye );
+		RB_DrawShaderPasses( drawSurfs + processed, numDrawSurfs - processed );
 		renderLog.CloseMainBlock();
 	}
 
@@ -2704,17 +2661,14 @@ void RB_MotionBlur() {
 	const idScreenRect & viewport = backEnd.viewDef->viewport;
 	globalImages->currentRenderImage->CopyFramebuffer( viewport.x1, viewport.y1, viewport.GetWidth(), viewport.GetHeight() );
 
-	// in stereo rendering, each eye needs to get a separate previous frame mvp
-	int mvpIndex = ( backEnd.viewDef->renderView.viewEyeBuffer == 1 ) ? 1 : 0;
-
 	// derive the matrix to go from current pixels to previous frame pixels
 	idRenderMatrix	inverseMVP;
 	idRenderMatrix::Inverse( backEnd.viewDef->worldSpace.mvp, inverseMVP );
 
 	idRenderMatrix	motionMatrix;
-	idRenderMatrix::Multiply( backEnd.prevMVP[mvpIndex], inverseMVP, motionMatrix );
+	idRenderMatrix::Multiply( backEnd.prevMVP[0], inverseMVP, motionMatrix );
 
-	backEnd.prevMVP[mvpIndex] = backEnd.viewDef->worldSpace.mvp;
+	backEnd.prevMVP[0] = backEnd.viewDef->worldSpace.mvp;
 
 	RB_SetMVP( motionMatrix );
 
@@ -2739,13 +2693,9 @@ void RB_MotionBlur() {
 /*
 ==================
 RB_DrawView
-
-StereoEye will always be 0 in mono modes, or -1 / 1 in stereo modes.
-If the view is a GUI view that is repeated for both eyes, the viewDef.stereoEye value
-is 0, so the stereoEye parameter is not always the same as that.
 ==================
 */
-void RB_DrawView( const void *data, const int stereoEye ) {
+void RB_DrawView( const void *data ) {
 	const drawSurfsCommand_t * cmd = (const drawSurfsCommand_t *)data;
 
 	backEnd.viewDef = cmd->viewDef;
@@ -2777,7 +2727,7 @@ void RB_DrawView( const void *data, const int stereoEye ) {
 	RB_ShowOverdraw();
 
 	// render the scene
-	RB_DrawViewInternal( cmd->viewDef, stereoEye );
+	RB_DrawViewInternal( cmd->viewDef );
 
 	RB_MotionBlur();
 
@@ -2785,23 +2735,6 @@ void RB_DrawView( const void *data, const int stereoEye ) {
 	if ( r_skipRenderContext.GetBool() && backEnd.viewDef->viewEntitys ) {
 		GLimp_ActivateContext();
 		GL_SetDefaultState();
-	}
-
-	// optionally draw a box colored based on the eye number
-	if ( r_drawEyeColor.GetBool() ) {
-		const idScreenRect & r = backEnd.viewDef->viewport;
-		GL_Scissor( ( r.x1 + r.x2 ) / 2, ( r.y1 + r.y2 ) / 2, 32, 32 );
-		switch ( stereoEye ) {
-			case -1:
-				GL_Clear( true, false, false, 0, 1.0f, 0.0f, 0.0f, 1.0f );
-				break;
-			case 1:
-				GL_Clear( true, false, false, 0, 0.0f, 1.0f, 0.0f, 1.0f );
-				break;
-			default:
-				GL_Clear( true, false, false, 0, 0.5f, 0.5f, 0.5f, 1.0f );
-				break;
-		}
 	}
 }
 

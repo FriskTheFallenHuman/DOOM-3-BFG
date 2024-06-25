@@ -36,8 +36,7 @@ const static int NUM_SETTING_OPTIONS = 8;
 enum settingMenuCmds_t {
 	SETTING_CMD_CONTROLS,
 	SETTING_CMD_GAMEPLAY,
-	SETTING_CMD_SYSTEM,
-	SETTING_CMD_3D,
+	SETTING_CMD_SYSTEM
 };
 
 /*
@@ -67,11 +66,6 @@ void idMenuScreen_Shell_Settings::Initialize( idMenuHandler * data ) {
 	option.Append( "#str_04160" );	// system
 	menuOptions.Append( option );
 	option.Clear();
-
-	if ( renderSystem->IsStereoScopicRenderingSupported() ) {
-		option.Append( "#str_swf_stereoscopics" );	// Stereoscopic Rendering
-		menuOptions.Append( option );
-	}
 
 	options->SetListData( menuOptions );
 	options->SetNumVisibleOptions( NUM_SETTING_OPTIONS );
@@ -222,10 +216,6 @@ bool idMenuScreen_Shell_Settings::HandleAction( idWidgetAction & action, const i
 				}
 				case SETTING_CMD_SYSTEM: {
 					menuData->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
-					break;
-				}
-				case SETTING_CMD_3D: {
-					menuData->SetNextScreen( SHELL_AREA_STEREOSCOPICS, MENU_TRANSITION_SIMPLE );
 					break;
 				}
 			}

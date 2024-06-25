@@ -296,7 +296,7 @@ const int MAX_SURFACE_TYPES		= 1 << NUM_SURFACE_BITS;
 
 typedef enum {
 	SURFTYPE_NONE,					// default type
-    SURFTYPE_METAL,
+	SURFTYPE_METAL,
 	SURFTYPE_STONE,
 	SURFTYPE_FLESH,
 	SURFTYPE_WOOD,
@@ -511,8 +511,6 @@ public:
 						// get sort order
 	const float			GetSort() const { return sort; }
 
-	const int			GetStereoEye() const { return stereoEye; }
-
 						// this is only used by the gui system to force sorting order
 						// on images referenced from tga's instead of materials. 
 						// this is done this way as there are 2000 tgas the guis use
@@ -604,7 +602,6 @@ private:
 	void				ParseMaterial( idLexer &src );
 	bool				MatchToken( idLexer &src, const char *match );
 	void				ParseSort( idLexer &src );
-	void				ParseStereoEye( idLexer &src );
 	void				ParseBlend( idLexer &src, shaderStage_t *stage );
 	void				ParseVertexParm( idLexer &src, newShaderStage_t *newStage );
 	void				ParseVertexParm2( idLexer &src, newShaderStage_t *newStage );
@@ -658,7 +655,6 @@ private:
 
 
 	mutable	float		sort;				// lower numbered shaders draw before higher numbered
-	int					stereoEye;
 	deform_t			deform;
 	int					deformRegisters[4];		// numeric parameter for deforms
 	const idDecl		*deformDecl;			// for surface emitted particle deforms and tables

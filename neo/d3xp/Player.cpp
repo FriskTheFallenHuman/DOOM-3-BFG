@@ -1285,9 +1285,6 @@ idPlayer::idPlayer():
 	lastSndHitTime			= 0;
 	lastSavingThrowTime		= 0;
 
-	laserSightHandle	= -1;
-	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
-
 	weapon					= NULL;
 	primaryObjective		= NULL;
 
@@ -1773,11 +1770,6 @@ void idPlayer::Init() {
 	flashlightBattery = flashlight_batteryDrainTimeMS.GetInteger();		// fully charged
 
 	aimAssist.Init( this );
-
-	// laser sight for 3DTV
-	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
-	laserSightRenderEntity.hModel = renderModelManager->FindModel( "_BEAM" );
-	laserSightRenderEntity.customShader = declManager->FindMaterial( "stereoRenderLaserSight" );
 }
 
 /*
@@ -2610,13 +2602,6 @@ void idPlayer::Restore( idRestoreGame *savefile ) {
 
 	aimAssist.Init( this );
 
-	laserSightHandle = -1;
-
-	// re-init the laser model
-	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
-	laserSightRenderEntity.hModel = renderModelManager->FindModel( "_BEAM" );
-	laserSightRenderEntity.customShader = declManager->FindMaterial( "stereoRenderLaserSight" );
-
 	for ( int i=0; i<MAX_PLAYER_PDA; i++ ) {
 		savefile->ReadBool( pdaHasBeenRead[i] );
 	}
@@ -3222,7 +3207,7 @@ void idPlayer::DrawHUD( idMenuHandler_HUD * _hudManager ) {
 
 			idMenuScreen_HUD * hud = _hudManager->GetHud();
 
-			if ( weapon.GetEntity()->ShowCrosshair() && !IsGameStereoRendered() ) {
+			if ( weapon.GetEntity()->ShowCrosshair() ) {
 				if ( weapon.GetEntity()->GetGrabberState() == 1 || weapon.GetEntity()->GetGrabberState() == 2 ) {
 					hud->SetCursorState( this, CURSOR_GRABBER, 1 );
 					hud->SetCursorState( this, CURSOR_IN_COMBAT, 0 );
@@ -7458,57 +7443,6 @@ bool idPlayer::HandleGuiEvents( const sysEvent_t * ev ) {
 
 /*
 ==============
-idPlayer::UpdateLaserSight
-==============
-*/
-idCVar	g_laserSightWidth( "g_laserSightWidth", "2.0", CVAR_FLOAT | CVAR_ARCHIVE, "laser sight beam width" );
-idCVar	g_laserSightLength( "g_laserSightLength", "250", CVAR_FLOAT | CVAR_ARCHIVE, "laser sight beam length" );
-
-void idPlayer::UpdateLaserSight() {
-	idVec3	muzzleOrigin;
-	idMat3	muzzleAxis;
-
-	// In Multiplayer, weapon might not have been spawned yet.
-	if( weapon.GetEntity() ==  NULL ) {
-		return;
-	}
-
-	if ( !IsGameStereoRendered() || 
-		!weapon.GetEntity()->ShowCrosshair() || 
-		AI_DEAD || 
-		weapon->IsHidden() ||
-		!weapon->GetMuzzlePositionWithHacks( muzzleOrigin, muzzleAxis ) ) {
-		// hide it
-		laserSightRenderEntity.allowSurfaceInViewID = -1;
-		if ( laserSightHandle == -1 ) {
-			laserSightHandle = gameRenderWorld->AddEntityDef( &laserSightRenderEntity );
-		} else {
-			gameRenderWorld->UpdateEntityDef( laserSightHandle, &laserSightRenderEntity );
-		}
-		return;
-	}
-
-	// program the beam model
-
-	// only show in the player's view
-	laserSightRenderEntity.allowSurfaceInViewID = entityNumber+1;
-	laserSightRenderEntity.axis.Identity();
-
-	laserSightRenderEntity.origin = muzzleOrigin - muzzleAxis[0] * 2.0f;
-	idVec3	&target = *reinterpret_cast<idVec3 *>( &laserSightRenderEntity.shaderParms[SHADERPARM_BEAM_END_X] );
-	target = muzzleOrigin + muzzleAxis[0] * g_laserSightLength.GetFloat();
-
-	laserSightRenderEntity.shaderParms[SHADERPARM_BEAM_WIDTH] = g_laserSightWidth.GetFloat();
-
-	if ( IsGameStereoRendered() && laserSightHandle == -1 ) {
-		laserSightHandle = gameRenderWorld->AddEntityDef( &laserSightRenderEntity );
-	} else {
-		gameRenderWorld->UpdateEntityDef( laserSightHandle, &laserSightRenderEntity );
-	}
-}
-
-/*
-==============
 idPlayer::Think
 
 Called every tic for each player
@@ -7771,9 +7705,6 @@ void idPlayer::Think() {
 
 	// determine if portal sky is in pvs
 	gameLocal.portalSkyActive = gameLocal.pvs.CheckAreasForPortalSky( gameLocal.GetPlayerPVS(), GetPhysics()->GetOrigin() );
-
-	// stereo rendering laser sight that replaces the crosshair
-	UpdateLaserSight();
 
 	// Show the respawn hud message if necessary.
 	if ( common->IsMultiplayer() && ( minRespawnTime != maxRespawnTime ) ) {
@@ -9811,9 +9742,6 @@ void idPlayer::ClientThink( const int curTime, const float fraction, const bool 
 	UpdateDamageEffects();
 
 	LinkCombat();
-
-	// stereo rendering laser sight that replaces the crosshair
-	UpdateLaserSight();
 
 	if ( gameLocal.isNewFrame && IsLocallyControlled() ) {
 		playerView.CalculateShake();

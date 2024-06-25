@@ -342,7 +342,7 @@ GLW_ChoosePixelFormat
 Returns -1 on failure, or a pixel format
 ====================
 */
-static int GLW_ChoosePixelFormat( const HDC hdc, const int multisamples, const bool stereo3D ) {
+static int GLW_ChoosePixelFormat( const HDC hdc, const int multisamples ) {
 	FLOAT	fAttributes[] = { 0, 0 };
 	int		iAttributes[] = {
 		WGL_SAMPLE_BUFFERS_ARB, ( ( multisamples > 1 ) ? 1 : 0 ),
@@ -354,7 +354,6 @@ static int GLW_ChoosePixelFormat( const HDC hdc, const int multisamples, const b
 		WGL_BLUE_BITS_ARB, 8,
 		WGL_GREEN_BITS_ARB, 8,
 		WGL_ALPHA_BITS_ARB, 8,
-		WGL_STEREO_ARB, ( stereo3D ? TRUE : FALSE ),
 		0, 0
 	};
 
@@ -415,17 +414,10 @@ static bool GLW_InitDriver( glimpParms_t parms ) {
 
 	// the multisample path uses the wgl 
 	if ( WGLEW_ARB_pixel_format ) {
-		win32.pixelformat = GLW_ChoosePixelFormat( win32.hDC, parms.multiSamples, parms.stereo );
+		win32.pixelformat = GLW_ChoosePixelFormat( win32.hDC, parms.multiSamples );
 	} else {
 		// this is the "classic" choose pixel format path
 		common->Printf( "Using classic ChoosePixelFormat\n" );
-
-		// eventually we may need to have more fallbacks, but for
-		// now, ask for everything
-		if ( parms.stereo ) {
-			common->Printf( "...attempting to use stereo\n" );
-			src.dwFlags |= PFD_STEREO;
-		}
 
 		//
 		// choose, set, and describe our desired pixel format.  If we're
@@ -959,14 +951,6 @@ static bool GLW_CreateWindow( glimpParms_t parms ) {
 		return false;
 	}
 
-	// Check to see if we can get a stereo pixel format, even if we aren't going to use it,
-	// so the menu option can be 
-	if ( GLW_ChoosePixelFormat( win32.hDC, parms.multiSamples, true ) != -1 ) {
-		glConfig.stereoPixelFormatAvailable = true;
-	} else {
-		glConfig.stereoPixelFormatAvailable = false;
-	}
-
 	if ( !GLW_InitDriver( parms ) ) {
 		ShowWindow( win32.hWnd, SW_HIDE );
 		DestroyWindow( win32.hWnd );
@@ -1100,8 +1084,8 @@ bool GLimp_Init( glimpParms_t parms ) {
 
 	cmdSystem->AddCommand( "testSwapBuffers", GLimp_TestSwapBuffers, CMD_FL_SYSTEM, "Times swapbuffer options" );
 
-	common->Printf( "Initializing OpenGL subsystem with multisamples:%i stereo:%i fullscreen:%i\n", 
-		parms.multiSamples, parms.stereo, parms.fullScreen );
+	common->Printf( "Initializing OpenGL subsystem with multisamples:%i fullscreen:%i\n", 
+		parms.multiSamples, parms.fullScreen );
 
 	// check our desktop attributes
 	hDC = GetDC( GetDesktopWindow() );
@@ -1146,13 +1130,10 @@ bool GLimp_Init( glimpParms_t parms ) {
 	}
 
 	glConfig.isFullscreen = parms.fullScreen;
-	glConfig.isStereoPixelFormat = parms.stereo;
 	glConfig.nativeScreenWidth = parms.width;
 	glConfig.nativeScreenHeight = parms.height;
 	glConfig.multisamples = parms.multiSamples;
-
-	glConfig.pixelAspect = 1.0f;	// FIXME: some monitor modes may be distorted
-									// should side-by-side stereo modes be consider aspect 0.5?
+	glConfig.pixelAspect = 1.0f;
 
 	// get the screen size, which may not be reliable...
 	// If we use the windowDC, I get my 30" monitor, even though the window is

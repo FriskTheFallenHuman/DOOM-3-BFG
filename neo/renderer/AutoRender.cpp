@@ -130,24 +130,12 @@ void idAutoRender::RenderFrame() {
 	
 	GL_Cull( CT_TWO_SIDED );
 	
-	const bool stereoRender = false;
-
 	const int width = renderSystem->GetWidth();
 	const int height = renderSystem->GetHeight();
-	const int guardBand = height / 24;
 
-	if ( stereoRender ) {
-		for ( int viewNum = 0 ; viewNum < 2; viewNum++ ) {
-			GL_ViewportAndScissor( 0, viewNum * ( height + guardBand ), width, height );
-			RenderBackground();
-			RenderLoadingIcon( loadingIconPosX, loadingIconPosY, loadingIconScale, loadingIconSpeed );
-		}
-	} else {
-		GL_ViewportAndScissor( 0, 0, width, height );
-		RenderBackground();
-		RenderLoadingIcon( loadingIconPosX, loadingIconPosY, loadingIconScale, loadingIconSpeed );
-	}
-
+	GL_ViewportAndScissor( 0, 0, width, height );
+	RenderBackground();
+	RenderLoadingIcon( loadingIconPosX, loadingIconPosY, loadingIconScale, loadingIconSpeed );
 }
 
 /*
