@@ -665,7 +665,17 @@ void idCommonLocal::Frame() {
 		mainFrameTiming = frameTiming;
 
 		session->GetSaveGameManager().Pump();
-	} catch( idException & ) {
+	} catch( idException & ) {	
+		// kill loading gui
+		delete loadGUI;
+		loadGUI = NULL;
+		
+		// drop back to main menu
+		LeaveGame();
+		
+		// force the console open to show error messages
+		console->Open();
+
 		return;			// an ERP_DROP was thrown
 	}
 }
