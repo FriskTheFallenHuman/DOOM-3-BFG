@@ -306,8 +306,6 @@ void idMenuScreen_Shell_Root::HandleExitGameBtn() {
 			common->Dialog().ClearDialog( msg );
 			if ( accept == 1 ) {
 				common->Quit();
-			} else if ( accept == -1 ) {
-				session->MoveToPressStart();
 			}
 			return idSWFScriptVar();
 		}
@@ -320,10 +318,8 @@ void idMenuScreen_Shell_Root::HandleExitGameBtn() {
 	idStaticList< idStrId, 4 > optionText;
 	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, 1 ) );
 	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, 0 ) );
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, -1 ) );
 	optionText.Append( idStrId( "#STR_SWF_ACCEPT" ) );
 	optionText.Append( idStrId( "#STR_SWF_CANCEL" ) );
-	optionText.Append( idStrId( "#str_swf_change_game" ) );
 
 	common->Dialog().AddDynamicDialog( GDM_QUIT_GAME, callbacks, optionText, true, "" );
 }
@@ -371,10 +367,6 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 	const idSWFParmList & parms = action.GetParms();
 
 	switch ( actionType ) {
-		case WIDGET_ACTION_GO_BACK: {
-			session->MoveToPressStart();
-			return true;
-		}
 		case WIDGET_ACTION_PRESS_FOCUSED: {
 			if ( menuData->GetPlatform() == 2 ) {
 

@@ -4970,9 +4970,6 @@ void idGameLocal::Shell_SyncWithSession() {
 		return;
 	}
 	switch ( session->GetState() ) {
-		case idSession::PRESS_START:
-			shellHandler->SetShellState( SHELL_STATE_PRESS_START );
-			break;
 		case idSession::INGAME:
 			shellHandler->SetShellState( SHELL_STATE_PAUSED );
 			break;

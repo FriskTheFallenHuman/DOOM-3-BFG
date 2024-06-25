@@ -263,11 +263,6 @@ void idSoundHardware_XAudio2::Init() {
 	idSoundVoice::InitSurround( outputChannels, channelMask );
 
 	// ---------------------
-	// Initialize the Doom classic sound system.
-	// ---------------------
-	I_InitSoundHardware( outputChannels, channelMask );
-
-	// ---------------------
 	// Create VU Meter Effect
 	// ---------------------
 	IUnknown * vuMeter = NULL;
@@ -341,11 +336,6 @@ void idSoundHardware_XAudio2::Shutdown() {
 	voices.Clear();
 	freeVoices.Clear();
 	zombieVoices.Clear();
-
-	// ---------------------
-	// Shutdown the Doom classic sound system.
-	// ---------------------
-	I_ShutdownSoundHardware();
 
 	if ( pXAudio2 != NULL ) {
 		// Unregister the sound engine callback

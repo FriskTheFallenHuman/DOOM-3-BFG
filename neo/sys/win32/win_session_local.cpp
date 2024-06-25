@@ -245,7 +245,7 @@ void idSessionLocalWin::Shutdown() {
 	MoveToMainMenu();
 	
 	// Wait until we fully shutdown
-	while ( localState != STATE_IDLE && localState != STATE_PRESS_START ) {
+	while ( localState != STATE_IDLE ) {
 		Pump();
 	}
 
@@ -619,8 +619,8 @@ idSessionLocalWin::DestroyLobbyBackend
 ========================
 */
 void idSessionLocalWin::DestroyLobbyBackend( idLobbyBackend * lobbyBackend ) {
-    assert( lobbyBackend != NULL );
-    assert( lobbyBackends[lobbyBackend->GetLobbyType()] == lobbyBackend );
+	assert( lobbyBackend != NULL );
+	assert( lobbyBackends[lobbyBackend->GetLobbyType()] == lobbyBackend );
 
 	lobbyBackends[lobbyBackend->GetLobbyType()] = NULL;
 

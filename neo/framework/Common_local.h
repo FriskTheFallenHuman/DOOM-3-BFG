@@ -86,11 +86,6 @@ enum errorParm_t {
 	ERP_DISCONNECT					// don't kill server
 };
 
-enum gameLaunch_t {
-	LAUNCH_TITLE_DOOM = 0,
-	LAUNCH_TITLE_DOOM2,
-};
-
 struct netTimes_t {
 	int localTime;
 	int serverTime;
@@ -186,10 +181,6 @@ public:
 
 	virtual int					GetGameFrame() { return gameFrame; }
 
-	virtual void				LaunchExternalTitle( int titleIndex,
-													 int device,
-													 const lobbyConnectInfo_t * const connectInfo ); // For handling invitations. NULL if no invitation used.
-
 	virtual void				InitializeMPMapsModes();
 	virtual const idStrList &			GetModeList() const { return mpGameModes; }
 	virtual const idStrList &			GetModeDisplayList() const { return mpDisplayGameModes; }
@@ -201,8 +192,6 @@ public:
 
 	virtual void				QueueShowShell() { showShellRequested = true; }
 
-	virtual currentGame_t		GetCurrentGame() const { return currentGame; }
-	virtual void				SwitchToGame( currentGame_t newGame );		
 
 public:
 	void	Draw();			// called by gameThread
@@ -414,17 +403,6 @@ private:
 
 	bool				showShellRequested;
 
-	currentGame_t		currentGame;
-	currentGame_t		idealCurrentGame;		// Defer game switching so that bad things don't happen in the middle of the frame.
-	const idMaterial *	doomClassicMaterial;
-
-	static const int			DOOMCLASSIC_RENDERWIDTH = 320 * 3;
-	static const int			DOOMCLASSIC_RENDERHEIGHT = 200 * 3;
-	static const int			DOOMCLASSIC_BYTES_PER_PIXEL = 4;
-	static const int			DOOMCLASSIC_IMAGE_SIZE_IN_BYTES = DOOMCLASSIC_RENDERWIDTH * DOOMCLASSIC_RENDERHEIGHT * DOOMCLASSIC_BYTES_PER_PIXEL;
-	
-	idArray< byte, DOOMCLASSIC_IMAGE_SIZE_IN_BYTES >	doomClassicImageData;
-
 private:
 	void	InitCommands();
 	void	InitSIMD();
@@ -493,12 +471,6 @@ private:
 	void	PlayIntroGui();
 	
 	void	ScrubSaveGameFileName( idStr &saveFileName ) const;
-
-	// Doom classic support
-	void	RunDoomClassicFrame();
-	void	RenderDoomClassic();
-	bool	IsPlayingDoomClassic() const { return GetCurrentGame() != DOOM3_BFG; }
-	void	PerformGameSwitch();
 };
 
 extern idCommonLocal commonLocal;
