@@ -986,7 +986,7 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 */
 
 struct vidMode_t {
-    int width;
+	int width;
 	int height;
 	int displayHz;
 
@@ -1027,7 +1027,7 @@ void		GLimp_Shutdown();
 // and resets the gamma ramps.
 
 void		GLimp_SetGamma( unsigned short red[256], 
-						    unsigned short green[256],
+							unsigned short green[256],
 							unsigned short blue[256] );
 // Sets the hardware gamma ramps for gamma and brightness adjustment.
 // These are now taken as 16 bit values, so we can take full advantage
@@ -1052,7 +1052,7 @@ void		GLimp_DeactivateContext();
 // being immediate returns, which lets us guage how much time is
 // being spent inside OpenGL.
 
-void		GLimp_EnableLogging( bool enable );
+//void		GLimp_EnableLogging( bool enable );
 
 
 /*

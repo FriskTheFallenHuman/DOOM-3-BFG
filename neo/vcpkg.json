@@ -2,6 +2,7 @@
 	"name": "doom3bfg",
 	"version": "0.0.1",
 	"dependencies": [
-		"stb"
+		"stb",
+		"glew"
 	]
 }

@@ -59,6 +59,11 @@ add_compile_definitions(
 
 # Stb
 find_package( Stb REQUIRED )
+include_directories( ${Stb_INCLUDE_DIR} )
+
+# Glew
+find_package( GLEW REQUIRED )
+include_directories( ${GLEW_INCLUDE_DIRS} )
 
 add_subdirectory(external)
 #add_subdirectory(d3xp)

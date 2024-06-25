@@ -53,7 +53,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <intrin.h>			// needed for intrinsics like _mm_setzero_si28
 #include <malloc.h>			// no malloc.h on mac or unix
 
-#include <windows.h>		// for qgl.h
+#include <windows.h>		// for gl.h
 
 // fix namespace pollution
 #undef FindText

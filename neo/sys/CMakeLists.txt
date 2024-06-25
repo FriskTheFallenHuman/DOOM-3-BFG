@@ -144,10 +144,10 @@ target_sources( ${PROJECT_NAME} PRIVATE ${SOURCE_FILES} )
 # D3XP Code
 include( "${CMAKE_SOURCE_DIR}/d3xp/Game.cmake" )
 
-target_include_directories( ${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/idlib" "${CMAKE_SOURCE_DIR}/external" ${Stb_INCLUDE_DIR} )
+target_include_directories( ${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/idlib" "${CMAKE_SOURCE_DIR}/external" )
 add_dependencies( ${PROJECT_NAME} idlib )
 target_precompile_headers( ${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/idlib/precompiled.h" )
-target_link_libraries( ${PROJECT_NAME} idlib external xaudio2 xinput dinput8 dxguid opengl32 winmm dbghelp ws2_32 )
+target_link_libraries( ${PROJECT_NAME} idlib external xaudio2 xinput dinput8 dxguid opengl32 winmm dbghelp ws2_32 GLEW::GLEW )
 set_target_properties( ${PROJECT_NAME} PROPERTIES LINK_FLAGS "/STACK:16777216,16777216 /SUBSYSTEM:WINDOWS" )
 set_target_properties( ${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY $<1:>${GAME_FOLDER} )
 
