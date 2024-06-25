@@ -34,8 +34,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <Windowsx.h>
 
-LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-
 static bool s_alttab_disabled;
 
 extern idCVar r_windowX;
@@ -84,7 +82,7 @@ void WIN_Sizing(WORD side, RECT *rect)
 
 	// Adjust width/height for window decoration
 	RECT decoRect = { 0, 0, 0, 0 };
-	AdjustWindowRect( &decoRect, WINDOW_STYLE|WS_SYSMENU, FALSE );
+	AdjustWindowRect( &decoRect, WINDOW_STYLE, FALSE );
 	int decoWidth = decoRect.right - decoRect.left;
 	int decoHeight = decoRect.bottom - decoRect.top;
 
@@ -143,7 +141,7 @@ MainWndProc
 main window procedure
 ====================
 */
-LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
+LRESULT CALLBACK MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 	int key;
 	switch( uMsg ) {
 		case WM_WINDOWPOSCHANGED:

@@ -30,7 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "../snd_local.h"
-#include "../../../doomclassic/doom/i_sound.h"
 
 idCVar s_showLevelMeter( "s_showLevelMeter", "0", CVAR_BOOL|CVAR_ARCHIVE, "Show VU meter" );
 idCVar s_meterTopTime( "s_meterTopTime", "1000", CVAR_INTEGER|CVAR_ARCHIVE, "How long (in milliseconds) peaks are displayed on the VU meter" );
@@ -63,7 +62,7 @@ idSoundHardware_XAudio2::idSoundHardware_XAudio2() {
 }
 
 void listDevices_f( const idCmdArgs & args ) {
-
+#if 0
 	IXAudio2 * pXAudio2 = soundSystemLocal.hardware.GetIXAudio2();
 
 	if ( pXAudio2 == NULL ) {
@@ -159,6 +158,7 @@ void listDevices_f( const idCmdArgs & args ) {
 			idLib::Printf( ", and %s\n", roles[roles.Num() - 1] );
 		}
 	}
+#endif
 }
 
 /*
@@ -201,55 +201,12 @@ void idSoundHardware_XAudio2::Init() {
 	pXAudio2->RegisterForCallbacks( &soundEngineCallback );
 	soundEngineCallback.hardware = this;
 
-	UINT32 deviceCount = 0;
-	if ( pXAudio2->GetDeviceCount( &deviceCount ) != S_OK || deviceCount == 0 ) {
-		idLib::Warning( "No audio devices found" );
-		pXAudio2->Release();
-		pXAudio2 = NULL;
-		return;
-	}
-
 	idCmdArgs args;
 	listDevices_f( args );
 
-	int preferredDevice = s_device.GetInteger();
-	if ( preferredDevice < 0 || preferredDevice >= (int)deviceCount ) {
-		int preferredChannels = 0;
-		for ( unsigned int i = 0; i < deviceCount; i++ ) {
-			XAUDIO2_DEVICE_DETAILS deviceDetails;
-			if ( pXAudio2->GetDeviceDetails( i, &deviceDetails ) != S_OK ) {
-				continue;
-			}
-
-			if ( deviceDetails.Role & DefaultGameDevice ) {
-				// if we find a device the user marked as their preferred 'game' device, then always use that
-				preferredDevice = i;
-				preferredChannels = deviceDetails.OutputFormat.Format.nChannels;
-				break;
-			}
-
-			if ( deviceDetails.OutputFormat.Format.nChannels > preferredChannels ) {
-				preferredDevice = i;
-				preferredChannels = deviceDetails.OutputFormat.Format.nChannels;
-			}
-		}
-	}
-
-	idLib::Printf( "Using device %d\n", preferredDevice );
-
-	XAUDIO2_DEVICE_DETAILS deviceDetails;
-	if ( pXAudio2->GetDeviceDetails( preferredDevice, &deviceDetails ) != S_OK ) {
-		// One way this could happen is if a device is removed between the loop and this line of code
-		// Highly unlikely but possible
-		idLib::Warning( "Failed to get device details" );
-		pXAudio2->Release();
-		pXAudio2 = NULL;
-		return;
-	}
-
 	DWORD outputSampleRate = 44100; // Max( (DWORD)XAUDIO2FX_REVERB_MIN_FRAMERATE, Min( (DWORD)XAUDIO2FX_REVERB_MAX_FRAMERATE, deviceDetails.OutputFormat.Format.nSamplesPerSec ) );
 
-	if ( FAILED( pXAudio2->CreateMasteringVoice( &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, outputSampleRate, 0, preferredDevice, NULL ) ) ) {
+	if ( FAILED( pXAudio2->CreateMasteringVoice( &pMasterVoice, XAUDIO2_DEFAULT_CHANNELS, outputSampleRate ) ) ) {
 		idLib::Warning( "Failed to create master voice" );
 		pXAudio2->Release();
 		pXAudio2 = NULL;
@@ -257,8 +214,13 @@ void idSoundHardware_XAudio2::Init() {
 	}
 	pMasterVoice->SetVolume( DBtoLinear( s_volume_dB.GetFloat() ) );
 
-	outputChannels = deviceDetails.OutputFormat.Format.nChannels;
-	channelMask = deviceDetails.OutputFormat.dwChannelMask;
+	XAUDIO2_VOICE_DETAILS deets;
+	pMasterVoice->GetVoiceDetails( &deets );
+	outputChannels = deets.InputChannels;
+
+	DWORD tempMask;
+	pMasterVoice->GetChannelMask( &tempMask );
+	channelMask = static_cast<int>(tempMask);
 
 	idSoundVoice::InitSurround( outputChannels, channelMask );
 
@@ -311,7 +273,7 @@ void idSoundHardware_XAudio2::Init() {
 	// ---------------------
 	// Create submix buffer
 	// ---------------------
-	if ( FAILED( pXAudio2->CreateSubmixVoice( &pSubmixVoice, 1, outputSampleRate, 0, 0, NULL, NULL ) ) ) {
+	if ( FAILED( pXAudio2->CreateSubmixVoice( &pSubmixVoice, 1, outputSampleRate ) ) ) {
 		idLib::FatalError( "Failed to create submix voice" );
 	}
 

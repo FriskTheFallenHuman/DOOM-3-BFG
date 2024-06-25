@@ -37,31 +37,22 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 #include "sys/sys_defines.h"
+#include "sys/sys_builddefines.h"
 
-#include <stddef.h>					// for offsetof
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
+#include <cstddef>					// for offsetof
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <cstring>
 
 #include <basetsd.h>				// for UINT_PTR
 #include <intrin.h>
-#pragma warning( disable : 4100 )	// unreferenced formal parameter
-#pragma warning( disable : 4127 )	// conditional expression is constant
-
-
-
-
 
 #include "sys/sys_assert.h"
 #include "sys/sys_types.h"
 #include "sys/sys_intrinsics.h"
+
 #include "math/Math.h"
 #include "ParallelJobList.h"
-
-#if _MSC_VER >= 1600
-#undef NULL
-#define NULL 0
-#endif
 
 #endif // !__PARALLELJOBLIST_JOBHEADERS_H__

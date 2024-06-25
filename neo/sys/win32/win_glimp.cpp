@@ -205,7 +205,7 @@ FakeWndProc
 Only used to get wglExtensions
 ====================
 */
-LONG WINAPI FakeWndProc (
+LRESULT CALLBACK FakeWndProc (
 	HWND    hWnd,
 	UINT    uMsg,
 	WPARAM  wParam,
@@ -219,7 +219,7 @@ LONG WINAPI FakeWndProc (
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	const static PIXELFORMATDESCRIPTOR pfd = {
+	const PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
 		1,
 		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
@@ -936,7 +936,7 @@ static bool GLW_GetWindowDimensions( const glimpParms_t parms, int &x, int &y, i
 		r.top = 0;
 		r.right = parms.width;
 
-		AdjustWindowRect (&r, WINDOW_STYLE|WS_SYSMENU, FALSE);
+		AdjustWindowRect (&r, WINDOW_STYLE, FALSE);
 
 		w = r.right - r.left;
 		h = r.bottom - r.top;
@@ -970,7 +970,7 @@ static bool GLW_CreateWindow( glimpParms_t parms ) {
 		stylebits = WS_POPUP|WS_VISIBLE|WS_SYSMENU;
 	} else {
 		exstyle = 0;
-		stylebits = WINDOW_STYLE|WS_SYSMENU;
+		stylebits = WINDOW_STYLE;
 	}
 
 	win32.hWnd = CreateWindowEx (
@@ -1257,7 +1257,7 @@ bool GLimp_SetScreenParms( glimpParms_t parms ) {
 		stylebits = WS_POPUP|WS_VISIBLE|WS_SYSMENU;
 	} else {
 		exstyle = 0;
-		stylebits = WINDOW_STYLE|WS_SYSMENU;
+		stylebits = WINDOW_STYLE;
 	}
 
 	SetWindowLong( win32.hWnd, GWL_STYLE, stylebits );

@@ -29,11 +29,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-//#if defined( ID_VS2010 )
-//#include "../../../libs/dxsdk_June2010/include/xinput.h"
-//#else
+#define DIRECTINPUT_VERSION 0x0800
+
 #include <Xinput.h>
-//#endif
+#include <dinput.h>
 
 static const int MAX_JOYSTICKS = 4;
 

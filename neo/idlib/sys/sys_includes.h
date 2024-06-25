@@ -38,41 +38,27 @@ If you have questions concerning this license or the applicable additional terms
 ================================================================================================
 */
 
-
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// prevent auto literal to string conversion
+#include <sdkddkver.h>
 
 #ifndef _D3SDK
 #ifndef GAME_DLL
-
-#define WINVER				0x0600			// targeting Windows Vista minimum!
-#define _WIN32_WINNT		0x0600
-
-#include <sdkddkver.h>		// MSDN told me to add this
 
 #include <winsock2.h>
 #include <mmsystem.h>
 #include <mmreg.h>
 
-#define DIRECTINPUT_VERSION  0x0800			// was 0x0700 with the old mssdk
-#define DIRECTSOUND_VERSION  0x0800
-
-#include <dsound.h>
-#include <dinput.h>
-
 #endif /* !GAME_DLL */
 #endif /* !_D3SDK */
 
 #include <intrin.h>			// needed for intrinsics like _mm_setzero_si28
+#include <malloc.h>			// no malloc.h on mac or unix
 
-#pragma warning(disable : 4100)				// unreferenced formal parameter
-#pragma warning(disable : 4127)				// conditional expression is constant
-#pragma warning(disable : 4244)				// conversion to smaller type, possible loss of data
-#pragma warning(disable : 4714)				// function marked as __forceinline not inlined
-#pragma warning(disable : 4996)				// unsafe string operations
+#include <windows.h>		// for qgl.h
 
-#include <malloc.h>							// no malloc.h on mac or unix
-#include <windows.h>						// for qgl.h
-#undef FindText								// fix namespace pollution
+// fix namespace pollution
+#undef FindText
+#undef DrawText
+#undef CopyFile
 
 /*
 ================================================================================================
@@ -87,17 +73,20 @@ If you have questions concerning this license or the applicable additional terms
 	#define NDEBUG
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <assert.h>
-#include <time.h>
-#include <ctype.h>
+// STD
+#include <cstdio>
+#include <cstdlib>
+#include <cstdarg>
+#include <cstring>
+#include <cassert>
+#include <ctime>
+#include <cctype>
+#include <cerrno>
+#include <cmath>
+#include <climits>
+
+// STL
 #include <typeinfo>
-#include <errno.h>
-#include <math.h>
-#include <limits.h>
 #include <memory>
 
 //-----------------------------------------------------

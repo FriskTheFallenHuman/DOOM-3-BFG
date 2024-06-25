@@ -178,7 +178,7 @@ void IN_InitDirectInput() {
 	// Register with the DirectInput subsystem and get a pointer
 	// to a IDirectInput interface we can use.
 	// Create the base DirectInput object
-	if ( FAILED( hr = DirectInput8Create( GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&win32.g_pdi, NULL ) ) ) {
+	if ( FAILED( hr = DirectInput8Create( win32.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&win32.g_pdi, NULL ) ) ) {
 		common->Printf ("DirectInputCreate failed\n");
 	}
 }

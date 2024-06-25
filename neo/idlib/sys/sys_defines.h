@@ -48,7 +48,6 @@ If you have questions concerning this license or the applicable additional terms
 #if defined(_WIN32)
 	// _WIN32 always defined
 	// _WIN64 also defined for x64 target
-/*
 	#if !defined( _MANAGED )
 		#if !defined( _WIN64 )
 			#define ID_WIN_X86_ASM
@@ -68,7 +67,6 @@ If you have questions concerning this license or the applicable additional terms
 			#define ID_WIN_X86_SSE3_INTRIN
 		#endif
 	#endif
-*/
 
 	#define ID_PC
 	#define ID_PC_WIN
@@ -90,7 +88,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef ID_PC_WIN
 
+#ifdef ID_PC_WIN64
+#define	CPUSTRING						"x64"
+#else
 #define	CPUSTRING						"x86"
+#endif
 
 #define	BUILD_STRING					"win-" CPUSTRING
 #define BUILD_OS_ID						0
@@ -134,8 +136,8 @@ Defines and macros usable in all code
 
 #define ALIGN( x, a ) ( ( ( x ) + ((a)-1) ) & ~((a)-1) )
 
-#define _alloca16( x )					((void *)ALIGN( (UINT_PTR)_alloca( ALIGN( x, 16 ) + 16 ), 16 ) )
-#define _alloca128( x )					((void *)ALIGN( (UINT_PTR)_alloca( ALIGN( x, 128 ) + 128 ), 128 ) )
+#define _alloca16( x )					((void *)ALIGN( (uintptr_t)_alloca( ALIGN( x, 16 ) + 16 ), 16 ) )
+#define _alloca128( x )					((void *)ALIGN( (uintptr_t)_alloca( ALIGN( x, 128 ) + 128 ), 128 ) )
 
 #define likely( x )	( x )
 #define unlikely( x )	( x )
@@ -181,27 +183,35 @@ bulk of the codebase, so it is the best place for analyze pragmas.
 // win32 needs this, but 360 doesn't
 #pragma warning( disable: 6540 )	// warning C6540: The use of attribute annotations on this function will invalidate all of its existing __declspec annotations [D:\tech5\engine\engine-10.vcxproj]
 
-// VS 2019 ADDED
-// SLART: VS > 2010 has better error checking, I should've documented the locations where all of these error, but most are project wide.
-#pragma warning( disable: 4458 )	// warning C4458:  declaration of 'data' hides class member
-#pragma warning( disable: 4456 )	// warning C4456 : declaration of 'm2' hides previous local declaration
-#pragma warning( disable: 4457 )	// warning C4457 : declaration of 'start' hides function parameter
-#pragma warning( disable: 4459 )	// warning C4459:  declaration of 'vertexCache' hides global declaration
+// From sys_includes.h
+#pragma warning(disable: 4100)		// unreferenced formal parameter
+#pragma warning(disable: 4127)		// conditional expression is constant
+#pragma warning(disable: 4244)		// conversion to smaller type, possible loss of data
+#pragma warning(disable: 4714)		// function marked as __forceinline not inlined
+#pragma warning(disable: 4996)		// unsafe string operations
 
-// SLART: VS version > 2010 warn against this, these can be manually fixed but I'm lazy, and it won't break anything by leaving them
-#pragma warning( disable: 4595 )	// warning C4595:  'operator delete[]': non-member operator new or delete functions may not be declared inline (compiling source file doom\doomlib.cpp)
-#pragma warning( disable: 4499 )	// warning C4499:  'extern': an explicit specialization cannot have a storage class (ignored)
+// ignorable warnings introduced with the VS 2019 upgrade
+#pragma warning( disable: 4456 )	// warning C4456: declaration of 'k' hides previous local declaration
+#pragma warning( disable: 4457 )	// warning C4457: declaration of 'type' hides function parameter
+#pragma warning( disable: 4458 )	// warning C4458: declaration of 'silent' hides class member
+#pragma warning( disable: 4459 )	// warning C4459: declaration of 'vertexCache' hides global declaration
+#pragma warning( disable: 4595 )	// warning C4595: 'operator new': non-member operator new or delete functions may not be declared inline
+#pragma warning( disable: 4499 )	// warning C4499: 'extern': an explicit specialization cannot have a storage class (ignored)
+// ATL attributes have been deprecated
+#pragma warning( disable: 4467 )	// warning C4467: usage of ATL attributes is deprecated
+// This is a very new warning, it recommends: "to simplify migration, consider the temporary use of /Wv:18 flag"
+#pragma warning( disable: 5205 )	// warning C5205: delete of an abstract class 'idSIMDProcessor' that has a non-virtual destructor results in undefined behavior
+// DirectInput does this, we can't help it!
+#pragma warning( disable: 4644 )	// warning C4644: usage of the macro-based offsetof pattern in constant expressions is non-standard; use offsetof defined in the C++ standard library instead
 
-// Not my fault! The DXSDK uses this!
-#pragma warning( disable: 4644 )	// warning C4644:  usage of the macro-based offsetof pattern in constant expressions is non-standard; use offsetof defined in the C++ standard library instead
-
-// This might be a problem post-2019, the code uses ATL attributes for CodeAnalysis
-#pragma warning( disable: 4467 )	// warning C4467 : usage of ATL attributes is deprecated
-
+// C++17/20 warnings
+#pragma warning( disable: 5033 )	// warning C5033: 'register' is no longer a supported storage class
+#pragma warning( disable: 5054 )	// warning C5054: operator '+': deprecated between enumerations of different types
+#pragma warning( disable: 5055 )	// warning C5055: operator '==': deprecated between enumerations and floating-point types
 
 // checking format strings catches a LOT of errors
-#include <CodeAnalysis\SourceAnnotations.h>
-#define	VERIFY_FORMAT_STRING	[SA_FormatString(Style="printf")]
+//#include <CodeAnalysis\SourceAnnotations.h>
+#define	VERIFY_FORMAT_STRING
 
 
 // We need to inform the compiler that Error() and FatalError() will

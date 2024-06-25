@@ -337,18 +337,7 @@ private:
 	// SWF_Image.cpp
 	//----------------------------------
 
-	class idDecompressJPEG {
-	public:
-		idDecompressJPEG();
-		~idDecompressJPEG();
-
-		byte * Load( const byte * input, int inputSize, int & width, int & height );
-
-	private:
-		void * vinfo;
-	};
-
-	idDecompressJPEG	jpeg;
+	byte *			LoadJPEG( const byte * input, int inputSize, int & width, int & height );
 
 	void			LoadImage( int characterID, const byte * imageData, int width, int height );
 
@@ -368,12 +357,12 @@ private:
 		idVec2i	allocSize;	// in DXT tiles, includes a border texel and rounding up to DXT blocks
 	};
 
- 	class idSortBlocks : public idSort_Quick< imageToPack_t, idSortBlocks > {
- 	public:
- 		int Compare( const imageToPack_t & a, const imageToPack_t & b ) const {
- 			return ( b.allocSize.x * b.allocSize.y ) - ( a.allocSize.x * a.allocSize.y );
- 		}
- 	};
+	class idSortBlocks : public idSort_Quick< imageToPack_t, idSortBlocks > {
+	public:
+		int Compare( const imageToPack_t & a, const imageToPack_t & b ) const {
+			return ( b.allocSize.x * b.allocSize.y ) - ( a.allocSize.x * a.allocSize.y );
+		}
+	};
 
 	idList<imageToPack_t, TAG_SWF>	packImages;	// only used during creation
 	void			WriteSwfImageAtlas( const char *filename );
