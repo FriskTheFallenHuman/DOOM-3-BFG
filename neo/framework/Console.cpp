@@ -69,6 +69,8 @@ public:
 	void				Clear();
 
 private:
+	void				Resize();
+
 	void				KeyDownEvent( int key );
 
 	void				Linefeed();
@@ -137,6 +139,9 @@ private:
 	idList< overlayText_t >	overlayText;
 	idList< idDebugGraph *> debugGraphs;
 
+	int					lastVirtualScreenWidth;
+	int					lastVirtualScreenHeight;
+
 	static idCVar		con_speed;
 	static idCVar		con_notifyTime;
 	static idCVar		con_noPrint;
@@ -190,9 +195,6 @@ void idConsoleLocal::DrawTextRightAlign( float x, float &y, const char *text, ..
 	renderSystem->DrawSmallStringExt( x - i * SMALLCHAR_WIDTH, y + 2, string, colorWhite, true );
 	y += SMALLCHAR_HEIGHT + 4;
 }
-
-
-
 
 /*
 ==================
@@ -337,9 +339,9 @@ void idConsoleLocal::Init() {
 	keyCatching = false;
 
 	LOCALSAFE_LEFT		= 32;
-	LOCALSAFE_RIGHT		= 608;
+	LOCALSAFE_RIGHT		= SCREEN_WIDTH - LOCALSAFE_LEFT;
 	LOCALSAFE_TOP		= 24;
-	LOCALSAFE_BOTTOM	= 456;
+	LOCALSAFE_BOTTOM	= SCREEN_HEIGHT - LOCALSAFE_TOP;
 	LOCALSAFE_WIDTH		= LOCALSAFE_RIGHT - LOCALSAFE_LEFT;
 	LOCALSAFE_HEIGHT	= LOCALSAFE_BOTTOM - LOCALSAFE_TOP;
 
@@ -477,6 +479,25 @@ void idConsoleLocal::Dump( const char *fileName ) {
 
 	fileSystem->CloseFile( f );
 }
+
+/*
+==============
+idConsoleLocal::Resize
+==============
+*/
+void idConsoleLocal::Resize() {
+	if ( renderSystem->GetVirtualWidth() == lastVirtualScreenWidth && renderSystem->GetVirtualHeight() == lastVirtualScreenHeight ) {
+		return;
+	}
+
+	lastVirtualScreenWidth = renderSystem->GetVirtualWidth();
+	lastVirtualScreenHeight = renderSystem->GetVirtualHeight();
+	LOCALSAFE_RIGHT		= renderSystem->GetVirtualWidth() - LOCALSAFE_LEFT;
+	LOCALSAFE_BOTTOM	= renderSystem->GetVirtualHeight() - LOCALSAFE_TOP;
+	LOCALSAFE_WIDTH		= LOCALSAFE_RIGHT - LOCALSAFE_LEFT;
+	LOCALSAFE_HEIGHT	= LOCALSAFE_BOTTOM - LOCALSAFE_TOP;
+}
+
 
 /*
 ================
@@ -923,7 +944,7 @@ void idConsoleLocal::DrawInput() {
 
 	renderSystem->DrawSmallChar( LOCALSAFE_LEFT + 1 * SMALLCHAR_WIDTH, y, ']' );
 
-	consoleField.Draw( LOCALSAFE_LEFT + 2 * SMALLCHAR_WIDTH, y, SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, true );
+	consoleField.Draw( LOCALSAFE_LEFT + 2 * SMALLCHAR_WIDTH, y, renderSystem->GetVirtualWidth() - 3 * SMALLCHAR_WIDTH, true );
 }
 
 
@@ -996,24 +1017,24 @@ void idConsoleLocal::DrawSolidConsole( float frac ) {
 	int				lines;
 	int				currentColor;
 
-	lines = idMath::Ftoi( SCREEN_HEIGHT * frac );
+	lines = idMath::Ftoi( renderSystem->GetVirtualHeight() * frac );
 	if ( lines <= 0 ) {
 		return;
 	}
 
-	if ( lines > SCREEN_HEIGHT ) {
-		lines = SCREEN_HEIGHT;
+	if ( lines > renderSystem->GetVirtualHeight() ) {
+		lines = renderSystem->GetVirtualHeight();
 	}
 
 	// draw the background
-	y = frac * SCREEN_HEIGHT - 2;
+	y = frac * renderSystem->GetVirtualHeight() - 2;
 	if ( y < 1.0f ) {
 		y = 0.0f;
 	} else {
-		renderSystem->DrawFilled( idVec4( 0.0f, 0.0f, 0.0f, 0.75f ), 0, 0, SCREEN_WIDTH, y );
+		renderSystem->DrawFilled( idVec4( 0.0f, 0.0f, 0.0f, 0.75f ), 0, 0, renderSystem->GetVirtualWidth(), y );
 	}
-
-	renderSystem->DrawFilled( colorCyan, 0, y, SCREEN_WIDTH, 2 );
+	
+	renderSystem->DrawFilled( colorCyan, 0, y, renderSystem->GetVirtualWidth(), 2 );
 
 	// draw the version number
 
@@ -1094,6 +1115,8 @@ ForceFullScreen is used by the editor
 ==============
 */
 void idConsoleLocal::Draw( bool forceFullScreen ) {
+	Resize();
+
 	if ( forceFullScreen ) {
 		// if we are forced full screen because of a disconnect, 
 		// we want the console closed when we go back to a session state

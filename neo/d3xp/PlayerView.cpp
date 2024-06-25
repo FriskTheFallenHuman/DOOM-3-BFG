@@ -464,7 +464,7 @@ void idPlayerView::SingleView( const renderView_t *view, idMenuHandler_HUD * hud
 
 		if ( armorPulse > 0.0f && armorPulse < 1.0f ) {
 			renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f - armorPulse );
-			renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, armorMaterial );
+			renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, armorMaterial );
 		}
 
 
@@ -485,12 +485,12 @@ void idPlayerView::SingleView( const renderView_t *view, idMenuHandler_HUD * hud
 
 		if ( alpha < 1.0f  ) {
 			renderSystem->SetColor4( ( player->health <= 0.0f ) ? MS2SEC( gameLocal.slow.time ) : lastDamageTime, 1.0f, 1.0f, ( player->health <= 0.0f ) ? 0.0f : alpha );
-			renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, tunnelMaterial );
+			renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, tunnelMaterial );
 		}
 
 		if ( bfgVision ) {
 			renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
-			renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, bfgMaterial );
+			renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, bfgMaterial );
 		}
 		
 	}
@@ -503,7 +503,7 @@ void idPlayerView::SingleView( const renderView_t *view, idMenuHandler_HUD * hud
 			g_testPostProcess.SetString( "" );
 		} else {
 			renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
-			renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, mtr );
+			renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, mtr );
 		}
 	}
 }
@@ -580,7 +580,7 @@ void idPlayerView::ScreenFade() {
 
 	if ( fadeColor[ 3 ] != 0.0f ) {
 		renderSystem->SetColor4( fadeColor[ 0 ], fadeColor[ 1 ], fadeColor[ 2 ], fadeColor[ 3 ] );
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
 	}
 }
 
@@ -818,9 +818,9 @@ void FullscreenFX_Helltime::AccumPass( const renderView_t *view ) {
 	// capture pass
 	if ( clearAccumBuffer ) {
 		clearAccumBuffer = false;
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, t0, 1.0f, t1, initMaterial );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, initMaterial );
 	} else {
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, t0, 1.0f, t1, captureMaterials[level] );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, captureMaterials[level] );
 	}
 }
 
@@ -834,7 +834,7 @@ void FullscreenFX_Helltime::HighQuality() {
 	float t1 = 0.0f;
 
 	renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
-	renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, t0, 1.0f, t1, drawMaterial );
+	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, drawMaterial );
 }
 
 /*
@@ -926,9 +926,9 @@ void FullscreenFX_Multiplayer::AccumPass( const renderView_t *view ) {
 	// capture pass
 	if ( clearAccumBuffer ) {
 		clearAccumBuffer = false;
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, t0, 1.0f, t1, initMaterial );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, initMaterial );
 	} else {
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, t0, 1.0f, t1, captureMaterial );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, captureMaterial );
 	}
 }
 
@@ -942,7 +942,7 @@ void FullscreenFX_Multiplayer::HighQuality() {
 	float t1 = 0.0f;
 
 	renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
-	renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, t0, 1.0f, t1, drawMaterial );
+	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, drawMaterial );
 }
 
 /*
@@ -956,10 +956,6 @@ void FullscreenFX_Multiplayer::Restore( idRestoreGame *savefile ) {
 	// latch the clear flag
 	clearAccumBuffer = true;
 }
-
-
-
-
 
 /*
 ==================
@@ -1071,8 +1067,8 @@ void FullscreenFX_Warp::HighQuality() {
 	interp = 0.7 * ( 1 - interp ) + 0.3 * ( interp );
 
 	// draw the warps
-	center.x = 320;
-	center.y = 240;
+	center.x = renderSystem->GetVirtualWidth() / 2.0f;
+	center.y = renderSystem->GetVirtualHeight() / 2.0f;
 	radius = 200;
 
 	for ( float i = 0; i < 360; i += STEP ) {
@@ -1088,27 +1084,23 @@ void FullscreenFX_Warp::HighQuality() {
 
 		p.outer1.x = center.x + x1 * radius;
 		p.outer1.y = center.y + y1 * radius;
-		p.outer1.z = p.outer1.x / (float)SCREEN_WIDTH;
-		p.outer1.w = 1 - ( p.outer1.y / (float)SCREEN_HEIGHT );
-
+		p.outer1.z = p.outer1.x / (float)renderSystem->GetVirtualWidth();
+		p.outer1.w = 1 - ( p.outer1.y / (float)renderSystem->GetVirtualHeight() );
+		
 		p.outer2.x = center.x + x2 * radius;
 		p.outer2.y = center.y + y2 * radius;
-		p.outer2.z = p.outer2.x / (float)SCREEN_WIDTH;
-		p.outer2.w = 1 - ( p.outer2.y / (float)SCREEN_HEIGHT );
-
+		p.outer2.z = p.outer2.x / (float)renderSystem->GetVirtualWidth();
+		p.outer2.w = 1 - ( p.outer2.y / (float)renderSystem->GetVirtualHeight() );
+		
 		p.center.x = center.x;
 		p.center.y = center.y;
-		p.center.z = p.center.x / (float)SCREEN_WIDTH;
-		p.center.w = 1 - ( p.center.y / (float)SCREEN_HEIGHT );
+		p.center.z = p.center.x / (float)renderSystem->GetVirtualWidth();
+		p.center.w = 1 - ( p.center.y / (float)renderSystem->GetVirtualHeight() );
  
 		// draw it
 		DrawWarp( p, interp );
 	}
 }
-
-
-
-
 
 /*
 ==================
@@ -1145,7 +1137,7 @@ void FullscreenFX_EnviroSuit::HighQuality() {
 	float t0 = 1.0f;
 	float s1 = 1.0f;
 	float t1 = 0.0f;
-	renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, s0, t0, s1, t1, material );
+	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), s0, t0, s1, t1, material );
 }
 
 /*
@@ -1226,15 +1218,15 @@ void FullscreenFX_DoubleVision::HighQuality() {
 
 
 	renderSystem->SetColor4( color.x, color.y, color.z, 1.0f );
-	renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, s0, t0, s1, t1, material );
-
+	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), s0, t0, s1, t1, material );
+	
 	renderSystem->SetColor4( color.x, color.y, color.z, 0.5f );
 	s0 = 0.0f;
 	t0 = 1.0f;
 	s1 = ( 1.0-shift );
 	t1 = 0.0f;
-
-	renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, s0, t0, s1, t1, material );
+	
+	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), s0, t0, s1, t1, material );
 }
 
 /*
@@ -1285,7 +1277,7 @@ void FullscreenFX_InfluenceVision::HighQuality() {
 
 	if ( player->GetInfluenceMaterial() ) {
 		renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, pct );
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, player->GetInfluenceMaterial() );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, player->GetInfluenceMaterial() );
 	} else if ( player->GetInfluenceEntity() == NULL ) {
 		return;
 	} else {
@@ -1293,9 +1285,6 @@ void FullscreenFX_InfluenceVision::HighQuality() {
 //		DoubleVision( hud, view, pct * offset );
 	}
 }
-
-
-
 
 /*
 ==================
@@ -1388,7 +1377,7 @@ void FullscreenFX_Bloom::HighQuality() {
 		float yScale = 1.0f;
 
 		renderSystem->SetColor4( alpha, alpha, alpha, 1 );
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, s1, t2 * yScale, s2, t1 * yScale, drawMaterial );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), s1, t2 * yScale, s2, t1 * yScale, drawMaterial );
 
 		shift += currentIntensity;
 	}
@@ -1415,11 +1404,6 @@ void FullscreenFX_Bloom::Restore( idRestoreGame *savefile ) {
 	savefile->ReadFloat( currentIntensity );
 	savefile->ReadFloat( targetIntensity );
 }
-
-
-
-
-
 
 /*
 ==================
@@ -1530,7 +1514,7 @@ void FullscreenFXManager::Blendback( float alpha ) {
 		float t0 = 1.0f;
 		float s1 = 1.0f;
 		float t1 = 0.0f;
-		renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, s0, t0, s1, t1, blendBackMaterial );
+		renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), s0, t0, s1, t1, blendBackMaterial );
 	}
 }
 
@@ -1610,6 +1594,3 @@ void FullscreenFXManager::Process( const renderView_t *view ) {
 		}
 	}
 }
-
-
-

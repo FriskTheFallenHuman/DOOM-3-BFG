@@ -198,7 +198,7 @@ void idCommonLocal::DrawWipeModel() {
 
 	float fade = ( float )( currentTime - wipeStartTime ) / ( wipeStopTime - wipeStartTime );
 	renderSystem->SetColor4( 1, 1, 1, fade );
-	renderSystem->DrawStretchPic( 0, 0, 640, 480, 0, 0, 1, 1, wipeMaterial );
+	renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, wipeMaterial );
 }
 
 /*
@@ -218,7 +218,7 @@ void idCommonLocal::Draw() {
 		bool gameDraw = game->Draw( game->GetLocalClientNum() );
 		if ( !gameDraw ) {
 			renderSystem->SetColor( colorBlack );
-			renderSystem->DrawStretchPic( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial );
+			renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 		}
 		game->Shell_Render();
 	} else if ( readDemo ) {
@@ -238,7 +238,7 @@ void idCommonLocal::Draw() {
 		}
 		if ( !gameDraw ) {
 			renderSystem->SetColor( colorBlack );
-			renderSystem->DrawStretchPic( 0, 0, 640, 480, 0, 0, 1, 1, whiteMaterial );
+			renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 		}
 
 		// save off the 2D drawing from the game
@@ -247,7 +247,7 @@ void idCommonLocal::Draw() {
 		}
 	} else {
 		renderSystem->SetColor4( 0, 0, 0, 1 );
-		renderSystem->DrawStretchPic( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial );
+		renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 	}
 
 	{
