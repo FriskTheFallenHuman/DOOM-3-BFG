@@ -68,6 +68,7 @@ class idDemoFile;
 class idUserInterface;
 class idSaveLoadParms;
 class idMatchParameters;
+class idUserCmdMgr;
 
 struct lobbyConnectInfo_t;
 
@@ -157,12 +158,6 @@ struct mpMap_t {
 };
 
 static const int	MAX_LOGGED_STATS = 60 * 120;		// log every half second 
-
-enum currentGame_t {
-	DOOM_CLASSIC,
-	DOOM2_CLASSIC,
-	DOOM3_BFG
-};
 
 class idCommon {
 public:
@@ -294,8 +289,6 @@ public:
 
 	virtual int					GetGameFrame() = 0;
 
-	virtual void				LaunchExternalTitle( int titleIndex, int device, const lobbyConnectInfo_t * const connectInfo ) = 0;
-
 	virtual void				InitializeMPMapsModes() = 0;
 	virtual const idStrList &			GetModeList() const = 0;
 	virtual const idStrList &			GetModeDisplayList() const = 0;
@@ -307,8 +300,7 @@ public:
 
 	virtual void				QueueShowShell() = 0;		// Will activate the shell on the next frame.
 
-	virtual currentGame_t		GetCurrentGame() const = 0;
-	virtual void				SwitchToGame( currentGame_t newGame ) = 0;
+	virtual idUserCmdMgr &		GetUCmdMgr() = 0;
 };
 
 extern idCommon *		common;

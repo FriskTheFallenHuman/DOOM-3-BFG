@@ -857,6 +857,8 @@ idSessionCallbacks
 */
 class idSessionCallbacks { 
 public:
+	virtual							~idSessionCallbacks() {}
+
 	virtual idLobby &				GetPartyLobby() = 0;
 	virtual idLobby &				GetGameLobby() = 0;
 	virtual idLobby &				GetActingGameStateLobby() = 0;

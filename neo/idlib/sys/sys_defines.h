@@ -90,6 +90,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef ID_PC_WIN
 
+#define ID_PC_WIN_8						( _WIN32_WINNT >= _WIN32_WINNT_WIN8 )
+
 #define	CPUSTRING						"x86"
 
 #define	BUILD_STRING					"win-" CPUSTRING

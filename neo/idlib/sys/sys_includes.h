@@ -44,9 +44,6 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef _D3SDK
 #ifndef GAME_DLL
 
-#define WINVER				0x0600			// targeting Windows Vista minimum!
-#define _WIN32_WINNT		0x0600
-
 #include <sdkddkver.h>		// MSDN told me to add this
 
 #include <winsock2.h>

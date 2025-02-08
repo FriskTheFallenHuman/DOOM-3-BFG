@@ -91,7 +91,7 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 void Conbuf_AppendText( const char *msg );
 
-typedef struct {
+struct Win32Vars_t {
 	HWND			hWnd;
 	HINSTANCE		hInstance;
 
@@ -159,7 +159,7 @@ typedef struct {
 	int				wglErrors;
 	// SMP acceleration vars
 
-} Win32Vars_t;
+};
 
 extern Win32Vars_t	win32;
 

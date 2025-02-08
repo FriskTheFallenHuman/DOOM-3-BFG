@@ -80,6 +80,7 @@ struct dominantTri_t;
 class idSIMDProcessor {
 public:
 									idSIMDProcessor() { cpuid = CPUID_NONE; }
+	virtual							~idSIMDProcessor() {}
 
 	cpuid_t							cpuid;
 

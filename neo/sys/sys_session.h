@@ -81,9 +81,6 @@ const int8 GAME_MODE_SINGLEPLAYER = -2;
 const int8 GAME_MAP_RANDOM = -1;
 const int8 GAME_MAP_SINGLEPLAYER = -2;
 
-const int8 GAME_EPISODE_UNKNOWN = -1;
-const int8 GAME_SKILL_DEFAULT = -1;
-
 const int DefaultPartyFlags			= MATCH_JOIN_IN_PROGRESS | MATCH_ONLINE;
 const int DefaultPublicGameFlags	= MATCH_JOIN_IN_PROGRESS | MATCH_REQUIRE_PARTY_LOBBY | MATCH_RANKED |  MATCH_STATS;
 const int DefaultPrivateGameFlags	= MATCH_JOIN_IN_PROGRESS | MATCH_REQUIRE_PARTY_LOBBY | MATCH_PRIVATE;
@@ -99,8 +96,6 @@ public:
 		numSlots( MAX_PLAYERS ),
 		gameMode( GAME_MODE_RANDOM ),
 		gameMap( GAME_MAP_RANDOM ),
-		gameEpisode( GAME_EPISODE_UNKNOWN ),
-		gameSkill( GAME_SKILL_DEFAULT ),
 		matchFlags( 0 )
 	{}
 
@@ -110,8 +105,6 @@ public:
 	void Serialize( idSerializer & serializer ) {
 		serializer.Serialize( gameMode );
 		serializer.Serialize( gameMap );
-		serializer.Serialize( gameEpisode );
-		serializer.Serialize( gameSkill );
 		serializer.Serialize( numSlots );
 		serializer.Serialize( matchFlags );
 		serializer.SerializeString( mapName );
@@ -121,8 +114,6 @@ public:
 	uint8 	numSlots;
 	int8	gameMode;
 	int8 	gameMap;
-	int8	gameEpisode;		// Episode for doom classic support.
-	int8	gameSkill;			// Skill for doom classic support.
 	uint8	matchFlags;
 
 	idStr	mapName; // This is only used for SP (gameMap == GAME_MAP_SINGLEPLAYER)
@@ -356,7 +347,6 @@ class idSession {
 public:
 
 	enum sessionState_t {
-		PRESS_START,
 		IDLE,
 		SEARCHING,
 		CONNECTING,
@@ -404,7 +394,6 @@ public:
 	virtual	void			ClearSessionOption( sessionOption_t option ) = 0;
 	virtual sessionState_t	GetBackState() = 0;
 	virtual void			Cancel() = 0;
-	virtual void			MoveToPressStart() = 0;
 	virtual void			FinishDisconnect() = 0;
 	virtual void			LoadingFinished() = 0;
 	virtual bool			IsCurrentLobbyMigrating() const = 0;

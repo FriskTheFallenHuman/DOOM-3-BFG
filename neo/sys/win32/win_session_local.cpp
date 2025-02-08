@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ public:
 	virtual void			HandleBootableInvite( int64 lobbyId = 0 );
 	virtual void			ClearBootableInvite();
 	virtual void			ClearPendingInvite();
-	
+
 	virtual bool			HasPendingBootableInvite();
 	virtual void			SetDiscSwapMPInvite( void * parm );
 	virtual void *			GetDiscSwapMPInviteParms();
@@ -242,9 +242,9 @@ void idSessionLocalWin::Shutdown() {
 	idSessionLocal::Shutdown();
 
 	MoveToMainMenu();
-	
+
 	// Wait until we fully shutdown
-	while ( localState != STATE_IDLE && localState != STATE_PRESS_START ) {
+	while ( localState != STATE_IDLE ) {
 		Pump();
 	}
 
@@ -322,7 +322,7 @@ void idSessionLocalWin::ShowSystemMarketplaceUI() const {
 idSessionLocalWin::ListServers
 ========================
 */
-void idSessionLocalWin::ListServers( const idCallback & callback ) { 
+void idSessionLocalWin::ListServers( const idCallback & callback ) {
 	ListServersCommon();
 }
 
@@ -373,7 +373,7 @@ void idSessionLocalWin::Connect_f( const idCmdArgs &args ) {
 
 	Cancel();
 
-	if ( signInManager->GetMasterLocalUser() == NULL ) { 
+	if ( signInManager->GetMasterLocalUser() == NULL ) {
 		signInManager->RegisterLocalUser( 0 );
 	}
 
@@ -554,7 +554,7 @@ void idSessionLocalWin::LeaderboardDownloadAttachment( int sessionUserIndex, con
 idSessionLocalWin::EnsurePort
 ========================
 */
-void idSessionLocalWin::EnsurePort() {	
+void idSessionLocalWin::EnsurePort() {
 	// Init the port using reqular windows sockets
 	if ( port.IsOpen() ) {
 		return;		// Already initialized
@@ -574,9 +574,9 @@ void idSessionLocalWin::EnsurePort() {
 idSessionLocalWin::GetPort
 ========================
 */
-idNetSessionPort & idSessionLocalWin::GetPort( bool dedicated ) { 
-	EnsurePort(); 
-	return port; 
+idNetSessionPort & idSessionLocalWin::GetPort( bool dedicated ) {
+	EnsurePort();
+	return port;
 }
 
 /*

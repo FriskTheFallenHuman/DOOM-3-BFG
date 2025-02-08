@@ -66,17 +66,9 @@ void idMenuHandler_Shell::Update() {
 			PlaySound( GUI_SOUND_MUSIC );
 		}
 
-		if ( nextState == SHELL_STATE_PRESS_START ) {
+		if ( nextState == SHELL_STATE_IDLE ) {
 			HidePacifier();
-			nextScreen = SHELL_AREA_START;
-			transition = MENU_TRANSITION_SIMPLE;
-			state = nextState;
-			if ( menuBar != NULL && gui != NULL ) {			
-				menuBar->ClearSprite();
-			}
-		} else if ( nextState == SHELL_STATE_IDLE ) {
-			HidePacifier();
-			if ( nextScreen == SHELL_AREA_START || nextScreen == SHELL_AREA_PARTY_LOBBY || nextScreen == SHELL_AREA_GAME_LOBBY || nextScreen == SHELL_AREA_INVALID )  {
+			if ( nextScreen == SHELL_AREA_PARTY_LOBBY || nextScreen == SHELL_AREA_GAME_LOBBY || nextScreen == SHELL_AREA_INVALID )  {
 				nextScreen = SHELL_AREA_ROOT;
 			}
 
@@ -403,7 +395,6 @@ void idMenuHandler_Shell::Initialize( const char * swfFile, idSoundWorld * sw ) 
 		BIND_SHELL_SCREEN( SHELL_AREA_CREDITS, idMenuScreen_Shell_Credits, this );
 
 	} else {
-		BIND_SHELL_SCREEN( SHELL_AREA_START, idMenuScreen_Shell_PressStart, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_ROOT, idMenuScreen_Shell_Root, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_CAMPAIGN, idMenuScreen_Shell_Singleplayer, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_SETTINGS, idMenuScreen_Shell_Settings, this );
@@ -785,8 +776,6 @@ void idMenuHandler_Shell::HandleExitGameBtn() {
 			common->Dialog().ClearDialog( msg );
 			if ( accept == 1 ) {
 				common->Quit();
-			} else if ( accept == -1 ) {
-				session->MoveToPressStart();
 			}
 			return idSWFScriptVar();
 		}
@@ -802,7 +791,6 @@ void idMenuHandler_Shell::HandleExitGameBtn() {
 	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, -1 ) );
 	optionText.Append( idStrId( "#STR_SWF_ACCEPT" ) );
 	optionText.Append( idStrId( "#STR_SWF_CANCEL" ) );
-	optionText.Append( idStrId( "#str_swf_change_game" ) );
 
 	common->Dialog().AddDynamicDialog( GDM_QUIT_GAME, callbacks, optionText, true, "" );
 }
@@ -1073,7 +1061,7 @@ void idMenuHandler_Shell::UpdateBGState() {
 		}
 	}
 
-	if ( smallFrameShowing || largeFrameShowing || nextScreen == SHELL_AREA_START ) {
+	if ( smallFrameShowing || largeFrameShowing ) {
 		ShowLogo( false );
 	} else  { 
 		ShowLogo( true );
