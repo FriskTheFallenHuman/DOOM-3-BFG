@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ bool IN_StartupKeyboard() {
 		win32.g_pKeyboard = NULL;
 	}
 
-    // Detrimine where the buffer would like to be allocated 
+    // Detrimine where the buffer would like to be allocated
     bExclusive         = false;
     bForeground        = true;
     bImmediate         = false;
@@ -85,8 +85,8 @@ bool IN_StartupKeyboard() {
 		common->Printf("keyboard: couldn't find a keyboard device\n");
         return false;
 	}
-    
-    // Set the data format to "keyboard format" - a predefined data format 
+
+    // Set the data format to "keyboard format" - a predefined data format
     //
     // A data format specifies which controls on a device we
     // are interested in, and how they should be reported.
@@ -95,7 +95,7 @@ bool IN_StartupKeyboard() {
     // of 256 bytes to IDirectInputDevice::GetDeviceState.
     if( FAILED( hr = win32.g_pKeyboard->SetDataFormat( &c_dfDIKeyboard ) ) )
         return false;
-    
+
     // Set the cooperativity level to let DirectInput know how
     // this device should interact with the system and with other
     // DirectInput applications.
@@ -202,7 +202,7 @@ bool IN_InitDIMouse() {
 		return false;
 	}
 
-    // Set the data format to "mouse format" - a predefined data format 
+    // Set the data format to "mouse format" - a predefined data format
     //
     // A data format specifies which controls on a device we
     // are interested in, and how they should be reported.
@@ -213,7 +213,7 @@ bool IN_InitDIMouse() {
 		common->Printf ("mouse: Couldn't set DI mouse format\n");
 		return false;
 	}
-    
+
 	// set the cooperativity level.
 	hr = win32.g_pMouse->SetCooperativeLevel( win32.hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
 
@@ -429,7 +429,7 @@ void	Sys_GrabMouseCursor( bool grabIt ) {
 
 //=====================================================================================
 
-static DIDEVICEOBJECTDATA polled_didod[ DINPUT_BUFFERSIZE ];  // Receives buffered data 
+static DIDEVICEOBJECTDATA polled_didod[ DINPUT_BUFFERSIZE ];  // Receives buffered data
 
 static int diFetch;
 static byte toggleFetch[2][ 256 ];
@@ -451,11 +451,11 @@ int Sys_PollKeyboardInputEvents() {
     if( win32.g_pKeyboard == NULL ) {
         return 0;
 	}
-    
+
     dwElements = DINPUT_BUFFERSIZE;
     hr = win32.g_pKeyboard->GetDeviceData( sizeof(DIDEVICEOBJECTDATA),
                                      polled_didod, &dwElements, 0 );
-    if( hr != DI_OK ) 
+    if( hr != DI_OK )
     {
         // We got an error or we got DI_BUFFEROVERFLOW.
         //
@@ -465,7 +465,7 @@ int Sys_PollKeyboardInputEvents() {
         // and some events were lost.
         hr = win32.g_pKeyboard->Acquire();
 
-		
+
 
 		// nuke the garbage
 		if (!FAILED(hr)) {
@@ -476,8 +476,8 @@ int Sys_PollKeyboardInputEvents() {
 			dwElements = 0;
 		}
         // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-        // may occur when the app is minimized or in the process of 
-        // switching, so just try again later 
+        // may occur when the app is minimized or in the process of
+        // switching, so just try again later
     }
 
     if( FAILED(hr) ) {
@@ -503,9 +503,9 @@ int Sys_PollKeyboardInputEvents() {
     if( win32.g_pKeyboard == NULL ) {
         return 0;
 	}
-    
+
 	hr = win32.g_pKeyboard->GetDeviceState( sizeof( toggleFetch[ diFetch ] ), toggleFetch[ diFetch ] );
-    if( hr != DI_OK ) 
+    if( hr != DI_OK )
     {
         // We got an error or we got DI_BUFFEROVERFLOW.
         //
@@ -520,8 +520,8 @@ int Sys_PollKeyboardInputEvents() {
 			hr = win32.g_pKeyboard->GetDeviceState( sizeof( toggleFetch[ diFetch ] ), toggleFetch[ diFetch ] );
 		}
         // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-        // may occur when the app is minimized or in the process of 
-        // switching, so just try again later 
+        // may occur when the app is minimized or in the process of
+        // switching, so just try again later
     }
 
     if( FAILED(hr) ) {
@@ -695,9 +695,9 @@ void JoystickSamplingThread( void *data ) {
 					// XInputGetState might block... for a _really_ long time..
 					validData[i] = XInputGetState( i, &joyData[i] ) == ERROR_SUCCESS;
 
-					// allow an immediate data poll if the input device is connected else 
+					// allow an immediate data poll if the input device is connected else
 					// wait for some time to see if another device was reconnected.
-					// Checking input state infrequently for newly connected devices prevents 
+					// Checking input state infrequently for newly connected devices prevents
 					// severe slowdowns on PC, especially on WinXP64.
 					if ( validData[i] ) {
 						nextCheck[i] = 0;

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,19 +46,19 @@ idLZWCompressor::Start
 void idLZWCompressor::Start( uint8 * data_, int maxSize_, bool append ) {
 	// Clear hash
 	ClearHash();
-	
+
 	if ( append ) {
 		assert( lzwData->nextCode > LZW_FIRST_CODE );
-		
+
 		int originalNextCode = lzwData->nextCode;
 
 		lzwData->nextCode = LZW_FIRST_CODE;
-		
+
 		// If we are appending, then fill up the hash
 		for ( int i = LZW_FIRST_CODE; i < originalNextCode; i++ ) {
 			AddToDict( lzwData->dictionaryW[i], lzwData->dictionaryK[i] );
 		}
-	
+
 		assert( originalNextCode == lzwData->nextCode );
 	} else {
 		for ( int i = 0; i < LZW_FIRST_CODE; i++ ) {
@@ -73,15 +73,15 @@ void idLZWCompressor::Start( uint8 * data_, int maxSize_, bool append ) {
 		lzwData->tempBits		= 0;
 		lzwData->bytesWritten	= 0;
 	}
-		
+
 	oldCode		= -1;		// Used by DecompressBlock
 	data		= data_;
 
 	blockSize	= 0;
 	blockIndex	= 0;
-	
+
 	bytesRead	= 0;
-	
+
 	maxSize		= maxSize_;
 	overflowed	= false;
 
@@ -99,7 +99,7 @@ idLZWCompressor::ReadBits
 */
 int idLZWCompressor::ReadBits( int bits ) {
 	int bitsToRead = bits - lzwData->tempBits;
-	
+
 	while ( bitsToRead > 0 ) {
 		if ( bytesRead >= maxSize ) {
 			return -1;
@@ -108,11 +108,11 @@ int idLZWCompressor::ReadBits( int bits ) {
 		lzwData->tempBits += 8;
 		bitsToRead -= 8;
 	}
-	
+
 	int value = (int)lzwData->tempValue & ( ( 1 << bits ) - 1 );
 	lzwData->tempValue >>= bits;
 	lzwData->tempBits -= bits;
-	
+
 	return value;
 }
 
@@ -126,7 +126,7 @@ void idLZWCompressor::WriteBits( uint32 value, int bits ) {
 	// Queue up bits into temp value
 	lzwData->tempValue |= (uint64)value << lzwData->tempBits;
 	lzwData->tempBits += bits;
-	
+
 	// Flush 8 bits (1 byte) at a time ( leftovers will get caught in idLZWCompressor::End() )
 	while ( lzwData->tempBits >= 8 ) {
 		if ( lzwData->bytesWritten >= maxSize ) {
@@ -143,9 +143,9 @@ void idLZWCompressor::WriteBits( uint32 value, int bits ) {
 /*
 ========================
 idLZWCompressor::WriteChain
- 
-The chain is stored backwards, so we have to write it to a buffer then output the buffer in 
-reverse. 
+
+The chain is stored backwards, so we have to write it to a buffer then output the buffer in
+reverse.
 ========================
 */
 int idLZWCompressor::WriteChain( int code ) {
@@ -171,10 +171,10 @@ idLZWCompressor::DecompressBlock
 */
 void idLZWCompressor::DecompressBlock() {
 	assert( blockIndex == blockSize );		// Make sure we've read all we can
-	
+
 	blockIndex = 0;
 	blockSize = 0;
-	
+
 	int firstChar = -1;
 	while ( blockSize < LZW_BLOCK_SIZE - lzwCompressionData_t::LZW_DICT_SIZE ) {
 		assert( lzwData->codeBits <= lzwCompressionData_t::LZW_DICT_BITS );
@@ -225,7 +225,7 @@ int idLZWCompressor::ReadByte( bool ignoreOverflow ) {
 		}
 		return -1;
 	}
-	
+
 	return block[blockIndex++];
 }
 
@@ -255,7 +255,7 @@ void idLZWCompressor::WriteByte( uint8 value ) {
 
 /*
 ========================
-idLZWCompressor::Lookup 
+idLZWCompressor::Lookup
 ========================
 */
 int idLZWCompressor::Lookup( int w, int k ) {
@@ -263,10 +263,10 @@ int idLZWCompressor::Lookup( int w, int k ) {
 		return k;
 	} else {
 		int i = HashIndex( w, k );
-		
+
 		for ( int j = hash[i]; j != 0xFFFF; j = nextHash[j] ) {
 			assert( j < lzwCompressionData_t::LZW_DICT_SIZE );
-			if ( lzwData->dictionaryK[j] == k && lzwData->dictionaryW[j] == w ) { 
+			if ( lzwData->dictionaryK[j] == k && lzwData->dictionaryW[j] == w ) {
 				return j;
 			}
 		}
@@ -276,14 +276,14 @@ int idLZWCompressor::Lookup( int w, int k ) {
 
 /*
 ========================
-idLZWCompressor::AddToDict 
+idLZWCompressor::AddToDict
 ========================
 */
 int idLZWCompressor::AddToDict( int w, int k ) {
 	assert( w < 0xFFFF - 1 );
 	assert( k < 256 );
 	assert( lzwData->nextCode < lzwCompressionData_t::LZW_DICT_SIZE );
-	
+
 	lzwData->dictionaryK[lzwData->nextCode] = (uint8)k;
 	lzwData->dictionaryW[lzwData->nextCode] = (uint16)w;
 	int i = HashIndex( w, k );
@@ -295,9 +295,9 @@ int idLZWCompressor::AddToDict( int w, int k ) {
 /*
 ========================
 idLZWCompressor::BumpBits
- 
+
 Possibly increments codeBits.
-	return: bool	- true, if the dictionary was cleared. 
+	return: bool	- true, if the dictionary was cleared.
 ========================
 */
 bool idLZWCompressor::BumpBits() {
@@ -335,7 +335,7 @@ int idLZWCompressor::End() {
 		}
 		data[lzwData->bytesWritten++] = (uint8)lzwData->tempValue & ( ( 1 << lzwData->tempBits ) - 1 );
 	}
-	
+
 	return Length() > 0 ? Length() : -1;		// Total bytes written (or failure)
 }
 
@@ -344,7 +344,7 @@ int idLZWCompressor::End() {
 idLZWCompressor::Save
 ========================
 */
-void idLZWCompressor::Save() { 
+void idLZWCompressor::Save() {
 	assert( !overflowed );
 	// Check and make sure we are at a good spot (can call End)
 	assert( lzwData->bytesWritten < maxSize - ( lzwData->codeBits + lzwData->tempBits + 7 ) / 8 );
@@ -361,8 +361,8 @@ void idLZWCompressor::Save() {
 idLZWCompressor::Restore
 ========================
 */
-void idLZWCompressor::Restore() { 
-	lzwData->bytesWritten	= savedBytesWritten; 
+void idLZWCompressor::Restore() {
+	lzwData->bytesWritten	= savedBytesWritten;
 	lzwData->codeWord		= savedCodeWord;
 	lzwData->codeBits		= saveCodeBits;
 	lzwData->tempValue		= savedTempValue;
@@ -374,8 +374,8 @@ void idLZWCompressor::Restore() {
 idLZWCompressor::ClearHash
 ========================
 */
-void idLZWCompressor::ClearHash() { 
-	memset( hash, 0xFF, sizeof( hash ) ); 
+void idLZWCompressor::ClearHash() {
+	memset( hash, 0xFF, sizeof( hash ) );
 }
 
 /*
@@ -420,7 +420,7 @@ bool idZeroRunLengthCompressor::WriteByte( uint8 value ) {
 			return false;
 		}
 	}
-	
+
 	if ( value != 0 ) {
 		if ( compressed + 1 > maxSize ) {
 			maxSize = -1;
@@ -429,13 +429,13 @@ bool idZeroRunLengthCompressor::WriteByte( uint8 value ) {
 		if ( comp != NULL ) {
 			comp->WriteByte( value );
 		} else {
-			*dest++ = value; 
+			*dest++ = value;
 		}
 		compressed++;
 	} else {
 		zeroCount++;
 	}
-	
+
 	return true;
 }
 
@@ -452,9 +452,9 @@ byte idZeroRunLengthCompressor::ReadByte() {
 		// Read the number of zeroes
 		zeroCount = ReadInternal();
 	}
-	
+
 	assert( zeroCount > 0 );
-	
+
 	zeroCount--;
 	return 0;
 }

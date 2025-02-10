@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ typedef struct commandDef_s {
 
 /*
 ================================================
-idCmdSystemLocal 
+idCmdSystemLocal
 ================================================
 */
 class idCmdSystemLocal : public idCmdSystem {
@@ -103,7 +103,7 @@ private:
 	// a command stored to be executed after a reloadEngine and all associated commands have been processed
 	idCmdArgs				postReload;
 
-private:	
+private:
 	void					ExecuteTokenizedString( const idCmdArgs &args );
 	void					InsertCommandText( const char *text );
 
@@ -127,7 +127,7 @@ idCmdSystem *				cmdSystem = &cmdSystemLocal;
 
 /*
 ================================================
-idSort_CommandDef 
+idSort_CommandDef
 ================================================
 */
 class idSort_CommandDef : public idSort_Quick< commandDef_t, idSort_CommandDef > {
@@ -252,7 +252,7 @@ void idCmdSystemLocal::Exec_f( const idCmdArgs &args ) {
 		return;
 	}
 	common->Printf( "execing %s\n", args.Argv(1) );
-	
+
 	cmdSystemLocal.BufferCommandText( CMD_EXEC_INSERT, f );
 
 	fileSystem->FreeFile( f );
@@ -287,7 +287,7 @@ Just prints the rest of the line to the console
 */
 void idCmdSystemLocal::Echo_f( const idCmdArgs &args ) {
 	int		i;
-	
+
 	for ( i = 1; i < args.Argc(); i++ ) {
 		common->Printf( "%s ", args.Argv( i ) );
 	}
@@ -381,7 +381,7 @@ idCmdSystemLocal::AddCommand
 */
 void idCmdSystemLocal::AddCommand( const char *cmdName, cmdFunction_t function, int flags, const char *description, argCompletion_t argCompletion ) {
 	commandDef_t *cmd;
-	
+
 	// fail if the command already exists
 	for ( cmd = commands; cmd; cmd = cmd->next ) {
 		if ( idStr::Cmp( cmdName, cmd->name ) == 0 ) {
@@ -449,7 +449,7 @@ idCmdSystemLocal::CommandCompletion
 */
 void idCmdSystemLocal::CommandCompletion( void(*callback)( const char *s ) ) {
 	commandDef_t *cmd;
-	
+
 	for ( cmd = commands; cmd; cmd = cmd->next ) {
 		callback( cmd->name );
 	}
@@ -482,15 +482,15 @@ void idCmdSystemLocal::ArgCompletion( const char *cmdString, void(*callback)( co
 idCmdSystemLocal::ExecuteTokenizedString
 ============
 */
-void idCmdSystemLocal::ExecuteTokenizedString( const idCmdArgs &args ) {	
+void idCmdSystemLocal::ExecuteTokenizedString( const idCmdArgs &args ) {
 	commandDef_t *cmd, **prev;
-	
+
 	// execute the command line
 	if ( !args.Argc() ) {
 		return;		// no tokens
 	}
 
-	// check registered command functions	
+	// check registered command functions
 	for ( prev = &commands; *prev; prev = &cmd->next ) {
 		cmd = *prev;
 		if ( idStr::Icmp( args.Argv( 0 ), cmd->name ) == 0 ) {
@@ -513,7 +513,7 @@ void idCmdSystemLocal::ExecuteTokenizedString( const idCmdArgs &args ) {
 			return;
 		}
 	}
-	
+
 	// check cvars
 	if ( cvarSystem->Command( args ) ) {
 		return;
@@ -529,7 +529,7 @@ idCmdSystemLocal::ExecuteCommandText
 Tokenizes, then executes.
 ============
 */
-void idCmdSystemLocal::ExecuteCommandText( const char *text ) {	
+void idCmdSystemLocal::ExecuteCommandText( const char *text ) {
 	ExecuteTokenizedString( idCmdArgs( text, false ) );
 }
 
@@ -574,7 +574,7 @@ Adds command text at the end of the buffer, does NOT add a final \n
 */
 void idCmdSystemLocal::AppendCommandText( const char *text ) {
 	int l;
-	
+
 	l = strlen( text );
 
 	if ( textLength + l >= (int)sizeof( textBuf ) ) {
@@ -666,7 +666,7 @@ void idCmdSystemLocal::ExecuteCommandBuffer() {
 				break;
 			}
 		}
-			
+
 		text[i] = 0;
 
 		if ( !idStr::Cmp( text, "_execTokenized" ) ) {

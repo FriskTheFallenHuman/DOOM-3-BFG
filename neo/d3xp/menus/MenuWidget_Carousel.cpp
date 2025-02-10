@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -63,14 +63,14 @@ void idMenuWidget_Carousel::Initialize( idMenuHandler * data ) {
 					} else {
 						widget->SetMoveDiff( 0 );
 					}
-				} 
+				}
 
 				widget->Update();
 				return idSWFScriptVar();
 			}
 	private:
 		idMenuWidget_Carousel *	widget;
-	};	
+	};
 
 	if ( GetSWFObject() != NULL ) {
 		GetSWFObject()->SetGlobal( "refreshCarousel", new idCarouselRefresh( this ) );
@@ -167,7 +167,7 @@ void idMenuWidget_Carousel::MoveToFirstItem( bool instant ) {
 idMenuWidget_Carousel::MoveToLastItem
 ========================
 */
-void idMenuWidget_Carousel::MoveToLastItem( bool instant ) {	
+void idMenuWidget_Carousel::MoveToLastItem( bool instant ) {
 	if ( instant ) {
 		moveDiff = 0;
 		viewIndex = GetTotalNumberOfOptions() - 1;
@@ -200,7 +200,7 @@ void idMenuWidget_Carousel::MoveToIndex( int index, bool instant ) {
 		idSWFScriptObject & root = GetSWFObject()->GetRootObject();
 		if ( BindSprite( root ) ) {
 			GetSprite()->StopFrame( 1 );
-		}		
+		}
 
 		Update();
 		return;

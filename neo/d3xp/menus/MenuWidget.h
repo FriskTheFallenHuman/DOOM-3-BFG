@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ enum widgetEvent_t {
 	WIDGET_EVENT_ROLL_OUT,
 	WIDGET_EVENT_FOCUS_ON,
 	WIDGET_EVENT_FOCUS_OFF,
-	
+
 	WIDGET_EVENT_SCROLL_UP_LSTICK,
 	WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE,
 	WIDGET_EVENT_SCROLL_DOWN_LSTICK,
@@ -284,7 +284,7 @@ public:
 		// everything else is equal, so check all parms. NOTE: this assumes we are only sending
 		// integral types.
 		for ( int i = 0; i < GetParms().Num(); ++i ) {
-			if ( GetParms()[ i ].GetType() != otherAction.GetParms()[ i ].GetType() 
+			if ( GetParms()[ i ].GetType() != otherAction.GetParms()[ i ].GetType()
 				|| GetParms()[ i ].ToInteger() != otherAction.GetParms()[ i ].ToInteger() ) {
 				return false;
 			}
@@ -575,7 +575,7 @@ idMenuWidget_LobbyButton
 ================================================
 */
 class idMenuWidget_LobbyButton : public idMenuWidget_Button {
-public:	
+public:
 	idMenuWidget_LobbyButton() :
 		voiceState( VOICECHAT_DISPLAY_NONE ) {
 	}
@@ -595,7 +595,7 @@ idMenuWidget_ScoreboardButton
 ================================================
 */
 class idMenuWidget_ScoreboardButton : public idMenuWidget_Button {
-public:	
+public:
 	idMenuWidget_ScoreboardButton() :
 		voiceState( VOICECHAT_DISPLAY_NONE ),
 		index( -1 ) {
@@ -616,7 +616,7 @@ idMenuWidget_ControlButton
 */
 class idMenuWidget_ControlButton : public idMenuWidget_Button {
 public:
-	idMenuWidget_ControlButton() : 
+	idMenuWidget_ControlButton() :
 		optionType( OPTION_BUTTON_TEXT ),
 		disabled( false ) {
 	}
@@ -661,7 +661,7 @@ protected:
 	bool					joinable;
 	bool					validMap;
 	idStrId					mapName;
-	idStr					modeName;	
+	idStr					modeName;
 };
 
 /*
@@ -678,7 +678,7 @@ public:
 		NAV_WIDGET_SELECTED		// option is selected
 	};
 
-	idMenuWidget_NavButton() : 
+	idMenuWidget_NavButton() :
 		navIndex( 0 ),
 		xPos( 0 ) {
 	}
@@ -705,7 +705,7 @@ idMenuWidget_NavButton
 class idMenuWidget_MenuButton : public idMenuWidget_Button {
 public:
 
-	idMenuWidget_MenuButton() : 
+	idMenuWidget_MenuButton() :
 		xPos( 0 ) {
 	}
 
@@ -797,7 +797,7 @@ private:
 /*
 ================================================
 idMenuWidget_Carousel
-Displays a list of items in a looping carousel pattern 
+Displays a list of items in a looping carousel pattern
 ================================================
 */
 class idMenuWidget_Carousel : public idMenuWidget {
@@ -820,7 +820,7 @@ public:
 
 	void						SetNumVisibleOptions( const int numVisibleOptions_ ) { numVisibleOptions = numVisibleOptions_; }
 	int							GetNumVisibleOptions() const { return numVisibleOptions; }
-		
+
 	void						MoveToIndex( int index, bool instant = false );
 	void						MoveToFirstItem( bool instant = true );
 	void						MoveToLastItem( bool instant = true );
@@ -920,7 +920,7 @@ public:
 	idMenuWidget_LobbyList() :
 		numEntries( 0 ) {
 	}
-	  
+
 	virtual void				Update();
 	virtual bool				PrepareListElement( idMenuWidget & widget, const int childIndex );
 	virtual int					GetTotalNumberOfOptions() const { return numEntries; }
@@ -942,7 +942,7 @@ idMenuWidget_DynamicList
 class idMenuWidget_DynamicList : public idMenuWidget_List {
 public:
 
-	idMenuWidget_DynamicList() : 
+	idMenuWidget_DynamicList() :
 		controlList( false ),
 		ignoreColor( false ) {
 	}
@@ -954,7 +954,7 @@ public:
 
 	virtual void				Recalculate();
 	virtual void				SetListData( idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > & list );
-	
+
 	void						SetControlList( bool val ) { controlList = val; }
 	void						SetIgnoreColor( bool val ) { ignoreColor = val; }
 
@@ -985,12 +985,12 @@ The nav bar is set up with the main option being at the safe frame line.
 class idMenuWidget_NavBar : public idMenuWidget_DynamicList {
 public:
 
-			idMenuWidget_NavBar() : 
+			idMenuWidget_NavBar() :
 				initialPos( 0.0f ),
 				buttonPos( 0.0f ),
 				leftSpacer( 0.0f ),
 				rightSpacer( 0.0f ),
-				selectedSpacer( 0.0f ) {		
+				selectedSpacer( 0.0f ) {
 			}
 
 	virtual void				Update();
@@ -1035,13 +1035,13 @@ public:
 	virtual void				SetListHeadings( idList< idStr > & list );
 	virtual int					GetTotalNumberOfOptions() const;
 
-private: 
+private:
 
 	idList< idStr, TAG_IDLIB_LIST_MENU >				headings;
 	float						totalWidth;
 	float						buttonPos;
 	float						rightSpacer;
-		
+
 };
 
 /*
@@ -1051,7 +1051,7 @@ idMenuWidget_PDA_UserData
 */
 class idMenuWidget_PDA_UserData : public idMenuWidget {
 public:
-					idMenuWidget_PDA_UserData() : 
+					idMenuWidget_PDA_UserData() :
 						pdaIndex( 0 ) {
 					}
 virtual ~idMenuWidget_PDA_UserData() {}
@@ -1069,7 +1069,7 @@ idMenuWidget_DynamicList
 */
 class idMenuWidget_ScrollBar : public idMenuWidget {
 public:
-	idMenuWidget_ScrollBar() : 
+	idMenuWidget_ScrollBar() :
 		yTop( 0.0f ),
 		yBot( 0.0f ),
 		dragging( false ) {
@@ -1204,7 +1204,7 @@ private:
 */
 class idMenuWidget_ItemAssignment: public idMenuWidget {
 public:
-	idMenuWidget_ItemAssignment() : 
+	idMenuWidget_ItemAssignment() :
 		slotIndex( 0 ) {
 	}
 
@@ -1290,12 +1290,12 @@ public:
 			}
 	   		case WIDGET_ACTION_EVENT_TAB_NEXT: {
 				action.Set( (widgetAction_t)WIDGET_ACTION_SCROLL_TAB, 1 );
-				handled = true;				
+				handled = true;
 				break;
 			}
 			case WIDGET_ACTION_EVENT_TAB_PREV: {
 				action.Set( (widgetAction_t)WIDGET_ACTION_SCROLL_TAB, -1 );
-				handled = true;				
+				handled = true;
 				break;
 			}
 			case WIDGET_ACTION_EVENT_JOY3_ON_PRESS: {

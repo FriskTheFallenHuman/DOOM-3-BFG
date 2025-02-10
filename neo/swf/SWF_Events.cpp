@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,21 +46,21 @@ idSWFScriptObject * idSWF::HitTest( idSWFSpriteInstance * spriteInstance, const 
 		return NULL;
 	}
 
-	if ( spriteInstance->scriptObject->HasValidProperty( "onRelease" ) 
-		|| spriteInstance->scriptObject->HasValidProperty( "onPress" ) 
+	if ( spriteInstance->scriptObject->HasValidProperty( "onRelease" )
+		|| spriteInstance->scriptObject->HasValidProperty( "onPress" )
 		|| spriteInstance->scriptObject->HasValidProperty( "onRollOver" )
 		|| spriteInstance->scriptObject->HasValidProperty( "onRollOut" )
-		|| spriteInstance->scriptObject->HasValidProperty( "onDrag" ) 
+		|| spriteInstance->scriptObject->HasValidProperty( "onDrag" )
 		) {
 		parentObject = spriteInstance->scriptObject;
 	}
 
 	// rather than returning the first object we find, we actually want to return the last object we find
 	idSWFScriptObject * returnObject = NULL;
-	
+
 	float xOffset = spriteInstance->xOffset;
 	float yOffset = spriteInstance->yOffset;
-	
+
 	for ( int i = 0; i < spriteInstance->displayList.Num(); i++ ) {
 		const swfDisplayEntry_t & display = spriteInstance->displayList[i];
 		idSWFDictionaryEntry * entry = FindDictionaryEntry( display.characterID );
@@ -131,10 +131,10 @@ idSWFScriptObject * idSWF::HitTest( idSWFSpriteInstance * spriteInstance, const 
 			float textLength = display.textInstance->GetTextLength();
 
 			float lengthDiff = fabs( shape->bounds.br.x - shape->bounds.tl.x ) - textLength;
-			
-			idVec3 tl; 
-			idVec3 tr; 
-			idVec3 br; 
+
+			idVec3 tl;
+			idVec3 tr;
+			idVec3 br;
 			idVec3 bl;
 
 			float xOffset = spriteInstance->xOffset;
@@ -143,21 +143,21 @@ idSWFScriptObject * idSWF::HitTest( idSWFSpriteInstance * spriteInstance, const 
 			float topOffset = 0.0f;
 
 			if ( text->align == SWF_ET_ALIGN_LEFT ) {
-				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x  + xOffset, shape->bounds.tl.y + topOffset + yOffset ) ); 
-				tr.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x - lengthDiff + xOffset, shape->bounds.tl.y + topOffset + yOffset ) ); 
-				br.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x - lengthDiff + xOffset, shape->bounds.br.y + topOffset + yOffset ) ); 
-				bl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + xOffset, shape->bounds.br.y + topOffset + yOffset ) );									
+				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x  + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
+				tr.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x - lengthDiff + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
+				br.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x - lengthDiff + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
+				bl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
 			} else if ( text->align == SWF_ET_ALIGN_RIGHT ) {
 				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + lengthDiff + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				tr.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				br.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
-				bl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + lengthDiff + xOffset, shape->bounds.br.y + topOffset + yOffset ) );				
+				bl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + lengthDiff + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
 			} else if ( text->align == SWF_ET_ALIGN_CENTER ) {
 				float middle = ( ( shape->bounds.br.x + xOffset ) + ( shape->bounds.tl.x + xOffset ) ) / 2.0f;
 				tl.ToVec2() = renderState2.matrix.Transform( idVec2( middle - ( textLength / 2.0f ), shape->bounds.tl.y + topOffset + yOffset ) );
 				tr.ToVec2() = renderState2.matrix.Transform( idVec2( middle + ( textLength / 2.0f ), shape->bounds.tl.y + topOffset + yOffset ) );
 				br.ToVec2() = renderState2.matrix.Transform( idVec2( middle + ( textLength / 2.0f ), shape->bounds.br.y + topOffset + yOffset ) );
-				bl.ToVec2() = renderState2.matrix.Transform( idVec2( middle - ( textLength / 2.0f ), shape->bounds.br.y + topOffset + yOffset ) );				
+				bl.ToVec2() = renderState2.matrix.Transform( idVec2( middle - ( textLength / 2.0f ), shape->bounds.br.y + topOffset + yOffset ) );
 			} else {
 				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				tr.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
@@ -221,7 +221,7 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 			if ( event->evValue2 ) {
 
 				idSWFScriptVar waitInput = globals->Get( "waitInput" );
-				if ( waitInput.IsFunction() ) { 
+				if ( waitInput.IsFunction() ) {
 					useMouse = false;
 					idSWFParmList waitParms;
 					waitParms.Append( event->evValue );
@@ -235,7 +235,7 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 				if ( hitObject != NULL ) {
 					mouseObject = hitObject;
 					mouseObject->AddRef();
-					
+
 					var = hitObject->Get( "onPress" );
 					if ( var.IsFunction() ) {
 						idSWFParmList parms;
@@ -268,7 +268,7 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 						idSWFParmList parms;
 						parms.Append( mouseObject ); // FIXME: Remove this
 						var.GetFunction()->Call( mouseObject, parms );
-					}					
+					}
 					mouseObject->Release();
 					mouseObject = NULL;
 				}
@@ -281,7 +281,7 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
 		const char * keyName = idKeyInput::KeyNumToString( (keyNum_t)event->evValue );
@@ -324,11 +324,11 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 				const char * action = idKeyInput::GetBinding( event->evValue );
 				if ( idStr::Cmp( "_use", action ) == 0 ) {
 					useFunction.GetFunction()->Call( NULL, idSWFParmList() );
-				}				
+				}
 			}
 
 			idSWFScriptVar waitInput = globals->Get( "waitInput" );
-			if ( waitInput.IsFunction() ) { 
+			if ( waitInput.IsFunction() ) {
 				useMouse = false;
 				if ( event->evValue2 ) {
 					idSWFParmList waitParms;

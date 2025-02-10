@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ ID_INLINE idPlane idPlane::operator-() const {
 	return idPlane( -a, -b, -c, -d );
 }
 
-ID_INLINE idPlane &idPlane::operator=( const idVec3 &v ) { 
+ID_INLINE idPlane &idPlane::operator=( const idVec3 &v ) {
 	a = v.x;
 	b = v.y;
 	c = v.z;
@@ -202,7 +202,7 @@ ID_INLINE bool idPlane::Compare( const idPlane &p, const float epsilon ) const {
 	if ( idMath::Fabs( a - p.a ) > epsilon ) {
 		return false;
 	}
-			
+
 	if ( idMath::Fabs( b - p.b ) > epsilon ) {
 		return false;
 	}

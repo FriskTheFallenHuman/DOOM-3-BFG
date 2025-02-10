@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ public:
 	virtual int				VPrintf( const char *fmt, va_list arg );
 							// Write a string with high precision floating point numbers to the file.
 	virtual int				WriteFloatString( VERIFY_FORMAT_STRING const char *fmt, ... );
-	
+
 	// Endian portable alternatives to Read(...)
 	virtual int				ReadInt( int &value );
 	virtual int				ReadUnsignedInt( unsigned int &value );
@@ -94,7 +94,7 @@ public:
 	virtual int				ReadVec4( idVec4 &vec );
 	virtual int				ReadVec6( idVec6 &vec );
 	virtual int				ReadMat3( idMat3 &mat );
-	
+
 	// Endian portable alternatives to Write(...)
 	virtual int				WriteInt( const int value );
 	virtual int				WriteUnsignedInt( const unsigned int value );
@@ -140,7 +140,7 @@ public:
 
 /*
 ================================================
-idFile_Memory 
+idFile_Memory
 ================================================
 */
 class idFile_Memory : public idFile {
@@ -340,10 +340,10 @@ private:
 #endif
 /*
 ================================================
-idFileLocal is a FileStream wrapper that automatically closes a file when the 
-class variable goes out of scope. Note that the pointer passed in to the constructor can be for 
-any type of File Stream that ultimately inherits from idFile, and that this is not actually a 
-SmartPointer, as it does not keep a reference count. 
+idFileLocal is a FileStream wrapper that automatically closes a file when the
+class variable goes out of scope. Note that the pointer passed in to the constructor can be for
+any type of File Stream that ultimately inherits from idFile, and that this is not actually a
+SmartPointer, as it does not keep a reference count.
 ================================================
 */
 class idFileLocal {

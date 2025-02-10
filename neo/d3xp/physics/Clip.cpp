@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ void idClipModel::SaveTraceModels( idSaveGame *savefile ) {
 	savefile->WriteInt( traceModelCache.Num() );
 	for ( i = 0; i < traceModelCache.Num(); i++ ) {
 		trmCache_t *entry = traceModelCache[i];
-		
+
 		savefile->WriteTraceModel( entry->trm );
 		savefile->WriteFloat( entry->volume );
 		savefile->WriteVec3( entry->centerOfMass );
@@ -259,7 +259,7 @@ void idClipModel::RestoreTraceModels( idRestoreGame *savefile ) {
 
 	for ( i = 0; i < num; i++ ) {
 		trmCache_t *entry = new (TAG_PHYSICS_CLIP) trmCache_t;
-		
+
 		savefile->ReadTraceModel( entry->trm );
 
 		savefile->ReadFloat( entry->volume );
@@ -752,9 +752,9 @@ clipSector_t *idClip::CreateClipSectors_r( const int depth, const idBounds &boun
 
 	front = bounds;
 	back = bounds;
-	
+
 	front[0][anode->axis] = back[1][anode->axis] = anode->dist;
-	
+
 	anode->children[0] = CreateClipSectors_r( depth+1, front, maxSector );
 	anode->children[1] = CreateClipSectors_r( depth+1, back, maxSector );
 
@@ -1052,7 +1052,7 @@ ID_INLINE bool TestHugeTranslation( trace_t &results, const idClipModel *mdl, co
 		// May be important: This occurs in CTF when a player connects and spawns
 		// in the PVS of a player that has a flag that is spawning the idMoveableItem
 		// "nuggets".  The error seems benign and the assert was getting in the way
-		// of testing.  
+		// of testing.
 		assert( 0 );
 #endif
 

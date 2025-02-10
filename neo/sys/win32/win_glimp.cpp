@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -418,7 +418,7 @@ shown, and create the rendering context
 ====================
 */
 static bool GLW_InitDriver( glimpParms_t parms ) {
-    PIXELFORMATDESCRIPTOR src = 
+    PIXELFORMATDESCRIPTOR src =
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),	// size of this pfd
 		1,								// version number
@@ -432,7 +432,7 @@ static bool GLW_InitDriver( glimpParms_t parms ) {
 		0,								// shift bit ignored
 		0,								// no accumulation buffer
 		0, 0, 0, 0, 					// accum bits ignored
-		24,								// 24-bit z-buffer	
+		24,								// 24-bit z-buffer
 		8,								// 8-bit stencil buffer
 		0,								// no auxiliary buffer
 		PFD_MAIN_PLANE,					// main layer
@@ -455,7 +455,7 @@ static bool GLW_InitDriver( glimpParms_t parms ) {
 		common->Printf( "succeeded\n" );
 	}
 
-	// the multisample path uses the wgl 
+	// the multisample path uses the wgl
 	if ( wglChoosePixelFormatARB ) {
 		win32.pixelformat = GLW_ChoosePixelFormat( win32.hDC, parms.multiSamples, parms.stereo );
 	} else {
@@ -973,7 +973,7 @@ static bool GLW_CreateWindow( glimpParms_t parms ) {
 	}
 
 	win32.hWnd = CreateWindowEx (
-		 exstyle, 
+		 exstyle,
 		 WIN32_WINDOW_CLASS_NAME,
 		 GAME_NAME,
 		 stylebits,
@@ -1002,7 +1002,7 @@ static bool GLW_CreateWindow( glimpParms_t parms ) {
 	}
 
 	// Check to see if we can get a stereo pixel format, even if we aren't going to use it,
-	// so the menu option can be 
+	// so the menu option can be
 	if ( GLW_ChoosePixelFormat( win32.hDC, parms.multiSamples, true ) != -1 ) {
 		glConfig.stereoPixelFormatAvailable = true;
 	} else {
@@ -1099,15 +1099,15 @@ static bool GLW_ChangeDislaySettingsIfNeeded( glimpParms_t parms ) {
 		dm.dmDisplayFrequency = parms.displayHz;
 		dm.dmFields |= DM_DISPLAYFREQUENCY;
 	}
-	
+
 	common->Printf( "...calling CDS: " );
-	
+
 	const char * const deviceName = GetDisplayName( parms.fullScreen - 1 );
 
 	int		cdsRet;
 	if ( ( cdsRet = ChangeDisplaySettingsEx(
 		deviceName,
-		&dm, 
+		&dm,
 		NULL,
 		CDS_FULLSCREEN,
 		NULL) ) == DISP_CHANGE_SUCCESSFUL ) {
@@ -1142,7 +1142,7 @@ bool GLimp_Init( glimpParms_t parms ) {
 
 	cmdSystem->AddCommand( "testSwapBuffers", GLimp_TestSwapBuffers, CMD_FL_SYSTEM, "Times swapbuffer options" );
 
-	common->Printf( "Initializing OpenGL subsystem with multisamples:%i stereo:%i fullscreen:%i\n", 
+	common->Printf( "Initializing OpenGL subsystem with multisamples:%i stereo:%i fullscreen:%i\n",
 		parms.multiSamples, parms.stereo, parms.fullScreen );
 
 	// check our desktop attributes
@@ -1234,7 +1234,7 @@ bool GLimp_Init( glimpParms_t parms ) {
 ===================
 GLimp_SetScreenParms
 
-Sets up the screen based on passed parms.. 
+Sets up the screen based on passed parms..
 ===================
 */
 bool GLimp_SetScreenParms( glimpParms_t parms ) {
@@ -1418,7 +1418,7 @@ bool GLimp_SpawnRenderThread( void (*function)() ) {
 	if ( info.dwNumberOfProcessors < 2 ) {
 		return false;
 	}
-	
+
 	// create the IPC elements
 	win32.renderCommandsEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
 	win32.renderCompletedEvent = CreateEvent( NULL, TRUE, FALSE, NULL );

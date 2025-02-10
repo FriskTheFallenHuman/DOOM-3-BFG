@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ void idMenuScreen_Shell_Load::UpdateSaveEnumerations() {
 				}
 			}
 		}
-		options->SetListData( saveList ); 
+		options->SetListData( saveList );
 		options->Update();
 	}
 
@@ -220,7 +220,7 @@ void idMenuScreen_Shell_Load::UpdateSaveEnumerations() {
 				}
 			}
 			cmdBar->Update();
-		}		
+		}
 	}
 
 	if ( saveInfo != NULL ) {
@@ -319,10 +319,10 @@ void idMenuScreen_Shell_Load::LoadGame( int index ) {
 	if ( player != NULL && player->health <= 0 ) {
 		isDead = true;
 	}
-	
+
 	idMenuHandler_Shell * mgr = dynamic_cast< idMenuHandler_Shell * >( menuData );
 	if ( mgr != NULL && mgr->GetInGame() && !isDead ) {
-		
+
 		class idSWFScriptFunction_LoadDialog : public idSWFScriptFunction_RefCounted {
 		public:
 			idSWFScriptFunction_LoadDialog( gameDialogMessages_t _msg, bool _accept, const char * _name ) {
@@ -355,7 +355,7 @@ void idMenuScreen_Shell_Load::LoadGame( int index ) {
 
 			cmdSystem->AppendCommandText( va( "loadgame %s\n", name.c_str() ) );
 		}
-	}	
+	}
 }
 
 /*
@@ -452,7 +452,7 @@ bool idMenuScreen_Shell_Load::HandleAction( idWidgetAction & action, const idWid
 				}
 			} else {
 				LoadGame( options->GetViewIndex() );
-			}		
+			}
 
 			return true;
 		}

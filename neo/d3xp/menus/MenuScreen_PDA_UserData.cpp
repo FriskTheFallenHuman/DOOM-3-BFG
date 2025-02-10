@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,14 +47,14 @@ void idMenuScreen_PDA_UserData::Initialize( idMenuHandler * data ) {
 	pdaUserData.SetSpritePath( GetSpritePath(), "info", "pdaData" );
 	pdaUserData.Initialize( data );
 	pdaUserData.SetNoAutoFree( true );
-	
+
 	AddChild( &pdaUserData );
 
 	pdaObjectiveSimple.SetSpritePath( GetSpritePath(), "info", "missionInfo" );
 	pdaObjectiveSimple.Initialize( data );
 	pdaObjectiveSimple.SetNoAutoFree( true );
 
-	AddChild( &pdaObjectiveSimple );	
+	AddChild( &pdaObjectiveSimple );
 
 	pdaAudioFiles.SetSpritePath( GetSpritePath(), "info", "audioFiles" );
 	pdaAudioFiles.Initialize( data );
@@ -84,13 +84,13 @@ void idMenuScreen_PDA_UserData::Update() {
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
-			
+
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_01345";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
-			
+
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_TAB );
 			buttonInfo->label = "";
@@ -146,13 +146,13 @@ void idMenuScreen_PDA_UserData::ShowScreen( const mainMenuTransition_t transitio
 			navBar->PlayFrame( "rollOn" );
 		}
 	}
-	
+
 	idMenuScreen::ShowScreen( transitionType );
 
 	if ( menuData != NULL) {
 		idMenuWidget_DynamicList * pdaList = dynamic_cast< idMenuWidget_DynamicList * >( menuData->GetChildFromIndex( PDA_WIDGET_PDA_LIST ) );
 		if ( pdaList != NULL ) {
-			pdaList->SetFocusIndex( pdaList->GetFocusIndex() );			
+			pdaList->SetFocusIndex( pdaList->GetFocusIndex() );
 		}
 	}
 }
@@ -186,7 +186,7 @@ bool idMenuScreen_PDA_UserData::HandleAction( idWidgetAction & action, const idW
 	if ( menuData == NULL ) {
 		return true;
 	}
-	
+
 	if ( menuData->ActiveScreen() != PDA_AREA_USER_DATA ) {
 		return false;
 	}
@@ -201,7 +201,7 @@ bool idMenuScreen_PDA_UserData::HandleAction( idWidgetAction & action, const idW
 			if ( pdaList == NULL ) {
 				return true;
 			}
-			
+
 			int pdaIndex = pdaList->GetViewIndex();
 			if ( pdaIndex == 0 ) {
 				return true;
@@ -212,7 +212,7 @@ bool idMenuScreen_PDA_UserData::HandleAction( idWidgetAction & action, const idW
 				player->EndAudioLog();
 			} else {
 				if ( menuData != NULL && pdaAudioFiles.GetChildren().Num() > 0 ) {
-					int index = pdaAudioFiles.GetChildByIndex( 0 ).GetFocusIndex();					
+					int index = pdaAudioFiles.GetChildByIndex( 0 ).GetFocusIndex();
 					idMenuHandler_PDA * pdaHandler = dynamic_cast< idMenuHandler_PDA * const >( menuData );
 					if ( pdaHandler != NULL ) {
 						pdaHandler->PlayPDAAudioLog( pdaIndex, index );

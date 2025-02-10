@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ struct shortBounds_t {
 
 
 // pure function
-int FindBoundsIntersectionsTEST( 
+int FindBoundsIntersectionsTEST(
 	const shortBounds_t			testBounds,
 	const shortBounds_t * const	boundsList,
 	const int					numBounds,
@@ -141,7 +141,7 @@ int FindBoundsIntersectionsTEST(
 }
 
 // pure function
-int FindBoundsIntersectionsSimSIMD( 
+int FindBoundsIntersectionsSimSIMD(
 	const shortBounds_t			testBounds,
 	const shortBounds_t * const	boundsList,
 	const int					numBounds,
@@ -267,7 +267,7 @@ keep a sorted list of static interactions and interactions already generated thi
 determine if the light needs more exact culling because it is rotated or a spot light
 for each entity on the bounds intersection list
 	if entity is not directly visible, determine if it can cast a shadow into the view
-		if the light center is in-frustum 
+		if the light center is in-frustum
 			and the entity bounds is out-of-frustum, it can't contribue
 		else the light center is off-frustum
 			if any of the view frustum planes can be moved out to the light center and the entity bounds is still outside it, it can't contribute

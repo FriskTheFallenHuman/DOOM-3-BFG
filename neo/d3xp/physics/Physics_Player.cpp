@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ void idPhysics_Player::Accelerate( const idVec3 &wishdir, const float wishspeed,
 	if (accelspeed > addspeed) {
 		accelspeed = addspeed;
 	}
-	
+
 	current.velocity += accelspeed * wishdir;
 #else
 	// proper way (avoids strafe jump maxspeed bug), but feels bad
@@ -293,7 +293,7 @@ bool idPhysics_Player::SlideMove( bool gravity, bool stepUp, bool stepDown, bool
 				current.velocity *= 1.0f - idMath::ClampFloat( 0.0f, 1000.0f, totalMass - 20.0f ) * ( 1.0f / 950.0f );
 				pushed = true;
 			}
-	
+
 			current.origin = trace.endpos;
 			time_left -= time_left * trace.fraction;
 
@@ -439,7 +439,7 @@ void idPhysics_Player::Friction() {
 	idVec3	vel;
 	float	speed, newspeed, control;
 	float	drop;
-	
+
 	vel = current.velocity;
 	if ( walking ) {
 		// ignore slope movement, remove all velocity in gravity direction
@@ -1009,7 +1009,7 @@ void idPhysics_Player::CheckGround() {
 		walking = false;
 		return;
 	}
-	
+
 	// slopes that are too steep will not be considered onground
 	if ( ( groundTrace.c.normal * -gravityNormal ) < MIN_WALK_NORMAL ) {
 		if ( debugLevel ) {
@@ -1121,7 +1121,7 @@ void idPhysics_Player::CheckLadder() {
 	idVec3		forward, start, end;
 	trace_t		trace;
 	float		tracedist;
-	
+
 	if ( current.movementTime ) {
 		return;
 	}
@@ -1766,12 +1766,12 @@ bool idPhysics_Player::Interpolate( const float fraction ) {
 
 	if( deltaLengthSq > pm_clientInterpolation_Divergence.GetFloat() ) {
 		idLib::Printf( "Client Interpolation Divergence exceeded, snapping client to next position\n" );
-		current.origin = next.origin; 
+		current.origin = next.origin;
 		previous.origin = next.origin;
 	} else {
 		current.origin = Lerp( previous.origin, next.origin, fraction );
 	}
-	
+
 	//current.localOrigin = Lerp( previous.localOrigin, next.localOrigin, fraction );
 	if ( self != NULL && ( self->entityNumber != gameLocal.GetLocalClientNum() ) ) {
 		current.velocity = Lerp( previous.velocity, next.velocity, fraction );
@@ -1786,12 +1786,12 @@ bool idPhysics_Player::Interpolate( const float fraction ) {
 	//const playerPState_t & flagStateToUse = ( fraction < 0.5f ) ? previous : next;
 
 	//current.movementFlags = flagStateToUse.movementFlags;
-	//current.movementType = flagStateToUse.movementType;	
+	//current.movementType = flagStateToUse.movementType;
 
 	if ( clipModel ) {
 		clipModel->Link( gameLocal.clip, self, 0, next.origin, clipModel->GetAxis() );
 	}
-	
+
 	return true;
 }
 

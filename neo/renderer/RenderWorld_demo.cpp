@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ ProcessDemoCommand
 */
 bool		idRenderWorldLocal::ProcessDemoCommand( idDemoFile *readDemo, renderView_t *renderView, int *demoTimeOffset ) {
 	bool	newMap = false;
-	
+
 	if ( !readDemo ) {
 		return false;
 	}
@@ -140,7 +140,7 @@ bool		idRenderWorldLocal::ProcessDemoCommand( idDemoFile *readDemo, renderView_t
 		if ( !readDemo->ReadInt( (int&)renderView->globalMaterial ) ) {
 			 return false;
 		 }
-												 
+
 		if ( r_showDemo.GetBool() ) {
 			common->Printf( "DC_RENDERVIEW: %i\n", renderView->time );
 		}
@@ -232,7 +232,7 @@ bool		idRenderWorldLocal::ProcessDemoCommand( idDemoFile *readDemo, renderView_t
 				common->Printf( "DC_SET_PORTAL_STATE: %i %i\n", data[0], data[1] );
 			}
 		}
-		
+
 		break;
 	case DC_END_FRAME:
 		return true;
@@ -270,7 +270,7 @@ void	idRenderWorldLocal::WriteLoadMap() {
 	common->WriteDemo()->WriteInt( header.sizeofRenderLight );
 	for ( int i = 0; i < 256; i++ )
 		common->WriteDemo()->WriteChar( header.mapname[i] );
-	
+
 	if ( r_showDemo.GetBool() ) {
 		common->Printf( "write DC_DELETE_LIGHTDEF: %s\n", mapName.c_str() );
 	}
@@ -330,7 +330,7 @@ void	idRenderWorldLocal::WriteRenderView( const renderView_t *renderView ) {
 	if ( this != common->RW() ) {
 		return;
 	}
-	
+
 	// write the actual view command
 	common->WriteDemo()->WriteInt( DS_RENDER );
 	common->WriteDemo()->WriteInt( DC_RENDERVIEW );
@@ -348,7 +348,7 @@ void	idRenderWorldLocal::WriteRenderView( const renderView_t *renderView ) {
 	for ( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ )
 		common->WriteDemo()->WriteFloat( renderView->shaderParms[i] );
 	common->WriteDemo()->WriteInt( (int&)renderView->globalMaterial );
-	
+
 	if ( r_showDemo.GetBool() ) {
 		common->Printf( "write DC_RENDERVIEW: %i\n", renderView->time );
 	}
@@ -523,7 +523,7 @@ void	idRenderWorldLocal::WriteRenderEntity( qhandle_t handle, const renderEntity
 	common->WriteDemo()->WriteInt( DS_RENDER );
 	common->WriteDemo()->WriteInt( DC_UPDATE_ENTITYDEF );
 	common->WriteDemo()->WriteInt( handle );
-	
+
 	common->WriteDemo()->WriteInt( (int&)ent->hModel );
 	common->WriteDemo()->WriteInt( ent->entityNum );
 	common->WriteDemo()->WriteInt( ent->bodyId );
@@ -674,7 +674,7 @@ void	idRenderWorldLocal::ReadRenderEntity() {
 		ent.referenceSound = common->SW()->EmitterForIndex( index );
 	}
 	if ( ent.numJoints ) {
-		ent.joints = (idJointMat *)Mem_Alloc16( SIMD_ROUND_JOINTS( ent.numJoints ) * sizeof( ent.joints[0] ), TAG_JOINTMAT ); 
+		ent.joints = (idJointMat *)Mem_Alloc16( SIMD_ROUND_JOINTS( ent.numJoints ) * sizeof( ent.joints[0] ), TAG_JOINTMAT );
 		for ( int i = 0; i < ent.numJoints; i++) {
 			float *data = ent.joints[i].ToFloatPtr();
 			for ( int j = 0; j < 12; ++j ) {

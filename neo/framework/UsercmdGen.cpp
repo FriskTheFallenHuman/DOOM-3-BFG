@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ void usercmd_t::Serialize( idSerializer & ser, const usercmd_t & base ) {
 usercmd_t::operator==
 ================
 */
-bool usercmd_t::operator==( const usercmd_t &rhs ) const { 
+bool usercmd_t::operator==( const usercmd_t &rhs ) const {
 	return ( buttons == rhs.buttons &&
 			forwardmove == rhs.forwardmove &&
 			rightmove == rhs.rightmove &&
@@ -207,7 +207,7 @@ const int MAX_CHAT_BUFFER = 127;
 class idUsercmdGenLocal : public idUsercmdGen {
 public:
 					idUsercmdGenLocal();
-	
+
 	void			Init();
 
 	void			InitForNewMap();
@@ -400,7 +400,7 @@ Moves the local angle positions
 */
 void idUsercmdGenLocal::AdjustAngles() {
 	float speed = MS2SEC( 16 );
-	
+
 	if ( toggled_run.on || ( in_alwaysRun.GetBool() && common->IsMultiplayer() ) ) {
 		speed *= in_angleSpeedKey.GetFloat();
 	}
@@ -446,7 +446,7 @@ void idUsercmdGenLocal::MouseMove() {
 
 	history[historyCounter&7][0] = mouseDx;
 	history[historyCounter&7][1] = mouseDy;
-	
+
 	// allow mouse movement to be smoothed together
 	int smooth = m_smooth.GetInteger();
 	if ( smooth < 1 ) {
@@ -744,7 +744,7 @@ idVec2 JoypadFunction(
 
 	// apply the acceleration
 	float accelerated;
-	
+
 	if ( shape == FUNC_EXPONENTIAL ) {
 		accelerated = idMath::Pow( 1.04712854805f, rescaledLen * 100.0f ) * 0.01f;
 	} else if ( shape == FUNC_LOGARITHMIC ) {
@@ -1002,7 +1002,7 @@ creates the current command for this frame
 */
 void idUsercmdGenLocal::MakeCurrent() {
 	idVec3 oldAngles = viewangles;
-	
+
 	if ( !Inhibited() ) {
 		// update toggled key states
 		toggled_crouch.SetKeyState( ButtonState( UB_MOVEDOWN ), in_toggleCrouch.GetBool() );
@@ -1037,7 +1037,7 @@ void idUsercmdGenLocal::MakeCurrent() {
 			viewangles[PITCH] = oldAngles[PITCH] + 90;
 		} else if ( oldAngles[PITCH] - viewangles[PITCH] > 90 ) {
 			viewangles[PITCH] = oldAngles[PITCH] - 90;
-		} 
+		}
 	} else {
 		mouseDx = 0;
 		mouseDy = 0;
@@ -1135,7 +1135,7 @@ idUsercmdGenLocal::Clear
 ================
 */
 void idUsercmdGenLocal::Clear() {
-	// clears all key states 
+	// clears all key states
 	memset( buttonState, 0, sizeof( buttonState ) );
 	memset( keyState, false, sizeof( keyState ) );
 	memset( joystickAxis, 0, sizeof( joystickAxis ) );

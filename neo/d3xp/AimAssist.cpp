@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ idAimAssist::Update
 void idAimAssist::Update() {
 	angleCorrection = ang_zero;
 
-	UpdateNewAimAssist();		
+	UpdateNewAimAssist();
 }
 
 /*
@@ -126,7 +126,7 @@ void idAimAssist::UpdateNewAimAssist() {
 		}
 
 		targetEntity = entity;
-	}	
+	}
 
 	lastTargetPos = targetPos;
 }
@@ -157,7 +157,7 @@ idEntity* idAimAssist::FindAimAssistTarget( idVec3& targetPos ) {
 	float  distanceToTargetSquared;
 	idVec3 primaryTargetPos;
 	idVec3 secondaryTargetPos;
-	
+
 	for ( idEntity * entity = gameLocal.aimAssistEntities.Next(); entity != NULL; entity = entity->aimAssistNode.Next() ) {
 		if ( !entity->IsActive() ) {
 			continue;
@@ -216,7 +216,7 @@ idEntity* idAimAssist::FindAimAssistTarget( idVec3& targetPos ) {
 			// determine if the current target is in our line of sight
 			trace_t tr;
 			gameLocal.clip.TracePoint( tr, cameraPos, primaryTargetPos, MASK_MONSTERSOLID, player );
-		
+
 			// did our trace fail?
 			if ( ( ( tr.fraction < 1.0f ) && ( tr.c.entityNum != entity->entityNumber ) ) || ( tr.fraction >= 1.0f ) ) {
 
@@ -253,13 +253,13 @@ idAimAssist::ComputeEntityAimAssistScore
 float idAimAssist::ComputeEntityAimAssistScore( const idVec3& targetPos, const idVec3& cameraPos, const idMat3& cameraAxis ) {
 
 	float score = 0.0f;
-		
-	idVec3 dirToTarget = targetPos - cameraPos;	
+
+	idVec3 dirToTarget = targetPos - cameraPos;
 	float distanceToTarget = dirToTarget.Length();
 
 	// Compute a score in the range of 0..1 for how much are looking towards the target.
 	idVec3 forward = cameraAxis[0];
-	forward.Normalize();	
+	forward.Normalize();
 	dirToTarget.Normalize();
 	float ViewDirDotTargetDir = idMath::ClampFloat( 0.0f, 1.0f, forward * dirToTarget ); // compute the dot and clamp to account for floating point error
 
@@ -293,9 +293,9 @@ void idAimAssist::UpdateAdhesion( idEntity* pTarget, const idVec3& targetPos ) {
 	if ( !pTarget ) {
 		return;
 	}
-	
+
 	float contributionPctMax = aa_targetAdhesionContributionPctMax.GetFloat();
-	
+
 	idVec3 cameraPos;
 	idMat3 cameraAxis;
 	player->GetViewPos(cameraPos, cameraAxis);
@@ -316,7 +316,7 @@ void idAimAssist::UpdateAdhesion( idEntity* pTarget, const idVec3& targetPos ) {
 	// clamp velocities to some max values
 	aimAngles.yaw = idMath::ClampFloat( -aa_targetAdhesionYawSpeedMax.GetFloat(), aa_targetAdhesionYawSpeedMax.GetFloat(), aimAngles.yaw );
 	aimAngles.pitch = idMath::ClampFloat( -aa_targetAdhesionPitchSpeedMax.GetFloat(), aa_targetAdhesionPitchSpeedMax.GetFloat(), aimAngles.pitch );
-	
+
 	idVec3 forward = cameraAxis[0];
 	forward.Normalize();
 	dirToTarget.Normalize();
@@ -367,7 +367,7 @@ void idAimAssist::UpdateFriction( idEntity* pTarget, const idVec3& targetPos ) {
 	if ( pTarget == NULL ) {
 		return;
 	}
-	
+
 	idVec3 cameraPos;
 	idMat3 cameraAxis;
 	player->GetViewPos(cameraPos, cameraAxis);

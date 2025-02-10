@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -222,7 +222,7 @@ idAASFindAttackPosition::idAASFindAttackPosition( const idAI *self, const idMat3
 	this->gravityAxis	= gravityAxis;
 
 	excludeBounds		= idBounds( idVec3( -64.0, -64.0f, -8.0f ), idVec3( 64.0, 64.0f, 64.0f ) );
-	excludeBounds.TranslateSelf( self->GetPhysics()->GetOrigin() );	
+	excludeBounds.TranslateSelf( self->GetPhysics()->GetOrigin() );
 
 	// setup PVS
 	idBounds bounds( targetPos - idVec3( 16, 16, 0 ), targetPos + idVec3( 16, 16, 64 ) );
@@ -723,13 +723,13 @@ void idAI::Restore( idRestoreGame *savefile ) {
 		memset(&newEmitter, 0, sizeof(newEmitter));
 
 		idStr name;
-		savefile->ReadString( name ); 
+		savefile->ReadString( name );
 
 		strcpy( newEmitter.name, name.c_str() );
 
 		savefile->ReadJoint( newEmitter.joint );
 		savefile->ReadObject(reinterpret_cast<idClass *&>(newEmitter.particle));
-		
+
 		funcEmitters.Set(newEmitter.name, newEmitter);
 	}
 
@@ -737,7 +737,7 @@ void idAI::Restore( idRestoreGame *savefile ) {
 	//if(harvestEnt.GetEntity()) {
 	//	harvestEnt.GetEntity()->SetParent(this);
 	//}
-	
+
 }
 
 /*
@@ -774,7 +774,7 @@ void idAI::Spawn() {
 
 	spawnArgs.GetFloat( "melee_range",			"64",		melee_range );
 	spawnArgs.GetFloat( "projectile_height_to_distance_ratio",	"1", projectile_height_to_distance_ratio );
-	
+
 	spawnArgs.GetFloat( "turn_rate",			"360",		turnRate );
 
 	spawnArgs.GetBool( "talks",					"0",		talks );
@@ -906,7 +906,7 @@ void idAI::Spawn() {
 
 	// move up to make sure the monster is at least an epsilon above the floor
 	physicsObj.SetOrigin( GetPhysics()->GetOrigin() + idVec3( 0, 0, CM_CLIP_EPSILON ) );
-	
+
 	if ( num_cinematics ) {
 		physicsObj.SetGravity( vec3_origin );
 	} else {
@@ -997,7 +997,7 @@ void idAI::InitMuzzleFlash() {
 
 	spawnArgs.GetString( "mtr_flashShader", "muzzleflash", &shader );
 	spawnArgs.GetVector( "flashColor", "0 0 0", flashColor );
-	float flashRadius = spawnArgs.GetFloat( "flashRadius" );	
+	float flashRadius = spawnArgs.GetFloat( "flashRadius" );
 	flashTime = SEC2MS( spawnArgs.GetFloat( "flashTime", "0.25" ) );
 
 	memset( &worldMuzzleFlash, 0, sizeof ( worldMuzzleFlash ) );
@@ -1085,7 +1085,7 @@ void idAI::DormantEnd() {
 		// let our enemy know we're back on the trail
 		enemyNode.AddToEnd( enemy.GetEntity()->enemyList );
 	}
-	
+
 	if ( particles.Num() ) {
 		for ( int i = 0; i < particles.Num(); i++ ) {
 			particles[i].time = gameLocal.time;
@@ -1402,7 +1402,7 @@ idAI::ReachedPos
 bool idAI::ReachedPos( const idVec3 &pos, const moveCommand_t moveCommand ) const {
 	if ( move.moveType == MOVETYPE_SLIDE ) {
 		idBounds bnds( idVec3( -4, -4.0f, -8.0f ), idVec3( 4.0f, 4.0f, 64.0f ) );
-		bnds.TranslateSelf( physicsObj.GetOrigin() );	
+		bnds.TranslateSelf( physicsObj.GetOrigin() );
 		if ( bnds.ContainsPoint( pos ) ) {
 			return true;
 		}
@@ -1413,7 +1413,7 @@ bool idAI::ReachedPos( const idVec3 &pos, const moveCommand_t moveCommand ) cons
 			}
 		} else {
 			idBounds bnds( idVec3( -16.0, -16.0f, -8.0f ), idVec3( 16.0, 16.0f, 64.0f ) );
-			bnds.TranslateSelf( physicsObj.GetOrigin() );	
+			bnds.TranslateSelf( physicsObj.GetOrigin() );
 			if ( bnds.ContainsPoint( pos ) ) {
 				return true;
 			}
@@ -2074,7 +2074,7 @@ idAI::WanderAround
 */
 bool idAI::WanderAround() {
 	StopMove( MOVE_STATUS_DONE );
-	
+
 	move.moveDest = physicsObj.GetOrigin() + viewAxis[ 0 ] * physicsObj.GetGravityAxis() * 256.0f;
 	if ( !NewWanderDir( move.moveDest ) ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
@@ -2287,7 +2287,7 @@ bool idAI::GetMovePos( idVec3 &seekPos ) {
 		}
 		return false;
 		break;
-	
+
 	case MOVE_SLIDE_TO_POSITION :
 		seekPos = org;
 		return false;
@@ -2723,7 +2723,7 @@ void idAI::AnimMove() {
 
 	AI_BLOCKED = false;
 
-	if ( move.moveCommand < NUM_NONMOVING_COMMANDS ){ 
+	if ( move.moveCommand < NUM_NONMOVING_COMMANDS ){
 		move.lastMoveOrigin.Zero();
 		move.lastMoveTime = gameLocal.time;
 	}
@@ -2843,7 +2843,7 @@ void idAI::SlideMove() {
 
 	AI_BLOCKED = false;
 
-	if ( move.moveCommand < NUM_NONMOVING_COMMANDS ){ 
+	if ( move.moveCommand < NUM_NONMOVING_COMMANDS ){
 		move.lastMoveOrigin.Zero();
 		move.lastMoveTime = gameLocal.time;
 	}
@@ -3024,7 +3024,7 @@ void idAI::AdjustFlyHeight( idVec3 &vel, const idVec3 &goalPos ) {
 			vel.z += addVel.z;
 			goLower = true;
 		}
-        
+
 		if ( ai_debugMove.GetBool() ) {
 			gameRenderWorld->DebugBounds( goLower ? colorRed : colorGreen, physicsObj.GetBounds(), path.endPos, 1 );
 		}
@@ -3054,7 +3054,7 @@ idAI::FlySeekGoal
 */
 void idAI::FlySeekGoal( idVec3 &vel, idVec3 &goalPos ) {
 	idVec3 seekVel;
-	
+
 	// seek the goal position
 	seekVel = Seek( vel, physicsObj.GetOrigin(), goalPos, AI_SEEK_PREDICTION );
 	seekVel *= fly_seek_scale;
@@ -3393,7 +3393,7 @@ void idAI::Killed( idEntity *inflictor, idEntity *attacker, int damage, const id
 	EndAttack();
 
 	if ( g_debugDamage.GetBool() ) {
-		gameLocal.Printf( "Damage: joint: '%s', zone '%s'\n", animator.GetJointName( ( jointHandle_t )location ), 
+		gameLocal.Printf( "Damage: joint: '%s', zone '%s'\n", animator.GetJointName( ( jointHandle_t )location ),
 			GetDamageGroup( location ) );
 	}
 
@@ -3488,7 +3488,7 @@ void idAI::Killed( idEntity *inflictor, idEntity *attacker, int damage, const id
 			idEntity *temp;
 			gameLocal.SpawnEntityDef( *harvestDef, &temp, false );
 			harvestEnt = static_cast<idHarvestable *>(temp);
-			
+
 		}
 
 		if(harvestEnt.GetEntity()) {
@@ -4038,7 +4038,7 @@ void idAI::CalculateAttackOffsets() {
 		return;
 	}
 	num = modelDef->NumAnims();
-	
+
 	// needs to be off while getting the offsets so that we account for the distance the monster moves in the attack anim
 	animator.RemoveOriginOffset( false );
 
@@ -4166,7 +4166,7 @@ idProjectile *idAI::CreateProjectile( const idVec3 &pos, const idVec3 &dir ) {
 			gameLocal.Error( "Could not spawn entityDef '%s'", clsname );
 			return NULL;
 		}
-		
+
 		if ( !ent->IsType( idProjectile::Type ) ) {
 			clsname = ent->GetClassname();
 			gameLocal.Error( "'%s' is not an idProjectile", clsname );
@@ -4637,7 +4637,7 @@ idAI::UpdateMuzzleFlash
 ================
 */
 void idAI::UpdateMuzzleFlash() {
-	if ( worldMuzzleFlashHandle != -1 ) { 
+	if ( worldMuzzleFlashHandle != -1 ) {
 		if ( gameLocal.time >= muzzleFlashEnd ) {
 			gameRenderWorld->FreeLightDef( worldMuzzleFlashHandle );
 			worldMuzzleFlashHandle = -1;
@@ -4825,7 +4825,7 @@ void idAI::TriggerParticles( const char *jointName ) {
 }
 
 void idAI::TriggerFX( const char* joint, const char* fx ) {
-	
+
 	if( !strcmp(joint, "origin") ) {
 		idEntityFx::StartFx( fx, NULL, NULL, this, true );
 	} else {
@@ -4887,14 +4887,14 @@ idEntity* idAI::StartEmitter( const char* name, const char* joint, const char* p
 	axis[0] = -tmp;
 
 	ent->GetPhysics()->SetAxis(axis);*/
-	
+
 	axis = physicsObj.GetGravityAxis();
 	ent->GetPhysics()->SetAxis(axis);
 
-	
+
 	ent->GetPhysics()->GetClipModel()->SetOwner( this );
 
-	
+
 	//Keep a reference to the emitter so we can track it
 	funcEmitter_t newEmitter;
 	strcpy(newEmitter.name, name);
@@ -5039,7 +5039,7 @@ bool idAI::UpdateAnimationControllers() {
 	newLookAng.roll	= 0.0f;
 
 	diff = newLookAng - lookAng;
-	
+
 	if ( eyeAng != diff ) {
 		eyeAng = diff;
 		eyeAng.Clamp( eyeMin, eyeMax );
@@ -5088,7 +5088,7 @@ bool idAI::UpdateAnimationControllers() {
 		// lean into turns
 		AdjustFlyingAngles();
 	}
-	
+
 	if ( headEnt ) {
 		idAnimator *headAnimator = headEnt->GetAnimator();
 
@@ -5236,7 +5236,7 @@ void idCombatNode::DrawDebugInfo() {
 	idPlayer		*player = gameLocal.GetLocalPlayer();
 	idVec4			color;
 	idBounds		bounds( idVec3( -16, -16, 0 ), idVec3( 16, 16, 0 ) );
-	
+
 	for( ent = gameLocal.spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next() ) {
 		if ( !ent->IsType( idCombatNode::Type ) ) {
 			continue;
@@ -5298,7 +5298,7 @@ bool idCombatNode::EntityInView( idActor *actor, const idVec3 &pos ) {
 	const idMat3 &axis = GetPhysics()->GetAxis();
 	idVec3 dir = pos - org;
 	float  dist = dir * axis[ 0 ];
-	
+
 	if ( ( dist < min_dist ) || ( dist > max_dist ) ) {
 		return false;
 	}

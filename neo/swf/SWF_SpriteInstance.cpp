@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ materialHeight( 0 ),
 xOffset( 0.0f ),
 yOffset( 0.0f ),
 moveToXScale( 1.0f ),
-moveToYScale( 1.0f ), 
+moveToYScale( 1.0f ),
 moveToSpeed( 1.0f ),
 firstRun( false ),
 stereoDepth( 0 )
@@ -194,7 +194,7 @@ void idSWFSpriteInstance::RemoveDisplayEntry( int depth ) {
 
 /*
 ================================================
-idSort_SpriteDepth 
+idSort_SpriteDepth
 ================================================
 */
 class idSort_SpriteDepth : public idSort_Quick< swfDisplayEntry_t, idSort_SpriteDepth > {
@@ -704,11 +704,11 @@ void idSWFSpriteInstance::SetRotation( float rot ) {
 	}
 
 	swfMatrix_t & matrix = thisDisplayEntry->matrix;
-	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length(); 
-	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length(); 
+	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length();
+	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length();
 
 	float s, c;
-	idMath::SinCos( DEG2RAD( rot ), s, c ); 
+	idMath::SinCos( DEG2RAD( rot ), s, c );
 	matrix.xx = c * xscale;
 	matrix.yx = s * xscale;
 	matrix.xy = -s * yscale;
@@ -740,7 +740,7 @@ void idSWFSpriteInstance::SetScale( float x, float y ) {
 		thisDisplayEntry->matrix.xx = currentScale.x * newScale;
 		thisDisplayEntry->matrix.yx = currentScale.y * newScale;
 	}
-	
+
 	newScale = y / 100.0f;
 	// this is done funky to maintain the current rotation
 	currentScale = thisDisplayEntry->matrix.Scale( idVec2( 0.0f, 1.0f ) );
@@ -780,9 +780,9 @@ bool idSWFSpriteInstance::UpdateMoveToScale( float speed ) {
 	}
 
 	swfMatrix_t & matrix = thisDisplayEntry->matrix;
-	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length() * 100.0f; 
+	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length() * 100.0f;
 	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length() * 100.0f;
-	
+
 	float toX = xscale;
 	if ( moveToXScale >= 0.0f ) {
 		toX = moveToXScale * 100.0f;
@@ -932,7 +932,7 @@ SWF_SPRITE_FUNCTION_DEFINE( duplicateMovieClip ) {
 	if ( parms.Num() < 2 ) {
 		idLib::Warning( "duplicateMovieClip: expected 2 parameters" );
 		return idSWFScriptVar();
-	}	
+	}
 	swfDisplayEntry_t * thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
 	if ( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "duplicateMovieClip: Couldn't find our display entry in our parents display list" );
@@ -1223,11 +1223,11 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _rotation ) {
 		return;
 	}
 	swfMatrix_t & matrix = thisDisplayEntry->matrix;
-	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length(); 
-	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length(); 
+	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length();
+	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length();
 
 	float s, c;
-	idMath::SinCos( DEG2RAD( value.ToFloat() ), s, c ); 
+	idMath::SinCos( DEG2RAD( value.ToFloat() ), s, c );
 	matrix.xx = c * xscale;
 	matrix.yx = s * xscale;
 	matrix.xy = -s * yscale;

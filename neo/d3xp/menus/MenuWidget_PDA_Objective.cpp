@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void idMenuWidget_PDA_Objective::Update() {
 	if ( player == NULL ) {
 		return;
 	}
-	
+
 	idSWFScriptObject * dataObj = GetSprite()->GetScriptObject()->GetNestedObj( "info" );
 	idSWFSpriteInstance * dataSprite = dataObj->GetSprite();
 
@@ -61,16 +61,16 @@ void idMenuWidget_PDA_Objective::Update() {
 			dataSprite->StopFrame( 1 );
 		} else {
 			int numObjectives = player->GetInventory().objectiveNames.Num();
-			
+
 			int objStartIndex = 0;
 			if ( numObjectives == 1 ) {
-				dataSprite->StopFrame( 2 );			
+				dataSprite->StopFrame( 2 );
 				objStartIndex = 0;
 			} else {
-				dataSprite->StopFrame( 3 );		
+				dataSprite->StopFrame( 3 );
 				objStartIndex = 1;
 			}
-			
+
 			idSWFTextInstance * txtDesc = dataObj->GetNestedText( "txtDesc" );
 
 			int displayCount = 0;
@@ -83,7 +83,7 @@ void idMenuWidget_PDA_Objective::Update() {
 						img->SetVisible( true );
 						img->SetMaterial( player->GetInventory().objectiveNames[index].screenshot );
 					}
-				}	
+				}
 
 				idSWFSpriteInstance * objSel = dataObj->GetNestedSprite( va( "obj%d", objStartIndex - displayCount ), "sel" );
 				idSWFTextInstance * txtNote = dataObj->GetNestedText( va( "obj%d", objStartIndex - displayCount ), "txtVal" );
@@ -103,10 +103,10 @@ void idMenuWidget_PDA_Objective::Update() {
 				if ( displayCount == 0 ) {
 					txtDesc->SetText( player->GetInventory().objectiveNames[index].text.c_str() );
 				}
-				
+
 				displayCount++;
 			}
-		} 
+		}
 
 		// Set the main objective text
 		idTarget_SetPrimaryObjective * mainObj = player->GetPrimaryObjective();

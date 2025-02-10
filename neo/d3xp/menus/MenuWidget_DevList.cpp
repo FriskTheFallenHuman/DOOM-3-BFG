@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -164,11 +164,11 @@ void idMenuWidget_DevList::NavigateBack() {
 		// widget will have the parent's focus, so a standard ReceiveEvent() here would turn
 		// into an infinite recursion.
 		idWidgetEvent event( WIDGET_EVENT_BACK, 0, NULL, idSWFParmList() );
-		
+
 		idWidgetAction action;
 		action.Set( WIDGET_ACTION_GO_BACK, MENU_ROOT );
 		HandleAction( action, event );
-		
+
 		return;
 	}
 

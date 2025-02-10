@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,9 +70,9 @@ typedef void (*argCompletion_t)( const idCmdArgs &args, void(*callback)( const c
 
 /*
 ================================================
-idCommandLink is a convenient way to get a function registered as a 
-ConsoleCommand without having to add an explicit call to idCmdSystem->AddCommand() in a startup 
-function somewhere. Simply declare a static variable with the parameters and it will get 
+idCommandLink is a convenient way to get a function registered as a
+ConsoleCommand without having to add an explicit call to idCmdSystem->AddCommand() in a startup
+function somewhere. Simply declare a static variable with the parameters and it will get
 executed before main(). For example:
 
 static idCommandLink sys_dumpMemory( "sys_dumpMemory", Sys_DumpMemory_f, "Walks the heap and reports stats" );

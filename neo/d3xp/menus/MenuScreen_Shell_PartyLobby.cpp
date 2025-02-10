@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void idMenuScreen_Shell_PartyLobby::Initialize( idMenuHandler * data ) {
 
 	idMenuWidget_Help * const helpWidget = new ( TAG_SWF ) idMenuWidget_Help();
 	helpWidget->SetSpritePath( GetSpritePath(), "info", "helpTooltip" );
-	AddChild( helpWidget );	
+	AddChild( helpWidget );
 
 	while ( options->GetChildren().Num() < NUM_LOBBY_OPTIONS ) {
 		idMenuWidget_Button * const buttonWidget = new  (TAG_SWF) idMenuWidget_Button();
@@ -77,7 +77,7 @@ void idMenuScreen_Shell_PartyLobby::Initialize( idMenuHandler * data ) {
 		options->AddChild( buttonWidget );
 	}
 	options->Initialize( data );
-	
+
 
 	btnBack = new (TAG_SWF) idMenuWidget_Button();
 	btnBack->Initialize( data );
@@ -146,12 +146,12 @@ void idMenuScreen_Shell_PartyLobby::Update() {
 	}
 
 	UpdateOptions();
-	
+
 	if ( menuData != NULL && menuData->NextScreen() == SHELL_AREA_PARTY_LOBBY ) {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -176,7 +176,7 @@ void idMenuScreen_Shell_PartyLobby::Update() {
 				buttonInfo->label = "#str_swf_view_profile";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_SELECT_GAMERTAG );
-		}		
+		}
 	}
 
 	if ( btnBack != NULL ) {
@@ -274,7 +274,7 @@ void idMenuScreen_Shell_PartyLobby::UpdateOptions() {
 		options->SetListData( menuOptions );
 
 	} else if ( session->GetPartyLobbyBase().IsPeer() && options != NULL ) {
-		if ( !isPeer || forceUpdate ) {		
+		if ( !isPeer || forceUpdate ) {
 
 			menuOptions.Clear();
 			idList< idStr > option;
@@ -336,9 +336,9 @@ void idMenuScreen_Shell_PartyLobby::ShowScreen( const mainMenuTransition_t trans
 	if ( session->GetPartyLobbyBase().IsHost() ) {
 		idMatchParameters matchParameters = session->GetPartyLobbyBase().GetMatchParms();
 		if ( net_inviteOnly.GetBool() ) {
-			matchParameters.matchFlags |= MATCH_INVITE_ONLY; 
+			matchParameters.matchFlags |= MATCH_INVITE_ONLY;
 		} else {
-			matchParameters.matchFlags &= ~MATCH_INVITE_ONLY; 
+			matchParameters.matchFlags &= ~MATCH_INVITE_ONLY;
 		}
 
 		matchParameters.numSlots = session->GetTitleStorageInt("MAX_PLAYERS_ALLOWED", 4 );
@@ -472,7 +472,7 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction & action, const
 			return true;
 		}
 		case WIDGET_ACTION_COMMAND: {
-			
+
 			if ( options == NULL ) {
 				return true;
 			}
@@ -497,11 +497,11 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction & action, const
 
 					// Always a public match.
 					matchParameters.matchFlags &= ~MATCH_INVITE_ONLY;
-					
+
 					session->UpdatePartyParms( matchParameters );
 
 					// Update flags for game lobby.
-					matchParameters.matchFlags = DefaultPartyFlags | DefaultPublicGameFlags;					
+					matchParameters.matchFlags = DefaultPartyFlags | DefaultPublicGameFlags;
 					cvarSystem->MoveCVarsToDict( CVAR_SERVERINFO, matchParameters.serverInfo );
 
 					// Force a default value for the si_timelimit and si_fraglimit for quickmatch
@@ -601,7 +601,7 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction & action, const
 			if ( luid.IsValid() ) {
 				session->ShowLobbyUserGamerCardUI( luid );
 			}
-			
+
 			return true;
 		}
 	}
@@ -615,11 +615,11 @@ idMenuScreen_Shell_PartyLobby::UpdateLobby
 ========================
 */
 void idMenuScreen_Shell_PartyLobby::UpdateLobby() {
-	
+
 	if ( menuData != NULL && menuData->ActiveScreen() != SHELL_AREA_PARTY_LOBBY ) {
 		return;
 	}
-	
+
 	// Keep this menu in sync with the session host/peer status.
 	if ( session->GetPartyLobbyBase().IsHost() && !isHost ) {
 		Update();
@@ -648,7 +648,7 @@ void idMenuScreen_Shell_PartyLobby::UpdateLobby() {
 			lobby->SetViewIndex( lobby->GetNumEntries() - 1 );
 		}
 	}
-	
+
 	if ( session->GetState() == idSession::PARTY_LOBBY ) {
 
 		if ( options != NULL ) {
@@ -662,7 +662,7 @@ void idMenuScreen_Shell_PartyLobby::UpdateLobby() {
 		if ( privacy != NULL ) {
 			if ( isPeer ) {
 				privacy->SetText( "" );
-			} else {				
+			} else {
 
 				idMatchParameters matchParameters = session->GetPartyLobbyBase().GetMatchParms();
 				int bitSet = ( matchParameters.matchFlags & MATCH_INVITE_ONLY );

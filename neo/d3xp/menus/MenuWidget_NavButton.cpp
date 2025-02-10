@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ idMenuWidget_NavButton::ExecuteEvent
 ========================
 */
 bool idMenuWidget_NavButton::ExecuteEvent( const idWidgetEvent & event ) {
-	
+
 	bool handled = false;
 
 	//// do nothing at all if it's disabled
@@ -164,7 +164,7 @@ void idMenuWidget_MenuButton::Update() {
 	}
 
 	GetSprite()->SetXPos( xPos );
-	
+
 	idSWFScriptObject * textObj = spriteObject->GetNestedObj( "txtVal" );
 
 	if ( textObj != NULL ) {

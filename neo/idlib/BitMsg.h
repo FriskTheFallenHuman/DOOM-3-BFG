@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ If you have questions concerning this license or the applicable additional terms
 
 /*
 ================================================
-idBitMsg operates on a sequence of individual bits. It handles byte ordering and 
-avoids alignment errors. It allows concurrent writing and reading. The data set with Init 
+idBitMsg operates on a sequence of individual bits. It handles byte ordering and
+avoids alignment errors. It allows concurrent writing and reading. The data set with Init
 is never free-d.
 ================================================
 */
@@ -281,7 +281,7 @@ ID_INLINE void idBitMsg::InitWrite( byte *data, int length ) {
 	readBit = 0;
 	allowOverflow = false;
 	overflowed = false;
-	
+
 	tempValue = 0;
 }
 
@@ -366,7 +366,7 @@ idBitMsg::SetSize
 */
 ID_INLINE void idBitMsg::SetSize( int size ) {
 	assert( writeBit == 0 );
-	
+
 	if ( size > maxSize ) {
 		curSize = maxSize;
 	} else {
@@ -685,7 +685,7 @@ idBitMsg::BeginReading
 ID_INLINE void idBitMsg::BeginReading() const {
 	readCount = 0;
 	readBit = 0;
-	
+
 	writeBit = 0;
 	tempValue = 0;
 }
@@ -824,11 +824,11 @@ ID_INLINE void idBitMsg::WriteQuantizedFloat( float value ) {
 	if ( _max_ > storeMax ) {
 		// Scaling down (scale should be < 1)
 		const float scale = (float)storeMax / (float)_max_;
-		WriteBits( idMath::ClampInt( -storeMax, storeMax, idMath::Ftoi( value * scale ) ), -_numBits_ );	
+		WriteBits( idMath::ClampInt( -storeMax, storeMax, idMath::Ftoi( value * scale ) ), -_numBits_ );
 	} else {
 		// Scaling up (scale should be >= 1) (Preserve whole numbers when possible)
 		enum { scale = storeMax / _max_ };
-		WriteBits( idMath::ClampInt( -storeMax, storeMax, idMath::Ftoi( value * scale ) ), -_numBits_ );	
+		WriteBits( idMath::ClampInt( -storeMax, storeMax, idMath::Ftoi( value * scale ) ), -_numBits_ );
 	}
 }
 
@@ -843,11 +843,11 @@ ID_INLINE void idBitMsg::WriteQuantizedUFloat( float value ) {
 	if ( _max_ > storeMax ) {
 		// Scaling down (scale should be < 1)
 		const float scale = (float)storeMax / (float)_max_;
-		WriteBits( idMath::ClampInt( 0, storeMax, idMath::Ftoi( value * scale ) ), _numBits_ );	
+		WriteBits( idMath::ClampInt( 0, storeMax, idMath::Ftoi( value * scale ) ), _numBits_ );
 	} else {
 		// Scaling up (scale should be >= 1) (Preserve whole numbers when possible)
 		enum { scale = storeMax / _max_ };
-		WriteBits( idMath::ClampInt( 0, storeMax, idMath::Ftoi( value * scale ) ), _numBits_ );	
+		WriteBits( idMath::ClampInt( 0, storeMax, idMath::Ftoi( value * scale ) ), _numBits_ );
 	}
 }
 
@@ -865,7 +865,7 @@ ID_INLINE float idBitMsg::ReadQuantizedFloat() const {
 		return (float)ReadBits( -_numBits_ ) * invScale;
 	} else {
 		// Scaling up (scale should be >= 1) (Preserve whole numbers when possible)
-		// Scale will be a whole number.  
+		// Scale will be a whole number.
 		// We use a float to get rid of (potential divide by zero) which is handled above, but the compiler is dumb
 		const float scale = storeMax / _max_;
 		const float invScale = 1.0f / scale;
@@ -887,9 +887,9 @@ float idBitMsg::ReadQuantizedUFloat() const {
 		return (float)ReadBits( _numBits_ ) * invScale;
 	} else {
 		// Scaling up (scale should be >= 1) (Preserve whole numbers when possible)
-		// Scale will be a whole number.  
+		// Scale will be a whole number.
 		// We use a float to get rid of (potential divide by zero) which is handled above, but the compiler is dumb
-		const float scale = storeMax / _max_;	
+		const float scale = storeMax / _max_;
 		const float invScale = 1.0f / scale;
 		return (float)ReadBits( _numBits_ ) * invScale;
 	}

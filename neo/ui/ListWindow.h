@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ public:
 	virtual idWinVar*	GetWinVarByName(const char *_name, bool winLookup = false, drawWin_t** owner = NULL);
 
 	void				UpdateList();
-	
+
 private:
 	virtual bool		ParseInternalVar(const char *name, idTokenParser *src);
 	void				CommonInit();
@@ -80,7 +80,7 @@ private:
 	idStr				tabTypeStr;
 	idStr				tabIconSizeStr;
 	idStr				tabIconVOffsetStr;
-	idHashTable<const idMaterial*> iconMaterials;						
+	idHashTable<const idMaterial*> iconMaterials;
 	bool				multipleSel;
 
 	idStrList			listItems;

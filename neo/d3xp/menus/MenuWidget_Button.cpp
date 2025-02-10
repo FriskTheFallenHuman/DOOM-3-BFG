@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ static const char * ANIM_STATE_TRANSITIONS[ idMenuWidget_Button::ANIM_STATE_MAX 
 static const char * const CONTROL_SPRITE_NAMES[ MAX_MENU_OPTION_TYPES ] = {
 	NULL,
 	"sliderBar",
-	"sliderText", 
+	"sliderText",
 	"sliderText",
 	NULL,
 	"sliderText",
@@ -160,7 +160,7 @@ bool idMenuWidget_Button::ExecuteEvent( const idWidgetEvent & event ) {
 		switch ( event.type ) {
 			case WIDGET_EVENT_PRESS: {
 				if ( GetMenuData() != NULL ) {
-					GetMenuData()->PlaySound( GUI_SOUND_ADVANCE );	
+					GetMenuData()->PlaySound( GUI_SOUND_ADVANCE );
 				}
 				AnimateToState( ANIM_STATE_DOWN );
 				handled = true;
@@ -174,7 +174,7 @@ bool idMenuWidget_Button::ExecuteEvent( const idWidgetEvent & event ) {
 			}
 			case WIDGET_EVENT_ROLL_OVER: {
 				if ( GetMenuData() != NULL ) {
-					GetMenuData()->PlaySound( GUI_SOUND_ROLL_OVER );	
+					GetMenuData()->PlaySound( GUI_SOUND_ROLL_OVER );
 				}
 				AnimateToState( ANIM_STATE_OVER );
 				handled = true;
@@ -349,7 +349,7 @@ void idMenuWidget_ControlButton::Update() {
 							txtInfo->SetStrokeInfo( true, 0.75f, 2.0f );
 						}
 					}
-				}				
+				}
 
 				idSWFScriptObject * const btnLess = GetSprite()->GetScriptObject()->GetObject( "btnLess" );
 				idSWFScriptObject * const btnMore = GetSprite()->GetScriptObject()->GetObject( "btnMore" );
@@ -434,7 +434,7 @@ void idMenuWidget_ServerButton::Update() {
 
 	idSWFScriptObject * const spriteObject = GetSprite()->GetScriptObject();
 	idSWFTextInstance * const txtName = spriteObject->GetNestedText( "label0", "txtVal" );
-	
+
 	if ( txtName != NULL ) {
 		txtName->SetText( serverName );
 		txtName->SetStrokeInfo( true, 0.75f, 1.75f );
@@ -505,7 +505,7 @@ void idMenuWidget_LobbyButton::Update() {
 
 	if ( txtName != NULL ) {
 		txtName->SetText( name );
-	} 
+	}
 
 	if ( talkIcon != NULL ) {
 		talkIcon->StopFrame( voiceState + 1 );

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ void idRenderWorldLocal::FreeWorld() {
 		areaNodes = NULL;
 	}
 
-	// free all the inline idRenderModels 
+	// free all the inline idRenderModels
 	for ( int i = 0; i < localModels.Num(); i++ ) {
 		renderModelManager->RemoveModel( localModels[i] );
 		delete localModels[i];
@@ -418,7 +418,7 @@ void idRenderWorldLocal::ParseInterAreaPortals( idLexer *src, idFile *fileOut ) 
 		fileOut->WriteBig( numInterAreaPortals );
 	}
 
-	doublePortals = (doublePortal_t *)R_ClearedStaticAlloc( numInterAreaPortals * 
+	doublePortals = (doublePortal_t *)R_ClearedStaticAlloc( numInterAreaPortals *
 		sizeof( doublePortals [0] ) );
 
 	for ( int i = 0; i < numInterAreaPortals; i++ ) {
@@ -760,7 +760,7 @@ bool idRenderWorldLocal::InitFromMap( const char *name ) {
 
 	FreeWorld();
 
-	// see if we have a generated version of this 
+	// see if we have a generated version of this
 	static const byte BPROC_VERSION = 1;
 	static const unsigned int BPROC_MAGIC = ( 'P' << 24 ) | ( 'R' << 16 ) | ( 'O' << 8 ) | BPROC_VERSION;
 	bool loaded = false;
@@ -828,7 +828,7 @@ bool idRenderWorldLocal::InitFromMap( const char *name ) {
 			delete src;
 			return false;
 		}
-			
+
 		int numEntries = 0;
 		idFileLocal outputFile( fileSystem->OpenFileWrite( generatedFileName, "fs_basepath" ) );
 		if ( outputFile != NULL ) {

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void idMenuScreen_Shell_Singleplayer::Initialize( idMenuHandler * data ) {
 	btnBack->SetLabel( "#str_02305" );
 	btnBack->SetSpritePath( GetSpritePath(), "info", "btnBack" );
 	btnBack->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_GO_BACK );
-	
+
 	AddChild( btnBack );
 
 	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN ).Set( new (TAG_SWF) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN ) );
@@ -104,7 +104,7 @@ void idMenuScreen_Shell_Singleplayer::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -135,7 +135,7 @@ idMenuScreen_Shell_Singleplayer::ShowScreen
 */
 void idMenuScreen_Shell_Singleplayer::ShowScreen( const mainMenuTransition_t transitionType ) {
 
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 	idList< idStr > option;
 
 	canContinue = false;
@@ -213,7 +213,7 @@ idMenuScreen_Shell_Singleplayer::ContinueGame
 void idMenuScreen_Shell_Singleplayer::ContinueGame() {
 	const saveGameDetailsList_t & saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
 	saveGameDetailsList_t sortedSaves = saveGameInfo;
-	sortedSaves.Sort( idSort_SavesByDate() );	
+	sortedSaves.Sort( idSort_SavesByDate() );
 	if ( sortedSaves.Num() > 0 ) {
 		if ( sortedSaves[0].damaged ) {
 			class idSWFScriptFunction_ContinueDamaged : public idSWFScriptFunction_RefCounted {
@@ -267,7 +267,7 @@ bool idMenuScreen_Shell_Singleplayer::HandleAction( idWidgetAction & action, con
 			int selectionIndex = options->GetViewIndex();
 			if ( parms.Num() == 1 ) {
 				selectionIndex = parms[0].ToInteger();
-			}			
+			}
 
 			canContinue = false;
 			const saveGameDetailsList_t & saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
@@ -303,9 +303,9 @@ bool idMenuScreen_Shell_Singleplayer::HandleAction( idWidgetAction & action, con
 					menuData->SetNextScreen( SHELL_AREA_NEW_GAME, MENU_TRANSITION_SIMPLE );
 				} else if ( selectionIndex == 1 ) {
 					menuData->SetNextScreen( SHELL_AREA_LOAD, MENU_TRANSITION_SIMPLE );
-				}	
+				}
 			}
-			
+
 			return true;
 		}
 	}

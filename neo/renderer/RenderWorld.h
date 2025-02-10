@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ typedef struct renderView_s {
 
 	bool					cramZNear;			// for cinematics, we want to set ZNear much lower
 	bool					flipProjection;
-	bool					forceUpdate;		// for an update 
+	bool					forceUpdate;		// for an update
 
 	// time in milliseconds for shader effects and other time dependent rendering issues
 	int						time[2];
@@ -404,7 +404,7 @@ public:
 	// the next renderScene
 	virtual bool			ProcessDemoCommand( idDemoFile *readDemo, renderView_t *demoRenderView, int *demoTimeOffset ) = 0;
 
-	// this is used to regenerate all interactions ( which is currently only done during influences ), there may be a less 
+	// this is used to regenerate all interactions ( which is currently only done during influences ), there may be a less
 	// expensive way to do it
 	virtual void			RegenerateWorld() = 0;
 

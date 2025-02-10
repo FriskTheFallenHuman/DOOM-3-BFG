@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -53,9 +53,9 @@ public:
 	float	GetStrokeStrength() { return strokeStrength; }
 	float	GetStrokeWeight() { return strokeWeight; }
 
-	// used for when text has random render mode set 
+	// used for when text has random render mode set
 	bool	IsGeneratingRandomText() { return generatingText; }
-	void	StartRandomText( int time );	
+	void	StartRandomText( int time );
 	idStr	GetRandomText( int time );
 	void	StartParagraphText( int time );
 	idStr	GetParagraphText( int time );
@@ -182,7 +182,7 @@ public:
 
 	// input text
 	int			inputTextStartChar;
-	
+
 	idList< subTimingWordData_t, TAG_SWF > subtitleTimingInfo;
 };
 
@@ -234,7 +234,7 @@ public:
 	SWF_NATIVE_VAR_DECLARE( subtitleAlign );
 	SWF_NATIVE_VAR_DECLARE( subtitleSourceID );
 	SWF_NATIVE_VAR_DECLARE( subtitleSpeaker );
-	
+
 	SWF_NATIVE_VAR_DECLARE_READONLY( _textLength );
 
 	SWF_TEXT_FUNCTION_DECLARE( subtitleSourceCheck );

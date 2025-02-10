@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ private:
 
 	// used for prediction in mp
 	int						clientPredictPickupMilliseconds;
-	
+
 	bool					UpdateRenderEntity( renderEntity_s *renderEntity, const renderView_t *renderView ) const;
 	static bool				ModelCallback( renderEntity_s *renderEntity, const renderView_t *renderView );
 
@@ -223,7 +223,7 @@ public:
 
     void                    Spawn();
 	virtual bool			Pickup( idPlayer *player );
-	virtual bool			ClientReceiveEvent( int event, int time, const idBitMsg &msg );    
+	virtual bool			ClientReceiveEvent( int event, int time, const idBitMsg &msg );
 	virtual void			Think(void );
 
 	void					Drop( bool death = false );	// was the drop caused by death of carrier?
@@ -239,7 +239,7 @@ public:
 
 public:
     int                     team;
-	// TODO : turn this into a state : 
+	// TODO : turn this into a state :
 	bool					carried;			// is it beeing carried by a player?
 	bool					dropped;			// was it dropped?
 

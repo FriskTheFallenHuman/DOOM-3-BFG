@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ extern idCVar net_verbose;
 class lobbyAddress_t {
 public:
 	lobbyAddress_t();
-	
+
 	void InitFromNetadr( const netadr_t & netadr );
 
 	void InitFromIPandPort( const char * ip, int port );
@@ -76,7 +76,7 @@ public:
 
 	bool IsOpen();
 	void Close();
-	
+
 private:
 	float	forcePacketDropCurr;	// Used with net_forceDrop and net_forceDropCorrelation
 	float	forcePacketDropPrev;
@@ -87,7 +87,7 @@ private:
 struct lobbyUser_t {
 	static const int INVALID_PING = 9999;
 	// gamertags can be up to 16 4-byte characters + \0
-	static const int MAX_GAMERTAG	= 64 + 1; 
+	static const int MAX_GAMERTAG	= 64 + 1;
 
 	lobbyUser_t() {
 		isBot				= false;
@@ -112,7 +112,7 @@ struct lobbyUser_t {
 	lobbyUserID_t		lobbyUserID;		// Locally generated to be unique, and internally keeps the local user handle
 	char				gamertag[MAX_GAMERTAG];
 	int					pingMs;				// round trip time in milliseconds
-	
+
 	bool				disconnecting;		// true if we've sent a msg to disconnect this user from the session
 	int					level;
 	int					teamNumber;
@@ -129,9 +129,9 @@ struct lobbyUser_t {
 	int					migrationGameData;	// index into the local migration gamedata array that is associated with this user. -1=no migration game data available
 
 	// Platform variables
-	
+
 	bool IsDisconnected() const { return lobbyUserID.IsValid() ? false : true; }
-	
+
 	void WriteToMsg( idBitMsg & msg ) {
 		address.WriteToMsg( msg );
 		lobbyUserID.WriteToMsg( msg );
@@ -141,7 +141,7 @@ struct lobbyUser_t {
 		msg.WriteString( gamertag, MAX_GAMERTAG, false );
 		WriteClientMutableData( msg );
 	}
-	
+
 	void ReadFromMsg( idBitMsg & msg ) {
 		address.ReadFromMsg( msg );
 		lobbyUserID.ReadFromMsg( msg );
@@ -191,7 +191,7 @@ public:
 		NUM_STATES
 	};
 
-	static const char * GetStateString( lobbyBackendState_t state_ ) { 
+	static const char * GetStateString( lobbyBackendState_t state_ ) {
 		static const char * stateToString[NUM_STATES] = {
 			"STATE_INVALID",
 			"STATE_READY",
@@ -204,9 +204,9 @@ public:
 			"STATE_FAILED"
 		};
 
-		return stateToString[ state_ ]; 
+		return stateToString[ state_ ];
 	}
-	
+
 	enum lobbyBackendType_t {
 		TYPE_PARTY		= 0,
 		TYPE_GAME		= 1,
@@ -234,7 +234,7 @@ public:
 	virtual void			UpdateMatchParms( const idMatchParameters & p ) = 0;
 	virtual void			UpdateLobbySkill( float lobbySkill ) = 0;
 	virtual void			SetInGame( bool value ) {}
-	
+
 	virtual lobbyBackendState_t	GetState() = 0;
 	virtual bool			IsLocal() const { return isLocal; }
 	virtual bool			IsOnline() const { return !isLocal; }
@@ -255,7 +255,7 @@ public:
 	virtual void			BecomeHost( int numInvites ) {}						// Become the host of this lobby
 	virtual	void			RegisterAddress( lobbyAddress_t & address ) {}	// Called after becoming a new host, to register old addresses to send invites to
 	virtual void			FinishBecomeHost() {}
-	
+
 	void					SetLobbyType( lobbyBackendType_t lobbyType ) { type = lobbyType; }
 	lobbyBackendType_t		GetLobbyType() const { return type; }
 	const char *			GetLobbyTypeString() const { return ( GetLobbyType() == TYPE_PARTY ) ? "Party" : "Game"; }
@@ -278,4 +278,4 @@ public:
 	// Ugh, hate having to ifdef these, but we're doing some fairly platform specific callbacks
 };
 
-#endif	// __SYS_LOBBY_BACKEND_H__ 
+#endif	// __SYS_LOBBY_BACKEND_H__

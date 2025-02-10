@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -173,8 +173,8 @@ idFile_SaveGamePipelined::ReadSaveFormatVersion
 ========================
 */
 bool idFile_SaveGamePipelined::ReadSaveFormatVersion() {
-	if ( ReadBig( pointerSize ) <= 0 ) { 
-		return false; 
+	if ( ReadBig( pointerSize ) <= 0 ) {
+		return false;
 	}
 	return ReadBig( saveFormatVersion ) != 0;
 }
@@ -184,10 +184,10 @@ bool idFile_SaveGamePipelined::ReadSaveFormatVersion() {
 idFile_SaveGamePipelined::GetPointerSize
 ========================
 */
-int idFile_SaveGamePipelined::GetPointerSize() const { 
-	if ( pointerSize == 0 ) { 
+int idFile_SaveGamePipelined::GetPointerSize() const {
+	if ( pointerSize == 0 ) {
 		// in original savegames we weren't saving the pointer size, so the 2 high bytes of the save version will be 0
-		return 4; 
+		return 4;
 	}  else {
 		return pointerSize;
 	}
@@ -276,7 +276,7 @@ void idFile_SaveGamePipelined::Abort() {
 		}
 
 	} else if ( mode == READ ) {
-	
+
 		if ( decompressThread != NULL ) {
 			decompressThread->WaitForThread();
 		}
@@ -1061,7 +1061,7 @@ static void TestProcessFile( const char * const filename ) {
 	const uint64 endWriteMicroseconds = Sys_Microseconds();
 	const uint64 writeMicroseconds = endWriteMicroseconds - startWriteMicroseconds;
 
-	idLib::Printf( "%lld microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n", 
+	idLib::Printf( "%lld microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n",
 		writeMicroseconds, testDataLength, readDataLength, (float)readDataLength / writeMicroseconds );
 
 	void * readData = (void *)Mem_Alloc( testDataLength, TAG_SAVEGAMES );
@@ -1143,7 +1143,7 @@ CONSOLE_COMMAND( TestCompressionSpeeds, "Compares zlib and our code", 0 ) {
 	const int endWriteMicroseconds = Sys_Microseconds();
 	const int writeMicroseconds = endWriteMicroseconds - startWriteMicroseconds;
 
-	idLib::Printf( "%i microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n", 
+	idLib::Printf( "%i microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n",
 		writeMicroseconds, testDataLength, readDataLength, (float)readDataLength / writeMicroseconds );
 
 }

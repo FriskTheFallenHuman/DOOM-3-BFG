@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -54,14 +54,14 @@ void idMenuScreen_PDA_Inventory::Initialize( idMenuHandler * data ) {
 	infoBox.SetSpritePath( GetSpritePath(), "info", "details" );
 	infoBox.Initialize( data );
 	infoBox.SetNoAutoFree( true );
-	
+
 	itemList.SetSpritePath( GetSpritePath(), "info", "options" );
 	itemList.SetNumVisibleOptions( NUM_INVENTORY_ITEMS_VISIBLE );
 	itemList.SetNoAutoFree( true );
 	while ( itemList.GetChildren().Num() < NUM_INVENTORY_ITEMS_VISIBLE ) {
 		idMenuWidget_Button * const buttonWidget = new (TAG_SWF) idMenuWidget_Button();
 		buttonWidget->Initialize( data );
-		buttonWidget->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_SELECT_PDA_ITEM, itemList.GetChildren().Num() );		
+		buttonWidget->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_SELECT_PDA_ITEM, itemList.GetChildren().Num() );
 		itemList.AddChild( buttonWidget );
 	}
 	itemList.Initialize( data );
@@ -112,7 +112,7 @@ void idMenuScreen_PDA_Inventory::ShowScreen( const mainMenuTransition_t transiti
 		idList<const idMaterial *> weaponIcons;
 		for ( int j = 0; j < MAX_WEAPONS; j++ ) {
 
-			const char * weap = GetWeaponName( j );				
+			const char * weap = GetWeaponName( j );
 			if ( weap == NULL || *weap == NULL ){
 				continue;
 			}
@@ -153,7 +153,7 @@ idMenuScreen_PDA_Inventory::GetWeaponName
 */
 const char * idMenuScreen_PDA_Inventory::GetWeaponName( int index ) {
 
-	idPlayer * player = gameLocal.GetLocalPlayer();	
+	idPlayer * player = gameLocal.GetLocalPlayer();
 	if ( player == NULL ) {
 		return NULL;
 	}
@@ -173,7 +173,7 @@ idMenuScreen_PDA_Inventory::GetWeaponName
 */
 bool idMenuScreen_PDA_Inventory::IsVisibleWeapon( int index ) {
 
-	idPlayer * player = gameLocal.GetLocalPlayer();	
+	idPlayer * player = gameLocal.GetLocalPlayer();
 	if ( player == NULL ) {
 		return false;
 	}
@@ -192,17 +192,17 @@ idMenuScreen_PDA_Inventory::Update
 ========================
 */
 void idMenuScreen_PDA_Inventory::Update() {
-		
-	idPlayer * player = gameLocal.GetLocalPlayer();	
+
+	idPlayer * player = gameLocal.GetLocalPlayer();
 	if ( player == NULL ) {
 		idMenuScreen::Update();
 		return;
 	}
 
-	int validIndex = 0;		
+	int validIndex = 0;
 	for ( int j = 0; j < MAX_WEAPONS; j++ ) {
-			
-		const char * weap = GetWeaponName( j );				
+
+		const char * weap = GetWeaponName( j );
 		if ( weap == NULL || *weap == NULL ){
 			continue;
 		}
@@ -231,8 +231,8 @@ void idMenuScreen_PDA_Inventory::Update() {
 		if ( dpad != NULL ) {
 			dpad->SetVisible( false );
 		}
-	}	
-	
+	}
+
 	if ( menuData != NULL ) {
 		idMenuWidget_CommandBar * cmdBar = dynamic_cast< idMenuWidget_CommandBar * const >( menuData->GetChildFromIndex( PDA_WIDGET_CMD_BAR ) );
 		if ( cmdBar != NULL ) {
@@ -243,7 +243,7 @@ void idMenuScreen_PDA_Inventory::Update() {
 				buttonInfo->label = "#str_01345";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
-			
+
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY3 );
 			buttonInfo->label = "#str_SWF_EQUIP";
 			buttonInfo->action.Set( WIDGET_ACTION_JOY3_ON_PRESS );
@@ -251,7 +251,7 @@ void idMenuScreen_PDA_Inventory::Update() {
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_TAB );
 			buttonInfo->label = "";
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
-		}		
+		}
 	}
 
 	idMenuScreen::Update();
@@ -276,15 +276,15 @@ void idMenuScreen_PDA_Inventory::EquipWeapon() {
 	int validIndex = 0;
 	for ( int j = 0; j < MAX_WEAPONS; j++ ) {
 
-		const char * weap = GetWeaponName( j );				
+		const char * weap = GetWeaponName( j );
 		if ( weap == NULL || *weap == NULL ){
 			continue;
-		}				
+		}
 
 		if ( !IsVisibleWeapon( j ) ) {
 			continue;
 		}
-		
+
 		if ( validIndex == itemList.GetMoveToIndex() ) {
 			int slot = player->SlotForWeapon( weap );
 			player->SetPreviousWeapon( slot );
@@ -351,7 +351,7 @@ bool idMenuScreen_PDA_Inventory::HandleAction( idWidgetAction & action, const id
 			return true;
 		}
 		case WIDGET_ACTION_SCROLL_HORIZONTAL: {
-			
+
 			if ( itemList.GetTotalNumberOfOptions() <= 1 ) {
 				return true;
 			}
@@ -361,7 +361,7 @@ bool idMenuScreen_PDA_Inventory::HandleAction( idWidgetAction & action, const id
 			}
 
 			int direction = parms[0].ToInteger();
-			if ( direction == 1 ) {					
+			if ( direction == 1 ) {
 				if ( itemList.GetViewIndex() == itemList.GetTotalNumberOfOptions() - 1 ) {
 					return true;
 				} else {
@@ -373,7 +373,7 @@ bool idMenuScreen_PDA_Inventory::HandleAction( idWidgetAction & action, const id
 				} else {
 					itemList.MoveToIndex( ( itemList.GetNumVisibleOptions() / 2 ) + 1 );
 				}
-			}	
+			}
 			Update();
 
 			return true;

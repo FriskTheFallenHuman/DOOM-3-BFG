@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ void R_SurfaceToTextureAxis( const srfTriangles_t *tri, idVec3 &origin, idVec3 a
     axis[0][0] = ( d0[0] * d1[4] - d0[4] * d1[0] ) * inva;
     axis[0][1] = ( d0[1] * d1[4] - d0[4] * d1[1] ) * inva;
     axis[0][2] = ( d0[2] * d1[4] - d0[4] * d1[2] ) * inva;
-    
+
     axis[1][0] = ( d0[3] * d1[0] - d0[0] * d1[3] ) * inva;
     axis[1][1] = ( d0[3] * d1[1] - d0[1] * d1[3] ) * inva;
     axis[1][2] = ( d0[3] * d1[2] - d0[2] * d1[3] ) * inva;

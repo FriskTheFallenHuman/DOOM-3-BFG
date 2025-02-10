@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ If you have questions concerning this license or the applicable additional terms
 struct gameReturn_t {
 
 	gameReturn_t() :
-		syncNextGameFrame( false ), 
+		syncNextGameFrame( false ),
 		vibrationLow( 0 ),
 		vibrationHigh( 0 ) {
 
@@ -78,10 +78,10 @@ public:
 	virtual const idDict &		GetServerInfo() = 0;
 
 	// Interpolated server time
-	virtual void				SetServerGameTimeMs( const int time ) = 0;										
+	virtual void				SetServerGameTimeMs( const int time ) = 0;
 
 	// Interpolated server time
-	virtual int					GetServerGameTimeMs() const = 0;												
+	virtual int					GetServerGameTimeMs() const = 0;
 
 	virtual int					GetSSEndTime() const  = 0;
 	virtual int					GetSSStartTime() const = 0;
@@ -158,7 +158,7 @@ public:
 	// Release the mouse when the PDA is open
 	virtual bool				IsPDAOpen() const = 0;
 	virtual bool				IsPlayerChatting() const = 0;
-	
+
 	// Creates leaderboards for each map/mode defined.
 	virtual void				Leaderboards_Init() = 0;
 	virtual void				Leaderboards_Shutdown() = 0;

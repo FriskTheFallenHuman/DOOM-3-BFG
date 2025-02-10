@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ void idMenuScreen_Shell_Controls::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -149,7 +149,7 @@ void idMenuScreen_Shell_Controls::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -191,11 +191,11 @@ idMenuScreen_Shell_Controls::HideScreen
 ========================
 */
 void idMenuScreen_Shell_Controls::HideScreen( const mainMenuTransition_t transitionType ) {
-	
+
 	if ( controlData.IsDataChanged() ) {
 		controlData.CommitData();
 	}
-	
+
 	if ( menuData != NULL ) {
 		idMenuHandler_Shell * handler = dynamic_cast< idMenuHandler_Shell * >( menuData );
 		if ( handler != NULL ) {
@@ -220,7 +220,7 @@ bool idMenuScreen_Shell_Controls::HandleAction( idWidgetAction & action, const i
 	if ( menuData->ActiveScreen() != SHELL_AREA_CONTROLS ) {
 		return false;
 	}
-	
+
 	widgetAction_t actionType = action.GetType();
 	const idSWFParmList & parms = action.GetParms();
 
@@ -323,7 +323,7 @@ idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::idMenuDataSource_
 idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::LoadData
 ========================
 */
-void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::LoadData() {	
+void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::LoadData() {
 	fields[ CONTROLS_FIELD_INVERT_MOUSE ].SetBool( in_mouseInvertLook.GetBool() );
 	float mouseSpeed = ( ( in_mouseSpeed.GetFloat() - 0.25f ) / ( 4.0f - 0.25 ) ) * 100.0f;
 	fields[ CONTROLS_FIELD_MOUSE_SENS ].SetFloat( mouseSpeed );
@@ -339,7 +339,7 @@ idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::CommitData
 */
 void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::CommitData() {
 
-	in_mouseInvertLook.SetBool( fields[ CONTROLS_FIELD_INVERT_MOUSE ].ToBool() );		
+	in_mouseInvertLook.SetBool( fields[ CONTROLS_FIELD_INVERT_MOUSE ].ToBool() );
 	float mouseSpeed = 0.25f + ( ( 4.0f - 0.25 ) * ( fields[ CONTROLS_FIELD_MOUSE_SENS ].ToFloat() / 100.0f ) );
 	in_mouseSpeed.SetFloat( mouseSpeed );
 	in_useJoystick.SetBool( fields[ CONTROLS_FIELD_GAMEPAD_ENABLED ].ToBool() );
@@ -370,7 +370,7 @@ idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::IsDataChanged
 ========================
 */
 bool idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::IsDataChanged() const {
-	
+
 	if ( fields[ CONTROLS_FIELD_INVERT_MOUSE ].ToBool() != originalFields[ CONTROLS_FIELD_INVERT_MOUSE ].ToBool() ) {
 		return true;
 	}

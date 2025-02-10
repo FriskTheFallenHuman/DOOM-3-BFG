@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ static columnDef_t public_CaptureTheFlag[] = {
 };
 
 // This should match up to the ordering of the gameType_t. ( in MultiplayerGame.h )
-const columnGameMode_t gameMode_columnDefs[] = { 
+const columnGameMode_t gameMode_columnDefs[] = {
 	{ public_Deathmatch,		ARRAY_COUNT( public_Deathmatch ),		RANK_GREATEST_FIRST, false, false, "DM" },			// DEATHMATCH
 	{ public_Tourney,			ARRAY_COUNT( public_Tourney ),			RANK_GREATEST_FIRST, false, false, "TOURNEY" },		// TOURNEY
 	{ public_TeamDeathmatch,	ARRAY_COUNT( public_TeamDeathmatch ),	RANK_GREATEST_FIRST, false, false, "TDM" },			// TEAM DEATHMATCH
@@ -78,8 +78,8 @@ const columnGameMode_t gameMode_columnDefs[] = {
 =====================================
 RetreiveLeaderboardID
 
-Each map will move in blocks of n*modes. 
-ex. map 0 will have 0 - 4 Leaderboard id's blocked out. 
+Each map will move in blocks of n*modes.
+ex. map 0 will have 0 - 4 Leaderboard id's blocked out.
 	map 1 will have 5 - 10 leaderboard id's blocked out.
 
 	if gamemode is added it will move in blocks of ARRAY_COUNT( modes )
@@ -107,10 +107,10 @@ void LeaderboardLocal_Init() {
 
 	// Iterate through all the available maps, and generate leaderboard Defs, and IDs for each.
 	for( int mapIdx = 0; mapIdx < maps.Num(); mapIdx++ ) {
-	
+
 		for( int modeIdx = 0; modeIdx < numModes; modeIdx++ ) {
-				
-			// Check the supported modes on the map.		
+
+			// Check the supported modes on the map.
 			if( maps[ mapIdx ].supportedModes & BIT( modeIdx ) ) {
 
 				const columnGameMode_t gamemode = gameMode_columnDefs[ modeIdx ];
@@ -120,7 +120,7 @@ void LeaderboardLocal_Init() {
 
 
 				// Create and Register the leaderboard with the sys_stats registered Leaderboards
-				leaderboardDefinition_t * newLeaderboardDef = Sys_CreateLeaderboardDef( boardID, 
+				leaderboardDefinition_t * newLeaderboardDef = Sys_CreateLeaderboardDef( boardID,
 																						gamemode.numColumns,
 																						gamemode.columnDef,
 																						gamemode.rankOrder,
@@ -128,7 +128,7 @@ void LeaderboardLocal_Init() {
 																						gamemode.checkAgainstCurrent );
 
 
-				
+
 				// Set the leaderboard name.
 				const char* mapname = idLocalization::GetString( maps[ mapIdx ].mapName );
 				newLeaderboardDef->boardName.Format( "%s %s", mapname, gamemode.abrevName );
@@ -138,7 +138,7 @@ void LeaderboardLocal_Init() {
 					idLib::Error( "Leaderboards_Init leaderboard creation failed" );
 				}
 
-			} 
+			}
 		}
 	}
 
@@ -170,7 +170,7 @@ void LeaderboardLocal_Upload( lobbyUserID_t lobbyUserID,int gameType, leaderboar
 	int mapIdx = 0;
 
 	// Need to figure out  What stat columns we want to base rank on. ( for now we'll use wins )
-	const column_t * gameTypeColumn = NULL;	
+	const column_t * gameTypeColumn = NULL;
 	const column_t defaultStats[] = { stats.wins };
 
 	// calculate DM score.
@@ -209,7 +209,7 @@ void LeaderboardLocal_Upload( lobbyUserID_t lobbyUserID,int gameType, leaderboar
 		case GAME_TOURNEY:
 			gameTypeColumn = tnyStats;
 			break;
-		case GAME_LASTMAN:	
+		case GAME_LASTMAN:
 			gameTypeColumn = lmsStats;
 			break;
 		case GAME_CTF: {
@@ -271,7 +271,7 @@ CONSOLE_COMMAND( testLeaderboardDownload, "<id 0 - n > <start = 1> <end = 100>",
 	if ( args.Argc() > 2 ) {
 		start = atoi( args.Argv( 2 ) );
 	}
-	
+
 	if ( args.Argc() > 3 ) {
 		end = atoi( args.Argv( 3 ) );
 	}
@@ -283,14 +283,14 @@ CONSOLE_COMMAND( testLeaderboardDownload, "<id 0 - n > <start = 1> <end = 100>",
 	} else  {
 		idLib::Warning( "Sys_FindLeaderboardDef() Unable to find board %d\n", leaderboardID  );
 	}
-	
+
 }
 
 CONSOLE_COMMAND( testLeaderboardUpload, "<gameType 0 - 4 > <frags = 0> <wins = 1>", 0 ) {
 
 	idLobbyBase & lobby = session->GetActingGameStateLobbyBase();
 	lobbyUserID_t user = lobby.GetLobbyUserIdByOrdinal( 0 );
-	
+
 	gameType_t gameType = GAME_DM;
 	int frags = 0;
 	int wins = 1;
@@ -319,7 +319,7 @@ CONSOLE_COMMAND( testLeaderboardUpload, "<gameType 0 - 4 > <frags = 0> <wins = 1
 
 CONSOLE_COMMAND( testLeaderboardUpload_SendToClients, "<gameType 0 - 4 > <frags = 0> <wins = 1>", 0 ) {
 
-	for( int playerIdx = 0; playerIdx < gameLocal.numClients; playerIdx++ ) {		
+	for( int playerIdx = 0; playerIdx < gameLocal.numClients; playerIdx++ ) {
 
 		leaderboardStats_t stats = { 1, 1, 1, 1 };
 

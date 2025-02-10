@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -194,8 +194,8 @@ public:
 
 	virtual void			Teleport( const idVec3 &origin, const idAngles &angles, idEntity *destination );
 
-	virtual	renderView_t *	GetRenderView();	
-	
+	virtual	renderView_t *	GetRenderView();
+
 							// animation state control
 	int						GetAnim( int channel, const char *name );
 	void					UpdateAnimState();
@@ -327,7 +327,7 @@ private:
 	void					Event_SetDamageCap( float _damageCap );
 	void					Event_SetWaitState( const char* waitState);
 	void					Event_GetWaitState();
-	
+
 };
 
 #endif /* !__GAME_ACTOR_H__ */

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class idPlayerProfile;
 
 /*
 ================================================
-idProfileMgr 
+idProfileMgr
 ================================================
 */
 class idProfileMgr {
@@ -56,7 +56,7 @@ public:
 private:
 	void				LoadSettingsAsync();
 	void				SaveSettingsAsync();
-	
+
 	void				OnLoadSettingsCompleted( idSaveLoadParms * parms );
 	void				OnSaveSettingsCompleted( idSaveLoadParms * parms );
 
@@ -65,7 +65,7 @@ private:
 	std::auto_ptr< idSaveGameProcessorLoadProfile >	profileLoadProcessor;
 
 	idLocalUser *						user;					// reference passed in
-	idPlayerProfile *					profile;				
+	idPlayerProfile *					profile;
 	saveGameHandle_t					handle;
 };
 
@@ -77,7 +77,7 @@ idSaveGameProcessorSaveProfile
 class idSaveGameProcessorSaveProfile : public idSaveGameProcessorSaveFiles {
 public:
 	DEFINE_CLASS( idSaveGameProcessorSaveProfile );
-					
+
 					idSaveGameProcessorSaveProfile();
 
 	bool			InitSaveProfile( idPlayerProfile * profile, const char * folder );

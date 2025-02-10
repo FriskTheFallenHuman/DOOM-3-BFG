@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -217,14 +217,14 @@ idCommonLocal::LoadLoadingGui
 void idCommonLocal::LoadLoadingGui( const char *mapName, bool & hellMap ) {
 
 	defaultLoadscreen = false;
-	loadGUI = new idSWF( "loading/default", NULL );	
-	
+	loadGUI = new idSWF( "loading/default", NULL );
+
 	if ( g_demoMode.GetBool() ) {
 		hellMap = false;
-		if ( loadGUI != NULL ) {					
+		if ( loadGUI != NULL ) {
 			const idMaterial * defaultMat = declManager->FindMaterial( "guis/assets/loadscreens/default" );
 			renderSystem->LoadLevelImages();
-			
+
 			loadGUI->Activate( true );
 			idSWFSpriteInstance * bgImg = loadGUI->GetRootObject().GetSprite( "bgImage" );
 			if ( bgImg != NULL ) {
@@ -276,7 +276,7 @@ void idCommonLocal::LoadLoadingGui( const char *mapName, bool & hellMap ) {
 				overlay->SetVisible( false );
 			}
 
-			idStr desc;	
+			idStr desc;
 			idStr subTitle;
 			idStr displayName;
 			idSWFTextInstance * txtVal = NULL;
@@ -287,7 +287,7 @@ void idCommonLocal::LoadLoadingGui( const char *mapName, bool & hellMap ) {
 			if ( txtVal != NULL ) {
 				txtVal->SetText( "#str_00408" );
 				txtVal->SetStrokeInfo( true, 2.0f, 1.0f );
-			}			
+			}
 
 			const idMatchParameters & matchParameters = session->GetActingGameStateLobbyBase().GetMatchParms();
 			if ( matchParameters.gameMode == GAME_MODE_SINGLEPLAYER ) {
@@ -300,7 +300,7 @@ void idCommonLocal::LoadLoadingGui( const char *mapName, bool & hellMap ) {
 				const char * modeDescs[] = { "#str_swf_deathmatch_desc", "#str_swf_tourney_desc", "#str_swf_team_deathmatch_desc", "#str_swf_lastman_desc", "#str_swf_ctf_desc" };
 				desc = idLocalization::GetString( modeDescs[matchParameters.gameMode] );
 			}
-			
+
 			if ( !isHellMap ) {
 				txtVal = loadGUI->GetRootObject().GetNestedText( "txtName" );
 			} else {
@@ -347,7 +347,7 @@ void idCommonLocal::ExecuteMapChange() {
 
 	// Clear all dialogs before beginning the load
 	common->Dialog().ClearDialogs( true );
-	
+
 	// Remember the current load ID.
 	// This is so we can tell if we had a new loadmap request from within an existing loadmap call
 	const int cachedLoadingID = session->GetLoadingID();
@@ -603,7 +603,7 @@ void idCommonLocal::ExecuteMapChange() {
 
 	int	msec = Sys_Milliseconds() - start;
 	common->Printf( "%6d msec to load %s\n", msec, currentMapName.c_str() );
-	//Sys_DumpMemory( false );	
+	//Sys_DumpMemory( false );
 
 	// Issue a render at the very end of the load process to update soundTime before the first frame
 	soundSystem->Render();
@@ -616,7 +616,7 @@ idCommonLocal::UpdateLevelLoadPacifier
 Pumps the session and if multiplayer, displays dialogs during the loading process.
 ===============
 */
-void idCommonLocal::UpdateLevelLoadPacifier() {	
+void idCommonLocal::UpdateLevelLoadPacifier() {
 	autoRenderIconType_t icon = AUTORENDER_DEFAULTICON;
 	bool autoswapsRunning = renderSystem->AreAutomaticBackgroundSwapsRunning( &icon );
 	if ( !insideExecuteMapChange && !autoswapsRunning ) {
@@ -775,7 +775,7 @@ bool idCommonLocal::SaveGame( const char * saveName ) {
 	pipelineFile = new (TAG_SAVEGAMES) idFile_SaveGamePipelined();
 	pipelineFile->OpenForWriting( &saveFile );
 
-	// Write SaveGame Header: 
+	// Write SaveGame Header:
 	// Game Name / Version / Map Name / Persistant Player Info
 
 	// game
@@ -823,7 +823,7 @@ bool idCommonLocal::SaveGame( const char * saveName ) {
 idCommonLocal::LoadGame
 ===============
 */
-bool idCommonLocal::LoadGame( const char * saveName ) { 
+bool idCommonLocal::LoadGame( const char * saveName ) {
 	if ( IsMultiplayer() ) {
 		common->Printf( "Can't load during net play.\n" );
 		if ( wipeForced ) {

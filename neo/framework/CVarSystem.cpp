@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -317,7 +317,7 @@ void idInternalCVar::Set( const char *newValue, bool force, bool fromServer ) {
 		if ( ( flags & CVAR_CHEAT ) && !net_allowCheats.GetBool() ) {
 			common->Printf( "%s cannot be changed in multiplayer.\n", nameString.c_str() );
 			return;
-		}	
+		}
 	}
 
 	if ( !newValue ) {
@@ -1004,7 +1004,7 @@ void idCVarSystemLocal::CvarAdd_f( const idCmdArgs &args ) {
 //
 ///*
 //================================================
-//idSort_CommandDef 
+//idSort_CommandDef
 //================================================
 //*/
 //class idSort_InternalCVar : public idSort_Quick< const idInternalCVar *, idSort_InternalCVar > {

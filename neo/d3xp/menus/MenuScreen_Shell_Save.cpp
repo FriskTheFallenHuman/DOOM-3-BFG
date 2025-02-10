@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ void idMenuScreen_Shell_Save::UpdateSaveEnumerations() {
 		saveName.Append( "#str_dlg_refreshing" );
 		saveList.Append( saveName );
 
-		if ( options != NULL ) {	
+		if ( options != NULL ) {
 			options->SetListData( saveList );
 			options->Update();
 		}
@@ -157,18 +157,18 @@ void idMenuScreen_Shell_Save::UpdateSaveEnumerations() {
 		if ( saveGameInfo.Num() == MAX_SAVEGAMES || ( !hasAutosave && saveGameInfo.Num() == MAX_SAVEGAMES - 1 ) ) {
 			newSaveOffset = 0;
 		}
-		
+
 		if ( newSaveOffset != 0 ) {
 			idList< idStr > newSave;
 			newSave.Append( "#str_swf_new_save_game" );
 			saveList.Append( newSave );
 		}
 
-		if ( options != NULL ) {			
+		if ( options != NULL ) {
 			sortedSaves.Sort( idSort_SavesByDate() );
 
 			for ( int slot = 0; slot < sortedSaves.Num(); ++slot ) {
-				const idSaveGameDetails & details = sortedSaves[slot];	
+				const idSaveGameDetails & details = sortedSaves[slot];
 				if ( details.slotName.Icmp( "autosave" ) == 0 ) {
 					sortedSaves.RemoveIndex( slot );
 					slot--;
@@ -216,7 +216,7 @@ void idMenuScreen_Shell_Save::UpdateSaveEnumerations() {
 					buttonInfo->label = "#str_02179";	// SAVE GAME
 				}
 				buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-			
+
 				if ( options != NULL ) {
 					if ( options->GetViewIndex() != 0 || ( options->GetViewIndex() == 0 && newSaveOffset == 0 ) )  {
 						buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY3 );
@@ -249,7 +249,7 @@ void idMenuScreen_Shell_Save::UpdateSaveEnumerations() {
 				}
 			}
 			cmdBar->Update();
-		}		
+		}
 	}
 
 	if ( saveInfo != NULL ) {
@@ -378,7 +378,7 @@ void idMenuScreen_Shell_Save::SaveGame( int index ) {
 
 		common->Dialog().AddDialog( GDM_OVERWRITE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, true, index, this ), new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, false, index, this ), false );
 	}
-	
+
 }
 
 /*
@@ -387,7 +387,7 @@ idMenuScreen_Shell_Save::DeleteGame
 ========================
 */
 void idMenuScreen_Shell_Save::DeleteGame( int index ) {
-	
+
 	class idSWFScriptFunction_DeleteGame : public idSWFScriptFunction_RefCounted {
 	public:
 		idSWFScriptFunction_DeleteGame( gameDialogMessages_t _msg, bool _accept, int _index, idMenuScreen_Shell_Save * _screen ) {
@@ -439,7 +439,7 @@ bool idMenuScreen_Shell_Save::HandleAction( idWidgetAction & action, const idWid
 	if ( menuData == NULL ) {
 		return true;
 	}
-		
+
 	if ( menuData->ActiveScreen() != SHELL_AREA_SAVE ) {
 		return false;
 	}
@@ -468,7 +468,7 @@ bool idMenuScreen_Shell_Save::HandleAction( idWidgetAction & action, const idWid
 			if ( options == NULL ) {
 				return true;
 			}
-		
+
 			if ( session->GetSaveGameManager().IsWorking() ) {
 				return true;
 			}

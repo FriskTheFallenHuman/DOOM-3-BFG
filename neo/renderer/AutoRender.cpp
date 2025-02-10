@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ void idAutoRender::StartBackgroundAutoSwaps( autoRenderIconType_t iconType ) {
 	const bool captureToImage = true;
 	common->UpdateScreen( captureToImage );
 
-	// unbind any shaders prior to entering the background autoswaps so we don't run 
+	// unbind any shaders prior to entering the background autoswaps so we don't run
 	// into any problems with cached vertex shader indices from the main thread
 	renderProgManager.Unbind();
 
@@ -125,9 +125,9 @@ void idAutoRender::RenderFrame() {
 
 
 	GL_SetDefaultState();
-	
+
 	GL_Cull( CT_TWO_SIDED );
-	
+
 	const bool stereoRender = false;
 
 	const int width = renderSystem->GetWidth();
@@ -191,7 +191,7 @@ idAutoRender::RenderLoadingIcon
 */
 void idAutoRender::RenderLoadingIcon( float fracX, float fracY, float size, float speed ) {
 
-	float s = 0.0f; 
+	float s = 0.0f;
 	float c = 1.0f;
 
 	if ( autoRenderIcon != AUTORENDER_HELLICON ) {

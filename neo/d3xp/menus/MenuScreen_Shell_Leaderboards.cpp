@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -92,28 +92,28 @@ void idMenuScreen_Shell_Leaderboards::Initialize( idMenuHandler * data ) {
 	AddChild( options );
 
 	btnBack = new (TAG_SWF) idMenuWidget_Button();
-	btnBack->Initialize( data );	
+	btnBack->Initialize( data );
 	btnBack->SetLabel( "#str_swf_party_lobby" );
 	btnBack->SetSpritePath( GetSpritePath(), "info", "btnBack" );
 	btnBack->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_GO_BACK );
 	AddChild( btnBack );
 
 	btnNext = new (TAG_SWF) idMenuWidget_Button();
-	btnNext->Initialize( data );	
+	btnNext->Initialize( data );
 	btnNext->SetLabel( "#str_swf_next" );
 	btnNext->SetSpritePath( GetSpritePath(), "info", "btnNext" );
 	btnNext->AddEventAction( WIDGET_EVENT_PRESS ).Set( new (TAG_SWF) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_TAB_NEXT, WIDGET_EVENT_TAB_NEXT ) );
 	AddChild( btnNext );
 
 	btnPrev = new (TAG_SWF) idMenuWidget_Button();
-	btnPrev->Initialize( data );	
+	btnPrev->Initialize( data );
 	btnPrev->SetLabel( "#str_swf_prev" );
 	btnPrev->SetSpritePath( GetSpritePath(), "info", "btnPrevious" );
 	btnPrev->AddEventAction( WIDGET_EVENT_PRESS ).Set( new (TAG_SWF) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_TAB_PREV, WIDGET_EVENT_TAB_PREV ) );
 	AddChild( btnPrev );
 
 	btnPageDwn = new (TAG_SWF) idMenuWidget_Button();
-	btnPageDwn->Initialize( data );	
+	btnPageDwn->Initialize( data );
 	btnPageDwn->SetLabel( "#str_swf_next_page" );
 	btnPageDwn->SetSpritePath( GetSpritePath(), "info", "btnPageDwn" );
 	idSWFParmList parms;
@@ -123,7 +123,7 @@ void idMenuScreen_Shell_Leaderboards::Initialize( idMenuHandler * data ) {
 	AddChild( btnPageDwn );
 
 	btnPageUp = new (TAG_SWF) idMenuWidget_Button();
-	btnPageUp->Initialize( data );	
+	btnPageUp->Initialize( data );
 	btnPageUp->SetLabel( "#str_swf_prev_page" );
 	btnPageUp->SetSpritePath( GetSpritePath(), "info", "btnPageUp" );
 	parms.Clear();
@@ -146,7 +146,7 @@ void idMenuScreen_Shell_Leaderboards::Initialize( idMenuHandler * data ) {
 	AddEventAction( WIDGET_EVENT_SCROLL_PAGEUP_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_PAGEUP_RELEASE ) );
 	AddEventAction( WIDGET_EVENT_TAB_NEXT ).Set( new (TAG_SWF) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_TAB_NEXT, WIDGET_EVENT_TAB_NEXT ) );
 	AddEventAction( WIDGET_EVENT_TAB_PREV ).Set( new (TAG_SWF) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_TAB_PREV, WIDGET_EVENT_TAB_PREV ) );
-	
+
 	leaderboards.Clear();
 
 	const idList< mpMap_t > maps = common->GetMapList();
@@ -156,7 +156,7 @@ void idMenuScreen_Shell_Leaderboards::Initialize( idMenuHandler * data ) {
 
 	for ( int mapIndex = 0; mapIndex < maps.Num(); ++mapIndex ) {
 		for ( int modeIndex = 0; modeIndex < numModes; ++modeIndex ) {
-			// Check the supported modes on the map.		
+			// Check the supported modes on the map.
 			if( maps[ mapIndex ].supportedModes & BIT( modeIndex ) ) {
 				int boardID = LeaderboardLocal_GetID( mapIndex, modeIndex );
 				const leaderboardDefinition_t * lbDef = Sys_FindLeaderboardDef( boardID );
@@ -180,7 +180,7 @@ void idMenuScreen_Shell_Leaderboards::PumpLBCache() {
 	if ( lbCache == NULL ) {
 		return;
 	}
-	
+
 	lbCache->Pump();
 
 }
@@ -221,7 +221,7 @@ void idMenuScreen_Shell_Leaderboards::Update() {
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY3 );
 			buttonInfo->label = "#str_online_leaderboards_toggle_filter";
 			buttonInfo->action.Set( WIDGET_ACTION_JOY3_ON_PRESS );
-			
+
 			if ( !lbCache->IsLoadingNewLeaderboard() && !lbCache->IsRequestingRows() && options != NULL && options->GetTotalNumberOfOptions() > 0 ) {
 				buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
 				if ( menuData->GetPlatform() != 2 ) {
@@ -229,7 +229,7 @@ void idMenuScreen_Shell_Leaderboards::Update() {
 				}
 				buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
 			}
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -260,13 +260,13 @@ idMenuScreen_Shell_Leaderboards::ShowScreen
 */
 void idMenuScreen_Shell_Leaderboards::ShowScreen( const mainMenuTransition_t transitionType ) {
 	idMenuScreen::ShowScreen( transitionType );
-	
+
 	if ( GetSprite() != NULL ) {
-		lbHeading = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtLbType" );	
+		lbHeading = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtLbType" );
 		if ( menuData != NULL && menuData->GetGUI() != NULL ) {
 			idSWFScriptObject * const shortcutKeys = menuData->GetGUI()->GetGlobal( "shortcutKeys" ).GetObject();
 			if ( verify( shortcutKeys != NULL ) ) {
-			
+
 				// TAB NEXT
 				idSWFScriptObject * const btnTabNext = GetSprite()->GetScriptObject()->GetNestedObj( "info", "btnNext" );
 				if ( btnTabNext != NULL ) {
@@ -289,7 +289,7 @@ void idMenuScreen_Shell_Leaderboards::ShowScreen( const mainMenuTransition_t tra
 						btnTabPrev->GetSprite()->StopFrame( menuData->GetPlatform() + 1 );
 					}
 				}
-									
+
 				// TAB NEXT
 				idSWFScriptObject * const btnDwn = GetSprite()->GetScriptObject()->GetNestedObj( "info", "btnPageDwn" );
 				if ( btnDwn != NULL ) {
@@ -376,7 +376,7 @@ void idMenuScreen_Shell_Leaderboards::ShowScreen( const mainMenuTransition_t tra
 		}
 	}
 
-	
+
 }
 
 /*
@@ -409,7 +409,7 @@ bool idMenuScreen_Shell_Leaderboards::HandleAction( idWidgetAction & action, con
 	switch ( actionType ) {
 		case WIDGET_ACTION_GO_BACK: {
 			menuData->SetNextScreen( SHELL_AREA_PARTY_LOBBY, MENU_TRANSITION_SIMPLE );
-			return true;									
+			return true;
 		}
 		case WIDGET_ACTION_JOY3_ON_PRESS: {
 			lbCache->CycleFilter();
@@ -451,7 +451,7 @@ bool idMenuScreen_Shell_Leaderboards::HandleAction( idWidgetAction & action, con
 				return true;
 			}
 
-			if ( options == NULL ) {		
+			if ( options == NULL ) {
 				return true;
 			}
 
@@ -468,7 +468,7 @@ bool idMenuScreen_Shell_Leaderboards::HandleAction( idWidgetAction & action, con
 				return true;
 			}
 
-			if ( options == NULL ) {		
+			if ( options == NULL ) {
 				return true;
 			}
 
@@ -508,12 +508,12 @@ idMenuScreen_Shell_Leaderboards::SetLeaderboardIndex
 ========================
 */
 void idMenuScreen_Shell_Leaderboards::SetLeaderboardIndex() {
-	
+
 	if ( lbIndex >= leaderboards.Num() ) {
 		lbIndex = 0;
 	} else if ( lbIndex < 0 ) {
 		lbIndex = leaderboards.Num() - 1;
-	}		
+	}
 
 	const leaderboardDefinition_t * leaderboardDef = leaderboards[ lbIndex ].lb;
 	for ( int i = 0; i < leaderboardDef->numColumns; i++ ) {
@@ -538,8 +538,8 @@ void idMenuScreen_Shell_Leaderboards::RefreshLeaderboard() {
 	if ( refreshWhenMasterIsOnline ) {
 		SetLeaderboardIndex();
 		refreshWhenMasterIsOnline = false;
-	}	
-	
+	}
+
 	if ( !refreshLeaderboard ) {
 		return;
 	}
@@ -561,7 +561,7 @@ void idMenuScreen_Shell_Leaderboards::RefreshLeaderboard() {
 			const idLeaderboardCallback::row_t * row = lbCache->GetLeaderboardRow( index );		// If this row is not in the cache, this will kick off a request
 			if ( row != NULL ) {
 				values.Append( va( "%i", (int)row->rank ) );
-				values.Append( row->name );				
+				values.Append( row->name );
 				values.Append( FormatColumn( &lbCache->GetLeaderboard()->columnDefs[0], row->columns[0] ).ToString() );
 			}
 
@@ -638,8 +638,8 @@ void idMenuScreen_Shell_Leaderboards::ShowMessage( bool show, idStr message, boo
 	if ( !menuData || !menuData->GetGUI() ) {
 		return;
 	}
-	
-	idSWFSpriteInstance * pacifier = menuData->GetGUI()->GetRootObject().GetNestedSprite( "menuLeaderboards", "info", "pacifier" );	
+
+	idSWFSpriteInstance * pacifier = menuData->GetGUI()->GetRootObject().GetNestedSprite( "menuLeaderboards", "info", "pacifier" );
 
 	if ( !pacifier ) {
 		return;
@@ -659,7 +659,7 @@ void idMenuScreen_Shell_Leaderboards::ShowMessage( bool show, idStr message, boo
 			txtMsg->SetText( message );
 			txtMsg->SetStrokeInfo( true, 0.75f, 1.75f );
 		}
-		
+
 		idSWFSpriteInstance * spriteSpinner = pacifier->GetScriptObject()->GetNestedSprite( "graphic" );
 		if ( spriteSpinner != NULL ) {
 			spriteSpinner->StopFrame( spinner ? 1 : 2 );
@@ -693,7 +693,7 @@ public:
 
 	LBCallback * Clone() const {
 		return new LBCallback( *this );
-	}	
+	}
 };
 
 /*
@@ -835,7 +835,7 @@ bool idLBCache::Scroll( int amount ) {
 	} else if ( entryIndex >= MAX_STAT_LISTINGS ) {
 		rowOffset += entryIndex - ( MAX_STAT_LISTINGS - 1 );
 		entryIndex = MAX_STAT_LISTINGS - 1;
-	}	
+	}
 
 	// Clamp row offset
 	rowOffset = idMath::ClampInt( 0, Max( numRowsInLeaderboard - MAX_STAT_LISTINGS, 0 ), rowOffset );
@@ -869,7 +869,7 @@ bool idLBCache::ScrollOffset( int amount ) {
 	} else {
 		entryIndex += amount;
 		entryIndex = idMath::ClampInt( 0, numRowsInLeaderboard - 1, entryIndex );
-	}	
+	}
 
 	// Let caller know if anything actually changed
 	return ( oldEntryIndex != entryIndex || oldRowOffset != rowOffset );
@@ -986,7 +986,7 @@ void idLBCache::Update( const idLeaderboardCallback * callback ) {
 
 	rowBlock->lastTime		= Sys_Milliseconds();			// Freshen row
 	rowBlock->startIndex	= callback->GetStartIndex();
-	rowBlock->rows			= callback->GetRows();	
+	rowBlock->rows			= callback->GetRows();
 }
 
 /*

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ void idMenuHandler_Shell::Update() {
 
 	if ( ( IsPacifierVisible() || common->Dialog().IsDialogActive() ) && actionRepeater.isActive ) {
 		ClearWidgetActionRepeater();
-	} 
+	}
 
 	if ( nextState != state ) {
 
@@ -72,7 +72,7 @@ void idMenuHandler_Shell::Update() {
 				nextScreen = SHELL_AREA_ROOT;
 			}
 
-			if ( menuBar != NULL && gui != NULL ) {			
+			if ( menuBar != NULL && gui != NULL ) {
 				idSWFScriptObject & root = gui->GetRootObject();
 				menuBar->BindSprite( root );
 				SetupPCOptions();
@@ -138,7 +138,7 @@ void idMenuHandler_Shell::Update() {
 
 			idSWFSpriteInstance * bg = gui->GetRootObject().GetNestedSprite( "pause_bg" );
 			idSWFSpriteInstance * edging = gui->GetRootObject().GetNestedSprite( "_fullscreen" );
-			
+
 			if ( bg != NULL )  {
 				bg->PlayFrame( "rollOff" );
 			}
@@ -155,7 +155,7 @@ void idMenuHandler_Shell::Update() {
 
 			if ( nextScreen > SHELL_AREA_INVALID && nextScreen < SHELL_NUM_AREAS && menuScreens[ nextScreen ] != NULL ) {
 				menuScreens[ nextScreen ]->UpdateCmds();
-				menuScreens[ nextScreen ]->ShowScreen( static_cast<mainMenuTransition_t>(transition) );			
+				menuScreens[ nextScreen ]->ShowScreen( static_cast<mainMenuTransition_t>(transition) );
 			}
 		}
 
@@ -164,7 +164,7 @@ void idMenuHandler_Shell::Update() {
 	}
 
 	if ( cmdBar != NULL && cmdBar->GetSprite() ) {
-		if ( common->Dialog().IsDialogActive() ) {		
+		if ( common->Dialog().IsDialogActive() ) {
 			cmdBar->GetSprite()->SetVisible( false );
 		} else {
 			cmdBar->GetSprite()->SetVisible( true );
@@ -278,7 +278,7 @@ bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t * sev ) {
 				if ( idStr::Icmp( idKeyInput::GetBinding( sev->evValue ), "" ) == 0 ) {	// no existing binding found
 
 					idKeyInput::SetBinding( sev->evValue, waitBind );
-					
+
 					idMenuScreen_Shell_Bindings * bindScreen = dynamic_cast< idMenuScreen_Shell_Bindings * >( menuScreens[ SHELL_AREA_KEYBOARD ] );
 					if ( bindScreen != NULL ) {
 						bindScreen->SetBindingChanged( true );
@@ -385,13 +385,13 @@ void idMenuHandler_Shell::Initialize( const char * swfFile, idSoundWorld * sw ) 
 		BIND_SHELL_SCREEN( SHELL_AREA_SYSTEM_OPTIONS, idMenuScreen_Shell_SystemOptions, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_GAME_OPTIONS, idMenuScreen_Shell_GameOptions, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_SAVE, idMenuScreen_Shell_Save, this );
-		BIND_SHELL_SCREEN( SHELL_AREA_STEREOSCOPICS, idMenuScreen_Shell_Stereoscopics, this );		
+		BIND_SHELL_SCREEN( SHELL_AREA_STEREOSCOPICS, idMenuScreen_Shell_Stereoscopics, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_CONTROLS, idMenuScreen_Shell_Controls, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_KEYBOARD, idMenuScreen_Shell_Bindings, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_RESOLUTION, idMenuScreen_Shell_Resolution, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_CONTROLLER_LAYOUT, idMenuScreen_Shell_ControllerLayout, this );
 
-		BIND_SHELL_SCREEN( SHELL_AREA_GAMEPAD, idMenuScreen_Shell_Gamepad, this );		
+		BIND_SHELL_SCREEN( SHELL_AREA_GAMEPAD, idMenuScreen_Shell_Gamepad, this );
 		BIND_SHELL_SCREEN( SHELL_AREA_CREDITS, idMenuScreen_Shell_Credits, this );
 
 	} else {
@@ -517,7 +517,7 @@ void idMenuHandler_Shell::Initialize( const char * swfFile, idSoundWorld * sw ) 
 			gameLocal.Shell_Show( false );
 			return idSWFScriptVar();
 		}
-	};	
+	};
 
 	if ( gui != NULL ) {
 		gui->SetGlobal( "closeMenu", new idPauseGUIClose() );
@@ -531,7 +531,7 @@ idMenuHandler_Shell::Cleanup
 */
 void idMenuHandler_Shell::Cleanup() {
 	idMenuHandler::Cleanup();
-	
+
 	delete introGui;
 	introGui = NULL;
 }
@@ -554,21 +554,21 @@ void idMenuHandler_Shell::ActivateMenu( bool show ) {
 		idPlayer * player = gameLocal.GetLocalPlayer();
 		if ( player != NULL ) {
 			if ( !show ) {
-				bool isDead = false;			
+				bool isDead = false;
 				if ( player->health <= 0 ) {
 					isDead = true;
 				}
-			
+
 				if ( isDead && !common->IsMultiplayer() ) {
 					return;
 				}
 			}
 		}
-	} 
+	}
 
 	idMenuHandler::ActivateMenu( show );
 	if ( show ) {
-	
+
 		if ( !inGame ) {
 			PlaySound( GUI_SOUND_MUSIC );
 
@@ -599,7 +599,7 @@ void idMenuHandler_Shell::ActivateMenu( bool show ) {
 		}
 
 		SetupPCOptions();
-		
+
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
 			cmdBar->Update();
@@ -660,7 +660,7 @@ void idMenuHandler_Shell::SetupPCOptions() {
 				buttonWidget->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_COMMAND, SHELL_CMD_DEMO0, index );
 				buttonWidget->SetDescription( "Launch the demo" );
 			}
-			if ( g_demoMode.GetInteger() == 2 ) {			
+			if ( g_demoMode.GetInteger() == 2 ) {
 				index++;
 				buttonWidget = dynamic_cast< idMenuWidget_MenuButton * >( &menuBar->GetChildByIndex( index ) );
 				if ( buttonWidget != NULL ) {
@@ -684,7 +684,7 @@ void idMenuHandler_Shell::SetupPCOptions() {
 				buttonWidget->SetDescription( "#str_01976" );
 			}
 		} else {
-#if !defined ( ID_RETAIL ) 
+#if !defined ( ID_RETAIL )
 			navOptions.Append( "DEV" );	// DEV
 #endif
 			navOptions.Append( "#str_swf_campaign" );	// singleplayer
@@ -693,10 +693,10 @@ void idMenuHandler_Shell::SetupPCOptions() {
 			navOptions.Append( "#str_swf_credits" );	// credits
 			navOptions.Append( "#str_swf_quit" );	// quit
 
-			
+
 			idMenuWidget_MenuButton * buttonWidget = NULL;
 			int index = 0;
-#if !defined ( ID_RETAIL ) 
+#if !defined ( ID_RETAIL )
 			buttonWidget = dynamic_cast< idMenuWidget_MenuButton * >( &menuBar->GetChildByIndex( index ) );
 			if ( buttonWidget != NULL ) {
 				buttonWidget->ClearEventActions();
@@ -742,18 +742,18 @@ void idMenuHandler_Shell::SetupPCOptions() {
 		}
 	}
 
-	if ( menuBar != NULL && gui != NULL ) {			
+	if ( menuBar != NULL && gui != NULL ) {
 		idSWFScriptObject & root = gui->GetRootObject();
 		if ( menuBar->BindSprite( root ) ) {
 			menuBar->GetSprite()->SetVisible( true );
 			menuBar->SetListHeadings( navOptions );
-			menuBar->Update();				
-			
+			menuBar->Update();
+
 			idMenuScreen_Shell_Root * menu = dynamic_cast< idMenuScreen_Shell_Root * >( menuScreens[ SHELL_AREA_ROOT ] );
 			if ( menu != NULL ) {
 				const int activeIndex = menu->GetRootIndex();
 				menuBar->SetViewIndex( activeIndex );
-				menuBar->SetFocusIndex( activeIndex );				
+				menuBar->SetFocusIndex( activeIndex );
 			}
 
 		}
@@ -843,9 +843,9 @@ bool idMenuHandler_Shell::HandleAction( idWidgetAction & action, const idWidgetE
 				session->Cancel();
 			}
 
-			if ( cmd != SHELL_CMD_QUIT && ( nextScreen == SHELL_AREA_STEREOSCOPICS || nextScreen == SHELL_AREA_SYSTEM_OPTIONS || nextScreen == SHELL_AREA_GAME_OPTIONS || 
+			if ( cmd != SHELL_CMD_QUIT && ( nextScreen == SHELL_AREA_STEREOSCOPICS || nextScreen == SHELL_AREA_SYSTEM_OPTIONS || nextScreen == SHELL_AREA_GAME_OPTIONS ||
 				nextScreen == SHELL_AREA_GAMEPAD || nextScreen == SHELL_AREA_MATCH_SETTINGS ) ) {
-				
+
 				cvarSystem->SetModifiedFlags( CVAR_ARCHIVE );
 			}
 
@@ -898,7 +898,7 @@ bool idMenuHandler_Shell::HandleAction( idWidgetAction & action, const idWidgetE
 					break;
 				}
 			}
-						
+
 			return true;
 		}
 	}
@@ -1055,7 +1055,7 @@ void idMenuHandler_Shell::UpdateBGState() {
 			ShowMPFrame( false );
 		}
 	} else {
-		if ( nextScreen == SHELL_AREA_PARTY_LOBBY || nextScreen == SHELL_AREA_CONTROLLER_LAYOUT || nextScreen == SHELL_AREA_GAME_LOBBY || nextScreen == SHELL_AREA_KEYBOARD || nextScreen == SHELL_AREA_LEADERBOARDS || nextScreen == SHELL_AREA_MATCH_SETTINGS || nextScreen == SHELL_AREA_MODE_SELECT || 
+		if ( nextScreen == SHELL_AREA_PARTY_LOBBY || nextScreen == SHELL_AREA_CONTROLLER_LAYOUT || nextScreen == SHELL_AREA_GAME_LOBBY || nextScreen == SHELL_AREA_KEYBOARD || nextScreen == SHELL_AREA_LEADERBOARDS || nextScreen == SHELL_AREA_MATCH_SETTINGS || nextScreen == SHELL_AREA_MODE_SELECT ||
 			nextScreen == SHELL_AREA_BROWSER || nextScreen == SHELL_AREA_LOAD || nextScreen == SHELL_AREA_SAVE || nextScreen == SHELL_AREA_CREDITS ) {
 			ShowMPFrame( true );
 		}
@@ -1063,9 +1063,9 @@ void idMenuHandler_Shell::UpdateBGState() {
 
 	if ( smallFrameShowing || largeFrameShowing ) {
 		ShowLogo( false );
-	} else  { 
+	} else  {
 		ShowLogo( true );
-	}	
+	}
 
 }
 
@@ -1134,7 +1134,7 @@ void idMenuHandler_Shell::UpdateLobby( idMenuWidget_LobbyList * lobbyList ) {
 		lobbyPlayer->voiceState = session->GetDisplayStateFromVoiceState( session->GetLobbyUserVoiceState( lobbyUserID ) );
 	}
 
-	
+
 	for ( int i = 0; i < maxPlayers; ++i ) {
 		if ( i >= lobbyPlayers.Num() ) {
 			lobbyList->SetEntryData( i, "", VOICECHAT_DISPLAY_NONE );
@@ -1202,7 +1202,7 @@ idMenuHandler_Shell::ShowIntroVideo
 								va( "%s %s", idLocalization::GetString("#str_04060"), idLocalization::GetString( "#str_04061" ) ) };
 
 		for ( int i = 0; i < numTextFields; ++i ) {
-			
+
 			idSWFTextInstance * txtVal = introGui->GetRootObject().GetNestedText( va( "info%d", i ), "txtInfo", "txtVal" );
 			if ( txtVal != NULL ) {
 				txtVal->SetText( textEntries[i] );
@@ -1348,14 +1348,14 @@ void idMenuHandler_Shell::ShowROEIntro() {
 		introGui->Activate( true );
 
 		int numTextFields = NUM_ROE_INTRO_LINES;
-		idStr textEntries[NUM_ROE_INTRO_LINES] = { 
+		idStr textEntries[NUM_ROE_INTRO_LINES] = {
 			idLocalization::GetString( "#str_00100870" ),
 			idLocalization::GetString( "#str_00100854" ),
 			idLocalization::GetString( "#str_00100879" ),
 			idLocalization::GetString( "#str_00100855" ),
 			idLocalization::GetString( "#str_00100890" ),
 			idLocalization::GetString( "#str_00100856" ),
-		};				
+		};
 
 		for ( int i = 0; i < numTextFields; ++i ) {
 
@@ -1438,7 +1438,7 @@ void idMenuHandler_Shell::ShowROEIntro() {
 											}
 										}
 									}
-								}					
+								}
 							}
 						}
 
@@ -1537,7 +1537,7 @@ void idMenuHandler_Shell::ShowLEIntro() {
 									return idSWFScriptVar();
 								}
 								thisObject->GetSprite()->SetAlpha( alpha );
-							}					
+							}
 						}
 					}
 

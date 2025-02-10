@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -867,11 +867,11 @@ void idDxtEncoder::EmitColorAlphaIndices_SSE2( const byte *colorBlock, const byt
 		temp3 = _mm_max_epi16( temp3, (const __m128i &)SIMD_SSE2_word_127 );	// b3
 		temp3 = _mm_cmpeq_epi16( temp3, (const __m128i &)SIMD_SSE2_word_127 );
 
-		temp2 = _mm_and_si128( temp2, temp4 );			
+		temp2 = _mm_and_si128( temp2, temp4 );
 		temp2 = _mm_or_si128( temp2, temp3 );							// b0 & b1 | b3
 		temp1 = _mm_xor_si128( temp1, temp4 );
 		temp1 = _mm_or_si128( temp1, temp3 );							// b2 ^ b1 | b3
-		temp2 = _mm_and_si128( temp2, (const __m128i &)SIMD_SSE2_word_2 );		
+		temp2 = _mm_and_si128( temp2, (const __m128i &)SIMD_SSE2_word_2 );
 		temp1 = _mm_and_si128( temp1, (const __m128i &)SIMD_SSE2_word_1 );
 		temp2 = _mm_or_si128( temp2, temp1 );
 
@@ -2415,7 +2415,7 @@ void idDxtEncoder::CompressYCoCgDXT5Fast_SSE2( const byte *inBuf, byte *outBuf, 
 idDxtEncoder::EmitGreenIndices_SSE2
 
 params:	block		- 16-normal block for which to find normal Y indices
-paramO:	minGreen	- Minimal normal Y found 
+paramO:	minGreen	- Minimal normal Y found
 paramO:	maxGreen	- Maximal normal Y found
 ========================
 */

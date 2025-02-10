@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -79,18 +79,18 @@ public:
 		void _Release();
 	private:
 		byte *			data;
-		objectSize_t	size;		
+		objectSize_t	size;
 	};
 
 	struct objectState_t {
-		objectState_t() : 
+		objectState_t() :
 			objectNum( 0 ),
 			visMask( MAX_UNSIGNED_TYPE( uint32 ) ),
 			stale( false ),
 			deleted( false ),
 			changedCount( 0 ),
 			createdFromTemplate( false ),
-			
+
 			expectedSequence( 0 )
 			{ }
 		void Print( const char * name );
@@ -114,13 +114,13 @@ public:
 		int					maxObjMemory;			// Max memory (which will dictate when syncs need to occur)
 		lzwParm_t *			lzwParms;				// Start of lzw parms
 		int					maxDeltaParms;			// Max lzw parms (which will dictate how many syncs we can have)
-		
+
 		idSnapShot *		oldSnap;				// snap we are comparing this snap to (to produce a delta)
-		int					visIndex; 
+		int					visIndex;
 		int					baseSequence;
 
 		idSnapShot *		templateStates;			// states for new snapObj that arent in old states
-		
+
 		lzwInOutData_t *	lzwInOutData;
 	};
 
@@ -146,7 +146,7 @@ public:
 
 	// returns the object index or -1 if it's not found
 	int FindObjectIndexByID( int objectNum ) const;
-	
+
 	// returns the object by id, or NULL if not found
 	objectState_t *	FindObjectByID( int objectNum ) const;
 
@@ -186,14 +186,14 @@ private:
 										objHeader_t *&					curHeader,					// Current header dest
 										uint8 *&						curObjDest,					// Current write pos of current obj
 										lzwParm_t *&					curlzwParm  );				// Current delta parm for next lzw job
-	void SubmitLZWJob( 
+	void SubmitLZWJob(
 		const submitDeltaJobsInfo_t &	writeDeltaInfo,		// Struct containing parameters originally passed in to SubmitWriteDeltaToJobs
 		objParms_t *&					baseObjParm,		// Pointer to the first obj parm for the current stream
 		objParms_t *&					curObjParm,			// Current obj parm
 		lzwParm_t *&					curlzwParm,			// Current delta parm
 		bool							saveDictionary		// If true, this is the first of several calls which will be appended
-	);		
-	
+	);
+
 	void WriteObject( idFile * file, int visIndex, objectState_t * newState, objectState_t * oldState, int & lastobjectNum );
 	void FreeObjectState( int index );
 };

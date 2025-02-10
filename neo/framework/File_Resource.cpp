@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,9 +39,9 @@ idResourceContainer
 
 /*
 ========================
-idResourceContainer::ReOpen 
+idResourceContainer::ReOpen
 ========================
-*/ 
+*/
 void idResourceContainer::ReOpen() {
 	delete resourceFile;
 	resourceFile = fileSystem->OpenFileRead( fileName );
@@ -49,9 +49,9 @@ void idResourceContainer::ReOpen() {
 
 /*
 ========================
-idResourceContainer::Init 
+idResourceContainer::Init
 ========================
-*/ 
+*/
 bool idResourceContainer::Init( const char *_fileName, uint8 containerIndex ) {
 
 	if ( idStr::Icmp( _fileName, "_ordered.resources" ) == 0 ) {
@@ -115,9 +115,9 @@ bool idResourceContainer::Init( const char *_fileName, uint8 containerIndex ) {
 
 /*
 ========================
-idResourceContainer::WriteManifestFile 
+idResourceContainer::WriteManifestFile
 ========================
-*/ 
+*/
 void idResourceContainer::WriteManifestFile( const char *name, const idStrList &list ) {
 	idStr filename( name );
 	filename.SetFileExtension( "manifest" );
@@ -135,9 +135,9 @@ void idResourceContainer::WriteManifestFile( const char *name, const idStrList &
 
 /*
 ========================
-idResourceContainer::ReadManifestFile 
+idResourceContainer::ReadManifestFile
 ========================
-*/ 
+*/
 int idResourceContainer::ReadManifestFile( const char *name, idStrList &list ) {
 	idFile *inFile = fileSystem->OpenFileRead( name );
 	if ( inFile != NULL ) {
@@ -158,9 +158,9 @@ int idResourceContainer::ReadManifestFile( const char *name, idStrList &list ) {
 
 /*
 ========================
-idResourceContainer::UpdateResourceFile 
+idResourceContainer::UpdateResourceFile
 ========================
-*/ 
+*/
 void idResourceContainer::UpdateResourceFile( const char *_filename, const idStrList &_filesToUpdate ) {
 	idFile *outFile = fileSystem->OpenFileWrite( va( "%s.new", _filename ) );
 	if ( outFile == NULL ) {
@@ -284,9 +284,9 @@ void idResourceContainer::UpdateResourceFile( const char *_filename, const idStr
 
 /*
 ========================
-idResourceContainer::ExtractResourceFile 
+idResourceContainer::ExtractResourceFile
 ========================
-*/ 
+*/
 void idResourceContainer::SetContainerIndex( const int & _idx ) {
 	for ( int i = 0; i < cacheTable.Num(); i++ ) {
 		cacheTable[ i ].containerIndex = _idx;
@@ -295,9 +295,9 @@ void idResourceContainer::SetContainerIndex( const int & _idx ) {
 
 /*
 ========================
-idResourceContainer::ExtractResourceFile 
+idResourceContainer::ExtractResourceFile
 ========================
-*/ 
+*/
 void idResourceContainer::ExtractResourceFile ( const char * _fileName, const char * _outPath, bool _copyWavs ) {
 	idFile *inFile = fileSystem->OpenFileRead( _fileName );
 
@@ -360,9 +360,9 @@ void idResourceContainer::ExtractResourceFile ( const char * _fileName, const ch
 
 /*
 ========================
-idResourceContainer::Open 
+idResourceContainer::Open
 ========================
-*/ 
+*/
 void idResourceContainer::WriteResourceFile( const char *manifestName, const idStrList &manifest, const bool &_writeManifest ) {
 
 	if ( manifest.Num() == 0 ) {
@@ -409,7 +409,7 @@ void idResourceContainer::WriteResourceFile( const char *manifestName, const idS
 		idStr fileName = manifestName;
 		if ( idx > 0 ) {
 			fileName = va( "%s_%02d", manifestName, idx );
-		} 
+		}
 		fileName.SetFileExtension( "resources" );
 
 		idFile *resFile = fileSystem->OpenFileWrite( fileName );

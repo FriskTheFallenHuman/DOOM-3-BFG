@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
- 
+
 #include "../idlib/precompiled.h"
 #pragma hdrstop
 
@@ -78,7 +78,7 @@ idProjectile::idProjectile
 ================
 */
 idProjectile::idProjectile() :
-	launchOrigin( 0.0f ), 
+	launchOrigin( 0.0f ),
 	launchAxis( mat3_identity ) {
 	owner				= NULL;
 	lightDefHandle		= -1;
@@ -335,7 +335,7 @@ void idProjectile::Launch( const idVec3 &start, const idVec3 &dir, const idVec3 
 	endthrust			= spawnArgs.GetFloat( "thrust_end" );
 
 	spawnArgs.GetVector( "velocity", "0 0 0", velocity );
-	
+
 	speed = velocity.Length() * launchPower;
 
 	damagePower = dmgPower;
@@ -486,11 +486,11 @@ void idProjectile::Think() {
 	if ( mTouchTriggers ) {
 		TouchTriggers();
 	}
-	
+
 	// if the projectile owner is a player
 	if ( owner.GetEntity() && owner.GetEntity()->IsType( idPlayer::Type ) ) {
 		idPlayer *player = static_cast<idPlayer *>( owner.GetEntity() );
-			
+
 		// Remove any projectiles spectators threw.
 		if( player != NULL && player->spectating ) {
 			PostEventMS( &EV_Remove, 0 );
@@ -534,11 +534,11 @@ void idProjectile::AddParticlesAndLight() {
 				if ( gameLocal.time < lightEndTime ) {
 					float frac = ( float )( gameLocal.time - lightStartTime ) / ( float )( lightEndTime - lightStartTime );
 					color.Lerp( lightColor, color, frac );
-				} 
+				}
 				renderLight.shaderParms[SHADERPARM_RED] = color.x;
 				renderLight.shaderParms[SHADERPARM_GREEN] = color.y;
 				renderLight.shaderParms[SHADERPARM_BLUE] = color.z;
-			} 
+			}
 			gameRenderWorld->UpdateLightDef( lightDefHandle, &renderLight );
 		} else {
 			lightDefHandle = gameRenderWorld->AddLightDef( &renderLight );
@@ -562,7 +562,7 @@ bool idProjectile::Collide( const trace_t &collision, const idVec3 &velocity ) {
 	if ( state == EXPLODED || state == FIZZLED ) {
 		return true;
 	}
-	
+
 	const bool isHitscan = spawnArgs.GetBool( "net_instanthit" );
 
 	// hanlde slow projectiles here.
@@ -716,7 +716,7 @@ bool idProjectile::Collide( const trace_t &collision, const idVec3 &velocity ) {
 			player->GetAchievementManager().EventCompletesAchievement( ACHIEVEMENT_MP_KILL_2_GUYS_IN_ROOM_WITH_BFG );
 		}
 
-		// projectile is done dealing damage. 
+		// projectile is done dealing damage.
 		player->ResetProjectileKills();
 	}
 
@@ -1008,9 +1008,9 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 
 	if ( fxname && *fxname ) {
 		SetModel( fxname );
-		renderEntity.shaderParms[SHADERPARM_RED] = 
-		renderEntity.shaderParms[SHADERPARM_GREEN] = 
-		renderEntity.shaderParms[SHADERPARM_BLUE] = 
+		renderEntity.shaderParms[SHADERPARM_RED] =
+		renderEntity.shaderParms[SHADERPARM_GREEN] =
+		renderEntity.shaderParms[SHADERPARM_BLUE] =
 		renderEntity.shaderParms[SHADERPARM_ALPHA] = 1.0f;
 		renderEntity.shaderParms[SHADERPARM_TIMEOFFSET] = -MS2SEC( gameLocal.time );
 		renderEntity.shaderParms[SHADERPARM_DIVERSITY] = gameLocal.random.CRandomFloat();
@@ -1025,7 +1025,7 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 	{
 		light_shader = "lights/midnight_grenade";
 	}
-	
+
 	if ( *light_shader ) {
 		renderLight.shader = declManager->FindMaterial( light_shader, false );
 		renderLight.pointLight = true;
@@ -1043,7 +1043,7 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 			renderLight.lightRadius[1] =
 			renderLight.lightRadius[2] = spawnArgs.GetFloat( "explode_light_radius" ) * 2;
 		}
-		
+
 		spawnArgs.GetVector( "explode_light_color", "1 1 1", lightColor );
 		renderLight.shaderParms[SHADERPARM_RED] = lightColor.x;
 		renderLight.shaderParms[SHADERPARM_GREEN] = lightColor.y;
@@ -1251,7 +1251,7 @@ void idProjectile::CatchProjectile( idEntity* o, const char* reflectName ) {
 
 	const idDict *damageDef = gameLocal.FindEntityDefDict( s, false );
 	if ( damageDef ) {
-		spawnArgs.Set( "def_damage", s );	
+		spawnArgs.Set( "def_damage", s );
 	}
 }
 
@@ -1380,7 +1380,7 @@ void idProjectile::WriteToSnapshot( idBitMsg &msg ) const {
 	msg.WriteBits( owner.GetSpawnId(), 32 );
 	msg.WriteBits( state, 3 );
 	msg.WriteBits( fl.hidden, 1 );
-	
+
 	physicsObj.WriteToSnapshot( msg );
 }
 
@@ -1481,7 +1481,7 @@ idProjectile::QueueToSimulate
 */
 void idProjectile::QueueToSimulate( int startTime ) {
 	assert( common->IsMultiplayer() && common->IsServer() );
-	
+
 	for ( int i = 0; i < MAX_SIMULATED_PROJECTILES; i++ ) {
 		if ( projectilesToSimulate[i].projectile == NULL ) {
 			projectilesToSimulate[i].projectile = this;
@@ -1493,7 +1493,7 @@ void idProjectile::QueueToSimulate( int startTime ) {
 			return;
 		}
 	}
-	
+
 	idLib::Warning("Unable to simulate more projectiles this frame");
 }
 
@@ -1503,7 +1503,7 @@ idProjectile::SimulateProjectileFrame
 ========================
 */
 void idProjectile::SimulateProjectileFrame( int msec, int endTime ) {
-	idVec3 oldOrigin = GetPhysics()->GetOrigin();	
+	idVec3 oldOrigin = GetPhysics()->GetOrigin();
 
 	GetPhysics()->Evaluate( msec, endTime );
 	SetOrigin( GetPhysics()->GetOrigin() );
@@ -1662,7 +1662,7 @@ void idGuidedProjectile::Think() {
 	int			i;
 
 	if ( state == LAUNCHED && !unGuided ) {
-		
+
 		GetSeekPos( seekPos );
 
 		if ( rndUpdateTime < gameLocal.time ) {
@@ -1738,7 +1738,7 @@ void idGuidedProjectile::Launch( const idVec3 &start, const idVec3 &dir, const i
 			gameLocal.clip.TracePoint( tr, start, end, MASK_SHOT_RENDERMODEL | CONTENTS_BODY, owner.GetEntity() );
 			if ( tr.fraction < 1.0f ) {
 				enemy = gameLocal.GetTraceEntity( tr );
-			} 
+			}
 			// ignore actors on the player's team
 			if ( enemy.GetEntity() == NULL || !enemy.GetEntity()->IsType( idActor::Type ) || ( static_cast<idActor *>( enemy.GetEntity() )->team == player->team ) ) {
 				enemy = player->EnemyWithMostHealth();
@@ -1887,13 +1887,13 @@ void idSoulCubeMissile::Think() {
 				if ( !gameLocal.smokeParticles->EmitSmoke( smokeKill, smokeKillTime, gameLocal.random.CRandomFloat(), orbitOrg, mat3_identity, timeGroup /*_D3XP*/ ) ) {
 					smokeKillTime = gameLocal.time;
 				}
-			} 
+			}
 		} else  {
 			if ( accelTime && gameLocal.time < launchTime + accelTime * 1000 ) {
 				pct = ( gameLocal.time - launchTime ) / ( accelTime * 1000 );
 				speed = ( startingVelocity + ( startingVelocity + endingVelocity ) * pct ).Length();
-			} 
-		} 
+			}
+		}
 		idGuidedProjectile::Think();
 		GetSeekPos( seekPos );
 		if ( ( seekPos - physicsObj.GetOrigin() ).Length() < 32.0f ) {
@@ -1930,7 +1930,7 @@ void idSoulCubeMissile::GetSeekPos( idVec3 &out ) {
 	if ( destOrg != vec3_zero ) {
 		out = destOrg;
 		return;
-	} 
+	}
 	idGuidedProjectile::GetSeekPos( out );
 }
 
@@ -1976,7 +1976,7 @@ void idSoulCubeMissile::Launch( const idVec3 &start, const idVec3 &dir, const id
 	launchTime = gameLocal.time;
 	killPhase = false;
 	UpdateVisuals();
-	
+
 	ownerEnt = owner.GetEntity();
 	if ( ownerEnt != NULL && ownerEnt->IsType( idPlayer::Type ) ) {
 		static_cast<idPlayer *>( ownerEnt )->SetSoulCubeProjectile( this );
@@ -2154,9 +2154,9 @@ void idBFGProjectile::Think() {
 			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_BEAM_END_X ] = org.x;
 			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_BEAM_END_Y ] = org.y;
 			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_BEAM_END_Z ] = org.z;
-			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_RED ] = 
-			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_GREEN ] = 
-			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_BLUE ] = 
+			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_RED ] =
+			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_GREEN ] =
+			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_BLUE ] =
 			beamTargets[i].renderEntity.shaderParms[ SHADERPARM_ALPHA ] = 1.0f;
 			if ( gameLocal.time > nextDamageTime ) {
 				bool bfgVision = true;
@@ -2165,9 +2165,9 @@ void idBFGProjectile::Think() {
 					org.Normalize();
 					beamTargets[i].target.GetEntity()->Damage( this, owner.GetEntity(), org, damageFreq, ( damagePower ) ? damagePower : 1.0f, INVALID_JOINT );
 				} else {
-					beamTargets[i].renderEntity.shaderParms[ SHADERPARM_RED ] = 
-					beamTargets[i].renderEntity.shaderParms[ SHADERPARM_GREEN ] = 
-					beamTargets[i].renderEntity.shaderParms[ SHADERPARM_BLUE ] = 
+					beamTargets[i].renderEntity.shaderParms[ SHADERPARM_RED ] =
+					beamTargets[i].renderEntity.shaderParms[ SHADERPARM_GREEN ] =
+					beamTargets[i].renderEntity.shaderParms[ SHADERPARM_BLUE ] =
 					beamTargets[i].renderEntity.shaderParms[ SHADERPARM_ALPHA ] = 0.0f;
 					bfgVision = false;
 				}
@@ -2211,7 +2211,7 @@ void idBFGProjectile::Launch( const idVec3 &start, const idVec3 &dir, const idVe
 	idProjectile::Launch( start, dir, pushVelocity, 0.0f, power, dmgPower );
 
 	// dmgPower * radius is the target acquisition area
-	// acquisition should make sure that monsters are not dormant 
+	// acquisition should make sure that monsters are not dormant
 	// which will cut down on hitting monsters not actively fighting
 	// but saves on the traces making sure they are visible
 	// damage is not applied until the projectile explodes
@@ -2545,7 +2545,7 @@ void idDebris::Launch() {
 
 	spawnArgs.GetVector( "velocity", "0 0 0", velocity );
 	spawnArgs.GetAngles( "angular_velocity", "0 0 0", angular_velocity );
-	
+
 	linear_friction		= spawnArgs.GetFloat( "linear_friction" );
 	angular_friction	= spawnArgs.GetFloat( "angular_friction" );
 	contact_friction	= spawnArgs.GetFloat( "contact_friction" );
@@ -2892,7 +2892,7 @@ void idHomingProjectile::Think() {
 	float		frac;
 	int			i;
 
-		
+
 	nose = physicsObj.GetOrigin() + 10.0f * physicsObj.GetAxis()[0];
 
 	dir = seekPos - nose;
@@ -2958,7 +2958,7 @@ void idHomingProjectile::Launch( const idVec3 &start, const idVec3 &dir, const i
 			gameLocal.clip.TracePoint( tr, start, end, MASK_SHOT_RENDERMODEL | CONTENTS_BODY, owner.GetEntity() );
 			if ( tr.fraction < 1.0f ) {
 				enemy = gameLocal.GetTraceEntity( tr );
-			} 
+			}
 			// ignore actors on the player's team
 			if ( enemy.GetEntity() == NULL || !enemy.GetEntity()->IsType( idActor::Type ) || ( static_cast<idActor *>( enemy.GetEntity() )->team == player->team ) ) {
 				enemy = player->EnemyWithMostHealth();

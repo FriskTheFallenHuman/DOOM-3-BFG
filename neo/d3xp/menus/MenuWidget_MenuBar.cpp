@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ void idMenuWidget_MenuBar::Update() {
 	buttonPos = 0.0f;
 
 	for ( int index = 0; index < GetNumVisibleOptions(); ++index ) {
-			
+
 		if ( index >= children.Num() ) {
 			break;
 		}
@@ -109,8 +109,8 @@ void idMenuWidget_MenuBar::SetListHeadings( idList< idStr > & list ) {
 idMenuWidget_MenuBar::GetTotalNumberOfOptions
 ========================
 */
-int idMenuWidget_MenuBar::GetTotalNumberOfOptions() const { 
-	return GetChildren().Num(); 
+int idMenuWidget_MenuBar::GetTotalNumberOfOptions() const {
+	return GetChildren().Num();
 }
 
 /*
@@ -136,7 +136,7 @@ bool idMenuWidget_MenuBar::PrepareListElement( idMenuWidget & widget, const int 
 		idSWFTextInstance * ti = button->GetSprite()->GetScriptObject()->GetNestedText( "txtVal" );
 		if ( ti != NULL ) {
 			ti->SetStrokeInfo( true, 0.7f, 1.25f );
-			ti->SetText( headings[ navIndex ] );			
+			ti->SetText( headings[ navIndex ] );
 			button->SetPosition( buttonPos );
 			totalWidth += ti->GetTextLength();
 			buttonPos += rightSpacer + ti->GetTextLength();

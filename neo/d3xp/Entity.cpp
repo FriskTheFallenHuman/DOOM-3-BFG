@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -495,7 +495,7 @@ void idEntity::Spawn() {
 	gameEdit->ParseSpawnArgsToRenderEntity( &spawnArgs, &renderEntity );
 
 	renderEntity.entityNum = entityNumber;
-	
+
 	noGrab = spawnArgs.GetBool( "noGrab", "0" );
 
 	xraySkin = NULL;
@@ -756,7 +756,7 @@ void idEntity::Restore( idRestoreGame *savefile ) {
 
 	savefile->Read( &fl, sizeof( fl ) );
 	LittleBitField( &fl, sizeof( fl ) );
-	
+
 	savefile->ReadInt( timeGroup );
 	savefile->ReadBool( noGrab );
 	savefile->ReadRenderEntity( xrayEntity );
@@ -856,7 +856,7 @@ const char * idEntity::GetName() const {
 /***********************************************************************
 
 	Thinking
-	
+
 ***********************************************************************/
 
 /*
@@ -919,7 +919,7 @@ off from the player can skip all of their work
 */
 bool idEntity::CheckDormant() {
 	bool dormant;
-	
+
 	dormant = DoDormantTests();
 	if ( dormant && !fl.isDormant ) {
 		fl.isDormant = true;
@@ -1033,7 +1033,7 @@ void idEntity::BecomeInactive( int flags ) {
 /***********************************************************************
 
 	Visuals
-	
+
 ***********************************************************************/
 
 /*
@@ -1587,7 +1587,7 @@ renderView_t *idEntity::GetRenderView() {
 /***********************************************************************
 
   Sound
-	
+
 ***********************************************************************/
 
 /*
@@ -1781,7 +1781,7 @@ void idEntity::FreeSoundEmitter( bool immediate ) {
 /***********************************************************************
 
   entity binding
-	
+
 ***********************************************************************/
 
 /*
@@ -2422,7 +2422,7 @@ void idEntity::JoinTeam( idEntity *teammember ) {
 
 	teamMaster = master;
 
-	// reorder the active entity list 
+	// reorder the active entity list
 	gameLocal.sortTeamMasters = true;
 }
 
@@ -2477,7 +2477,7 @@ void idEntity::QuitTeam() {
 /***********************************************************************
 
   Physics.
-	
+
 ***********************************************************************/
 
 /*
@@ -3129,7 +3129,7 @@ void idEntity::RemoveContactEntity( idEntity *ent ) {
 /***********************************************************************
 
 	Damage
-	
+
 ***********************************************************************/
 
 /*
@@ -3240,7 +3240,7 @@ inflictor, attacker, dir, and point can be NULL for environmental effects
 
 ============
 */
-void idEntity::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &dir, 
+void idEntity::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &dir,
 					  const char *damageDefName, const float damageScale, const int location ) {
 	if ( !fl.takedamage ) {
 		return;
@@ -3348,7 +3348,7 @@ void idEntity::Killed( idEntity *inflictor, idEntity *attacker, int damage, cons
 /***********************************************************************
 
   Script functions
-	
+
 ***********************************************************************/
 
 /*
@@ -3585,7 +3585,7 @@ void idEntity::SignalEvent( idThread *thread, signalNum_t signalnum ) {
 /***********************************************************************
 
   Guis.
-	
+
 ***********************************************************************/
 
 
@@ -3780,7 +3780,7 @@ bool idEntity::HandleSingleGuiCommand( idEntity *entityGui, idLexer *src ) {
 /***********************************************************************
 
   Targets
-	
+
 ***********************************************************************/
 
 /*
@@ -3831,7 +3831,7 @@ idEntity::ActivateTargets
 void idEntity::ActivateTargets( idEntity *activator ) const {
 	idEntity	*ent;
 	int			i, j;
-	
+
 	for( i = 0; i < targets.Num(); i++ ) {
 		ent = targets[ i ].GetEntity();
 		if ( !ent ) {
@@ -3840,7 +3840,7 @@ void idEntity::ActivateTargets( idEntity *activator ) const {
 		if ( ent->RespondsTo( EV_Activate ) || ent->HasSignal( SIG_TRIGGER ) ) {
 			ent->Signal( SIG_TRIGGER );
 			ent->ProcessEvent( &EV_Activate, activator );
-		} 		
+		}
 		for ( j = 0; j < MAX_RENDERENTITY_GUI; j++ ) {
 			if ( ent->renderEntity.gui[ j ] ) {
 				ent->renderEntity.gui[ j ]->Trigger( gameLocal.time );
@@ -3852,7 +3852,7 @@ void idEntity::ActivateTargets( idEntity *activator ) const {
 /***********************************************************************
 
   Misc.
-	
+
 ***********************************************************************/
 
 /*
@@ -3982,7 +3982,7 @@ void idEntity::ShowEditingDialog() {
 /***********************************************************************
 
    Events
-	
+
 ***********************************************************************/
 
 /*
@@ -4149,7 +4149,7 @@ void idEntity::Event_SpawnBind() {
 	const idAnim	*anim;
 	int				animNum;
 	idAnimator		*parentAnimator;
-	
+
 	if ( spawnArgs.GetString( "bind", "", &bind ) ) {
 		if ( idStr::Icmp( bind, "worldspawn" ) == 0 ) {
 			//FIXME: Completely unneccessary since the worldspawn is called "world"
@@ -4359,12 +4359,12 @@ void idEntity::Event_StopSound( int channel, int netSync ) {
 
 /*
 ================
-idEntity::Event_StartSound 
+idEntity::Event_StartSound
 ================
 */
 void idEntity::Event_StartSound( const char *soundName, int channel, int netSync ) {
 	int time;
-	
+
 	StartSound( soundName, ( s_channelType )channel, 0, ( netSync != 0 ), &time );
 	idThread::ReturnFloat( MS2SEC( time ) );
 }
@@ -4725,7 +4725,7 @@ void idEntity::Event_UpdateCameraTarget() {
 				dir.Normalize();
 				cameraTarget->SetAxis( dir.ToMat3() );
 				SetAxis(dir.ToMat3());
-				break;						
+				break;
 			}
 			kv = cameraTarget->spawnArgs.MatchPrefix( "target", kv );
 		}
@@ -4774,7 +4774,7 @@ idEntity::Event_WaitFrame
 */
 void idEntity::Event_WaitFrame() {
 	idThread *thread;
-	
+
 	thread = idThread::CurrentThread();
 	if ( thread ) {
 		thread->WaitFrame();
@@ -4920,7 +4920,7 @@ void idEntity::Event_GuiNamedEvent(int guiNum, const char *event) {
 /***********************************************************************
 
    Network
-	
+
 ***********************************************************************/
 
 /*
@@ -5296,7 +5296,7 @@ void idEntity::DecayOriginAndAxisDelta() {
 		}
 		delta.Normalize();
 		delta *= length;
-	
+
 		originDelta += delta;
 	} else {
 		originDelta = vec3_zero;
@@ -5557,7 +5557,7 @@ bool idAnimatedEntity::GetJointTransformForAnim( jointHandle_t jointHandle, int 
 
 	offset = frame[ jointHandle ].ToVec3();
 	axis = frame[ jointHandle ].ToMat3();
-	
+
 	return true;
 }
 

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ void idMenuScreen_Scoreboard::Update() {
 				buttonInfo->label = "#str_swf_view_profile";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idMenuScreen::Update();
@@ -129,7 +129,7 @@ void idMenuScreen_Scoreboard::ShowScreen( const mainMenuTransition_t transitionT
 			txtVal = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtGameType" );
 			if ( txtVal != NULL ) {
 				idStr mode = idLocalization::GetString( "#str_02376" );
-				mode.Append( ": " );				
+				mode.Append( ": " );
 				const idStrList & modes = common->GetModeDisplayList();
 				idStr modeName = idLocalization::GetString( modes[ idMath::ClampInt( 0, modes.Num() - 1, gameLocal.gameType ) ] );
 				mode.Append( idLocalization::GetString( idLocalization::GetString( modeName ) ) );
@@ -202,7 +202,7 @@ idMenuScreen_Scoreboard::SetPlayerData
 ========================
 */
 void idMenuScreen_Scoreboard::SetPlayerData( idList< scoreboardInfo_t, TAG_IDLIB_LIST_MENU > data ) {
-	if ( playerList != NULL ) {		
+	if ( playerList != NULL ) {
 		for ( int i = 0; i < data.Num(); ++i ) {
 			if ( i < playerList->GetChildren().Num() ) {
 				idMenuWidget_ScoreboardButton * button = dynamic_cast< idMenuWidget_ScoreboardButton * >( &playerList->GetChildByIndex( i ) );
@@ -304,9 +304,9 @@ void idMenuScreen_Scoreboard::UpdateHighlight() {
 	int curIndex = playerList->GetViewIndex();
 	int newIndex = playerList->GetViewIndex();
 	int numRed = data->GetNumPlayers( 0 );
-	int numBlue = data->GetNumPlayers( 1 );	
+	int numBlue = data->GetNumPlayers( 1 );
 
-	if ( numBlue == 0 ) {		
+	if ( numBlue == 0 ) {
 		if ( curIndex >= numRed ) {
 			newIndex = numRed - 1;
 		}
@@ -375,12 +375,12 @@ bool idMenuScreen_Scoreboard::HandleAction( idWidgetAction & action, const idWid
 			int selectionIndex = playerList->GetViewIndex();
 			if ( parms.Num() == 1 ) {
 				selectionIndex = parms[0].ToInteger();
-			}	
+			}
 
 			if ( selectionIndex != playerList->GetFocusIndex() ) {
 				playerList->SetViewIndex( playerList->GetViewOffset() + selectionIndex );
 				playerList->SetFocusIndex( selectionIndex );
-			}	
+			}
 
 			idMenuHandler_Scoreboard * data = dynamic_cast< idMenuHandler_Scoreboard * >( menuData );
 
@@ -397,17 +397,17 @@ bool idMenuScreen_Scoreboard::HandleAction( idWidgetAction & action, const idWid
 			} else {
 				data->ViewPlayerProfile( selectionIndex );
 			}
-			
-			
+
+
 			return true;
 		}
 		case WIDGET_ACTION_SCROLL_VERTICAL_VARIABLE: {
-			
+
 			if ( parms.Num() == 0 ) {
 				return true;
 			}
 
-			if ( playerList ) {		
+			if ( playerList ) {
 
 				int dir = parms[ 0 ].ToInteger();
 				int scroll = 0;

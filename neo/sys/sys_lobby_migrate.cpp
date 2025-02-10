@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "../idlib/precompiled.h"
 #include "sys_lobby.h"
 
-idCVar net_migration_debug( "net_migration_debug", "0", CVAR_BOOL, "debug" ); 
-idCVar net_migration_disable( "net_migration_disable", "0", CVAR_BOOL, "debug" ); 
+idCVar net_migration_debug( "net_migration_debug", "0", CVAR_BOOL, "debug" );
+idCVar net_migration_disable( "net_migration_disable", "0", CVAR_BOOL, "debug" );
 idCVar net_migration_forcePeerAsHost( "net_migration_forcePeerAsHost", "-1", CVAR_INTEGER, "When set to >-1, it forces that peer number to be the new host during migration" );
 
 
@@ -80,7 +80,7 @@ idLobby::UpdateHostMigration
 ========================
 */
 void idLobby::UpdateHostMigration() {
-	
+
 	int time = Sys_Milliseconds();
 
 	// If we are picking a new host, then update that
@@ -141,9 +141,9 @@ void idLobby::UpdateHostMigration() {
 		outmsg.WriteBool( migrationInfo.persistUntilGameEndsData.wasMigratedGame );
 
 		NET_VERBOSE_PRINT( "NET: Sending migration invite to %s\n", migrationInfo.invites[i].address.ToString() );
-		
+
 		// Send the migration invite
-		SendConnectionLess( migrationInfo.invites[i].address, OOB_MIGRATE_INVITE, outmsg.GetReadData(), outmsg.GetSize() ); 
+		SendConnectionLess( migrationInfo.invites[i].address, OOB_MIGRATE_INVITE, outmsg.GetReadData(), outmsg.GetSize() );
 	}
 }
 
@@ -263,7 +263,7 @@ void idLobby::PickNewHostInternal( bool forceMe, bool inviteOldHost ) {
 
 	// Remember when we first started picking a new host
 	migrationInfo.state						= MIGRATE_PICKING_HOST;
-	migrationInfo.migrationStartTime		= Sys_Milliseconds();	
+	migrationInfo.migrationStartTime		= Sys_Milliseconds();
 
 	migrationInfo.persistUntilGameEndsData.wasMigratedGame = sessionCB->GetState() == idSession::INGAME;
 
@@ -276,7 +276,7 @@ void idLobby::PickNewHostInternal( bool forceMe, bool inviteOldHost ) {
 	NET_VERBOSE_PRINT( "MIGRATION: Chose user index %d (%s) for new host\n", bestUserIndex, GetLobbyUser( bestUserIndex )->gamertag );
 
 	bool bestWasLocal = IsSessionUserIndexLocal( bestUserIndex );		// Check before shutting down the lobby
-	migrateMsgFlags = parms.matchFlags;						// Save off match parms 
+	migrateMsgFlags = parms.matchFlags;						// Save off match parms
 
 	// Build invite list
 	BuildMigrationInviteList( inviteOldHost );
@@ -346,7 +346,7 @@ void idLobby::EndMigration() {
 	}
 
 	sessionCB->MigrationEnded( *this );
-	
+
 	if ( lobbyBackend != NULL ) {
 		lobbyBackend->FinishBecomeHost();
 	}
@@ -431,7 +431,7 @@ bool idLobby::GetMigrationGameDataUser( lobbyUserID_t lobbyUserID, idBitMsg & ms
 			u->migrationGameData = userNum;
 			memset( migrationInfo.persistUntilGameEndsData.gameDataUser[ userNum ], 0, sizeof( migrationInfo.persistUntilGameEndsData.gameDataUser[0] ) );
 			msg.InitWrite( migrationInfo.persistUntilGameEndsData.gameDataUser[ userNum ], sizeof( migrationInfo.persistUntilGameEndsData.gameDataUser[0] ) );
-			
+
 		}
 		return true;
 	}
@@ -455,7 +455,7 @@ void idLobby::HandleMigrationGameData( idBitMsg & msg ) {
 			u->migrationGameData = -1;
 		}
 	}
-	
+
 	msg.ReadData( migrationInfo.persistUntilGameEndsData.gameData, sizeof( migrationInfo.persistUntilGameEndsData.gameData ) );
 	int numUsers = msg.ReadByte();
 	int dataIndex=0;
@@ -469,7 +469,7 @@ void idLobby::HandleMigrationGameData( idBitMsg & msg ) {
 
 			user->migrationGameData = dataIndex;
 			msg.ReadData( migrationInfo.persistUntilGameEndsData.gameDataUser[ dataIndex ], sizeof( migrationInfo.persistUntilGameEndsData.gameDataUser[ dataIndex ] ) );
-			dataIndex++;			
+			dataIndex++;
 		}
 	}
 }
@@ -535,7 +535,7 @@ void idLobby::SendMigrationGameData() {
 			break;
 		}
 	}
-	
+
 	// Increment next send time / next send peer
 	nextSendMigrationGamePeer++;
 	if ( nextSendMigrationGamePeer >= peers.Num() ) {

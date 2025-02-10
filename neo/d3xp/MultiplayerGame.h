@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ public:
 	// checks rules and updates state of the mp game
 	void			Run();
 
-	// draws mp hud, scoredboard, etc.. 
+	// draws mp hud, scoredboard, etc..
 	bool			Draw( int clientNum );
 
 	// updates frag counts and potentially ends the match in sudden death
@@ -192,7 +192,7 @@ public:
 	void			CleanupScoreboard();
 
 	void			Precache();
-	
+
 	void			ToggleSpectate();
 
 	void			GetSpectateText( idPlayer * player, idStr spectatetext[ 2 ], bool scoreboard );
@@ -213,7 +213,7 @@ public:
 	void			SetFlagMsg( bool b );		// allow flag event messages to be sent
 	bool			IsFlagMsgOn();		// should flag event messages go through?
 
-	int             player_red_flag;            // Ent num of red flag carrier for HUD    
+	int             player_red_flag;            // Ent num of red flag carrier for HUD
 	int             player_blue_flag;           // Ent num of blue flag carrier for HUD
 
 	void			PlayerStats( int clientNum, char *data, const int len );
@@ -318,7 +318,7 @@ private:
 	void			NewState_Countdown_ServerAndClient();
 	void			NewState_GameOn_ServerAndClient();
 	void			NewState_GameReview_ServerAndClient();
-   
+
 public:
 
 	const char *	GetTeamName( int team ) const;
@@ -338,7 +338,7 @@ public:
 
 	bool            IsGametypeFlagBased();
 	bool            IsGametypeTeamBased();
-	
+
 };
 
 ID_INLINE idMultiplayerGame::gameState_t idMultiplayerGame::GetGameState() const {

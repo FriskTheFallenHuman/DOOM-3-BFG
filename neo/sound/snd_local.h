@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -176,7 +176,7 @@ public:
 	float					volumeDB;			// last volume at which this channel will play (calculated in UpdateVolume)
 	float					currentAmplitude;	// current amplitude on the hardware voice
 
-	// hardwareVoice will be freed and NULL'd when a sound is out of range, 
+	// hardwareVoice will be freed and NULL'd when a sound is out of range,
 	// and reallocated when it comes back in range
 	idSoundVoice *			hardwareVoice;
 
@@ -297,7 +297,7 @@ public:
 	float					slowmoSpeed;
 	bool					enviroSuitActive;
 
-public: 
+public:
 	struct soundPortalTrace_t {
 		int		portalArea;
 		const soundPortalTrace_t * prevStack;
@@ -309,7 +309,7 @@ public:
 
 /*
 ================================================
-idSoundEmitterLocal 
+idSoundEmitterLocal
 ================================================
 */
 class idSoundEmitterLocal : public idSoundEmitter {
@@ -479,7 +479,7 @@ public:
 	idSoundHardware				hardware;
 
 	idRandom2					random;
-	
+
 	int							soundTime;
 	bool						muted;
 	bool						musicMuted;

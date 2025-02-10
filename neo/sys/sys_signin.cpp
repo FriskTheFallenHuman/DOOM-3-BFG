@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ bool idSignInManagerBase::ProcessInputEvent( const sysEvent_t * ev ) {
 			}
 		}
 	}
-		
+
 	return false;
 }
 
@@ -106,7 +106,7 @@ idPlayerProfile * idSignInManagerBase::GetPlayerProfileByInputDevice( int index 
 	idLocalUser * user = session->GetSignInManager().GetLocalUserByInputDevice( index );
 	idPlayerProfile * profile = NULL;
 	if ( user != NULL ) {
-		profile = user->GetProfile();	
+		profile = user->GetProfile();
 	}
 	return profile;
 }
@@ -219,7 +219,7 @@ idSignInManagerBase::GetUniqueLocalUserHandle
 Uniquely generate a handle based on name and time
 ========================
 */
-localUserHandle_t idSignInManagerBase::GetUniqueLocalUserHandle( const char * name ) { 
+localUserHandle_t idSignInManagerBase::GetUniqueLocalUserHandle( const char * name ) {
 	MD5_CTX			ctx;
 	unsigned char	digest[16];
 	int64			clockTicks = Sys_GetClockTicks();
@@ -234,7 +234,7 @@ localUserHandle_t idSignInManagerBase::GetUniqueLocalUserHandle( const char * na
 	const int NUM_LOOPS		= 16 / STRIDE_BYTES;
 
 	localUserHandle_t::userHandleType_t handle = 0;
-	
+
 	for ( int i = 0; i < NUM_LOOPS; i++ ) {
 		localUserHandle_t::userHandleType_t tempHandle = 0;
 
@@ -245,5 +245,5 @@ localUserHandle_t idSignInManagerBase::GetUniqueLocalUserHandle( const char * na
 		handle ^= tempHandle;
 	}
 
-	return localUserHandle_t( handle ); 
+	return localUserHandle_t( handle );
 }

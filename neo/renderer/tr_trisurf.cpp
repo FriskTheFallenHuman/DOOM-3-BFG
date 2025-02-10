@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1237,7 +1237,7 @@ void R_DeriveTangentsWithoutNormals( srfTriangles_t *tri ) {
         temp[2] = ( d0[2] * d1[4] - d0[4] * d1[2] ) * inva;
 		temp.Normalize();
 		triangleTangents[i / 3] = temp;
-        
+
         temp[0] = ( d0[3] * d1[0] - d0[0] * d1[3] ) * inva;
         temp[1] = ( d0[3] * d1[1] - d0[1] * d1[3] ) * inva;
         temp[2] = ( d0[3] * d1[2] - d0[2] * d1[3] ) * inva;
@@ -1249,7 +1249,7 @@ void R_DeriveTangentsWithoutNormals( srfTriangles_t *tri ) {
         temp[2] = ( d0[2] * d1[4] - d0[4] * d1[2] );
 		temp.Normalize();
 		triangleTangents[i / 3] = temp;
-        
+
         temp[0] = ( d0[3] * d1[0] - d0[0] * d1[3] );
         temp[1] = ( d0[3] * d1[1] - d0[1] * d1[3] );
         temp[2] = ( d0[3] * d1[2] - d0[2] * d1[3] );
@@ -1353,7 +1353,7 @@ void R_BuildDominantTris( srfTriangles_t *tri ) {
 			int	i1 = tri->indexes[ind[i+j].faceNum * 3 + 0];
 			int	i2 = tri->indexes[ind[i+j].faceNum * 3 + 1];
 			int	i3 = tri->indexes[ind[i+j].faceNum * 3 + 2];
-			
+
 			a = tri->verts + i1;
 			b = tri->verts + i2;
 			c = tri->verts + i3;
@@ -1414,7 +1414,7 @@ void R_BuildDominantTris( srfTriangles_t *tri ) {
 				len = 0.001f;
 			}
 			dt[vertNum].normalizationScale[0] = ( area > 0 ? 1 : -1 ) / len;	// tangents[0]
-	        
+
 			bitangent[0] = ( d0[3] * d1[0] - d0[0] * d1[3] );
 			bitangent[1] = ( d0[3] * d1[1] - d0[1] * d1[3] );
 			bitangent[2] = ( d0[3] * d1[2] - d0[2] * d1[3] );
@@ -1767,7 +1767,7 @@ DEFORMED SURFACES
 R_BuildDeformInfo
 ===================
 */
-deformInfo_t *R_BuildDeformInfo( int numVerts, const idDrawVert *verts, int numIndexes, const int *indexes, 
+deformInfo_t *R_BuildDeformInfo( int numVerts, const idDrawVert *verts, int numIndexes, const int *indexes,
 									bool useUnsmoothedTangents ) {
 	srfTriangles_t	tri;
 	memset( &tri, 0, sizeof( srfTriangles_t ) );

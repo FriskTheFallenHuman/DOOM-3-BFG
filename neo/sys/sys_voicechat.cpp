@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -55,18 +55,18 @@ idVoiceChatMgr::RegisterTalker
 ================================================
 */
 void idVoiceChatMgr::RegisterTalker( lobbyUser_t * user, int lobbyType, bool isLocal ) {
-	
+
 	int i = FindTalkerIndex( user, lobbyType );
-	
+
 	if ( !verify( i == -1 ) ) {
 		assert( talkers[i].lobbyType == lobbyType );
 		idLib::Printf( "RegisterTalker: Talker already registered.\n" );
 		return;
 	}
-	
+
 	// Talker not found, need to create a new one
-	
-	talker_t newTalker; 
+
+	talker_t newTalker;
 
 	newTalker.user				= user;
 	newTalker.isLocal			= isLocal;
@@ -81,7 +81,7 @@ void idVoiceChatMgr::RegisterTalker( lobbyUser_t * user, int lobbyType, bool isL
 	}
 
 	talkers.Append( newTalker );
-	
+
 	// Since we added a new talker, make sure he is registered. UpdateRegisteredTalkers will catch all users, including this one.
 	UpdateRegisteredTalkers();
 }
@@ -93,14 +93,14 @@ idVoiceChatMgr::UnregisterTalker
 */
 void idVoiceChatMgr::UnregisterTalker( lobbyUser_t * user, int lobbyType, bool isLocal ) {
 	int i = FindTalkerIndex( user, lobbyType );
-	
+
 	if ( !verify( i != -1 ) ) {
 		idLib::Printf( "UnregisterTalker: Talker not found.\n" );
 		return;
 	}
-	
+
 	talker_t & talker = talkers[i];
-	
+
 	assert( talker.IsLocal() == ( talker.machineIndex == -1 ) );
 	assert( talker.IsLocal() == isLocal );
 
@@ -121,11 +121,11 @@ idVoiceChatMgr::GetActiveLocalTalkers
 ================================================
 */
 void idVoiceChatMgr::GetActiveLocalTalkers( idStaticList< int, MAX_PLAYERS > & localTalkers ) {
-	
+
 	localTalkers.Clear();
 
 	for ( int i = 0; i < talkers.Num(); i++ ) {
-		
+
 		if ( !talkers[i].IsLocal() ) {
 			continue;
 		}
@@ -137,7 +137,7 @@ void idVoiceChatMgr::GetActiveLocalTalkers( idStaticList< int, MAX_PLAYERS > & l
 		if ( !TalkerHasData( i ) ) {
 			continue;
 		}
-		
+
 		localTalkers.Append( i );
 	}
 }
@@ -148,17 +148,17 @@ idVoiceChatMgr::GetRecipientsForTalker
 ================================================
 */
 void idVoiceChatMgr::GetRecipientsForTalker( int talkerIndex, idStaticList< const lobbyAddress_t *, MAX_PLAYERS > & recipients ) {
-	
+
 	recipients.Clear();
-	
+
 	talker_t & talker = talkers[talkerIndex];
-	
+
 	if ( !talker.IsLocal() ) {
 		return;
 	}
-	
+
 	sendFrame++;
-	
+
 	for ( int i = 0; i < talkers.Num(); i++ ) {
 		if ( !talkers[i].registeredSuccess ) {
 			continue;
@@ -200,16 +200,16 @@ idVoiceChatMgr::SetTalkerGroup
 */
 void idVoiceChatMgr::SetTalkerGroup( const lobbyUser_t * user, int lobbyType, int groupIndex ) {
 	int i = FindTalkerIndex( user, lobbyType );
-	
+
 	if ( !verify( i != -1 ) ) {
 		idLib::Printf( "SetTalkerGroup: Talker not found.\n" );
 		return;
 	}
-	
+
 	// Assign the new group index to this talker
 	talkers[i].groupIndex = groupIndex;
-	
-	// Since the group index of this player changed, call UpdateRegisteredTalkers, which will register the 
+
+	// Since the group index of this player changed, call UpdateRegisteredTalkers, which will register the
 	// appropriate users based on the current active group and session
 	UpdateRegisteredTalkers();
 }
@@ -222,7 +222,7 @@ idVoiceChatMgr::SetActiveLobby
 void idVoiceChatMgr::SetActiveLobby( int lobbyType ) {
 	if ( activeLobbyType != lobbyType ) {
 		activeLobbyType = lobbyType;
-		// When the active session changes, we need to immediately call UpdateRegisteredTalkers, 
+		// When the active session changes, we need to immediately call UpdateRegisteredTalkers,
 		// which will make sure the appropriate talkers are registered depending on the activeSession.
 		UpdateRegisteredTalkers();
 	}
@@ -236,7 +236,7 @@ idVoiceChatMgr::SetActiveChatGroup
 void idVoiceChatMgr::SetActiveChatGroup( int groupIndex ) {
 	if ( activeGroupIndex != groupIndex ) {
 		activeGroupIndex = groupIndex;
-		// When the active group changes, we need to immediately call UpdateRegisteredTalkers, 
+		// When the active group changes, we need to immediately call UpdateRegisteredTalkers,
 		// which will make sure the appropriate talkers are registered depending on the activeGroup.
 		UpdateRegisteredTalkers();
 	}
@@ -253,7 +253,7 @@ int idVoiceChatMgr::FindTalkerByUserId( lobbyUserID_t userID, int lobbyType ) {
 			return i;
 		}
 	}
-	
+
 	return -1;			// Not found
 }
 
@@ -269,7 +269,7 @@ bool idVoiceChatMgr::GetLocalChatData( int talkerIndex, byte * data, int & dataS
 		idLib::Printf( "GetLocalChatData: Talker not local.\n" );
 		return false;	// Talker is remote
 	}
-	
+
 	if ( !talker.registeredSuccess ) {
 		return false;
 	}
@@ -302,17 +302,17 @@ bool idVoiceChatMgr::GetLocalChatData( int talkerIndex, byte * data, int & dataS
 idVoiceChatMgr::SubmitIncomingChatData
 ================================================
 */
-void idVoiceChatMgr::SubmitIncomingChatData( const byte * data, int dataSize ) {		
+void idVoiceChatMgr::SubmitIncomingChatData( const byte * data, int dataSize ) {
 	lobbyUserID_t lobbyUserID;
-	
+
 	idBitMsg voiceMsg;
 	voiceMsg.InitRead( data, dataSize );
 
 	lobbyUserID.ReadFromMsg( voiceMsg );
 	voiceMsg.ReadByteAlign();
-	
+
 	int i = FindTalkerByUserId( lobbyUserID, activeLobbyType );
-	
+
 	if ( i == -1 ) {
 		idLib::Printf( "SubmitIncomingChatData: Talker not found in session.\n" );
 		return;	// Talker is not in this session
@@ -336,7 +336,7 @@ idVoiceChatMgr::GetVoiceState
 */
 voiceState_t idVoiceChatMgr::GetVoiceState( const lobbyUser_t * user ) {
 	int i = FindTalkerByUserId( user->lobbyUserID, activeLobbyType );
-	
+
 	if ( i == -1 ) {
 		return VOICECHAT_STATE_NO_MIC;
 	}
@@ -363,7 +363,7 @@ voiceState_t idVoiceChatMgr::GetVoiceState( const lobbyUser_t * user ) {
 idVoiceChatMgr::CanSendVoiceTo
 ========================
 */
-bool idVoiceChatMgr::CanSendVoiceTo( int talkerFromIndex, int talkerToIndex ) { 
+bool idVoiceChatMgr::CanSendVoiceTo( int talkerFromIndex, int talkerToIndex ) {
 	talker_t & talkerFrom = talkers[talkerFromIndex];
 
 	if ( !talkerFrom.IsLocal() ) {
@@ -395,13 +395,13 @@ idVoiceChatMgr::ToggleMuteLocal
 */
 void idVoiceChatMgr::ToggleMuteLocal( const lobbyUser_t * src, const lobbyUser_t * target ) {
 	int fromTalkerIndex = FindTalkerByUserId( src->lobbyUserID, activeLobbyType );
-	
+
 	if ( fromTalkerIndex == -1 ) {
 		return;
 	}
 
 	int toTalkerIndex = FindTalkerByUserId( target->lobbyUserID, activeLobbyType );
-	
+
 	if ( toTalkerIndex == -1 ) {
 		return;
 	}
@@ -426,7 +426,7 @@ int idVoiceChatMgr::FindTalkerIndex( const lobbyUser_t * user, int lobbyType ) {
 			return i;
 		}
 	}
-	
+
 	return -1;			// Not found
 }
 
@@ -435,7 +435,7 @@ int idVoiceChatMgr::FindTalkerIndex( const lobbyUser_t * user, int lobbyType ) {
 idVoiceChatMgr::FindMachine
 ================================================
 */
-int idVoiceChatMgr::FindMachine( const lobbyAddress_t & address, int lobbyType ) {	
+int idVoiceChatMgr::FindMachine( const lobbyAddress_t & address, int lobbyType ) {
 	for ( int i = 0; i < remoteMachines.Num(); i++ ) {
 		if ( remoteMachines[i].refCount == 0 ) {
 			continue;
@@ -453,9 +453,9 @@ idVoiceChatMgr::AddMachine
 ================================================
 */
 int idVoiceChatMgr::AddMachine( const lobbyAddress_t & address, int lobbyType ) {
-		
+
 	int machineIndex = FindMachine( address, lobbyType );
-	
+
 	if ( machineIndex != -1 ) {
 		// If we find an existing machine, just increase the ref
 		remoteMachines[machineIndex].refCount++;
@@ -490,7 +490,7 @@ int idVoiceChatMgr::AddMachine( const lobbyAddress_t & address, int lobbyType ) 
 		// Re-use the machine slot we found
 		remoteMachines[index] = newMachine;
 	}
-	
+
 	return index;
 }
 
@@ -500,10 +500,10 @@ idVoiceChatMgr::RemoveMachine
 ================================================
 */
 void idVoiceChatMgr::RemoveMachine( int machineIndex, int lobbyType ) {
-	
+
 	assert( remoteMachines[machineIndex].refCount > 0 );
 	assert( remoteMachines[machineIndex].lobbyType == lobbyType );
-	
+
 	// Don't remove the machine.  refCount will eventually reach 0, which will free up the slot to reclaim.
 	// We don't want to remove it, because that would invalidate users machineIndex handles into the array
 	remoteMachines[machineIndex].refCount--;
@@ -514,17 +514,17 @@ void idVoiceChatMgr::RemoveMachine( int machineIndex, int lobbyType ) {
 idVoiceChatMgr::UpdateRegisteredTalkers
 ================================================
 */
-void idVoiceChatMgr::UpdateRegisteredTalkers() {	
+void idVoiceChatMgr::UpdateRegisteredTalkers() {
 	for ( int pass = 0; pass < 2; pass++ ) {
 		for ( int i = 0; i < talkers.Num(); i++ ) {
 			talker_t & talker = talkers[i];
-		
+
 			bool shouldBeRegistered = ( talker.lobbyType != -1 && disableVoiceReasons == 0 && talker.lobbyType == activeLobbyType );
 
 			if ( shouldBeRegistered && pass == 0 ) {
 				continue;		// Only unregister on first pass to make room for when the second pass will possibly register new talkers
 			}
-		
+
 			if ( talker.registered != shouldBeRegistered ) {
 				if ( !talker.registered ) {
 					talker.registeredSuccess = RegisterTalkerInternal( i );
@@ -532,7 +532,7 @@ void idVoiceChatMgr::UpdateRegisteredTalkers() {
 					UnregisterTalkerInternal( i );
 					talker.registeredSuccess = false;
 				}
-			
+
 				talker.registered = shouldBeRegistered;
 			}
 		}
@@ -544,7 +544,7 @@ void idVoiceChatMgr::UpdateRegisteredTalkers() {
 idVoiceChatMgr::SetDisableVoiceReason
 ================================================
 */
-void idVoiceChatMgr::SetDisableVoiceReason( disableVoiceReason_t reason ) {	
+void idVoiceChatMgr::SetDisableVoiceReason( disableVoiceReason_t reason ) {
 	if ( ( disableVoiceReasons & reason ) == 0 ) {
 		disableVoiceReasons |= reason;
 		UpdateRegisteredTalkers();
@@ -556,7 +556,7 @@ void idVoiceChatMgr::SetDisableVoiceReason( disableVoiceReason_t reason ) {
 idVoiceChatMgr::ClearDisableVoiceReason
 ================================================
 */
-void idVoiceChatMgr::ClearDisableVoiceReason( disableVoiceReason_t reason ) {	
+void idVoiceChatMgr::ClearDisableVoiceReason( disableVoiceReason_t reason ) {
 	if ( ( disableVoiceReasons & reason ) != 0 ) {
 		disableVoiceReasons &= ~reason;
 		UpdateRegisteredTalkers();
@@ -582,10 +582,10 @@ idVoiceChatMgr::HasHeadsetStateChanged
 bool idVoiceChatMgr::HasHeadsetStateChanged( int talkerIndex )
 {
 	talker_t & talker = talkers[ talkerIndex ];
-	
+
 	// We should only be checking this on the local user
 	assert( talker.IsLocal() );
-	
+
 	bool ret = talker.hasHeadsetChanged;
 	talker.hasHeadsetChanged = false;
 

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ chose to move through the list.
 */
 void idMenuWidget_List::CalculatePositionFromIndexDelta( int & outIndex, int & outOffset, const int currentIndex, const int currentOffset, const int windowSize, const int maxSize, const int indexDelta, const bool allowWrapping, const bool wrapAround ) const {
 	assert( indexDelta != 0 );
-	
+
 	int newIndex = currentIndex + indexDelta;
 	bool wrapped = false;
 
@@ -200,9 +200,9 @@ void idMenuWidget_List::CalculatePositionFromOffsetDelta( int & outIndex, int & 
 	// shouldn't be setting both indexDelta AND offsetDelta
 	// FIXME: make this simpler code - just pass a boolean to control it?
 	assert( offsetDelta != 0 );
-	
+
 	const int newOffset = Max( currentIndex + offsetDelta, 0 );
-		
+
 	if ( newOffset >= maxSize ) {
 		// scrolling past the end - just scroll all the way to the end
 		outIndex = maxSize - 1;
@@ -238,7 +238,7 @@ void idMenuWidget_List::Scroll( const int scrollAmount, const bool wrapAround ) 
 	if ( newOffset != GetViewOffset() ) {
 		SetViewOffset( newOffset );
 		if ( menuData != NULL ) {
-			menuData->PlaySound( GUI_SOUND_FOCUS );	
+			menuData->PlaySound( GUI_SOUND_FOCUS );
 		}
 		Update();
 	}
@@ -295,7 +295,7 @@ void idMenuWidget_GameBrowserList::Update() {
 		return;
 	}
 
-	for ( int optionIndex = 0; optionIndex < GetNumVisibleOptions(); ++optionIndex ) {		
+	for ( int optionIndex = 0; optionIndex < GetNumVisibleOptions(); ++optionIndex ) {
 		const int childIndex = GetViewOffset() + optionIndex;
 		bool shown = false;
 		if ( optionIndex < GetChildren().Num() ) {

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ idMenuScreen_HUD::HideScreen
 ========================
 */
 void idMenuScreen_HUD::HideScreen( const mainMenuTransition_t transitionType ) {
-		
+
 }
 
 /*
@@ -185,11 +185,11 @@ idMenuScreen_HUD::Update
 */
 void idMenuScreen_HUD::Update() {
 
-	idPlayer * player = gameLocal.GetLocalPlayer();	
+	idPlayer * player = gameLocal.GetLocalPlayer();
 	if ( player == NULL ) {
 		return;
 	}
-	
+
 	idMenuScreen::Update();
 }
 
@@ -305,7 +305,7 @@ void idMenuScreen_HUD::UpdateWeaponInfo( idPlayer * player ) {
 
 	if ( !player || !ammoInfo ) {
 		return;
-	}	
+	}
 
 	idEntityPtr<idWeapon> weapon = player->weapon;
 
@@ -345,15 +345,15 @@ void idMenuScreen_HUD::UpdateWeaponInfo( idPlayer * player ) {
 		//Hack to stop the bloodstone ammo to display when it is being activated
 		if ( !weapon.GetEntity()->IsReady() ) {
 			// show infinite ammo
-			playerAmmo = ""; 
+			playerAmmo = "";
 			totalAmmo = "";
-		} else { 
+		} else {
 			// show remaining ammo
 			totalAmmo = va( "%i", ammoAmount );
 			playerAmmo = weapon.GetEntity()->ClipSize() ? va( "%i", inClip ) : "--";		// how much in the current clip
 			playerClip = weapon.GetEntity()->ClipSize() ? va( "%i", ammoAmount / weapon.GetEntity()->ClipSize() ) : "--";
 			//allAmmo = va( "%i/%i", inClip, ammoAmount );
-		} 
+		}
 
 		if ( !weapon.GetEntity()->ClipSize() ) {
 			showClip = false;
@@ -408,10 +408,10 @@ void idMenuScreen_HUD::UpdateWeaponInfo( idPlayer * player ) {
 					txtClip->SetText( playerAmmo );
 					txtClip->SetStrokeInfo( true, 0.75f, 1.5f );
 				}
-			} 
+			}
 
 			if ( txtAmmo != NULL ) {
-			
+
 				if ( ammoEmptySprite && txtAmmoSprite ) {
 					if ( ammoEmpty ) {
 						ammoEmptySprite->SetVisible( true );
@@ -560,7 +560,7 @@ void idMenuScreen_HUD::SetCursorState( idPlayer * player, cursorState_t state, i
 			cursorNone = 0;
 			cursorItem = set;
 			break;
-		}	
+		}
 		case CURSOR_GRABBER: {
 			cursorNone = 0;
 			cursorGrabber = set;
@@ -599,11 +599,11 @@ idMenuScreen_HUD::CombatCursorFlash
 void idMenuScreen_HUD::CombatCursorFlash() {
 
 	if ( cursorInCombat ) {
-		if ( cursorState == CURSOR_IN_COMBAT ) {			
+		if ( cursorState == CURSOR_IN_COMBAT ) {
 			if ( combatCursor ) {
 				combatCursor->PlayFrame( "hit" );
 			}
-		} 
+		}
 	}
 
 }
@@ -635,7 +635,7 @@ void idMenuScreen_HUD::UpdateCursorState() {
 			grabberCursor->StopFrame( 1 );
 			grabberCursor->SetVisible( false );
 		}
-		
+
 	} else {
 
 		if ( cursorTalking ) {
@@ -647,7 +647,7 @@ void idMenuScreen_HUD::UpdateCursorState() {
 			}
 
 			if ( cursorState != CURSOR_TALK ) {
-			
+
 				if ( combatCursor ) {
 					combatCursor->StopFrame( 1 );
 					combatCursor->SetVisible( false );
@@ -686,12 +686,12 @@ void idMenuScreen_HUD::UpdateCursorState() {
 								actionText.Append( bind.keyboard );
 								actionText.Append( "]" );
 							}
-							
+
 							txtAction->SetText( actionText );
 						} else {
 							txtAction->tooltip = false;
 							txtAction->SetText( cursorAction );
-						}						
+						}
 						txtAction->SetStrokeInfo( true, 0.75f, 1.5f );
 						float actionLength = txtAction->GetTextLength();
 
@@ -752,7 +752,7 @@ void idMenuScreen_HUD::UpdateCursorState() {
 
 			cursorState = CURSOR_GRABBER;
 
-		} else if ( cursorItem ) { 
+		} else if ( cursorItem ) {
 
 			cursorState = CURSOR_ITEM;
 
@@ -787,7 +787,7 @@ void idMenuScreen_HUD::UpdateCursorState() {
 
 			cursorState = CURSOR_IN_COMBAT;
 
-		} 
+		}
 	}
 }
 
@@ -882,7 +882,7 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer * player, bool weaponChanged
 
 			int numRightWeapons = 0;
 			int numLeftWeapons = 0;
-			
+
 			if ( weaponDefNames.Num() == 2 ) {
 				numRightWeapons = 1 - weaponDefIndex;
 				numLeftWeapons = weaponDefIndex;
@@ -897,7 +897,7 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer * player, bool weaponChanged
 			for ( int i = -2; i < 3; ++i ) {
 
 				bool hide = false;
-				
+
 				if ( i < 0 && idMath::Abs( i ) > numLeftWeapons ) {
 					hide = true;
 				} else if ( i > numRightWeapons ) {
@@ -910,7 +910,7 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer * player, bool weaponChanged
 				if ( i < 0 ) {
 					index = 2 + idMath::Abs( i );
 				}
-				
+
 				idSWFSpriteInstance * topValid = mpWeapons->GetNestedSprite( "list", va( "weapon%i", index ), "topValid" );
 				idSWFSpriteInstance * botValid = mpWeapons->GetNestedSprite( "list", va( "weapon%i", index ), "botValid" );
 				idSWFSpriteInstance * topInvalid = mpWeapons->GetNestedSprite( "list", va( "weapon%i", index ), "topInvalid" );
@@ -935,7 +935,7 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer * player, bool weaponChanged
 				} else if ( weaponIndex >= weaponDefNames.Num() ) {
 					weaponIndex = ( weaponIndex - weaponDefNames.Num() );
 				}
-				
+
 				int weapState = 1;
 				const idMaterial * hudIcon = NULL;
 				const char * weapNum = weaponDefNames[ weaponIndex ];
@@ -948,7 +948,7 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer * player, bool weaponChanged
 							displayName = weaponDef->dict.GetString( "display_name" );
 							weapState++;
 						}
-					}	
+					}
 
 					if ( !player->inventory.HasAmmo( weap, true, player ) ) {
 						weapState = 0;
@@ -964,7 +964,7 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer * player, bool weaponChanged
 				botValid->SetMaterial( hudIcon );
 				topInvalid->SetMaterial( hudIcon );
 				botInvalid->SetMaterial( hudIcon );
-					
+
 				if ( weapState == 0 ) {
 					botInvalid->SetVisible( true );
 					if ( i == 0 ) {
@@ -1087,7 +1087,7 @@ void idMenuScreen_HUD::ShowTip( const char * title, const char * tip ) {
 	}
 
 	idSWFSpriteInstance * tipSprite = tipInfo->GetSprite();
-	
+
 	if ( !tipSprite ) {
 		return;
 	}
@@ -1153,7 +1153,7 @@ void idMenuScreen_HUD::DownloadPDA( const idDeclPDA * pda, bool newSecurity ) {
 
 		newPDAName = newPDADownload->GetScriptObject()->GetNestedText( "info", "txtName" );
 		newPDAHeading = newPDADownload->GetScriptObject()->GetNestedText( "info", "txtHeading" );
-		
+
 		if ( newPDAName && GetSWFObject() != NULL ) {
 			idStr pdaName = pda->GetPdaName();
 			pdaName.RemoveColors();
@@ -1162,7 +1162,7 @@ void idMenuScreen_HUD::DownloadPDA( const idDeclPDA * pda, bool newSecurity ) {
 		}
 
 		if ( newPDAHeading && GetSWFObject() != NULL ) {
-			GetSWFObject()->SetGlobal( "pdaDownloadHeading", "#str_02031" );			
+			GetSWFObject()->SetGlobal( "pdaDownloadHeading", "#str_02031" );
 			newPDAHeading->SetStrokeInfo( true, 0.9f, 2.0f );
 		}
 	}
@@ -1182,7 +1182,7 @@ void idMenuScreen_HUD::DownloadVideo() {
 	if ( newVideoDownload ) {
 		newVideoDownload->SetVisible( true );
 		newVideoDownload->PlayFrame( "rollOn" );
-		
+
 		newVideoHeading = newVideoDownload->GetScriptObject()->GetNestedText( "info", "txtHeading" );
 
 		if ( newVideoHeading ) {
@@ -1197,7 +1197,7 @@ void idMenuScreen_HUD::DownloadVideo() {
 idMenuScreen_HUD::UpdatedSecurity
 ========================
 */
-void idMenuScreen_HUD::UpdatedSecurity() {		
+void idMenuScreen_HUD::UpdatedSecurity() {
 	if ( security != NULL && securityText != NULL ) {
 		security->SetVisible( true );
 		security->PlayFrame( "rollOn" );
@@ -1307,7 +1307,7 @@ void  idMenuScreen_HUD::UpdateAudioLog( bool show ) {
 
 		for ( int index = 0; index < 13; ++index  ) {
 			idSWFSpriteInstance * node = audioLog->GetScriptObject()->GetNestedSprite( "bar", va( "node%d", index ) );
-			if ( node != NULL ) {				
+			if ( node != NULL ) {
 				float diff = gameLocal.time - audioLogPrevTime;
 				float speed = ( diff / 350.0f ) * 100.0f;
 				if ( !node->UpdateMoveToScale( speed ) ) {
@@ -1372,7 +1372,7 @@ void  idMenuScreen_HUD::UpdateCommunication( bool show, idPlayer * player ) {
 
 		for ( int index = 0; index < 16; ++index  ) {
 			idSWFSpriteInstance * node = communication->GetScriptObject()->GetNestedSprite( "info", "bar", va( "node%d", index ) );
-			if ( node != NULL ) {				
+			if ( node != NULL ) {
 				float diff = gameLocal.time - commPrevTime;
 				float speed = ( diff / 350.0f ) * 100.0f;
 				if ( !node->UpdateMoveToScale( speed ) ) {
@@ -1385,7 +1385,7 @@ void  idMenuScreen_HUD::UpdateCommunication( bool show, idPlayer * player ) {
 
 		commPrevTime = gameLocal.time;
 	}
-	
+
 	oxygenComm = inVaccuum;
 }
 
@@ -1436,11 +1436,11 @@ void  idMenuScreen_HUD::UpdateOxygen( bool show, int val ) {
 			txtVal->SetText( va( "%d", val ) );
 			txtVal->SetStrokeInfo( true, 0.9f, 2.0f );
 		}
-		
+
 	} else if ( !show ) {
 		inVaccuum = false;
 		oxygen->StopFrame( 1 );
-	} 
+	}
 }
 
 /*
@@ -1470,7 +1470,7 @@ void idMenuScreen_HUD::SetupObjectiveComplete( const idStr & title ) {
 idMenuScreen_HUD::ShowObjective
 ========================
 */
-void idMenuScreen_HUD::ShowObjective( bool complete ) {	
+void idMenuScreen_HUD::ShowObjective( bool complete ) {
 
 	if ( complete ) {
 
@@ -1484,7 +1484,7 @@ void idMenuScreen_HUD::ShowObjective( bool complete ) {
 		idSWFTextInstance * txtComplete = objectiveComplete->GetScriptObject()->GetNestedText( "info", "txtComplete" );
 		idSWFTextInstance * txtTitle = objectiveComplete->GetScriptObject()->GetNestedText( "info", "txtTitle" );
 		idSWFSpriteInstance * rightArrow = objectiveComplete->GetScriptObject()->GetNestedSprite( "info", "right_arrows" );
-		
+
 		if ( txtComplete != NULL ) {
 			txtComplete->SetStrokeInfo( true, 0.9f, 2.0f );
 
@@ -1601,7 +1601,7 @@ void idMenuScreen_HUD::ToggleMPInfo( bool show, bool showTeams, bool isCTF ) {
 		if ( !showTeams ) {
 			if ( redTeam ) {
 				redTeam->SetVisible( false );
-			}			
+			}
 
 			if ( blueTeam ) {
 				blueTeam->SetVisible( false );
@@ -1609,13 +1609,13 @@ void idMenuScreen_HUD::ToggleMPInfo( bool show, bool showTeams, bool isCTF ) {
 		} else {
 			if ( redTeam ) {
 				redTeam->SetVisible( true );
-			}			
+			}
 
 			if ( blueTeam ) {
 				blueTeam->SetVisible( true );
 			}
-		}	
-		
+		}
+
 	} else {
 		mpInfo->SetVisible( false );
 	}
@@ -1632,12 +1632,12 @@ void idMenuScreen_HUD::SetFlagState( int team, int state ) {
 	if ( !mpInfo ) {
 		return;
 	}
-	 
+
 
 	idSWFSpriteInstance * flag = NULL;
 	if ( team == 0 ) {
 		flag = mpInfo->GetScriptObject()->GetNestedSprite( "redFlag" );
-	} else if ( team == 1 ) {	
+	} else if ( team == 1 ) {
 		flag = mpInfo->GetScriptObject()->GetNestedSprite( "blueFlag" );
 	}
 
@@ -1667,7 +1667,7 @@ void idMenuScreen_HUD::SetTeamScore( int team, int score ) {
 
 	if ( team == 0 ) {
 		txtScore = mpInfo->GetScriptObject()->GetNestedText( "redTeam", "txtRedScore" );
-	} else if ( team == 1 ) {	
+	} else if ( team == 1 ) {
 		txtScore = mpInfo->GetScriptObject()->GetNestedText( "blueTeam", "txtBlueScore" );
 	}
 
@@ -1737,7 +1737,7 @@ void idMenuScreen_HUD::TriggerHitTarget( bool show, const idStr & target, int co
 
 /*
 ========================
-idMenuScreen_HUD::ToggleLagged 
+idMenuScreen_HUD::ToggleLagged
 ========================
 */
 void idMenuScreen_HUD::ToggleLagged( bool show ) {
@@ -1778,7 +1778,7 @@ void idMenuScreen_HUD::UpdateMessage( bool show, const idStr & message ) {
 		return;
 	}
 
-	if ( show ) {		
+	if ( show ) {
 		if ( mpTime ) {
 			mpTime->SetText( "" );
 		}
@@ -1824,7 +1824,7 @@ void idMenuScreen_HUD::ShowNewItem( const char * name, const char * icon ) {
 	if ( itemName != NULL ) {
 		itemName->SetText( name );
 		itemName->SetStrokeInfo( true, 0.75f, 1.5f );
-	}	
+	}
 
 }
 
@@ -1907,7 +1907,7 @@ void idMenuScreen_HUD::UpdateChattingHud( idPlayer * player ) {
 			if ( sayObj != NULL ) {
 
 				gui->SetGlobal( "focusWindow", sayObj );
-				
+
 				class idPostTextChat : public idSWFScriptFunction_RefCounted {
 				public:
 					idPostTextChat( idPlayer * _player, idSWFTextInstance * _text ) {

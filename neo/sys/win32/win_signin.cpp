@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -53,22 +53,22 @@ idSignInManagerWin::Pump
 ========================
 */
 void idSignInManagerWin::Pump() {
-	
+
 	// If we have more users than we need, then set to the lower amount
 	// (don't remove the master user though)
 	if ( localUsers.Num() > 1 && localUsers.Num() > maxDesiredLocalUsers ) {
 		localUsers.SetNum( maxDesiredLocalUsers );
 	}
-	
+
 #ifndef ID_RETAIL
 	// If we don't have enough, then make sure we do
-	// NOTE - We always want at least one user on windows for now, 
+	// NOTE - We always want at least one user on windows for now,
 	// and this master user will always use controller 0
 	while ( localUsers.Num() < minDesiredLocalUsers ) {
 		RegisterLocalUser( localUsers.Num() );
 	}
 #endif
-	
+
 	// See if we need to save settings on any of the profiles
 	for ( int i = 0; i < localUsers.Num(); i++ ) {
 		localUsers[i].Pump();
@@ -94,7 +94,7 @@ void idSignInManagerWin::RegisterLocalUser( int inputDevice ) {
 	if ( GetLocalUserByInputDevice( inputDevice ) != NULL ) {
 		return;
 	}
-	
+
 	static char machineName[128];
 	DWORD len = 128;
 	::GetComputerName( machineName, &len );
@@ -112,9 +112,9 @@ void idSignInManagerWin::RegisterLocalUser( int inputDevice ) {
 			name.AppendUTF8Char( c );
 		}
 	}
-	
+
 	idLocalUserWin & localUser = *localUsers.Alloc();
-	
+
 	localUser.Init( inputDevice, name.c_str(), localUsers.Num() );
 	localUser.SetLocalUserHandle( GetUniqueLocalUserHandle( localUser.GetGamerTag() ) );
 

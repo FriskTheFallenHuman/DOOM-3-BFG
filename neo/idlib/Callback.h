@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -130,11 +130,11 @@ private:
 /*
 ================================================================================================
 
-	These are needed because we can't derive the type of an object from the type passed to the 
+	These are needed because we can't derive the type of an object from the type passed to the
 	constructor. If it weren't for these, we'd have to manually specify the type:
 
 		idCallbackBindMem<idFoo>( this, &idFoo::MyFunction );
-	becomes: 
+	becomes:
 		MakeCallback( this, &idFoo::MyFunction );
 
 ================================================================================================
@@ -145,8 +145,8 @@ private:
 MakeCallback
 ========================
 */
-ID_INLINE_EXTERN idCallbackStatic MakeCallback( void (*f)(void) ) { 
-	return idCallbackStatic( f ); 
+ID_INLINE_EXTERN idCallbackStatic MakeCallback( void (*f)(void) ) {
+	return idCallbackStatic( f );
 }
 
 /*
@@ -155,8 +155,8 @@ MakeCallback
 ========================
 */
 template < class T >
-ID_INLINE_EXTERN idCallbackBindMem<T> MakeCallback( T * t, void (T::*f)(void) ) { 
-	return idCallbackBindMem<T>( t, f ); 
+ID_INLINE_EXTERN idCallbackBindMem<T> MakeCallback( T * t, void (T::*f)(void) ) {
+	return idCallbackBindMem<T>( t, f );
 }
 
 /*
@@ -165,7 +165,7 @@ MakeCallback
 ========================
 */
 template < class T, typename A1 >
-ID_INLINE_EXTERN idCallbackBindMemArg1<T, A1> MakeCallback( T * t, void (T::*f)( A1 ), A1 a1 ) { 
+ID_INLINE_EXTERN idCallbackBindMemArg1<T, A1> MakeCallback( T * t, void (T::*f)( A1 ), A1 a1 ) {
 	return idCallbackBindMemArg1<T, A1>( t, f, a1 );
 }
 

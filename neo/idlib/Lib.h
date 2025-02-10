@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public:
 	static void					Init();
 	static void					ShutDown();
 
-	// wrapper to idCommon functions 
+	// wrapper to idCommon functions
 	static void					Printf( const char *fmt, ... );
 	static void					PrintfIf( const bool test, const char *fmt, ... );
 	NO_RETURN static void		Error( const char *fmt, ... );
@@ -158,22 +158,22 @@ class idException {
 public:
 	static const int MAX_ERROR_LEN = 2048;
 
-					idException( const char *text = "" ) { 
-						strncpy( error, text, MAX_ERROR_LEN ); 
+					idException( const char *text = "" ) {
+						strncpy( error, text, MAX_ERROR_LEN );
 					}
 
 	// this really, really should be a const function, but it's referenced too many places to change right now
-	const char *	GetError() { 
-						return error; 
-					}	
+	const char *	GetError() {
+						return error;
+					}
 
 protected:
 	// if GetError() were correctly const this would be named GetError(), too
-	char *		GetErrorBuffer() { 
-					return error; 
-				}	
-	int			GetErrorBufferSize() { 
-					return MAX_ERROR_LEN; 
+	char *		GetErrorBuffer() {
+					return error;
+				}
+	int			GetErrorBufferSize() {
+					return MAX_ERROR_LEN;
 				}
 
 private:
@@ -190,22 +190,22 @@ class idFatalException {
 public:
 	static const int MAX_ERROR_LEN = 2048;
 
-	idFatalException( const char *text = "" ) { 
-		strncpy( idException::error, text, MAX_ERROR_LEN ); 
+	idFatalException( const char *text = "" ) {
+		strncpy( idException::error, text, MAX_ERROR_LEN );
 	}
 
 	// this really, really should be a const function, but it's referenced too many places to change right now
-	const char *	GetError() { 
-		return idException::error; 
-	}	
+	const char *	GetError() {
+		return idException::error;
+	}
 
 protected:
 	// if GetError() were correctly const this would be named GetError(), too
-	char *		GetErrorBuffer() { 
-		return idException::error; 
-	}	
-	int			GetErrorBufferSize() { 
-		return MAX_ERROR_LEN; 
+	char *		GetErrorBuffer() {
+		return idException::error;
+	}
+	int			GetErrorBufferSize() {
+		return MAX_ERROR_LEN;
 	}
 };
 

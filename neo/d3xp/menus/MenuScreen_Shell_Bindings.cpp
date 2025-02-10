@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ static bindInfo_t keyboardBinds[] = {
 	{ "#str_00100183",	"_impulse8"							},	// PLASMA GUN
 	{ "#str_00100184",	"_impulse9"							},	// ROCKETS
 	{ "#str_00100185",	"_impulse10"						},	// BFG
-	{ "#str_swf_soulcube_artifact",	"_impulse12"			},	// SOULCUBE / ARTIFACT	
+	{ "#str_swf_soulcube_artifact",	"_impulse12"			},	// SOULCUBE / ARTIFACT
 	{ "#str_00100187",	"_impulse16"						},	// FLASHLIGHT
 
 	{ "#str_04065",			""								},	// HEADING
@@ -192,18 +192,18 @@ idMenuScreen_Shell_Bindings::ShowScreen
 ========================
 */
 void idMenuScreen_Shell_Bindings::ShowScreen( const mainMenuTransition_t transitionType ) {
-	if ( options != NULL ) {		
+	if ( options != NULL ) {
 		options->SetViewOffset( 0 );
-		options->SetViewIndex( 1 );		
+		options->SetViewIndex( 1 );
 		options->SetFocusIndex( 1 );
 	}
 
 	if ( menuData != NULL ) {
 		menuGUI = menuData->GetGUI();
-		if ( menuGUI != NULL ) {		
+		if ( menuGUI != NULL ) {
 			idSWFScriptObject & root = menuGUI->GetRootObject();
 			txtBlinder = root.GetNestedSprite( "menuBindings", "info", "rebind" );
-			blinder = root.GetNestedSprite( "menuBindings", "info", "blinder" );			
+			blinder = root.GetNestedSprite( "menuBindings", "info", "blinder" );
 			if ( restoreDefault != NULL ) {
 				restoreDefault->BindSprite( root );
 			}
@@ -213,7 +213,7 @@ void idMenuScreen_Shell_Bindings::ShowScreen( const mainMenuTransition_t transit
 	ToggleWait( false );
 	UpdateBindingDisplay();
 
-	idMenuScreen::ShowScreen( transitionType );	
+	idMenuScreen::ShowScreen( transitionType );
 }
 
 /*
@@ -240,7 +240,7 @@ idMenuScreen_Shell_Bindings::UpdateBindingDisplay
 */
 void idMenuScreen_Shell_Bindings::UpdateBindingDisplay() {
 
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > bindList;	
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > bindList;
 
 	for ( int i = 0; i < numBinds; ++i ) {
 		idList< idStr > option;
@@ -297,7 +297,7 @@ void idMenuScreen_Shell_Bindings::UpdateBindingDisplay() {
 					bindings.Append( ", " );
 				}
 				bindings.Append( bind.keyboard );
-			} 
+			}
 
 			if ( !bind.mouse.IsEmpty() ) {
 				if ( !bindings.IsEmpty() ) {
@@ -357,7 +357,7 @@ void idMenuScreen_Shell_Bindings::ToggleWait( bool wait ) {
 		if ( restoreDefault != NULL ) {
 			if ( menuData != NULL ) {
 				menuGUI = menuData->GetGUI();
-				if ( menuGUI != NULL ) {		
+				if ( menuGUI != NULL ) {
 					idSWFScriptObject & root = menuGUI->GetRootObject();
 					restoreDefault->SetSpritePath( GetSpritePath(), "info", "btnRestore" );
 					restoreDefault->BindSprite( root );
@@ -384,7 +384,7 @@ void idMenuScreen_Shell_Bindings::SetBinding( int keyNum ) {
 	UpdateBindingDisplay();
 	ToggleWait( false );
 	Update();
-	
+
 }
 
 /*
@@ -496,7 +496,7 @@ bool idMenuScreen_Shell_Bindings::HandleAction( idWidgetAction & action, const i
 				return true;
 			}
 
-			if ( options != NULL ) {		
+			if ( options != NULL ) {
 
 				int dir = parms[ 0 ].ToInteger();
 				int scroll = 0;

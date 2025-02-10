@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ typedef struct {
 } gamepadBindInfo_t;
 
 static gamepadBindInfo_t gamepadBinds[] = {
-	{ "txtJoy1",		K_JOY1			},	
+	{ "txtJoy1",		K_JOY1			},
 	{ "txtJoy2",		K_JOY2			},
 	{ "txtJoy3",		K_JOY3			},
 	{ "txtJoy4",		K_JOY4			},
@@ -51,7 +51,7 @@ static gamepadBindInfo_t gamepadBinds[] = {
 	{ "txtLBumper",		K_JOY5			},
 	{ "txtRBumper",		K_JOY6			},
 	{ "txtLStick",		K_JOY_STICK1_UP	},
-	{ "txtRStick",		K_JOY_STICK2_UP	},	
+	{ "txtRStick",		K_JOY_STICK2_UP	},
 	{ "txtLTrigger",	K_JOY_TRIGGER1	},
 	{ "txtRTrigger",	K_JOY_TRIGGER2	}
 };
@@ -107,7 +107,7 @@ void idMenuScreen_Shell_ControllerLayout::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -116,7 +116,7 @@ void idMenuScreen_Shell_ControllerLayout::Update() {
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -133,10 +133,10 @@ void idMenuScreen_Shell_ControllerLayout::Update() {
 		}
 
 		if ( menuData != NULL ) {
-			idSWFSpriteInstance * layout = NULL; 
-			
+			idSWFSpriteInstance * layout = NULL;
+
 			layout = GetSprite()->GetScriptObject()->GetNestedSprite( "info", "controlInfo", "layout360" );
-			
+
 			if ( layout != NULL ) {
 				if ( menuData->GetPlatform( true ) == 2 ) {
 					layout->StopFrame( 1 );
@@ -166,7 +166,7 @@ void idMenuScreen_Shell_ControllerLayout::ShowScreen( const mainMenuTransition_t
 	idMenuScreen::ShowScreen( transitionType );
 
 	if ( GetSprite() != NULL ) {
-		
+
 		idSWFSpriteInstance * layout360 = NULL;
 		idSWFSpriteInstance * layoutPS3 = NULL;
 
@@ -208,7 +208,7 @@ void idMenuScreen_Shell_ControllerLayout::UpdateBindingInfo() {
 		const char * txtField = gamepadBinds[i].textField;
 		int keyNum = gamepadBinds[i].keyNum;
 
-		idSWFTextInstance * txtVal = NULL;	
+		idSWFTextInstance * txtVal = NULL;
 
 		txtVal = GetSprite()->GetScriptObject()->GetNestedText( "info", "controlInfo", "layout360", txtField );
 
@@ -265,7 +265,7 @@ bool idMenuScreen_Shell_ControllerLayout::HandleAction( idWidgetAction & action,
 			if ( selectionIndex != options->GetFocusIndex() ) {
 				options->SetViewIndex( options->GetViewOffset() + selectionIndex );
 				options->SetFocusIndex( selectionIndex );
-			}						
+			}
 
 			layoutData.AdjustField( selectionIndex, 1 );
 			options->Update();
@@ -315,7 +315,7 @@ idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::idMenuData
 idMenuScreen_Shell_ControllerLayout::idMenuDataSource_AudioSettings::LoadData
 ========================
 */
-void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::LoadData() {	
+void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::LoadData() {
 
 	idPlayerProfile * profile = session->GetProfileFromMasterLocalUser();
 	if ( profile == NULL ) {
@@ -365,7 +365,7 @@ void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::Adjus
 		} else if ( configSet >= MAX_CONTROLLER_CONFIGS ) {
 			configSet = 0;
 		}
-	} 
+	}
 
 	fields[ LAYOUT_FIELD_LAYOUT ].SetString( idLocalization::GetString( va( "#str_swf_config_360_%i", configSet ) ) );
 

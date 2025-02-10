@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ Utility for detecting a bool state change:
 
 Useful because:
 -Hides client from having to manually declare "last" state and manually checking against it
--using int counter prevents problems w/ dropped snapshots 
+-using int counter prevents problems w/ dropped snapshots
 
 (ie if we just serialized a bool to true for a single ss, if that ss is dropped,skipped,whatever
 the client would never handle it. By incrementing a wrapped counter, we are guaranteed to detect
@@ -133,7 +133,7 @@ struct idNetEvent {
 		return false;
 	}
 	void	Serialize( idSerializer &ser ) {
-		if ( count >= max ) { 
+		if ( count >= max ) {
 			idLib::Warning("idNetEvent. count %d > max %d", count, max );
 		}
 		ser.SerializeUMax( count, max );
@@ -149,7 +149,7 @@ typedef idNetEvent< 7 > netBoolEvent_t;
 
 inline void	WriteToBitMsg( const netBoolEvent_t & netEvent, idBitMsg & msg ) {
 	msg.WriteBits( netEvent.count, idMath::BitsForInteger( netBoolEvent_t::Maximum ) );
-	
+
 	assert( netEvent.count <= netBoolEvent_t::Maximum );
 }
 
@@ -468,7 +468,7 @@ protected:
 
 	idVec3					GetOriginDelta() const { return originDelta; }
 	idMat3					GetAxisDelta() const { return axisDelta; }
-	
+
 private:
 	idPhysics_Static		defaultPhysicsObj;					// default physics object
 	idPhysics *				physics;							// physics used for this entity
@@ -492,7 +492,7 @@ private:
 	idVec3					originDelta;
 	idMat3					axisDelta;
 
-	interpolationBehavior_t	interpolationBehavior;	
+	interpolationBehavior_t	interpolationBehavior;
 	unsigned int			snapshotsReceived;
 
 private:
@@ -591,7 +591,7 @@ private:
 ===============================================================================
 
 	Animated entity base class.
-	
+
 ===============================================================================
 */
 

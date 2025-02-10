@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ static const int NUM_SERVER_LIST_ITEMS = 10;
 
 /*
 ================================================
-idPair is is a template class Container composed of two objects, which can be of 
-any type, and provides accessors to these objects as well as Pair equality operators. The main 
+idPair is is a template class Container composed of two objects, which can be of
+any type, and provides accessors to these objects as well as Pair equality operators. The main
 uses of Pairs in the engine are for the Tools and for callbacks.
 ================================================
 */
@@ -63,7 +63,7 @@ public:
 
 /*
 ================================================
-idSort_PlayerGamesList 
+idSort_PlayerGamesList
 ================================================
 */
 class idSort_PlayerGamesList : public idSort_Quick< idPair< serverInfo_t, int >, idSort_PlayerGamesList > {
@@ -106,10 +106,10 @@ void idMenuScreen_Shell_GameBrowser::Initialize( idMenuHandler * data ) {
 	listWidget->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ).Set( WIDGET_ACTION_STOP_REPEATER );
 	listWidget->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( WIDGET_ACTION_STOP_REPEATER );
 	AddChild( listWidget );
-	
+
 	idMenuWidget_Help * const helpWidget = new ( TAG_SWF ) idMenuWidget_Help();
 	helpWidget->SetSpritePath( GetSpritePath(), "info", "helpTooltip" );
-	AddChild( helpWidget );	
+	AddChild( helpWidget );
 
 	while ( listWidget->GetChildren().Num() < NUM_SERVER_LIST_ITEMS ) {
 		idMenuWidget_ServerButton * buttonWidget = new idMenuWidget_ServerButton;
@@ -325,7 +325,7 @@ void idMenuScreen_Shell_GameBrowser::DescribeServer( const serverInfo_t & server
 		joinable = server.joinable;
 	} else {
 		mapName = common->GetMapList()[ server.gameMap ].mapName;
-		
+
 		const idStrList & modes = common->GetModeDisplayList();
 		idStr mode = idLocalization::GetString( modes[ idMath::ClampInt( 0, modes.Num() - 1, server.gameMode ) ] );
 		validMap = true;

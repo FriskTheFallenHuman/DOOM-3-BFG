@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void idMenuScreen_Shell_Difficulty::Initialize( idMenuHandler * data ) {
 	SetSpritePath( "menuDifficulty" );
 
 	options = new (TAG_SWF) idMenuWidget_DynamicList();
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 	idList< idStr > option;
 	option.Append( "#str_04089" );	// Easy
 	menuOptions.Append( option );
@@ -90,7 +90,7 @@ void idMenuScreen_Shell_Difficulty::Initialize( idMenuHandler * data ) {
 	options->Initialize( data );
 
 	btnBack = new (TAG_SWF) idMenuWidget_Button();
-	btnBack->Initialize( data );	
+	btnBack->Initialize( data );
 	btnBack->SetLabel( "#str_02207" );
 	btnBack->SetSpritePath( GetSpritePath(), "info", "btnBack" );
 	btnBack->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_GO_BACK );
@@ -130,7 +130,7 @@ void idMenuScreen_Shell_Difficulty::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -255,7 +255,7 @@ bool idMenuScreen_Shell_Difficulty::HandleAction( idWidgetAction & action, const
 			int selectionIndex = options->GetViewIndex();
 			if ( parms.Num() == 1 ) {
 				selectionIndex = parms[0].ToInteger();
-			}	
+			}
 
 			if ( selectionIndex == 3 && !nightmareUnlocked ) {
 				return true;

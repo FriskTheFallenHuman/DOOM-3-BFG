@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ const struct achievementInfo_t {
 idAchievementManager::idAchievementManager
 ========================
 */
-idAchievementManager::idAchievementManager() : 
+idAchievementManager::idAchievementManager() :
 	lastImpKilledTime( 0 ),
 	lastPlayerKilledTime( 0 ),
 	playerTookDamage( false ) {
@@ -181,7 +181,7 @@ idAchievementManager::Restore
 */
 void idAchievementManager::Restore( idRestoreGame * savefile ) {
 	owner.Restore( savefile );
-	
+
 	for ( int i = 0; i < ACHIEVEMENTS_NUM; i++ ) {
 		savefile->ReadInt( counts[i] );
 	}
@@ -207,7 +207,7 @@ void idAchievementManager::EventCompletesAchievement( const achievement_t eventI
 	idLocalUser * localUser = GetLocalUser();
 	if ( localUser == NULL || localUser->GetProfile() == NULL ) {
 
-		// Send a Reliable Message to the User that needs to unlock this. 
+		// Send a Reliable Message to the User that needs to unlock this.
 		if ( owner != NULL ) {
 			int playerId = owner->entityNumber;
 			const int bufferSize = sizeof( playerId ) + sizeof( eventId );
@@ -226,7 +226,7 @@ void idAchievementManager::EventCompletesAchievement( const achievement_t eventI
 		return; // Remote user or build game
 	}
 
-	// Check to see if we've already given the achievement.  
+	// Check to see if we've already given the achievement.
 	// If so, don't do again because we don't want to autosave every time a trigger is hit
 	if ( localUser->GetProfile()->GetAchievement( eventId ) ) {
 		return;
@@ -296,7 +296,7 @@ idAchievementManager::LocalUser_CompleteAchievement
 void idAchievementManager::LocalUser_CompleteAchievement( achievement_t id ) {
 	idLocalUser * localUser = session->GetSignInManager().GetMasterLocalUser();
 
-	// Check to see if we've already given the achievement.  
+	// Check to see if we've already given the achievement.
 	// If so, don't do again because we don't want to autosave every time a trigger is hit
 	if( localUser == NULL || localUser->GetProfile()->GetAchievement( id ) ) {
 		return;

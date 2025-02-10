@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ enum utf8Encoding_t {
 	UTF8_PURE_ASCII,		// no characters with values > 127
 	UTF8_ENCODED_BOM,		// characters > 128 encoded with UTF8, but no byte-order-marker at the beginning
 	UTF8_ENCODED_NO_BOM,	// characters > 128 encoded with UTF8, with a byte-order-marker at the beginning
-	UTF8_INVALID,			// has values > 127 but isn't valid UTF8 
+	UTF8_INVALID,			// has values > 127 but isn't valid UTF8
 	UTF8_INVALID_BOM		// has a byte-order-marker at the beginning, but isn't valuid UTF8 -- it's messed up
 };
 
@@ -357,7 +357,7 @@ protected:
 
 private:
 	// initialize string using base buffer... call ONLY FROM CONSTRUCTOR
-	ID_INLINE void		Construct();										
+	ID_INLINE void		Construct();
 
 	static const uint32	STATIC_BIT	= 31;
 	static const uint32	STATIC_MASK	= 1u << STATIC_BIT;
@@ -427,7 +427,7 @@ ID_INLINE void idStr::EnsureAlloced( int amount, bool keepold ) {
 idStr::SetStaticBuffer
 ========================
 */
-ID_INLINE void idStr::SetStaticBuffer( char * buffer, const int bufferLength ) { 
+ID_INLINE void idStr::SetStaticBuffer( char * buffer, const int bufferLength ) {
 	// this should only be called on a freshly constructed idStr
 	assert( data == baseBuffer );
 	data = buffer;

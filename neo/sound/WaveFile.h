@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ public:
 		uint32 start;			// start of the loop point
 		uint32 end;				// end of the loop point
 		uint32 fraction;		// ignored
-		uint32 playCount;		// ignored	
+		uint32 playCount;		// ignored
 	};
 
 	const char * ReadWaveFormat( waveFmt_t & waveFmt );
@@ -201,7 +201,7 @@ public:
 	static bool  WriteHeaderDirect( uint32 fileSize, idFile * file );
 
 	bool		 ReadLoopData( int & start, int & end );
-	
+
 private:
 	idFile *					file;
 

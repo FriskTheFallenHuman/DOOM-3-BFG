@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ void idMenuScreen_Shell_Pause::Initialize( idMenuHandler * data ) {
 		options->AddChild( buttonWidget );
 	}
 	options->Initialize( data );
-	
+
 	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN ).Set( new (TAG_SWF) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP ).Set( new (TAG_SWF) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER, WIDGET_EVENT_SCROLL_UP ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_RELEASE ) );
@@ -104,7 +104,7 @@ void idMenuScreen_Shell_Pause::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-			
+
 			bool isDead = false;
 			idPlayer * player = gameLocal.GetLocalPlayer();
 			if ( player != NULL ) {
@@ -120,7 +120,7 @@ void idMenuScreen_Shell_Pause::Update() {
 				}
 				buttonInfo->action.Set( WIDGET_ACTION_COMMAND, PAUSE_CMD_RETURN );
 			}
-		}		
+		}
 	}
 
 	idMenuScreen::Update();
@@ -132,8 +132,8 @@ idMenuScreen_Shell_Pause::ShowScreen
 ========================
 */
 void idMenuScreen_Shell_Pause::ShowScreen( const mainMenuTransition_t transitionType ) {
-	
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
+
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 	idList< idStr > option;
 
 	bool isDead = false;
@@ -204,7 +204,7 @@ void idMenuScreen_Shell_Pause::ShowScreen( const mainMenuTransition_t transition
 			menuOptions.Append( option );
 			option.Clear();
 			option.Append( "#str_swf_leave_game" );	// leave game
-			menuOptions.Append( option );		
+			menuOptions.Append( option );
 
 			int index = 0;
 			idMenuWidget_Button * buttonWidget = NULL;
@@ -276,7 +276,7 @@ void idMenuScreen_Shell_Pause::ShowScreen( const mainMenuTransition_t transition
 				menuOptions.Append( option );
 				option.Clear();
 				option.Append( "#str_02179" );	// save game
-				menuOptions.Append( option );	
+				menuOptions.Append( option );
 				option.Clear();
 				option.Append( "#str_02187" );	// load game
 				menuOptions.Append( option );
@@ -326,7 +326,7 @@ void idMenuScreen_Shell_Pause::ShowScreen( const mainMenuTransition_t transition
 			}
 		}
 	}
-	
+
 	options->SetListData( menuOptions );
 	idMenuScreen::ShowScreen( transitionType );
 

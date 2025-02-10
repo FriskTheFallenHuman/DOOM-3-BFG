@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 /*
 ========================
 idSessionLocalCallbacks::BecomingHost
-This is called when 
+This is called when
 ========================
 */
 bool idSessionLocalCallbacks::BecomingHost( idLobby & lobby ) {
@@ -84,7 +84,7 @@ bool idSessionLocalCallbacks::BecomingPeer( idLobby & lobby ) {
 
 			// What happens if we got the game migration before the party migration?
 			sessionLocal->SetState( sessionLocal->GetPartyLobby().IsHost() ? idSessionLocal::STATE_PARTY_LOBBY_HOST : idSessionLocal::STATE_PARTY_LOBBY_PEER );
-			
+
 			// session mgr housekeeping that would usually be done through the standard EndMatch path
 			sessionLocal->EndMatchForMigration();
 
@@ -155,7 +155,7 @@ void idSessionLocalCallbacks::MigrationEnded( idLobby & lobby ) {
 			}
 
 			lobby.ResetAllMigrationState();
-				
+
 			// Make sure the sessions are joinable again
 			sessionLocal->EndSessions();
 		}
@@ -197,7 +197,7 @@ void idSessionLocalCallbacks::MigrationEnded( idLobby & lobby ) {
 				}
 
 				lobby.ResetAllMigrationState();
-				
+
 				// Make sure the sessions are joinable again
 				sessionLocal->EndSessions();
 			}
@@ -218,7 +218,7 @@ idSessionLocalCallbacks::GoodbyeFromHost
 ========================
 */
 void idSessionLocalCallbacks::GoodbyeFromHost( idLobby & lobby, int peerNum, const lobbyAddress_t & remoteAddress, int msgType ) {
-	sessionLocal->GoodbyeFromHost( lobby, peerNum, remoteAddress, msgType );	
+	sessionLocal->GoodbyeFromHost( lobby, peerNum, remoteAddress, msgType );
 }
 
 /*
@@ -226,8 +226,8 @@ void idSessionLocalCallbacks::GoodbyeFromHost( idLobby & lobby, int peerNum, con
 idSessionLocalCallbacks::AnyPeerHasAddress
 ========================
 */
-bool idSessionLocalCallbacks::AnyPeerHasAddress( const lobbyAddress_t & remoteAddress ) const { 
-	return sessionLocal->GetPartyLobby().FindAnyPeer( remoteAddress ) || sessionLocal->GetGameLobby().FindAnyPeer( remoteAddress ); 
+bool idSessionLocalCallbacks::AnyPeerHasAddress( const lobbyAddress_t & remoteAddress ) const {
+	return sessionLocal->GetPartyLobby().FindAnyPeer( remoteAddress ) || sessionLocal->GetGameLobby().FindAnyPeer( remoteAddress );
 }
 
 /*
@@ -265,7 +265,7 @@ idSessionLocalCallbacks::LeaveGameLobby
 ========================
 */
 void idSessionLocalCallbacks::LeaveGameLobby() {
-	
+
 	// Make sure we're in the game lobby
 	if ( session->GetState() != idSession::GAME_LOBBY ) {
 		return;
@@ -308,24 +308,24 @@ idSessionLocalCallbacks::ConnectAndMoveToLobby
 ========================
 */
 void idSessionLocalCallbacks::ConnectAndMoveToLobby( idLobby::lobbyType_t destLobbyType, const lobbyConnectInfo_t & connectInfo, bool waitForPartyOk ) {
-	
+
 	// See if we are already in the game lobby
 	idLobby * lobby = sessionLocal->GetLobbyFromType( destLobbyType );
 
 	if ( lobby == NULL ) {
-		idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: Invalid lobby type.\n" ); 
+		idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: Invalid lobby type.\n" );
 		return;
 	}
 
 	if ( lobby->lobbyBackend != NULL && lobby->lobbyBackend->IsOwnerOfConnectInfo( connectInfo ) ) {
-		idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: Already in lobby.\n" ); 
+		idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: Already in lobby.\n" );
 		return;
 	}
 
 	// See if we are in a game, or loading into a game.  If so, ignore invites from our party host
-	if ( destLobbyType == idLobby::TYPE_GAME || destLobbyType == idLobby::TYPE_GAME_STATE ) { 
+	if ( destLobbyType == idLobby::TYPE_GAME || destLobbyType == idLobby::TYPE_GAME_STATE ) {
 		if ( GetState() == idSession::INGAME || GetState() == idSession::LOADING ) {
-			idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: In a different game, ignoring.\n" ); 
+			idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: In a different game, ignoring.\n" );
 			return;
 		}
 	}
@@ -335,7 +335,7 @@ void idSessionLocalCallbacks::ConnectAndMoveToLobby( idLobby::lobbyType_t destLo
 
 	// waitForPartyOk will be true if the party host wants us to wait for his ok to stay in the lobby
 	lobby->waitForPartyOk = waitForPartyOk;
-		
+
 	// Connect to new game lobby
 	sessionLocal->ConnectAndMoveToLobby( *lobby, connectInfo, true );		// Consider this an invite if party host told us to connect
 }

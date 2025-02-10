@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -48,10 +48,10 @@ enum cursorState_t {
 
 /*
 ================================================
-idLBRowBlock 
+idLBRowBlock
 ================================================
 */
-class idLBRowBlock { 
+class idLBRowBlock {
 public:
 	idLBRowBlock() : lastTime( 0 ), startIndex( 0 ) {}
 
@@ -68,10 +68,10 @@ enum leaderboardFilterMode_t {
 
 /*
 ================================================
-idLBCache 
+idLBCache
 ================================================
 */
-class idLBCache { 
+class idLBCache {
 public:
 	static const int NUM_ROW_BLOCKS		= 5;
 	static const leaderboardFilterMode_t DEFAULT_LEADERBOARD_FILTER = LEADERBOARD_FILTER_OVERALL;
@@ -83,7 +83,7 @@ public:
 		pendingFilter( DEFAULT_LEADERBOARD_FILTER ),
 		requestingRows( false ),
 		loadingNewLeaderboard( false ),
-		numRowsInLeaderboard( 0 ), 
+		numRowsInLeaderboard( 0 ),
 		entryIndex( 0 ),
 		rowOffset( 0 ),
 		localIndex( -1 ),
@@ -162,7 +162,7 @@ public:
 
 	virtual void				ObserveEvent( const idMenuWidget & widget, const idWidgetEvent & event );
 	virtual void				SetScreenGui( idSWF * gui ) { menuGUI = gui; }
-	
+
 protected:
 
 	idSWF *	menuGUI;
@@ -190,7 +190,7 @@ public:
 	idMenuWidget_PDA_Objective *	GetObjective() { return &pdaObjectiveSimple; }
 	idMenuWidget_PDA_AudioFiles *	GetAudioFiles() { return &pdaAudioFiles; }
 
-private: 
+private:
 	idMenuWidget_PDA_UserData 			pdaUserData;
 	idMenuWidget_PDA_Objective 		pdaObjectiveSimple;
 	idMenuWidget_PDA_AudioFiles 		pdaAudioFiles;
@@ -203,7 +203,7 @@ idMenuScreen_PDA_UserEmails
 */
 class idMenuScreen_PDA_UserEmails : public idMenuScreen {
 public:
-	idMenuScreen_PDA_UserEmails() : 
+	idMenuScreen_PDA_UserEmails() :
 		readingEmails( false ),
 		scrollEmailInfo( false ) {
 	}
@@ -218,11 +218,11 @@ public:
 	virtual bool					HandleAction( idWidgetAction & action, const idWidgetEvent & event, idMenuWidget * widget, bool forceHandled = false );
 	virtual void					ObserveEvent( const idMenuWidget & widget, const idWidgetEvent & event );
 	idMenuWidget_PDA_EmailInbox &	GetInbox() { return pdaInbox; }
-	
+
 	bool							ScrollCorrectList( idWidgetAction & action, const idWidgetEvent & event, idMenuWidget * widget );
 	void							ShowEmail( bool show );
 	void							UpdateEmail();
-private: 
+private:
 	idMenuWidget_PDA_EmailInbox 	pdaInbox;
 	idMenuWidget_InfoBox 			emailInfo;
 	idMenuWidget_ScrollBar 			emailScrollbar;
@@ -288,13 +288,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Root
 //================================================
 //*/
 class idMenuScreen_Shell_Root : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Root() : 
+	idMenuScreen_Shell_Root() :
 		options( NULL ),
 		helpWidget( NULL ) {
 	}
@@ -315,13 +315,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Pause
 //================================================
 //*/
 class idMenuScreen_Shell_Pause : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Pause() : 
+	idMenuScreen_Shell_Pause() :
 		options( NULL ),
 		isMpPause( false ) {
 	}
@@ -340,13 +340,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Singleplayer
 //================================================
 //*/
 class idMenuScreen_Shell_Singleplayer : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Singleplayer() : 
+	idMenuScreen_Shell_Singleplayer() :
 		options( NULL ),
 		btnBack( NULL ),
 		canContinue( false ) {
@@ -366,13 +366,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Settings
 //================================================
 //*/
 class idMenuScreen_Shell_Settings : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Settings() : 
+	idMenuScreen_Shell_Settings() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -403,13 +403,13 @@ struct creditInfo_t {
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Credits
 //================================================
 //*/
 class idMenuScreen_Shell_Credits : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Credits() : 
+	idMenuScreen_Shell_Credits() :
 		btnBack( NULL ),
 		creditIndex( 0 ) {
 	}
@@ -429,7 +429,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Resolution
 //================================================
 //*/
@@ -479,13 +479,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Difficulty
 //================================================
 //*/
 class idMenuScreen_Shell_Difficulty : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Difficulty() : 
+	idMenuScreen_Shell_Difficulty() :
 		options( NULL ),
 		btnBack( NULL ),
 		nightmareUnlocked( false ) {
@@ -502,13 +502,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Playstation
 //================================================
 //*/
 class idMenuScreen_Shell_Playstation : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Playstation() : 
+	idMenuScreen_Shell_Playstation() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -523,13 +523,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_ModeSelect
 //================================================
 //*/
 class idMenuScreen_Shell_ModeSelect : public idMenuScreen {
 public:
-	idMenuScreen_Shell_ModeSelect() : 
+	idMenuScreen_Shell_ModeSelect() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -544,7 +544,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_GameBrowser
 //================================================
 //*/
@@ -559,7 +559,7 @@ public:
 	virtual void				ShowScreen( const mainMenuTransition_t transitionType );
 	virtual void				HideScreen( const mainMenuTransition_t transitionType );
 	virtual bool				HandleAction( idWidgetAction & action, const idWidgetEvent & event, idMenuWidget * widget, bool forceHandle = false );
-	
+
 	void						UpdateServerList();
 	void						OnServerListReady();
 	void						DescribeServer( const serverInfo_t & server, const int index );
@@ -570,13 +570,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Leaderboards
 //================================================
 //*/
 class idMenuScreen_Shell_Leaderboards : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Leaderboards() : 
+	idMenuScreen_Shell_Leaderboards() :
 		options( NULL ),
 		btnBack( NULL ),
 		refreshLeaderboard( false ),
@@ -588,7 +588,7 @@ public:
 		btnPageDwn( NULL ),
 		btnPageUp( NULL ) {
 	}
-		
+
 	virtual ~idMenuScreen_Shell_Leaderboards();
 
 	virtual void				Initialize( idMenuHandler * data );
@@ -620,7 +620,7 @@ protected:
 	idMenuWidget_Button	*		btnPrev;
 	idMenuWidget_Button	*		btnNext;
 	idMenuWidget_Button	*		btnPageDwn;
-	idMenuWidget_Button	*		btnPageUp;	
+	idMenuWidget_Button	*		btnPageUp;
 	idLBCache *					lbCache;
 	idSWFTextInstance *			lbHeading;
 	int							lbIndex;
@@ -629,13 +629,13 @@ protected:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Bindings
 //================================================
 //*/
 class idMenuScreen_Shell_Bindings : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Bindings() : 
+	idMenuScreen_Shell_Bindings() :
 		options( NULL ),
 		btnBack( NULL ),
 		blinder( NULL ),
@@ -666,7 +666,7 @@ protected:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Dev
 //================================================
 //*/
@@ -688,7 +688,7 @@ public:
 		const char *	name;
 	};
 
-	idMenuScreen_Shell_Dev() : 
+	idMenuScreen_Shell_Dev() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -707,13 +707,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_NewGame
 //================================================
 //*/
 class idMenuScreen_Shell_NewGame : public idMenuScreen {
 public:
-	idMenuScreen_Shell_NewGame() : 
+	idMenuScreen_Shell_NewGame() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -728,13 +728,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Load
 //================================================
 //*/
 class idMenuScreen_Shell_Load : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Load() : 
+	idMenuScreen_Shell_Load() :
 		options( NULL ),
 		btnBack( NULL ),
 		btnDelete( NULL ),
@@ -745,7 +745,7 @@ public:
 	virtual void				ShowScreen( const mainMenuTransition_t transitionType );
 	virtual void				HideScreen( const mainMenuTransition_t transitionType );
 	virtual bool				HandleAction( idWidgetAction & action, const idWidgetEvent & event, idMenuWidget * widget, bool forceHandled = false );
-	
+
 	void						UpdateSaveEnumerations();
 	void						LoadDamagedGame( int index );
 	void						LoadGame( int index );
@@ -761,13 +761,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Save
 //================================================
 //*/
 class idMenuScreen_Shell_Save : public idMenuScreen {
 public:
-	idMenuScreen_Shell_Save() : 
+	idMenuScreen_Shell_Save() :
 		options( NULL ),
 		btnBack( NULL ),
 		btnDelete( NULL ),
@@ -779,7 +779,7 @@ public:
 	virtual void				HideScreen( const mainMenuTransition_t transitionType );
 	virtual bool				HandleAction( idWidgetAction & action, const idWidgetEvent & event, idMenuWidget * widget, bool forceHandled = false );
 	saveGameDetailsList_t		GetSortedSaves() const { return sortedSaves; }
-	
+
 	void						UpdateSaveEnumerations();
 	void						SaveGame( int index );
 	void						DeleteGame( int index );
@@ -793,7 +793,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_GameOptions
 //================================================
 //*/
@@ -839,7 +839,7 @@ public:
 		idStaticList< idSWFScriptVar, MAX_GAME_FIELDS >	originalFields;
 	};
 
-	idMenuScreen_Shell_GameOptions() : 
+	idMenuScreen_Shell_GameOptions() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -855,7 +855,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_GameOptions
 //================================================
 //*/
@@ -887,14 +887,14 @@ public:
 
 		// says whether something changed with the data
 		virtual bool				IsDataChanged() const;
-		
+
 		// retrieves a particular field for reading or updating
 		virtual idSWFScriptVar		GetField( const int fieldIndex ) const { return fields[ fieldIndex ]; }
 
 		virtual void				AdjustField( const int fieldIndex, const int adjustAmount );
 
 		bool						MapChanged() { return updateMap; }
-		void						ClearMapChanged() { updateMap = false; } 
+		void						ClearMapChanged() { updateMap = false; }
 
 	private:
 
@@ -906,7 +906,7 @@ public:
 		bool						updateMap;
 	};
 
-	idMenuScreen_Shell_MatchSettings() : 
+	idMenuScreen_Shell_MatchSettings() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -922,7 +922,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Controls
 //================================================
 //*/
@@ -939,7 +939,7 @@ public:
 		enum controlSettingFields_t {
 			CONTROLS_FIELD_INVERT_MOUSE,
 			CONTROLS_FIELD_GAMEPAD_ENABLED,
-			CONTROLS_FIELD_MOUSE_SENS,			
+			CONTROLS_FIELD_MOUSE_SENS,
 			MAX_CONTROL_FIELDS
 		};
 
@@ -964,7 +964,7 @@ public:
 		idStaticList< idSWFScriptVar, MAX_CONTROL_FIELDS >	originalFields;
 	};
 
-	idMenuScreen_Shell_Controls() : 
+	idMenuScreen_Shell_Controls() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -980,7 +980,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Controls
 //================================================
 //*/
@@ -998,7 +998,7 @@ public:
 			GAMEPAD_FIELD_LEFTY,
 			GAMEPAD_FIELD_INVERT,
 			GAMEPAD_FIELD_VIBRATE,
-			GAMEPAD_FIELD_HOR_SENS,			
+			GAMEPAD_FIELD_HOR_SENS,
 			GAMEPAD_FIELD_VERT_SENS,
 			GAMEPAD_FIELD_ACCELERATION,
 			GAMEPAD_FIELD_THRESHOLD,
@@ -1026,7 +1026,7 @@ public:
 		idStaticList< idSWFScriptVar, MAX_GAMEPAD_FIELDS >	originalFields;
 	};
 
-	idMenuScreen_Shell_Gamepad() : 
+	idMenuScreen_Shell_Gamepad() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -1042,7 +1042,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_ControllerLayout
 //================================================
 //*/
@@ -1101,7 +1101,7 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_SystemOptions
 //================================================
 //*/
@@ -1157,7 +1157,7 @@ public:
 		idList<vidMode_t>			modeList;
 	};
 
-	idMenuScreen_Shell_SystemOptions() : 
+	idMenuScreen_Shell_SystemOptions() :
 		options( NULL ),
 		btnBack( NULL ) {
 	}
@@ -1171,11 +1171,11 @@ private:
 	idMenuWidget_DynamicList *	options;
 	idMenuDataSource_SystemSettings	systemData;
 	idMenuWidget_Button	*		btnBack;
-	
+
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_Stereoscopics
 //================================================
 //*/
@@ -1219,7 +1219,7 @@ public:
 		idStaticList< idSWFScriptVar, MAX_STEREO_FIELDS >	originalFields;
 	};
 
-	idMenuScreen_Shell_Stereoscopics() : 
+	idMenuScreen_Shell_Stereoscopics() :
 		options( NULL ),
 		btnBack( NULL ),
 		leftEyeMat( NULL ),
@@ -1239,13 +1239,13 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_PartyLobby
 //================================================
 //*/
 class idMenuScreen_Shell_PartyLobby : public idMenuScreen {
 public:
-	idMenuScreen_Shell_PartyLobby() : 
+	idMenuScreen_Shell_PartyLobby() :
 		options( NULL ),
 		lobby( NULL ),
 		isHost( false ),
@@ -1273,17 +1273,17 @@ private:
 	idMenuWidget_DynamicList *		options;
 	idMenuWidget_LobbyList *		lobby;
 	idMenuWidget_Button	*			btnBack;
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Shell_GameLobby
 //================================================
 //*/
 class idMenuScreen_Shell_GameLobby : public idMenuScreen {
 public:
-	idMenuScreen_Shell_GameLobby() : 
+	idMenuScreen_Shell_GameLobby() :
 		options( NULL ),
 		lobby( NULL ),
 		longCountdown( 0 ),
@@ -1327,7 +1327,7 @@ private:
 class idMenuScreen_HUD : public idMenuScreen {
 public:
 
-	idMenuScreen_HUD() : 
+	idMenuScreen_HUD() :
 		weaponInfo( NULL ),
 		playerInfo( NULL ),
 		audioLog( NULL ),
@@ -1349,9 +1349,9 @@ public:
 		healthPulse( NULL ),
 		armorFrame( NULL ),
 		security( NULL ),
-		securityText( NULL ), 
-		newPDADownload( NULL ), 
-		newPDAHeading( NULL ), 
+		securityText( NULL ),
+		newPDADownload( NULL ),
+		newPDAHeading( NULL ),
 		newPDAName( NULL ),
 		newVideoDownload( NULL ),
 		newVideoHeading( NULL ),
@@ -1437,13 +1437,13 @@ public:
 	void					ShowNewItem( const char * name, const char * icon );
 	void					UpdateFlashlight( idPlayer * player );
 	void					UpdateChattingHud( idPlayer * player );
-	
-private: 
+
+private:
 
 	idSWFScriptObject *		weaponInfo;
 	idSWFScriptObject *		playerInfo;
 	idSWFScriptObject *		stamina;
-	idSWFScriptObject *		weaponName;	
+	idSWFScriptObject *		weaponName;
 	idSWFScriptObject *		weaponPills;
 	idSWFScriptObject *		downloadPda;
 	idSWFScriptObject *		downloadVideo;
@@ -1490,7 +1490,7 @@ private:
 
 	idSWFTextInstance *		mpMessage;
 	idSWFTextInstance *		mpTime;
-		
+
 	int						audioLogPrevTime;
 	int						commPrevTime;
 
@@ -1515,14 +1515,14 @@ private:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Scoreboard
 //================================================
 //*/
 class idMenuScreen_Scoreboard : public idMenuScreen {
 public:
 
-	idMenuScreen_Scoreboard() : 
+	idMenuScreen_Scoreboard() :
 		playerList( NULL ) {
 
 	}
@@ -1544,17 +1544,17 @@ protected:
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Scoreboard_CTF
 //================================================
 //*/
 class idMenuScreen_Scoreboard_CTF : public idMenuScreen_Scoreboard {
 public:
-	virtual void				Initialize( idMenuHandler * data );	
+	virtual void				Initialize( idMenuHandler * data );
 };
 
 //*
-//================================================	
+//================================================
 //idMenuScreen_Scoreboard_Team
 //================================================
 //*/

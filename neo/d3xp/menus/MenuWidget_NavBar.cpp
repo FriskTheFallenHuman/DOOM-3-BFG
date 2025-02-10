@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -54,8 +54,8 @@ void idMenuWidget_NavBar::Update() {
 	if ( !BindSprite( root ) ) {
 		return;
 	}
-	
-	int rightIndex = 0;	
+
+	int rightIndex = 0;
 
 	buttonPos = initialPos;
 
@@ -82,7 +82,7 @@ void idMenuWidget_NavBar::Update() {
 				child.Update();
 			}
 
-		} else if ( index > GetFocusIndex() ) {			
+		} else if ( index > GetFocusIndex() ) {
 			int rightChildIndex = ( GetNumVisibleOptions() - 1 ) + ( index - 1 );
 			idMenuWidget & child = GetChildByIndex( rightChildIndex );
 			child.SetSpritePath( GetSpritePath(), va( "optionRight%d", rightIndex ) );
@@ -102,7 +102,7 @@ void idMenuWidget_NavBar::Update() {
 				PrepareListElement( child, index );
 				child.Update();
 			}
-		}		
+		}
 	}
 }
 
@@ -123,8 +123,8 @@ void idMenuWidget_NavBar::SetListHeadings( idList< idStr > & list ) {
 idMenuWidget_NavBar::GetTotalNumberOfOptions
 ========================
 */
-int idMenuWidget_NavBar::GetTotalNumberOfOptions() const { 
-	return GetChildren().Num(); 
+int idMenuWidget_NavBar::GetTotalNumberOfOptions() const {
+	return GetChildren().Num();
 }
 
 /*
@@ -148,7 +148,7 @@ bool idMenuWidget_NavBar::PrepareListElement( idMenuWidget & widget, const int n
 	if ( ti != NULL ) {
 		ti->SetStrokeInfo( true, 0.7f, 1.25f );
 		if ( navIndex < GetFocusIndex() ) {
-			ti->SetText( headings[ navIndex ] );			
+			ti->SetText( headings[ navIndex ] );
 			buttonPos = buttonPos + ti->GetTextLength();
 			button->SetPosition( buttonPos );
 			button->SetNavIndex( navIndex, idMenuWidget_NavButton::NAV_WIDGET_LEFT );
@@ -159,7 +159,7 @@ bool idMenuWidget_NavBar::PrepareListElement( idMenuWidget & widget, const int n
 			button->GetSprite()->SetXPos( buttonPos );
 			button->SetPosition( buttonPos );
 			button->SetNavIndex( navIndex, idMenuWidget_NavButton::NAV_WIDGET_RIGHT );
-			buttonPos = buttonPos + ti->GetTextLength() + rightSpacer;			
+			buttonPos = buttonPos + ti->GetTextLength() + rightSpacer;
 		} else {
 			ti->SetText( headings[ navIndex ] );
 			ti->SetStrokeInfo( true, 0.7f, 1.25f );

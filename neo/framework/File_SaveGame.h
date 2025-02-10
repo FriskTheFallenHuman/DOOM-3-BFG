@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ enum saveGameType_t {
 
 /*
 ================================================
-idFile_SaveGame 
+idFile_SaveGame
 ================================================
 */
 class idFile_SaveGame : public idFile_Memory {
@@ -117,7 +117,7 @@ public:
 
 	bool					ReadBuildVersion();
 	const char *			GetBuildVersion() const { return buildVersion; }
-	
+
 	bool					ReadSaveFormatVersion();
 	int						GetSaveFormatVersion() const { return saveFormatVersion; }
 	int						GetPointerSize() const;

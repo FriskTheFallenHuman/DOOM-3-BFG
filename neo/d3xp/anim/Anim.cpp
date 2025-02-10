@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ bool idMD5Anim::LoadAnim( const char * filename ) {
 	}
 
 	name = filename;
-	
+
 	Free();
 
 	parser.ExpectTokenString( MD5_VERSION_STRING );
@@ -241,7 +241,7 @@ bool idMD5Anim::LoadAnim( const char * filename ) {
 	for ( int i = 0; i < numJoints; i++ ) {
 		parser.ReadToken( &token );
 		jointInfo[ i ].nameIndex = animationLib.JointIndex( token );
-		
+
 		// parse parent num
 		jointInfo[ i ].parentNum = parser.ParseInt();
 		if ( jointInfo[ i ].parentNum >= i ) {
@@ -305,7 +305,7 @@ bool idMD5Anim::LoadAnim( const char * filename ) {
 			parser.Error( "Expected frame number %d", i );
 		}
 		parser.ExpectTokenString( "{" );
-		
+
 		for ( int j = 0; j < numAnimatedComponents; j++, componentPtr++ ) {
 			*componentPtr = parser.ParseFloat();
 		}
@@ -573,7 +573,7 @@ void idMD5Anim::ConvertTimeToFrame( int time, int cyclecount, frameBlend_t &fram
 		frame.cycleCount	= 0;
 		return;
 	}
-	
+
 	frameTime			= time * frameRate;
 	frameNum			= frameTime / 1000;
 	frame.cycleCount	= frameNum / ( numFrames - 1 );
@@ -586,7 +586,7 @@ void idMD5Anim::ConvertTimeToFrame( int time, int cyclecount, frameBlend_t &fram
 		frame.frontlerp		= 1.0f;
 		return;
 	}
-	
+
 	frame.frame1 = frameNum % ( numFrames - 1 );
 	frame.frame2 = frame.frame1 + 1;
 	if ( frame.frame2 >= numFrames ) {
@@ -605,7 +605,7 @@ idMD5Anim::GetOrigin
 void idMD5Anim::GetOrigin( idVec3 &offset, int time, int cyclecount ) const {
 	offset = baseFrame[ 0 ].t;
 	if ( !( jointInfo[ 0 ].animBits & ( ANIM_TX | ANIM_TY | ANIM_TZ ) ) ) {
-		// just use the baseframe		
+		// just use the baseframe
 		return;
 	}
 
@@ -1160,7 +1160,7 @@ void idAnimManager::FlushUnusedAnims() {
 	int						i;
 	idMD5Anim				**animptr;
 	idList<idMD5Anim *>		removeAnims;
-	
+
 	for( i = 0; i < animations.Num(); i++ ) {
 		animptr = animations.GetIndex( i );
 		if ( animptr != NULL && *animptr != NULL ) {

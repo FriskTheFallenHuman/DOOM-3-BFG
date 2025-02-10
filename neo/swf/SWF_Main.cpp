@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ idSWF::idSWF( const char * filename_, idSoundWorld * soundWorld_ ) {
 	 tooltipButtonImage.Append( keyButtonImages_t( "<MOUSE1>", "guis/assets/hud/controller/mouse1", "", 64, 52, 0 ) );
 	 tooltipButtonImage.Append( keyButtonImages_t( "<MOUSE2>", "guis/assets/hud/controller/mouse2", "", 64, 52, 0 ) );
 	 tooltipButtonImage.Append( keyButtonImages_t( "<MOUSE3>", "guis/assets/hud/controller/mouse3", "", 64, 52, 0 ) );
-	 	
+
 	for ( int index = 0; index < tooltipButtonImage.Num(); index++ ) {
 		if ( ( tooltipButtonImage[index].xbImage != NULL ) && ( tooltipButtonImage[index].xbImage[0] != '\0' ) ) {
 			declManager->FindMaterial( tooltipButtonImage[index].xbImage );
@@ -235,7 +235,7 @@ idSWF::~idSWF() {
 			dictionary[i].edittext = NULL;
 		}
 	}
-	
+
 	globals->Clear();
 	tooltipButtonImage.Clear();
 	globals->Release();
@@ -430,7 +430,7 @@ idSWFScriptVar idSWF::idSWFScriptFunction_getLocalString::Call( idSWFScriptObjec
 	}
 
 	idStr val = idLocalization::GetString( parms[0].ToString() );
-	return val; 
+	return val;
 }
 
 /*
@@ -543,7 +543,7 @@ idSWF::idSWFScriptFunction_pow::Call
 idSWFScriptVar idSWF::idSWFScriptFunction_pow::Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
 	if ( parms.Num() != 2 ) {
 		return idSWFScriptVar();
-	}	
+	}
 
 	float value = parms[0].ToFloat();
 	float power = parms[1].ToFloat();
@@ -558,7 +558,7 @@ idSWF::idSWFScriptFunction_pow::Call
 idSWFScriptVar idSWF::idSWFScriptFunction_sqrt::Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
 	if ( parms.Num() != 1 ) {
 		return idSWFScriptVar();
-	}	
+	}
 
 	float value = parms[0].ToFloat();
 	return ( idMath::Sqrt( value ) );
@@ -572,7 +572,7 @@ idSWF::idSWFScriptFunction_abs::Call
 idSWFScriptVar idSWF::idSWFScriptFunction_abs::Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
 	if ( parms.Num() != 1 ) {
 		return idSWFScriptVar();
-	}	
+	}
 
 	float value = idMath::Fabs( parms[0].ToFloat() );
 	return value;

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -90,8 +90,8 @@ void idImage::MakeDefault() {
 		}
 	}
 
-	GenerateImage( (byte *)data, 
-		DEFAULT_SIZE, DEFAULT_SIZE, 
+	GenerateImage( (byte *)data,
+		DEFAULT_SIZE, DEFAULT_SIZE,
 		TF_DEFAULT, TR_REPEAT, TD_DEFAULT );
 
 	defaulted = true;
@@ -106,7 +106,7 @@ static void R_WhiteImage( idImage *image ) {
 
 	// solid white texture
 	memset( data, 255, sizeof( data ) );
-	image->GenerateImage( (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, 
+	image->GenerateImage( (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE,
 		TF_DEFAULT, TR_REPEAT, TD_DEFAULT );
 }
 
@@ -115,7 +115,7 @@ static void R_BlackImage( idImage *image ) {
 
 	// solid black texture
 	memset( data, 0, sizeof( data ) );
-	image->GenerateImage( (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, 
+	image->GenerateImage( (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE,
 		TF_DEFAULT, TR_REPEAT, TD_DEFAULT );
 }
 
@@ -219,7 +219,7 @@ void R_FogImage( idImage *image ) {
 		for (y=0 ; y<FOG_SIZE ; y++) {
 			float	d;
 
-			d = idMath::Sqrt( (x - FOG_SIZE/2) * (x - FOG_SIZE/2) 
+			d = idMath::Sqrt( (x - FOG_SIZE/2) * (x - FOG_SIZE/2)
 				+ (y - FOG_SIZE/2) * (y - FOG_SIZE / 2) );
 			d /= FOG_SIZE/2-1;
 
@@ -374,7 +374,7 @@ void R_QuadraticImage( idImage *image ) {
 			d = idMath::Fabs( d );
 			d -= 0.5;
 			d /= QUADRATIC_WIDTH/2;
-		
+
 			d = 1.0 - d;
 			d = d * d;
 

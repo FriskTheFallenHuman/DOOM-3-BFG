@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ idPlayerProfileLocal playerProfiles[MAX_INPUT_DEVICES];
 ========================
 Contains data that needs to be saved out on a per player profile basis, global for the lifetime of the player so
 the data can be shared across computers.
-- HUD tint colors 
+- HUD tint colors
 - key bindings
 - etc...
 ========================
@@ -132,11 +132,11 @@ bool idPlayerProfile::Serialize( idSerializer & ser ) {
 	int8 minorVersion = magicNumber & 0xff; minorVersion;
 
 	if ( tag != PROFILE_TAG ) {
-		return false;		
+		return false;
 	}
 
 	if ( majorVersion != PROFILE_VER_MAJOR ) {
-		return false;		
+		return false;
 	}
 
 	// Archived cvars (all the menu settings for Doom3 are archived cvars)
@@ -174,13 +174,13 @@ bool idPlayerProfile::Serialize( idSerializer & ser ) {
 
 	if ( ser.IsReading() ) {
 		// Which binding is used on the console?
-		ser.Serialize( customConfig );		
+		ser.Serialize( customConfig );
 
 		ExecConfig( false );
-		
+
 		if ( customConfig ) {
 			for ( int i = 0; i < K_LAST_KEY; ++i ) {
-				idStr bind;		
+				idStr bind;
 				ser.SerializeString( bind );
 				idKeyInput::SetBinding( i, bind.c_str() );
 			}
@@ -228,7 +228,7 @@ void idPlayerProfile::StatSetFloat( int s, float v ) {
 idPlayerProfile::StatGetInt
 ========================
 */
-int	idPlayerProfile::StatGetInt( int s ) const { 
+int	idPlayerProfile::StatGetInt( int s ) const {
 	return stats[s].i;
 }
 
@@ -389,7 +389,7 @@ void idPlayerProfile::ExecConfig( bool save, bool forceDefault ) {
 	}
 
 	cmdSystem->ExecuteCommandBuffer();
-	
+
 	if ( !save ) {
 		cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 		cvarSystem->SetModifiedFlags( flags );

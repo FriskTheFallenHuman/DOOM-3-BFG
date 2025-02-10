@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -94,8 +94,8 @@ void idMenuScreen_Shell_Root::Update() {
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
-			
-			if ( !g_demoMode.GetBool() ) {				
+
+			if ( !g_demoMode.GetBool() ) {
 				buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 				if ( menuData->GetPlatform() != 2 ) {
 					buttonInfo->label = "#str_00395";
@@ -108,7 +108,7 @@ void idMenuScreen_Shell_Root::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idMenuScreen::Update();
@@ -134,7 +134,7 @@ idMenuScreen_Shell_Root::ShowScreen
 void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionType ) {
 
 	if ( menuData != NULL && menuData->GetPlatform() != 2 ) {
-		idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
+		idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 		idList< idStr > option;
 
 		int index = 0;
@@ -191,7 +191,7 @@ void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionT
 
 			idMenuWidget_Button * buttonWidget = NULL;
 
-#if !defined ( ID_RETAIL ) 
+#if !defined ( ID_RETAIL )
 			option.Append( "DEV" );	// DEV
 			menuOptions.Append( option );
 			options->GetChildByIndex( index ).ClearEventActions();
@@ -202,7 +202,7 @@ void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionT
 			}
 			index++;
 #endif
-			
+
 			option.Clear();
 			option.Append( "#str_swf_campaign" );	// singleplayer
 			menuOptions.Append( option );
@@ -213,7 +213,7 @@ void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionT
 				buttonWidget->SetDescription( "#str_swf_campaign_desc" );
 			}
 			index++;
-			
+
 			option.Clear();
 			option.Append( "#str_swf_multiplayer" );	// multiplayer
 			menuOptions.Append( option );
@@ -224,7 +224,7 @@ void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionT
 				buttonWidget->SetDescription( "#str_02215" );
 			}
 			index++;
-			
+
 			option.Clear();
 			option.Append( "#str_swf_settings" );	// settings
 			menuOptions.Append( option );
@@ -235,7 +235,7 @@ void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionT
 				buttonWidget->SetDescription( "#str_02206" );
 			}
 			index++;
-			
+
 
 			option.Clear();
 			option.Append( "#str_swf_credits" );	// credits
@@ -392,7 +392,7 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 				idWidgetEvent pressEvent( WIDGET_EVENT_PRESS, 0, NULL, idSWFParmList() );
 				menuBar->ReceiveEvent( pressEvent );
 				return true;
-			} 
+			}
 			break;
 		}
 		case WIDGET_ACTION_SCROLL_HORIZONTAL: {
@@ -407,12 +407,12 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 			}
 
 			idMenuWidget_MenuBar * menuBar = shell->GetMenuBar();
-			
+
 			if ( !menuBar ) {
 				return true;
 			}
 
-			int index = menuBar->GetViewIndex();			
+			int index = menuBar->GetViewIndex();
 			const int dir = parms[0].ToInteger();
 #ifdef ID_RETAIL
 			const int totalCount = menuBar->GetTotalNumberOfOptions() - 1;
@@ -428,7 +428,7 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 
 			SetRootIndex( index );
 			menuBar->SetViewIndex( index );
-			menuBar->SetFocusIndex( index );			
+			menuBar->SetFocusIndex( index );
 
 			return true;
 		}
@@ -467,7 +467,7 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 
 					if ( masterUser->GetOnlineCaps() & CAP_BLOCKED_PERMISSION ) {
 						common->Dialog().AddDialog( GDM_ONLINE_INCORRECT_PERMISSIONS, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
-					} else if ( !masterUser->CanPlayOnline() ) { 
+					} else if ( !masterUser->CanPlayOnline() ) {
 						class idSWFScriptFunction_Accept : public idSWFScriptFunction_RefCounted {
 						public:
 							idSWFScriptFunction_Accept() { }

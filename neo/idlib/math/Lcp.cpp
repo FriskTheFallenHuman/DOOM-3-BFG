@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -701,7 +701,7 @@ static void UpperTriangularSolve_SIMD( const idMatX & U, const float * invDiag, 
 ========================
 LU_Factor_SIMD
 
-In-place factorization LU of the n * n sub-matrix of mat. The reciprocal of the diagonal 
+In-place factorization LU of the n * n sub-matrix of mat. The reciprocal of the diagonal
 elements of U are stored in invDiag. No pivoting is used.
 ========================
 */
@@ -772,7 +772,7 @@ static bool LU_Factor_SIMD( idMatX & mat, idVecX & invDiag, const int n ) {
 ========================
 LDLT_Factor_SIMD
 
-In-place factorization LDL' of the n * n sub-matrix of mat. The reciprocal of the diagonal 
+In-place factorization LDL' of the n * n sub-matrix of mat. The reciprocal of the diagonal
 elements are stored in invDiag.
 
 NOTE:	The number of columns of mat must be a multiple of 4.
@@ -2086,7 +2086,7 @@ bool idLCP_Square::Solve( const idMatX &o_m, idVecX &o_x, const idVecX &o_b, con
 		}
 	}
 
-	// sub matrix for factorization 
+	// sub matrix for factorization
 	clamped.SetData( m.GetNumRows(), m.GetNumColumns(), MATX_ALLOCA( m.GetNumRows() * m.GetNumColumns() ) );
 	diagonal.SetData( m.GetNumRows(), VECX_ALLOCA( m.GetNumRows() ) );
 
@@ -2768,7 +2768,7 @@ bool idLCP_Symmetric::Solve( const idMatX &o_m, idVecX &o_x, const idVecX &o_b, 
 		}
 	}
 
-	// sub matrix for factorization 
+	// sub matrix for factorization
 	clamped.SetDataCacheLines( m.GetNumRows(), m.GetNumColumns(), MATX_ALLOCA_CACHE_LINES( m.GetNumRows() * m.GetNumColumns() ), true );
 	diagonal.SetData( m.GetNumRows(), VECX_ALLOCA( m.GetNumRows() ) );
 	solveCache1.SetData( m.GetNumRows(), VECX_ALLOCA( m.GetNumRows() ) );

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ void R_FreeEntityDefDerivedData( idRenderEntityLocal *def, bool keepDecals, bool
 
 		// put it back on the free list for reuse
 		def->world->areaReferenceAllocator.Free( ref );
-	}	
+	}
 	def->entityRefs = NULL;
 }
 
@@ -177,7 +177,7 @@ void R_CreateEntityRefs( idRenderEntityLocal *entity ) {
 		return;
 	}
 
-	if ( r_showUpdates.GetBool() && 
+	if ( r_showUpdates.GetBool() &&
 			( entity->localReferenceBounds[1][0] - entity->localReferenceBounds[0][0] > 1024.0f ||
 				entity->localReferenceBounds[1][1] - entity->localReferenceBounds[0][1] > 1024.0f ) ) {
 		common->Printf( "big entityRef: %f,%f\n", entity->localReferenceBounds[1][0] - entity->localReferenceBounds[0][0],
@@ -518,7 +518,7 @@ static void R_CreateLightDefFogPortals( idRenderLightLocal *ldef ) {
 
 			// we only handle a single fog volume covering a portal
 			// this will never cause incorrect drawing, but it may
-			// fail to cull a portal 
+			// fail to cull a portal
 			if ( dp->fogLight ) {
 				continue;
 			}

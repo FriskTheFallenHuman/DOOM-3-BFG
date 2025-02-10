@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ void idMenuScreen_PDA_VideoDisks::Initialize( idMenuHandler * data ) {
 	}
 	pdaVideoList.Initialize( data );
 	pdaVideoList.AddChild( &scrollbar );
-	
+
 	AddChild( &pdaVideoList );
 	AddChild( &videoDetails );
 
@@ -92,23 +92,23 @@ idMenuScreen_PDA_VideoDisks::Update
 void idMenuScreen_PDA_VideoDisks::Update() {
 
 	idPlayer * player = gameLocal.GetLocalPlayer();
-	
+
 	if ( menuData != NULL ) {
 		idMenuWidget_CommandBar * cmdBar = dynamic_cast< idMenuWidget_CommandBar * const >( menuData->GetChildFromIndex( PDA_WIDGET_CMD_BAR ) );
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
-			
+
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_01345";
 			}
-			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );			
+			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_TAB );
 			buttonInfo->label = "";
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
-						
+
 			if ( player != NULL && player->GetInventory().videos.Num() > 0 ) {
 				if ( player->GetVideoMaterial() == NULL ) {
 					buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
@@ -142,9 +142,9 @@ void idMenuScreen_PDA_VideoDisks::Update() {
 			return;
 		}
 
-		if ( player->GetVideoMaterial() != NULL ) {		
+		if ( player->GetVideoMaterial() != NULL ) {
 			// update video material
-			if ( BindSprite( root ) && GetSprite() != NULL ) {			
+			if ( BindSprite( root ) && GetSprite() != NULL ) {
 				idSWFSpriteInstance * videoSprite = GetSprite()->GetScriptObject()->GetNestedSprite( "info", "details", "video", "img" );
 				const idMaterial * mat = player->GetVideoMaterial();
 
@@ -204,7 +204,7 @@ void idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay() {
 
 	int index = pdaVideoList.GetViewIndex();
 	const idDeclVideo * video = player->GetVideo( index );
-	
+
 	if ( video == NULL ) {
 		return;
 	}
@@ -217,8 +217,8 @@ void idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay() {
 
 	activeVideo = video;
 
-	if ( player->GetVideoMaterial() == NULL ) {		
-		player->PlayVideoDisk( video );		
+	if ( player->GetVideoMaterial() == NULL ) {
+		player->PlayVideoDisk( video );
 	} else {
 		player->EndVideoDisk();
 	}
@@ -236,7 +236,7 @@ void idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay( int index ) {
 		return;
 	}
 
-	player->EndVideoDisk();		
+	player->EndVideoDisk();
 	if ( menuData != NULL ) {
 		idMenuHandler_PDA * pdaHandler = dynamic_cast< idMenuHandler_PDA * const >( menuData );
 		pdaHandler->ClearVideoPlaying();
@@ -258,7 +258,7 @@ void idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay( int index ) {
 
 	activeVideo = video;
 
-	player->PlayVideoDisk( video );	
+	player->PlayVideoDisk( video );
 
 
 }
@@ -282,7 +282,7 @@ bool idMenuScreen_PDA_VideoDisks::HandleAction( idWidgetAction & action, const i
 	if ( menuData == NULL ) {
 		return true;
 	}
-	
+
 	if ( menuData->ActiveScreen() != PDA_AREA_VIDEO_DISKS ) {
 		return false;
 	}
@@ -293,7 +293,7 @@ bool idMenuScreen_PDA_VideoDisks::HandleAction( idWidgetAction & action, const i
 	switch ( actionType ) {
 		case WIDGET_ACTION_GO_BACK: {
 			menuData->SetNextScreen( PDA_AREA_INVALID, MENU_TRANSITION_ADVANCE );
-			return true;								
+			return true;
 		}
 		case WIDGET_ACTION_START_REPEATER: {
 			idWidgetAction repeatAction;

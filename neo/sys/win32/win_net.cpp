@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ static bool Net_StringToSockaddr( const char *s, sockaddr_in *sadr, bool doDNSRe
 	struct hostent	*h;
 	char buf[256];
 	int port;
-	
+
 	memset( sadr, 0, sizeof( *sadr ) );
 
 	sadr->sin_family = AF_INET;
@@ -241,7 +241,7 @@ static bool Net_StringToSockaddr( const char *s, sockaddr_in *sadr, bool doDNSRe
 		// try to remove the port first, otherwise the DNS gets confused into multiple timeouts
 		// failed or not failed, buf is expected to contain the appropriate host to resolve
 		if ( Net_ExtractPort( s, buf, sizeof( buf ), &port ) ) {
-			sadr->sin_port = htons( port );			
+			sadr->sin_port = htons( port );
 		}
 		h = gethostbyname( buf );
 		if ( h == 0 ) {
@@ -249,7 +249,7 @@ static bool Net_StringToSockaddr( const char *s, sockaddr_in *sadr, bool doDNSRe
 		}
 		*(int *)&sadr->sin_addr = *(int *)h->h_addr_list[0];
 	}
-	
+
 	return true;
 }
 
@@ -674,7 +674,7 @@ void Sys_InitNetworking() {
 	// the necessary size into the ulOutBufLen variable
 	if( GetAdaptersInfo( pAdapterInfo, &ulOutBufLen ) == ERROR_BUFFER_OVERFLOW ) {
 		free( pAdapterInfo );
-		pAdapterInfo = (IP_ADAPTER_INFO *)malloc( ulOutBufLen ); 
+		pAdapterInfo = (IP_ADAPTER_INFO *)malloc( ulOutBufLen );
 		if( !pAdapterInfo ) {
 			idLib::FatalError( "Sys_InitNetworking: Couldn't malloc( %ld )", ulOutBufLen );
 		}
@@ -746,11 +746,11 @@ Sys_StringToNetAdr
 */
 bool Sys_StringToNetAdr( const char *s, netadr_t *a, bool doDNSResolve ) {
 	sockaddr_in sadr;
-	
+
 	if ( !Net_StringToSockaddr( s, &sadr, doDNSResolve ) ) {
 		return false;
 	}
-	
+
 	Net_SockadrToNetadr( &sadr, a );
 	return true;
 }

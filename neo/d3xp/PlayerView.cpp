@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ void idPlayerView::Restore( idRestoreGame *savefile ) {
 
 	savefile->ReadInt( dvFinishTime );
 	savefile->ReadInt( kickFinishTime );
-	savefile->ReadAngles( kickAngles );			
+	savefile->ReadAngles( kickAngles );
 	savefile->ReadBool( bfgVision );
 
 	savefile->ReadMaterial( tunnelMaterial );
@@ -299,7 +299,7 @@ void idPlayerView::DamageImpulse( idVec3 localKickDir, const idDict *damageDef )
 		blob->x += ( gameLocal.random.RandomInt()&63 ) - 32;
 		blob->y = damageDef->GetFloat( "blob_y" );
 		blob->y += ( gameLocal.random.RandomInt()&63 ) - 32;
-		
+
 		float scale = ( 256 + ( ( gameLocal.random.RandomInt()&63 ) - 32 ) ) / 256.0f;
 		blob->w = damageDef->GetFloat( "blob_width" ) * g_blobSize.GetFloat() * scale;
 		blob->h = damageDef->GetFloat( "blob_height" ) * g_blobSize.GetFloat() * scale;
@@ -332,7 +332,7 @@ void idPlayerView::WeaponFireFeedback( const idDict *weaponDef ) {
 		kickAngles = angles;
 		int	finish = gameLocal.slow.time + g_kickTime.GetFloat() * recoilTime;
 		kickFinishTime = finish;
-	}	
+	}
 
 }
 
@@ -367,7 +367,7 @@ idMat3 idPlayerView::ShakeAxis() const {
 ===================
 idPlayerView::AngleOffset
 
-  kickVector, a world space direction that the attack should 
+  kickVector, a world space direction that the attack should
 ===================
 */
 idAngles idPlayerView::AngleOffset() const {
@@ -492,7 +492,7 @@ void idPlayerView::SingleView( const renderView_t *view, idMenuHandler_HUD * hud
 			renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
 			renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, bfgMaterial );
 		}
-		
+
 	}
 
 	// test a single material drawn over everything
@@ -596,7 +596,7 @@ struct stereoDistances_t {
 	// Offset to projection matrix, positive one eye, negative the other.
 	// Total distance is twice this, so 0.05 would give a 10% of screen width
 	// separation for objects at infinity.
-	float	screenSeparation;			
+	float	screenSeparation;
 
 	// Game world units from one eye to the centerline.
 	// Total distance is twice this.
@@ -612,9 +612,9 @@ float CentimetersToWorldUnits( const float cm ) {
 	return CentimetersToInches( cm );
 }
 
-float	CalculateWorldSeparation( 
-	const float screenSeparation, 
-	const float convergenceDistance, 
+float	CalculateWorldSeparation(
+	const float screenSeparation,
+	const float convergenceDistance,
 	const float fov_x_degrees ) {
 
 	const float fovRadians = DEG2RAD( fov_x_degrees );
@@ -713,7 +713,7 @@ void idPlayerView::RenderPlayerView( idMenuHandler_HUD * hudManager ) {
 		for ( int eye = 1 ; eye >= -1 ; eye -= 2 ) {
 			EmitStereoEyeView( eye, hudManager );
 		}
-	} else 
+	} else
 	{
 		SingleView( view, hudManager );
 	}
@@ -1044,7 +1044,7 @@ FullscreenFX_Multiplayer::AccumPass
 */
 void FullscreenFX_Multiplayer::AccumPass( const renderView_t *view ) {
 	renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
-	
+
 	float t0 = 1.0f;
 	float t1 = 0.0f;
 
@@ -1225,7 +1225,7 @@ void FullscreenFX_Warp::HighQuality() {
 		p.center.y = center.y;
 		p.center.z = p.center.x / (float)SCREEN_WIDTH;
 		p.center.w = 1 - ( p.center.y / (float)SCREEN_HEIGHT );
- 
+
 		// draw it
 		DrawWarp( p, interp );
 	}

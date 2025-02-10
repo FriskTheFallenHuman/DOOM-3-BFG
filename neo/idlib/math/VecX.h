@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ NOTE: due to the temporary memory pool idVecX cannot be used by multiple threads
 class idVecX {
 	friend class idMatX;
 
-public:	
+public:
 	ID_INLINE					idVecX();
 	ID_INLINE					explicit idVecX( int length );
 	ID_INLINE					explicit idVecX( int length, float *data );
@@ -231,7 +231,7 @@ ID_INLINE idVecX idVecX::operator-() const {
 idVecX::operator=
 ========================
 */
-ID_INLINE idVecX &idVecX::operator=( const idVecX &a ) { 
+ID_INLINE idVecX &idVecX::operator=( const idVecX &a ) {
 	SetSize( a.size );
 #if defined(ID_WIN_X86_SSE_INTRIN) && defined(VECX_SIMD)
 	for ( int i = 0; i < a.size; i += 4 ) {

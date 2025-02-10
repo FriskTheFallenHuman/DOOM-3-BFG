@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -166,10 +166,10 @@ const idEventDef AI_CanReachEnemy( "canReachEnemy", NULL, 'd' );
 const idEventDef AI_GetReachableEntityPosition( "getReachableEntityPosition", "e", 'v' );
 const idEventDef AI_MoveToPositionDirect( "moveToPositionDirect", "v" );
 const idEventDef AI_AvoidObstacles( "avoidObstacles", "d" );
-const idEventDef AI_TriggerFX( "triggerFX", "ss" ); 
-const idEventDef AI_StartEmitter( "startEmitter", "sss", 'e' ); 
-const idEventDef AI_GetEmitter( "getEmitter", "s", 'e' ); 
-const idEventDef AI_StopEmitter( "stopEmitter", "s" ); 
+const idEventDef AI_TriggerFX( "triggerFX", "ss" );
+const idEventDef AI_StartEmitter( "startEmitter", "sss", 'e' );
+const idEventDef AI_GetEmitter( "getEmitter", "s", 'e' );
+const idEventDef AI_StopEmitter( "stopEmitter", "s" );
 
 
 
@@ -264,7 +264,7 @@ CLASS_DECLARATION( idActor, idAI )
 	EVENT( AI_SetMoveType,						idAI::Event_SetMoveType )
 	EVENT( AI_SaveMove,							idAI::Event_SaveMove )
 	EVENT( AI_RestoreMove,						idAI::Event_RestoreMove )
-	EVENT( AI_AllowMovement,					idAI::Event_AllowMovement )	
+	EVENT( AI_AllowMovement,					idAI::Event_AllowMovement )
 	EVENT( AI_JumpFrame,						idAI::Event_JumpFrame )
 	EVENT( AI_EnableClip,						idAI::Event_EnableClip )
 	EVENT( AI_DisableClip,						idAI::Event_DisableClip )
@@ -473,7 +473,7 @@ void idAI::Event_ClosestReachableEnemyOfEntity( idEntity *team_mate ) {
 	int		areaNum;
 	int		enemyAreaNum;
 	aasPath_t path;
-	
+
 	if ( !team_mate->IsType( idActor::Type ) ) {
 		gameLocal.Error( "Entity '%s' is not an AI character or player", team_mate->GetName() );
 	}
@@ -737,7 +737,7 @@ idAI::Event_AttackMelee
 */
 void idAI::Event_AttackMelee( const char *meleeDefName ) {
 	bool hit;
-	
+
 	hit = AttackMelee( meleeDefName );
 	idThread::ReturnInt( hit );
 }
@@ -824,7 +824,7 @@ void idAI::Event_MeleeAttackToJoint( const char *jointname, const char *meleeDef
 	animator.GetJointTransform( joint, gameLocal.time, end, axis );
 	end = physicsObj.GetOrigin() + ( end + modelOffset ) * viewAxis * physicsObj.GetGravityAxis();
 	start = GetEyePosition();
-	
+
 	if ( ai_debugMove.GetBool() ) {
 		gameRenderWorld->DebugLine( colorYellow, start, end, 1 );
 	}
@@ -1296,7 +1296,7 @@ void idAI::Event_EnemyInCombatCone( idEntity *ent, int use_current_enemy_locatio
 		return;
 	}
 
-	//Allow the level designers define attack nodes that the enemy should never leave. 
+	//Allow the level designers define attack nodes that the enemy should never leave.
 	//This is different that the turrent type combat nodes because they can play an animation
 	if(ent->spawnArgs.GetBool("neverLeave", "0")) {
 		idThread::ReturnInt( true );
@@ -1372,7 +1372,7 @@ void idAI::Event_EntityInAttackCone( idEntity *ent ) {
 	idVec3	delta;
 	float	yaw;
 	float	relYaw;
-	
+
 	if ( !ent ) {
 		idThread::ReturnInt( false );
 		return;
@@ -1573,7 +1573,7 @@ void idAI::Event_CanHitEnemy() {
 	hit = gameLocal.GetTraceEntity( tr );
 	if ( tr.fraction >= 1.0f || ( hit == enemyEnt ) ) {
 		lastHitCheckResult = true;
-	} else if ( ( tr.fraction < 1.0f ) && ( hit->IsType( idAI::Type ) ) && 
+	} else if ( ( tr.fraction < 1.0f ) && ( hit->IsType( idAI::Type ) ) &&
 		( static_cast<idAI *>( hit )->team != team ) ) {
 		lastHitCheckResult = true;
 	} else {
@@ -1813,7 +1813,7 @@ void idAI::Event_TestAnimMoveTowardEnemy( const char *animname ) {
 	float			yaw;
 	idVec3			delta;
 	idActor			*enemyEnt;
-	
+
 	enemyEnt = enemy.GetEntity();
 	if ( !enemyEnt ) {
 		idThread::ReturnInt( false );
@@ -2573,7 +2573,7 @@ idAI::Event_LocateEnemy
 void idAI::Event_LocateEnemy() {
 	idActor *enemyEnt;
 	int areaNum;
-	
+
 	enemyEnt = enemy.GetEntity();
 	if ( !enemyEnt ) {
 		return;
@@ -2592,7 +2592,7 @@ idAI::Event_KickObstacles
 void idAI::Event_KickObstacles( idEntity *kickEnt, float force ) {
 	idVec3 dir;
 	idEntity *obEnt;
-	
+
 	if ( kickEnt ) {
 		obEnt = kickEnt;
 	} else {

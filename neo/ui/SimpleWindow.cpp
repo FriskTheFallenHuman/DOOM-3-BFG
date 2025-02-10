@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,10 +70,10 @@ idSimpleWindow::idSimpleWindow(idWindow *win) {
 	}
 	backGroundName.SetMaterialPtr(&background);
 
-// 
+//
 //  added parent
 	mParent = win->GetParent();
-// 
+//
 
 	hideCursor = win->hideCursor;
 
@@ -184,7 +184,7 @@ void idSimpleWindow::CalcClientRect(float xofs, float yofs) {
 		drawRect.x = rect.x() - rect.w();
 		drawRect.y = rect.y() - rect.h();
 	}
-	
+
 	drawRect.x += xofs;
 	drawRect.y += yofs;
 
@@ -213,7 +213,7 @@ void idSimpleWindow::CalcClientRect(float xofs, float yofs) {
 
 
 void idSimpleWindow::Redraw(float x, float y) {
-	
+
 	if (!visible) {
 		return;
 	}

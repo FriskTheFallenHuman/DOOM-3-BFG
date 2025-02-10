@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public:
 
 	void	WriteToDemo( idDemoFile * demo );
 	void	ReadFromDemo( idDemoFile * demo );
-	
+
 	// allocates memory for verts and indexes in frame-temporary buffer memory
 	void	BeginFrame();
 
@@ -53,13 +53,13 @@ public:
 
 	// the returned pointer will be in write-combined memory, so only make contiguous
 	// 32 bit writes and never read from it.
-	idDrawVert * AllocTris( int numVerts, const triIndex_t * indexes, int numIndexes, const idMaterial * material, 
+	idDrawVert * AllocTris( int numVerts, const triIndex_t * indexes, int numIndexes, const idMaterial * material,
 							const uint64 glState, const stereoDepthType_t stereoType );
 
 	//---------------------------
 private:
 	void	AdvanceSurf();
-	void	EmitSurfaces( float modelMatrix[16], float modelViewMatrix[16], 
+	void	EmitSurfaces( float modelMatrix[16], float modelViewMatrix[16],
 		bool depthHack, bool allowFullScreenStereoDepth, bool linkAsEntity );
 
 	guiModelSurface_t *			surf;

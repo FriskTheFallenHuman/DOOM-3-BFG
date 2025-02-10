@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -500,7 +500,7 @@ void			Sys_GenerateEvents();
 sysEvent_t		Sys_GetEvent();
 void			Sys_ClearEvents();
 
-// input is tied to windows, so it needs to be started up and shut down whenever 
+// input is tied to windows, so it needs to be started up and shut down whenever
 // the main window is recreated
 void			Sys_InitInput();
 void			Sys_ShutdownInput();
@@ -548,11 +548,11 @@ void			Sys_SetFatalError( const char *error );
 // Execute the specified process and wait until it's done, calling workFn every waitMS milliseconds.
 // If showOutput == true, std IO from the executed process will be output to the console.
 // Note that the return value is not an indication of the exit code of the process, but is false
-// only if the process could not be created at all. If you wish to check the exit code of the 
+// only if the process could not be created at all. If you wish to check the exit code of the
 // spawned process, check the value returned in exitCode.
 typedef bool ( *execProcessWorkFunction_t )();
 typedef void ( *execOutputFunction_t)( const char * text );
-bool Sys_Exec(	const char * appPath, const char * workingPath, const char * args, 
+bool Sys_Exec(	const char * appPath, const char * workingPath, const char * args,
 	execProcessWorkFunction_t workFn, execOutputFunction_t outputFn, const int waitMS,
 	unsigned int & exitCode );
 
@@ -610,8 +610,8 @@ public:
 	void		Close();
 
 	bool		GetPacket( netadr_t &from, void *data, int &size, int maxSize );
-	
-	bool		GetPacketBlocking( netadr_t &from, void *data, int &size, int maxSize, 
+
+	bool		GetPacketBlocking( netadr_t &from, void *data, int &size, int maxSize,
 								   int timeout );
 
 	void		SendPacket( const netadr_t to, const void *data, int size );
@@ -654,7 +654,7 @@ void			Sys_ShutdownNetworking();
 
 /*
 ================================================
-idJoystick is managed by each platform's local Sys implementation, and 
+idJoystick is managed by each platform's local Sys implementation, and
 provides full *Joy Pad* support (the most common device, these days).
 ================================================
 */

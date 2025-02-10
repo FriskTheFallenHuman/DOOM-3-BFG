@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -391,13 +391,13 @@ idDict::GetAngles
 bool idDict::GetAngles( const char *key, const char *defaultString, idAngles &out ) const {
 	bool		found;
 	const char	*s;
-	
+
 	if ( !defaultString ) {
 		defaultString = "0 0 0";
 	}
 
 	found = GetString( key, defaultString, &s );
-	out.Zero();	
+	out.Zero();
 	sscanf( s, "%f %f %f", &out.pitch, &out.yaw, &out.roll );
 	return found;
 }
@@ -410,7 +410,7 @@ idDict::GetVector
 bool idDict::GetVector( const char *key, const char *defaultString, idVec3 &out ) const {
 	bool		found;
 	const char	*s;
-	
+
 	if ( !defaultString ) {
 		defaultString = "0 0 0";
 	}
@@ -429,7 +429,7 @@ idDict::GetVec2
 bool idDict::GetVec2( const char *key, const char *defaultString, idVec2 &out ) const {
 	bool		found;
 	const char	*s;
-	
+
 	if ( !defaultString ) {
 		defaultString = "0 0";
 	}
@@ -448,7 +448,7 @@ idDict::GetVec4
 bool idDict::GetVec4( const char *key, const char *defaultString, idVec4 &out ) const {
 	bool		found;
 	const char	*s;
-	
+
 	if ( !defaultString ) {
 		defaultString = "0 0 0 0";
 	}
@@ -467,7 +467,7 @@ idDict::GetMatrix
 bool idDict::GetMatrix( const char *key, const char *defaultString, idMat3 &out ) const {
 	const char	*s;
 	bool		found;
-		
+
 	if ( !defaultString ) {
 		defaultString = "1 0 0 0 1 0 0 0 1";
 	}
@@ -681,7 +681,7 @@ void idDict::Serialize( idSerializer & ser ) {
 	ser.SerializePacked( num );
 	for ( int i = 0; i < num; i++ ) {
 		idStr key;
-		idStr val; 
+		idStr val;
 
 		if ( ser.IsWriting() ) {
 			key = args[i].GetKey();
@@ -804,7 +804,7 @@ bool idDict::ReadFromIniFile( idFile * f ) {
 			prefix.Append( '/' );
 			success = success && parser.ExpectTokenType( TT_PUNCTUATION, P_SQBRACKETCLOSE, &token );
 		}
-		
+
 		if ( !parser.PeekTokenType( TT_NAME, 0, &token ) ) {
 			// end of file most likely
 			break;

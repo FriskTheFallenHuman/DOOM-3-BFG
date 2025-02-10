@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -97,12 +97,12 @@ public:
 		RELIABLE_IN_GAME,						// peer to host : first full snap received, in game now
 		RELIABLE_SNAPSHOT_ACK,					// peer to host : got a snapshot
 		RELIABLE_RESOURCE_ACK,					// peer to host : got some new resources
-		RELIABLE_CONNECT_AND_MOVE_TO_LOBBY,		// host to peer : connect to this server 
+		RELIABLE_CONNECT_AND_MOVE_TO_LOBBY,		// host to peer : connect to this server
 		RELIABLE_PARTY_CONNECT_OK,				// host to peer
 		RELIABLE_PARTY_LEAVE_GAME_LOBBY,		// host to peer : leave game lobby
 		RELIABLE_MATCH_PARMS,					// host to peer : update in match parms
 		RELIABLE_UPDATE_MATCH_PARMS,			// peer to host : peer updating match parms
-		
+
 		// User join in progress msg's (join in progress for the party/game lobby, not inside a match)
 		RELIABLE_USER_CONNECT_REQUEST,			// peer to host: local user wants to join session in progress
 		RELIABLE_USER_CONNECT_DENIED,			// host to peer: user join session in progress denied (not enough slots)
@@ -115,7 +115,7 @@ public:
 		RELIABLE_MATCHFINISHED,					// host to peer - Match is in post looking at score board
 		RELIABLE_ENDMATCH,						// host to peer - End match, and go to game lobby
 		RELIABLE_ENDMATCH_PREMATURE,			// host to peer - End match prematurely, and go to game lobby (onl possible in unrated/custom games)
-		
+
 		RELIABLE_SESSION_USER_MODIFIED,			// peer to host : user changed something (emblem, name, etc)
 		RELIABLE_UPDATE_SESSION_USER,			// host to peers : inform all peers of the change
 
@@ -123,7 +123,7 @@ public:
 		RELIABLE_VOICE_STATE,					// * to * : voice state changed for user pair (mute, unmute, etc)
 		RELIABLE_PING,							// * to * : send host->peer, then reflected
 		RELIABLE_PING_VALUES,					// host to peers : ping data from lobbyUser_t for everyone
-		
+
 		RELIABLE_BANDWIDTH_VALUES,				// peer to host: data back about bandwidth test
 
 		RELIABLE_ARBITRATE,						// host to peer : start arbitration
@@ -132,7 +132,7 @@ public:
 		RELIABLE_POST_STATS,					// host to peer : here, write these stats now (hacky)
 
 		RELIABLE_MIGRATION_GAME_DATA,			// host to peers: game data to use incase of a migration
-		
+
 		RELIABLE_START_MATCH_GAME_LOBBY_HOST,	// game lobby host to game state lobby host: start the match, since all players are in
 
 		RELIABLE_DUMMY_MSG,						// used as a placeholder for old removed msg's
@@ -142,7 +142,7 @@ public:
 		RELIABLE_PLAYER_TO_PLAYER_END = RELIABLE_PLAYER_TO_PLAYER_BEGIN + NUM_RELIABLE_PLAYER_TO_PLAYER,
 
 		// * to * : misc reliable game data above this
-		RELIABLE_GAME_DATA = RELIABLE_PLAYER_TO_PLAYER_END	
+		RELIABLE_GAME_DATA = RELIABLE_PLAYER_TO_PLAYER_END
 	};
 
 	// JGM: Reliable type in packet is a byte and there are a lot of reliable game messages.
@@ -161,7 +161,7 @@ public:
 	static const int BANDWIDTH_REPORTING_MAX				= 10240;	// make bps to report receiving (clamp if higher). For quantizing
 	static const int BANDWIDTH_REPORTING_BITS				= 16;		// number of bits to use for bandwidth reporting
 	static const int MAX_BPS_HISTORY						= 32;		// size of outgoing bps history to maintain for each client
-	
+
 	static const int MAX_SNAP_SIZE				= idPacketProcessor::MAX_MSG_SIZE;
 	static const int MAX_SNAPSHOT_QUEUE			= 64;
 
@@ -171,12 +171,12 @@ public:
 	static const int OOB_GOODBYE_FULL			= 3;
 	static const int OOB_RESOURCE_LIST			= 4;
 	static const int OOB_VOICE_AUDIO			= 5;
-	
+
 	static const int OOB_MATCH_QUERY			= 6;
 	static const int OOB_MATCH_QUERY_ACK		= 7;
 
 	static const int OOB_SYSTEMLINK_QUERY		= 8;
-		
+
 	static const int OOB_MIGRATE_INVITE			= 9;
 
 	static const int OOB_BANDWIDTH_TEST			= 10;
@@ -207,7 +207,7 @@ public:
 			maxSnapQueueSize		= 0;
 			throttledSnapRate		= 0;
 			pauseSnapshots			= false;
-			
+
 			receivedBps				= -1.0f;
 			maxSnapBps				= -1.0f;
 			receivedThrottle		= 0;
@@ -217,7 +217,7 @@ public:
 			recoverPing				= 0;
 			failedPingRecoveries	= 0;
 			rightBeforeSnapsPing	= 0;
-			
+
 			bandwidthTestLastSendTime = 0;
 			bandwidthSequenceNum = 0;
 			bandwidthTestBytes = 0;
@@ -229,7 +229,7 @@ public:
 
 			ResetConnectState();
 		};
-		
+
 		void ResetConnectState() {
 			lastResourceTime		= 0;
 			lastSnapTime			= 0;
@@ -240,7 +240,7 @@ public:
 			needToSubmitPendingSnap	= false;
 			lastSnapJobTime			= true;
 			startResourceLoadTime	= 0;
-			
+
 			receivedBps				= -1.0;
 			maxSnapBps				= -1.0f;
 			receivedThrottle		= 0;
@@ -261,7 +261,7 @@ public:
 
 			debugGraphs.Clear();
 		}
-		
+
 		void ResetAllData() {
 			ResetConnectState();
 			ResetMatchData();
@@ -278,7 +278,7 @@ public:
 			receivedBpsIndex		= -1;
 			numSnapsSent			= 0;
 			pauseSnapshots			= false;
-	
+
 			// Reset the snapshot processor
 			if ( snapProc != NULL ) {
 				snapProc->Reset( false );
@@ -299,10 +299,10 @@ public:
 		bool IsConnected() const	{ return connectionState == CONNECTION_ESTABLISHED; }
 
 		connectionState_t	GetConnectionState() const;
-	
+
 		connectionState_t	connectionState;
 		bool				loaded;						// true if this peer has finished loading the map
-		bool				inGame;						// true if this peer received the first snapshot, and is in-game		
+		bool				inGame;						// true if this peer received the first snapshot, and is in-game
 		int					lastSnapTime;				// Last time a snapshot was sent on the network to this peer
 		float				snapHz;
 		int					lastProcTime;				// Used to determine when a packet was processed for sending to this peer
@@ -326,7 +326,7 @@ public:
 		int					lastPingRtt;
 		bool				needToSubmitPendingSnap;
 		int					lastSnapJobTime;			// Last time a snapshot was sent to the joblist for this peer
-		
+
 
 		int					startResourceLoadTime;		// Used to determine how long a peer has been loading resources
 
@@ -335,20 +335,20 @@ public:
 		int					nextThrottleCheck;
 
 		int					numSnapsSent;
-		
+
 		float				sentBpsHistory[ MAX_BPS_HISTORY ];
 		int					receivedBpsIndex;
 
 		float				receivedBps;				// peer's reported bps (they tell us their effective downstream)
 		float				maxSnapBps;
-		float				receivedThrottle;			// amount of accumlated time this client has been lagging behind 
+		float				receivedThrottle;			// amount of accumlated time this client has been lagging behind
 		int					receivedThrottleTime;		// last time we did received based throttle calculations
 
 		int					throttleSnapsForXSeconds;
 		int					recoverPing;
 		int					failedPingRecoveries;
 		int					rightBeforeSnapsPing;
-		
+
 		int					bandwidthChallengeStartSendTime;	// time we sent first packet of bw challenge to this peer
 		int					bandwidthTestLastSendTime;			// last time in MS we sent them a bw challenge packet
 		int					bandwidthTestBytes;					// used to measure number of bytes we sent them
@@ -360,7 +360,7 @@ public:
 		idPacketProcessor::sessionId_t sessionID;
 	};
 
-	const char *						GetLobbyName() { 
+	const char *						GetLobbyName() {
 		switch ( lobbyType ) {
 			case TYPE_PARTY:		return "TYPE_PARTY";
 			case TYPE_GAME:			return "TYPE_GAME";
@@ -396,23 +396,23 @@ public:
 	// If IsHost is true, we are a host accepting connections from peers
 	bool	IsHost() const { return isHost; }
 	// If IsPeer is true, we are a peer, with an active connection to a host
-	bool	IsPeer() const { 
+	bool	IsPeer() const {
 		if ( host == -1 ) {
 			return false;		// Can't possibly be a peer if we haven't setup a host
 		}
 		assert( !IsHost() );
 		return peers[host].IsConnected();
 	}
-	bool	IsConnectingPeer() const { 
+	bool	IsConnectingPeer() const {
 		if ( host == -1 ) {
 			return false;		// Can't possibly be a peer if we haven't setup a host
 		}
 		assert( !IsHost() );
 		return peers[host].connectionState == CONNECTION_CONNECTING;
 	}
-	
+
 	// IsRunningAsHostOrPeer means we are either an active host, and can accept connections from peers, or we are a peer with an active connection to a host
-	bool	IsRunningAsHostOrPeer() const { return IsHost() || IsPeer(); }	
+	bool	IsRunningAsHostOrPeer() const { return IsHost() || IsPeer(); }
 	bool	IsLobbyActive() const { return IsRunningAsHostOrPeer(); }
 
 
@@ -424,8 +424,8 @@ public:
 
 		// Both read and write return false if the data is invalid.
 		// The state of the msg and object are undefined if false is returned.
-		// The network packets contain userIds, and Read/Write will translate from userId to a 
-		//	sessionUserIndex.  The sessionUserIndex should be the same on all peers, but the 
+		// The network packets contain userIds, and Read/Write will translate from userId to a
+		//	sessionUserIndex.  The sessionUserIndex should be the same on all peers, but the
 		//	userId has to be used in case the target player quits while the message is on the
 		//	wire from the originating peer to the server.
 		bool Read( idLobby * lobby, idBitMsg & msg );
@@ -455,7 +455,7 @@ public:		// Turning this on for now, for the sake of getting this up and running
 	void								DisconnectPeerFromSession( int p );
 	void								SetPeerConnectionState( int p, connectionState_t newState, bool skipGoodbye = false );
 	void								DisconnectAllPeers();
-	
+
 	virtual void						SendReliable( int type, idBitMsg & msg, bool callReceiveReliable = true, peerMask_t sessionUserMask = MAX_UNSIGNED_TYPE( peerMask_t ) );
 	virtual void						SendReliableToLobbyUser( lobbyUserID_t lobbyUserID, int type, idBitMsg & msg );
 	virtual void						SendReliableToHost( int type, idBitMsg & msg );
@@ -587,7 +587,7 @@ public:		// Turning this on for now, for the sake of getting this up and running
 	int									GetLobbyUserIndexByLocalUserHandle( const localUserHandle_t localUserHandle ) const;
 
 	// This takes a session user, and converts to a controller user
-	idLocalUser *						GetLocalUserFromLobbyUserIndex( int lobbyUserIndex );	
+	idLocalUser *						GetLocalUserFromLobbyUserIndex( int lobbyUserIndex );
 
 	// Takes a controller user, and converts to a session user (will return NULL if there is no session user for this controller user)
 	lobbyUser_t *						GetSessionUserFromLocalUser( const idLocalUser * controller );
@@ -711,11 +711,11 @@ public:		// Turning this on for now, for the sake of getting this up and running
 	int									lastConnectRequest;			// Used to determine when the last hello was sent
 	int									connectionAttempts;			// Number of connection attempts
 
-	
+
 	bool								needToDisplayMigrateMsg;	// If true, we migrated as host, so we need to display the msg as soon as the lobby is active
 	gameDialogMessages_t				migrationDlg;				// current migration dialog we should be showing
 
-	uint8								migrateMsgFlags;			// cached match flags from the old game we migrated from, so we know what type of msg to display 
+	uint8								migrateMsgFlags;			// cached match flags from the old game we migrated from, so we know what type of msg to display
 
 	bool								joiningMigratedGame;		// we are joining a migrated game and need to tell the session mgr if we succeed or fail
 
@@ -782,7 +782,7 @@ public:		// Turning this on for now, for the sake of getting this up and running
 				memset( gameDataUser, 0, sizeof( gameDataUser ) );
 			}
 
-			int								ourGameData;		
+			int								ourGameData;
 			bool							wasMigratedHost;		// we are hosting a migrated session
 			bool							wasMigratedJoin;		// we joined a migrated session
 			bool							wasMigratedGame;		// If true, we migrated from a game
@@ -805,7 +805,7 @@ public:		// Turning this on for now, for the sake of getting this up and running
 	};
 
 	migrationInfo_t						migrationInfo;
-	
+
 	bool								showHostLeftTheSession;
 	bool								connectIsFromInvite;
 
@@ -855,7 +855,7 @@ public:		// Turning this on for now, for the sake of getting this up and running
 idSessionCallbacks
 ========================
 */
-class idSessionCallbacks { 
+class idSessionCallbacks {
 public:
 	virtual							~idSessionCallbacks() {}
 
@@ -866,7 +866,7 @@ public:
 	virtual int						GetUniquePlayerId() const = 0;
 	virtual idSignInManagerBase	&	GetSignInManager() = 0;
 	virtual	void					SendRawPacket( const lobbyAddress_t & to, const void * data, int size, bool useDirectPort ) = 0;
-	
+
 	virtual bool					BecomingHost( idLobby & lobby ) = 0;			// Called when a lobby is about to become host
 	virtual void					BecameHost( idLobby & lobby ) = 0;				// Called when a lobby becomes a host
 	virtual bool					BecomingPeer( idLobby & lobby ) = 0;			// Called when a lobby is about to become peer

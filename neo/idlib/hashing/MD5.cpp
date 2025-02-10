@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -99,8 +99,8 @@ static void Decode( UINT4 *output, const unsigned char *input, unsigned int len 
 ========================
 MD5_Transform
 
-The core of the MD5 algorithm, this alters an existing MD5 hash to reflect the addition of 16 
-longwords of new data. MD5Update blocks the data and converts bytes into longwords for this 
+The core of the MD5 algorithm, this alters an existing MD5 hash to reflect the addition of 16
+longwords of new data. MD5Update blocks the data and converts bytes into longwords for this
 routine.
 ========================
 */
@@ -212,7 +212,7 @@ void MD5_Init( MD5_CTX *ctx ) {
 ========================
 MD5_Update
 
-MD5 block update operation. Continues an MD5 message-digest operation, processing another 
+MD5 block update operation. Continues an MD5 message-digest operation, processing another
 message block, and updating the context.
 ========================
 */
@@ -253,7 +253,7 @@ void MD5_Update( MD5_CTX *context, unsigned char const *input, size_t inputLen )
 ========================
 MD5_Final
 
-MD5 finalization. Ends an MD5 message-digest operation, writing the message digest and 
+MD5 finalization. Ends an MD5 message-digest operation, writing the message digest and
 zero-izing the context.
 ========================
 */
@@ -271,7 +271,7 @@ void MD5_Final( MD5_CTX *context, unsigned char digest[16] ) {
 
 	// Append length (before padding)
 	MD5_Update( context, bits, 8 );
-	
+
 	// Store state in digest
 	Encode( digest, context->state, 16 );
 
@@ -295,7 +295,7 @@ unsigned int MD5_BlockChecksum( const void *data, size_t length ) {
 	MD5_Final( &ctx, (unsigned char *)digest );
 
 	// Handle it manually to be endian-safe since we don't have access to idSwap.
-	val =	( digest[3] << 24 | digest[2] << 16 | digest[1] << 8 | digest[0] ) ^ 
+	val =	( digest[3] << 24 | digest[2] << 16 | digest[1] << 8 | digest[0] ) ^
 			( digest[7] << 24 | digest[6] << 16 | digest[5] << 8 | digest[4] ) ^
 			( digest[11] << 24 | digest[10] << 16 | digest[9] << 8 | digest[8] ) ^
 			( digest[15] << 24 | digest[14] << 16 | digest[13] << 8 | digest[12] );

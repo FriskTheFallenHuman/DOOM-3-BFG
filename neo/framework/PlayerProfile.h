@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,11 +32,11 @@ If you have questions concerning this license or the applicable additional terms
 
 /*
 ================================================
-profileStatValue_t 
+profileStatValue_t
 ================================================
 */
 union profileStatValue_t {
-	int		i; 
+	int		i;
 	float	f;
 };
 
@@ -52,7 +52,7 @@ class idPlayerProfile {
 	friend class idLocalUser;
 	friend class idProfileMgr;
 
-public: 
+public:
 	// Only have room to squeeze ~450 in doom3 right now
 	static const int MAX_PLAYER_PROFILE_STATS = 200;
 

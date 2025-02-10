@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ bool idLocalization::LoadDictionary( const byte * data, int dataLen, const char 
 
 /*
 ========================
-idLocalization::GetString 
+idLocalization::GetString
 ========================
 */
 const char * idLocalization::GetString( const char * inString ) {
@@ -62,7 +62,7 @@ const char * idLocalization::GetString( const char * inString ) {
 
 /*
 ========================
-idLocalization::FindString 
+idLocalization::FindString
 ========================
 */
 const char * idLocalization::FindString( const char * inString ) {
@@ -89,7 +89,7 @@ utf8Encoding_t idLocalization::VerifyUTF8( const uint8 * buffer, const int buffe
 	return encoding;
 }
 
-// string entries can refer to other string entries, 
+// string entries can refer to other string entries,
 // recursing up to this many times before we decided someone did something stupid
 const char * idLangDict::KEY_PREFIX = "#str_";	// all keys should be prefixed with this for redirection to work
 const int idLangDict::KEY_PREFIX_LEN = idStr::Length( KEY_PREFIX );
@@ -269,7 +269,7 @@ bool idLangDict::Load( const byte * buffer, const int bufferLen, const char *nam
 	}
 
 	idLib::Printf( "%i strings read\n", numStrings );
-	
+
 	// get rid of any waste due to geometric list growth
 	//mem.PushHeap();
 	keyVals.Condense();
@@ -411,7 +411,7 @@ bool idLangDict::DeleteString( const int idx ) {
 	if ( idx < 0 || idx >= keyVals.Num() ) {
 		return false;
 	}
-	
+
 	//mem.PushHeap();
 	blockAlloc.Free( keyVals[idx].value );
 	keyVals[idx].value = NULL;
@@ -569,8 +569,8 @@ void idStrId::Set( const char * key ) {
 	} else {
 		index = idLocalization::languageDict.FindStringIndex( key );
 		if ( index < 0 ) {
-			// don't allow setting of string ID's to an unknown ID... this should only be allowed from 
-			// the string table tool because additions from anywhere else are not guaranteed to be 
+			// don't allow setting of string ID's to an unknown ID... this should only be allowed from
+			// the string table tool because additions from anywhere else are not guaranteed to be
 			// saved to the .lang file.
 			idLib::Warning( "Attempted to set unknown string ID '%s'", key );
 		}

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ HasCPUID
 ================
 */
 static bool HasCPUID() {
-	__asm 
+	__asm
 	{
 		pushfd						// save eflags
 		pop		eax
@@ -343,7 +343,7 @@ LogicalProcPerPhysicalProc
 ================
 */
 #define NUM_LOGICAL_BITS   0x00FF0000     // EBX[23:16] Bit 16-23 in ebx contains the number of logical
-                                          // processors per physical processor when execute cpuid with 
+                                          // processors per physical processor when execute cpuid with
                                           // eax set to 1
 static unsigned char LogicalProcPerPhysicalProc() {
 	unsigned int regebx = 0;
@@ -360,7 +360,7 @@ static unsigned char LogicalProcPerPhysicalProc() {
 GetAPIC_ID
 ================
 */
-#define INITIAL_APIC_ID_BITS  0xFF000000  // EBX[31:24] Bits 24-31 (8 bits) return the 8-bit unique 
+#define INITIAL_APIC_ID_BITS  0xFF000000  // EBX[31:24] Bits 24-31 (8 bits) return the 8-bit unique
                                           // initial APIC ID for the processor this code is running on.
                                           // Default value = 0xff if HT is not supported
 static unsigned char GetAPIC_ID() {
@@ -401,7 +401,7 @@ int CPUCount( int &logicalNum, int &physicalNum ) {
 
 	// Number of physical processors in a non-Intel system
 	// or in a 32-bit Intel system with Hyper-Threading technology disabled
-	physicalNum = info.dwNumberOfProcessors;  
+	physicalNum = info.dwNumberOfProcessors;
 
 	unsigned char HT_Enabled = 0;
 
@@ -413,7 +413,7 @@ int CPUCount( int &logicalNum, int &physicalNum ) {
 		DWORD  dwSystemAffinity;
 		DWORD  dwAffinityMask;
 
-		// Calculate the appropriate  shifts and mask based on the 
+		// Calculate the appropriate  shifts and mask based on the
 		// number of logical processors.
 
 		unsigned char i = 1, PHY_ID_MASK  = 0xFF, PHY_ID_SHIFT = 0;
@@ -423,7 +423,7 @@ int CPUCount( int &logicalNum, int &physicalNum ) {
  			PHY_ID_MASK  <<= 1;
 			PHY_ID_SHIFT++;
 		}
-		
+
 		hCurrentProcessHandle = GetCurrentProcess();
 		GetProcessAffinityMask( hCurrentProcessHandle, &dwProcessAffinity, &dwSystemAffinity );
 
@@ -455,10 +455,10 @@ int CPUCount( int &logicalNum, int &physicalNum ) {
 			}
 			dwAffinityMask = dwAffinityMask << 1;
 		}
-	        
+
 		// Reset the processor affinity
 		SetProcessAffinityMask( hCurrentProcessHandle, dwProcessAffinity );
-	    
+
 		if ( logicalNum == 1 ) {  // Normal P4 : HT is disabled in hardware
 			statusFlag = HT_DISABLED;
 		} else {
@@ -538,14 +538,14 @@ static bool HasDAZ() {
 
 /*
 ========================
-CountSetBits 
+CountSetBits
 Helper function to count set bits in the processor mask.
 ========================
 */
 DWORD CountSetBits( ULONG_PTR bitMask ) {
 	DWORD LSHIFT = sizeof( ULONG_PTR ) * 8 - 1;
 	DWORD bitSetCount = 0;
-	ULONG_PTR bitTest = (ULONG_PTR)1 << LSHIFT;    
+	ULONG_PTR bitTest = (ULONG_PTR)1 << LSHIFT;
 
 	for ( DWORD i = 0; i <= LSHIFT; i++ ) {
 		bitSetCount += ( ( bitMask & bitTest ) ? 1 : 0 );
@@ -635,7 +635,7 @@ bool GetCPUInfo( cpuInfo_t & cpuInfo ) {
 				break;
 
 			case localRelationCache:
-				// Cache data is in ptr->Cache, one CACHE_DESCRIPTOR structure for each cache. 
+				// Cache data is in ptr->Cache, one CACHE_DESCRIPTOR structure for each cache.
 				Cache = &ptr->Cache;
 				if ( Cache->Level >= 1 && Cache->Level <= 3 ) {
 					int level = Cache->Level - 1;

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -671,7 +671,7 @@ bool idPhysics_Parametric::Interpolate( const float fraction ) {
 	idMat3 oldAxis = current.axis;
 
 	const bool hasChanged = InterpolatePhysicsState( current, previous, next, fraction );
-	
+
 	gameLocal.push.ClipPush( pushResults, self, pushFlags, oldOrigin, oldAxis, current.origin, current.axis );
 
 	if ( clipModel ) {
@@ -1060,7 +1060,7 @@ idPhysics_Parametric::WriteToSnapshot
 void idPhysics_Parametric::WriteToSnapshot( idBitMsg &msg ) const {
 
 	const idQuat currentQuat = current.axis.ToQuat();
-	
+
 	WriteFloatArray( msg, current.origin );
 	WriteFloatArray( msg, currentQuat );
 }

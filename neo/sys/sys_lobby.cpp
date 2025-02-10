@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ idCVar net_peerTimeoutInSeconds( "net_peerTimeoutInSeconds", "30", CVAR_INTEGER,
 idCVar net_peerTimeoutInSeconds_Lobby( "net_peerTimeoutInSeconds_Lobby", "20", CVAR_INTEGER, "If the host hasn't received a response from a peer in this amount of time (in seconds), the peer will be disconnected." );
 
 // NOTE - The snapshot exchange does the bandwidth challenge
-idCVar net_bw_challenge_enable( "net_bw_challenge_enable", "0", CVAR_BOOL, "Enable pre game bandwidth challenge for throttling snap rate" ); 
+idCVar net_bw_challenge_enable( "net_bw_challenge_enable", "0", CVAR_BOOL, "Enable pre game bandwidth challenge for throttling snap rate" );
 
 idCVar net_bw_test_interval( "net_bw_test_interval", "33", CVAR_INTEGER, "MS - how often to send packets in bandwidth test" );
 idCVar net_bw_test_numPackets( "net_bw_test_numPackets", "30", CVAR_INTEGER, "Number of bandwidth challenge packets to send" );
@@ -51,7 +51,7 @@ idCVar net_bw_test_throttle_seq_pct( "net_bw_test_throttle_seq_pct", "0.80", CVA
 
 idCVar net_ignoreConnects( "net_ignoreConnects", "0", CVAR_INTEGER, "Test as if no one can connect to me. 0 = off, 1 = ignore with no reply, 2 = send goodbye" );
 
-idCVar net_skipGoodbye( "net_skipGoodbye", "0", CVAR_BOOL, "" ); 
+idCVar net_skipGoodbye( "net_skipGoodbye", "0", CVAR_BOOL, "" );
 
 extern unsigned long NetGetVersionChecksum();
 
@@ -68,7 +68,7 @@ idLobby::idLobby() {
 	objMemory				= NULL;
 	haveSubmittedSnaps		= false;
 
-	state					= STATE_IDLE;	
+	state					= STATE_IDLE;
 	failedReason			= FAILED_UNKNOWN;
 
 	host					= -1;
@@ -76,13 +76,13 @@ idLobby::idLobby() {
 	isHost					= false;
 	needToDisplayMigrateMsg	= false;
 	migrateMsgFlags			= 0;
-	
+
 	partyToken				= 0;		// will be initialized later
 	loaded					= false;
 	respondToArbitrate		= false;
 	waitForPartyOk			= false;
 	startLoadingFromHost	= false;
-	
+
 	nextSendPingValuesTime	= 0;
 	lastPingValuesRecvTime	= 0;
 
@@ -108,7 +108,7 @@ idLobby::idLobby() {
 	for ( int i = 0; i < userPool.Num(); i++ ) {
 		freeUsers.Append( &userPool[i] );
 	}
-	
+
 	showHostLeftTheSession	= false;
 	connectIsFromInvite		= false;
 }
@@ -182,7 +182,7 @@ idLobby::Pump
 ========================
 */
 void idLobby::Pump() {
-	
+
 	// Check the heartbeat of all our peers, make sure we shouldn't disconnect from peers that haven't sent a heartbeat in awhile
 	CheckHeartBeats();
 
@@ -198,7 +198,7 @@ void idLobby::Pump() {
 		case STATE_CONNECT_HELLO_WAIT:		State_Connect_Hello_Wait();		break;
 		case STATE_FINALIZE_CONNECT:		State_Finalize_Connect();		break;
 		case STATE_FAILED:													break;
-		default:	
+		default:
 			idLib::Error( "idLobby::Pump:  Unknown state." );
 	}
 }
@@ -255,19 +255,19 @@ void idLobby::Shutdown( bool retainMigrationInfo, bool skipGoodbye ) {
 			assert( peers[p].GetConnectionState() == CONNECTION_FREE );
 		}
 
-		state = STATE_IDLE;	
+		state = STATE_IDLE;
 
 		return;
 	}
 
 	NET_VERBOSE_PRINT( "NET: ShutdownLobby (%s)\n", GetLobbyName() );
-	
+
 	for ( int p = 0; p < peers.Num(); p++ ) {
 		if ( peers[p].GetConnectionState() != CONNECTION_FREE ) {
 			SetPeerConnectionState( p, CONNECTION_FREE, skipGoodbye );		// This will send goodbye's
 		}
 	}
-	
+
 	// Remove any users that weren't handled in ResetPeers
 	// (this will happen as a client, because we won't get the reliable msg from the server since we are severing the connection)
 	for ( int i = 0; i < GetNumLobbyUsers(); i++ ) {
@@ -330,10 +330,10 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 			// Not a valid connectionless packet
 			return;
 		}
-			
+
 		// Valid connectionless packets are always RETURN_TYPE_OOB
 		type = idPacketProcessor::RETURN_TYPE_OOB;
-			
+
 		// Find the peer this connectionless msg should go to
 		peerNum = FindPeer( remoteAddress, sessionID, true );
 	}
@@ -345,13 +345,13 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 
 	if ( peerNum >= 0 ) {
 		// Update their heart beat (only if we've received a valid packet (we've checked type == idPacketProcessor::RETURN_TYPE_NONE))
-		peers[peerNum].lastHeartBeat = Sys_Milliseconds();	
+		peers[peerNum].lastHeartBeat = Sys_Milliseconds();
 	}
 
 	// Handle server query requests.  We do this before the STATE_IDLE check.  This is so we respond.
 	// We may want to change this to just ignore the request if we are idle, and change the timeout time
 	// on the requesters part to just timeout faster.
-	if ( type == idPacketProcessor::RETURN_TYPE_OOB ) {	
+	if ( type == idPacketProcessor::RETURN_TYPE_OOB ) {
 		if ( userData == OOB_MATCH_QUERY || userData == OOB_SYSTEMLINK_QUERY ) {
 			sessionCB->HandleServerQueryRequest( remoteAddress, msg, userData );
 			return;
@@ -360,9 +360,9 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 			sessionCB->HandleServerQueryAck( remoteAddress, msg );
 			return;
 		}
-	}		
+	}
 
-	if ( type == idPacketProcessor::RETURN_TYPE_OOB ) {	
+	if ( type == idPacketProcessor::RETURN_TYPE_OOB ) {
 		if ( userData == OOB_VOICE_AUDIO ) {
 			sessionCB->HandleOobVoiceAudio( remoteAddress, msg );
 		} else if ( userData == OOB_HELLO ) {
@@ -483,7 +483,7 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 			idLib::Printf( "NET: In-band message from unknown peer: %s\n", remoteAddress.ToString() );
 			return;
 		}
-			
+
 		if ( !verify( peers[ peerNum ].address.Compare( remoteAddress ) ) ) {
 			idLib::Printf( "NET: Peer with wrong address: %i, %s\n", peerNum, remoteAddress.ToString() );
 			return;
@@ -508,7 +508,7 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 
 			HandleReliableMsg( peerNum, reliableMsg );
 		}
-	
+
 		if ( peerNum == -1 || !peers[ peerNum ].IsConnected() ) {
 			// If the peer still has no connection after HandleReliableMsg, then something is wrong.
 			// (We could have been in CONNECTION_CONNECTING state for this session type, but the first message
@@ -523,7 +523,7 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 				idLib::Printf( "NET: Snapshot msg for non game session lobby %s\n", remoteAddress.ToString() );
 				return;
 			}
-				
+
 			if ( peerNum == host ) {
 				idSnapShot	localSnap;
 				int			sequence = -1;
@@ -535,10 +535,10 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 				const byte * deltaData = msg.GetReadData() + msg.GetReadCount();
 				int deltaLength = msg.GetRemainingData();
 
-				if ( peers[ peerNum ].snapProc->ReceiveSnapshotDelta( deltaData, deltaLength, 0, sequence, baseseq, localSnap, fullSnap ) ) {						
-						
+				if ( peers[ peerNum ].snapProc->ReceiveSnapshotDelta( deltaData, deltaLength, 0, sequence, baseseq, localSnap, fullSnap ) ) {
+
 					NET_VERBOSESNAPSHOT_PRINT_LEVEL( 2, va( "NET: Got %s snapshot %d delta'd against %d. SS Time: %d\n", ( fullSnap ? "partial" : "full" ), sequence, baseseq, localSnap.GetTime() ) );
-						
+
 					if ( sessionCB->GetState() != idSession::INGAME && sequence != -1 ) {
 						int seq = peers[ peerNum ].snapProc->GetLastAppendedSequence();
 
@@ -557,7 +557,7 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 
 						ackmsg.WriteQuantizedUFloat< idLobby::BANDWIDTH_REPORTING_MAX, idLobby::BANDWIDTH_REPORTING_BITS >( incomingBPS );
 						QueueReliableMessage( host, RELIABLE_SNAPSHOT_ACK, ackbuffer, sizeof( ackbuffer ) );
-					}					
+					}
 				}
 
 				if ( fullSnap ) {
@@ -566,7 +566,7 @@ void idLobby::HandlePacket( lobbyAddress_t & remoteAddress, idBitMsg fragMsg, id
 				}
 
 				localReadSS = NULL;
-					
+
 			} else {
 				// If we are the host, we assume we only receive usercmds on the inband channel
 
@@ -608,11 +608,11 @@ idLobby::HasActivePeers
 */
 bool idLobby::HasActivePeers() const {
 	for ( int p = 0; p < peers.Num(); p++ ) {
-		if ( peers[p].GetConnectionState() != CONNECTION_FREE ) {	
+		if ( peers[p].GetConnectionState() != CONNECTION_FREE ) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -678,7 +678,7 @@ idLobby::State_Create_Lobby_Backend
 ========================
 */
 void idLobby::State_Create_Lobby_Backend() {
-	if ( !verify( lobbyBackend != NULL ) ) { 
+	if ( !verify( lobbyBackend != NULL ) ) {
 		SetState( STATE_FAILED );
 		return;
 	}
@@ -708,7 +708,7 @@ void idLobby::State_Create_Lobby_Backend() {
 
 	// Success
 	InitStateLobbyHost();
-	
+
 	// Set state to idle to signify to session we are done creating
 	SetState( STATE_IDLE );
 }
@@ -719,7 +719,7 @@ idLobby::State_Searching
 ========================
 */
 void idLobby::State_Searching() {
-	if ( !verify( lobbyBackend != NULL ) ) { 
+	if ( !verify( lobbyBackend != NULL ) ) {
 		SetState( STATE_FAILED );
 		return;
 	}
@@ -732,7 +732,7 @@ void idLobby::State_Searching() {
 		SetState( STATE_FAILED );		// Any other lobbyBackend state is invalid
 		return;
 	}
-	
+
 	// Done searching, get results from lobbyBackend
 	lobbyBackend->GetSearchResults( searchResults );
 
@@ -762,7 +762,7 @@ void idLobby::State_Obtaining_Address() {
 	if ( lobbyBackend->GetState() == idLobbyBackend::STATE_OBTAINING_ADDRESS ) {
 		return;		// Valid but not ready
 	}
-	
+
 	if ( lobbyBackend->GetState() != idLobbyBackend::STATE_READY ) {
 		// There was an error, signify to caller
 		failedReason = migrationInfo.persistUntilGameEndsData.wasMigratedJoin ? FAILED_MIGRATION_CONNECT_FAILED : FAILED_CONNECT_FAILED;
@@ -807,7 +807,7 @@ void idLobby::State_Finalize_Connect() {
 		SetState( STATE_FAILED );
 		return;
 	}
-	
+
 	// Success
 	SetState( STATE_IDLE );
 
@@ -831,7 +831,7 @@ void idLobby::State_Connect_Hello_Wait() {
 	}
 
 	int time = Sys_Milliseconds();
-	
+
 	const int timeoutMs = session->GetTitleStorageInt( "net_connectTimeoutInSeconds", net_connectTimeoutInSeconds.GetInteger() ) * 1000;
 
 	if ( timeoutMs != 0 && time - helloStartTime > timeoutMs ) {
@@ -847,7 +847,7 @@ void idLobby::State_Connect_Hello_Wait() {
 		// (keep getting more frequent to increase chance due to possible packet loss, but clamp to MIN_CONNECT_FREQUENCY seconds)
 		// TODO: We could eventually make timing out a function of actual number of attempts rather than just plain time.
 		int resendTime = Max( MIN_CONNECT_FREQUENCY_IN_SECONDS, CONNECT_REQUEST_FREQUENCY_IN_SECONDS / connectionAttempts ) * 1000;
-		
+
 		if ( time - lastConnectRequest > resendTime ) {
 			SendConnectionRequest();
 			lastConnectRequest = time;
@@ -860,7 +860,7 @@ void idLobby::State_Connect_Hello_Wait() {
 idLobby::SetState
 ========================
 */
-void idLobby::SetState( lobbyState_t newState ) {	
+void idLobby::SetState( lobbyState_t newState ) {
 	assert( newState < NUM_STATES );
 	assert( state < NUM_STATES );
 
@@ -894,7 +894,7 @@ void idLobby::StartCreating() {
 
 	lobbyBackend = sessionCB->CreateLobbyBackend( parms, skillLevel, (idLobbyBackend::lobbyBackendType_t)lobbyType );
 
-	SetState( STATE_CREATE_LOBBY_BACKEND );	
+	SetState( STATE_CREATE_LOBBY_BACKEND );
 }
 
 /*
@@ -904,10 +904,10 @@ idLobby::FindPeer
 */
 int idLobby::FindPeer( const lobbyAddress_t & remoteAddress, idPacketProcessor::sessionId_t sessionID, bool ignoreSessionID ) {
 
-	bool connectionless = ( sessionID == idPacketProcessor::SESSION_ID_CONNECTIONLESS_PARTY || 
-							sessionID == idPacketProcessor::SESSION_ID_CONNECTIONLESS_GAME || 
+	bool connectionless = ( sessionID == idPacketProcessor::SESSION_ID_CONNECTIONLESS_PARTY ||
+							sessionID == idPacketProcessor::SESSION_ID_CONNECTIONLESS_GAME ||
 							sessionID == idPacketProcessor::SESSION_ID_CONNECTIONLESS_GAME_STATE );
-	
+
 	if ( connectionless && !ignoreSessionID ) {
 		return -1;		// This was meant to be connectionless. FindPeer is meant for connected (or connecting) peers
 	}
@@ -925,10 +925,10 @@ int idLobby::FindPeer( const lobbyAddress_t & remoteAddress, idPacketProcessor::
 			// Using a rolling check, so that we account for possible packet loss, and out of order issues
 			if ( IsPeer() ) {
 				idPacketProcessor::sessionId_t searchStart = peers[p].sessionID;
-	
+
 				// Since we only roll the code between matches, we should only need to look ahead a couple increments.
 				// Worse case, if the stars line up, the client doesn't see the new sessionId, and times out, and gets booted.
-				// This should be impossible though, since the timings won't be possible considering how long it takes to end the match, 
+				// This should be impossible though, since the timings won't be possible considering how long it takes to end the match,
 				// and restart, and then restart again.
 				int numTries = 2;
 
@@ -980,7 +980,7 @@ idLobby::FindFreePeer
 ========================
 */
 int idLobby::FindFreePeer() const {
-	
+
 	// Return the first non active peer
 	for ( int p = 0; p < peers.Num(); p++ ) {
 		if ( !peers[p].IsActive()  ) {
@@ -995,25 +995,25 @@ int idLobby::FindFreePeer() const {
 idLobby::AddPeer
 ========================
 */
-int idLobby::AddPeer( const lobbyAddress_t & remoteAddress, idPacketProcessor::sessionId_t sessionID ) { 
+int idLobby::AddPeer( const lobbyAddress_t & remoteAddress, idPacketProcessor::sessionId_t sessionID ) {
 	// First, make sure we don't already have this peer
 	int p = FindPeer( remoteAddress, sessionID );
 	assert( p == -1 );		// When using session ID's, we SHOULDN'T find this remoteAddress/sessionID combo
 
 	if ( p == -1 ) {
 		// If we didn't find the peer, we need to add a new one
-		
+
 		p = FindFreePeer();
 
 		if ( p == -1 ) {
 			peer_t newPeer;
 			p = peers.Append( newPeer );
 		}
-		
+
 		peer_t & peer = peers[p];
-		
+
 		peer.ResetAllData();
-		
+
 		assert( peer.connectionState == CONNECTION_FREE );
 
 		peer.address	= remoteAddress;
@@ -1026,7 +1026,7 @@ int idLobby::AddPeer( const lobbyAddress_t & remoteAddress, idPacketProcessor::s
 	}
 
 	SetPeerConnectionState( p, CONNECTION_CONNECTING );
-	
+
 	if ( lobbyType == GetActingGameStateLobbyType() ) {
 		// Reset various flags used in game mode
 		peers[p].ResetMatchData();
@@ -1044,7 +1044,7 @@ void idLobby::DisconnectPeerFromSession( int p ) {
 	if ( !verify( IsHost() ) ) {
 		return;
 	}
-	
+
 	peer_t & peer = peers[p];
 
 	if ( peer.GetConnectionState() != CONNECTION_FREE ) {
@@ -1068,7 +1068,7 @@ void idLobby::DisconnectAllPeers() {
 idLobby::SendGoodbye
 ========================
 */
-void idLobby::SendGoodbye( const lobbyAddress_t & remoteAddress, bool wasFull ) { 
+void idLobby::SendGoodbye( const lobbyAddress_t & remoteAddress, bool wasFull ) {
 
 	if ( net_skipGoodbye.GetBool() ) {
 		return;
@@ -1077,7 +1077,7 @@ void idLobby::SendGoodbye( const lobbyAddress_t & remoteAddress, bool wasFull ) 
 	NET_VERBOSE_PRINT( "NET: Sending goodbye to %s for %s (wasFull = %i)\n", remoteAddress.ToString(), GetLobbyName(), wasFull );
 
 	static const int NUM_REDUNDANT_GOODBYES = 10;
-	
+
 	int msgType = OOB_GOODBYE;
 
 	if ( wasFull ) {
@@ -1085,10 +1085,10 @@ void idLobby::SendGoodbye( const lobbyAddress_t & remoteAddress, bool wasFull ) 
 	} else if ( lobbyType == TYPE_GAME && ( sessionCB->GetSessionOptions() & idSession::OPTION_LEAVE_WITH_PARTY ) && !( parms.matchFlags & MATCH_PARTY_INVITE_PLACEHOLDER ) ) {
 		msgType = OOB_GOODBYE_W_PARTY;
 	}
-	
-	for ( int i = 0; i < NUM_REDUNDANT_GOODBYES; i++ ) { 
-		SendConnectionLess( remoteAddress, msgType ); 
-	} 
+
+	for ( int i = 0; i < NUM_REDUNDANT_GOODBYES; i++ ) {
+		SendConnectionLess( remoteAddress, msgType );
+	}
 }
 
 /*
@@ -1173,7 +1173,7 @@ void idLobby::QueueReliableMessage( int p, byte type, const byte * data, int dat
 	}
 
 	peer_t & peer = peers[p];
-	
+
 	if ( !peer.IsConnected() ) {
 		// Don't send to this peer if we don't have an established connection of this session type
 		NET_VERBOSE_PRINT( "NET: Not sending reliable type %i to peer %i because connectionState is %i\n", type, p, peer.GetConnectionState() );
@@ -1234,7 +1234,7 @@ int idLobby::GetNumConnectedPeersInGame() const {
 idLobby::SendMatchParmsToPeers
 ========================
 */
-void idLobby::SendMatchParmsToPeers() {	
+void idLobby::SendMatchParmsToPeers() {
 	if ( !IsHost() ) {
 		return;
 	}
@@ -1246,7 +1246,7 @@ void idLobby::SendMatchParmsToPeers() {
 	byte buffer[ idPacketProcessor::MAX_PACKET_SIZE ];
 	idBitMsg msg( buffer, sizeof( buffer ) );
 	parms.Write( msg );
-	
+
 	for ( int p = 0; p < peers.Num(); p++ ) {
 		if ( !peers[p].IsConnected() ) {
 			continue;
@@ -1338,7 +1338,7 @@ void idLobby::SendConnectionLess( const lobbyAddress_t & remoteAddress, byte typ
 	const bool useDirectPort = ( lobbyType == TYPE_GAME_STATE );
 
 	// Send it
-	sessionCB->SendRawPacket( remoteAddress, processedMsg.GetReadData(), processedMsg.GetSize(), useDirectPort ); 
+	sessionCB->SendRawPacket( remoteAddress, processedMsg.GetReadData(), processedMsg.GetSize(), useDirectPort );
 }
 
 /*
@@ -1358,7 +1358,7 @@ void idLobby::SendConnectionRequest() {
 
 	// Add the current version info to the handshake
 	const unsigned long localChecksum = NetGetVersionChecksum();
-	
+
 	NET_VERBOSE_PRINT( "NET: version = %i\n", localChecksum );
 
 	msg.WriteLong( localChecksum );
@@ -1389,7 +1389,7 @@ void idLobby::SendConnectionRequest() {
 	NET_VERBOSE_PRINT( "NET: Sending hello to: %s (lobbyType: %s, session ID %i, attempt: %i)\n", hostAddress.ToString(), GetLobbyName(), peers[host].sessionID, connectionAttempts );
 
 	SendConnectionLess( hostAddress, OOB_HELLO, msg.GetReadData(), msg.GetSize() );
-	
+
 	connectionAttempts++;
 }
 
@@ -1490,7 +1490,7 @@ bool idLobby::ConnectToNextSearchResult() {
 	if ( searchResults.Num() == 0 ) {
 		return false;		// No more search results to connect to, give up
 	}
-	
+
 	// Get next search result
 	lobbyConnectInfo_t connectInfo = searchResults[0];
 
@@ -1575,7 +1575,7 @@ bool idLobby::VerifyLobbyUserIDs( idBitMsg & msg ) {
 	// Add the new users to our own list
 	for ( int u = 0; u < numUsers; u++ ) {
 		lobbyUser_t newUser;
-		
+
 		// Read in the new user
 		newUser.ReadFromMsg( msg );
 
@@ -1609,15 +1609,15 @@ int idLobby::HandleInitialPeerConnection( idBitMsg & msg, const lobbyAddress_t &
 		SendGoodbye( peerAddress );
 		return -1;
 	}
-	
+
 	// See if this is a peer migrating to us, if so, remove them from our invite list
 	bool migrationInvite = false;
 	int migrationGameData = -1;
 
-	
+
 	for ( int i = migrationInfo.invites.Num() - 1; i >= 0; i-- ) {
 		if ( migrationInfo.invites[i].address.Compare( peerAddress, true ) ) {
-				
+
 			migrationGameData = migrationInfo.invites[i].migrationGameData;
 			migrationInfo.invites.RemoveIndex( i );	// Remove this peer from the list, since this peer will now be connected (or rejected, either way we don't want to keep sending invites)
 			migrationInvite = true;
@@ -1636,7 +1636,7 @@ int idLobby::HandleInitialPeerConnection( idBitMsg & msg, const lobbyAddress_t &
 		return -1;
 	}
 
-	
+
 	if ( MatchTypeIsJoinInProgress( parms.matchFlags ) ) {
 		// If this is for a game connection, make sure we have a game lobby
 		if ( ( lobbyType == TYPE_GAME || lobbyType == TYPE_GAME_STATE ) && sessionCB->GetState() < idSession::GAME_LOBBY ) {
@@ -1651,7 +1651,7 @@ int idLobby::HandleInitialPeerConnection( idBitMsg & msg, const lobbyAddress_t &
 			SendGoodbye( peerAddress );
 			return -1;
 		}
-	
+
 		// If this is for a party connection, make sure we are not in game, unless this was for host migration invite
 		if ( !migrationInvite && lobbyType == TYPE_PARTY && ( sessionCB->GetState() == idSession::INGAME || sessionCB->GetState() == idSession::LOADING ) ) {
 			NET_VERBOSE_PRINT( "NET: Denying party connection from %s because we were already in a game\n", peerAddress.ToString() );
@@ -1678,7 +1678,7 @@ int idLobby::HandleInitialPeerConnection( idBitMsg & msg, const lobbyAddress_t &
 		if ( existingPeer.sessionID == sessionID ) {
 			return peerNum;		// If this is the same sessionID, then assume redundant connection attempt
 		}
-		
+
 		//
 		// This peer must be trying to reconnect from a previous abrupt disconnect
 		//
@@ -1688,12 +1688,12 @@ int idLobby::HandleInitialPeerConnection( idBitMsg & msg, const lobbyAddress_t &
 		// Assume a peer is trying to reconnect from a non clean disconnect
 		// We want to set the connection back to FREE manually, so we don't send a goodbye
 		existingPeer.connectionState = CONNECTION_FREE;
-		
+
 		if ( existingPeer.packetProc != NULL ) {
 			delete existingPeer.packetProc;
 			existingPeer.packetProc = NULL;
 		}
-		
+
 		if ( existingPeer.snapProc != NULL ) {
 			assert( lobbyType == TYPE_GAME );		// Only games sessions should be creating snap processors
 			delete existingPeer.snapProc;
@@ -1735,14 +1735,14 @@ int idLobby::HandleInitialPeerConnection( idBitMsg & msg, const lobbyAddress_t &
 
 	assert( newPeer.GetConnectionState() == CONNECTION_CONNECTING );
 	assert( lobbyType != GetActingGameStateLobbyType() || newPeer.snapProc != NULL );
-	
-	// First, add users from this new peer to our user list 
+
+	// First, add users from this new peer to our user list
 	// (which will then forward the list to all peers except peerNum)
 	AddUsersFromMsg( msg, peerNum );
 
 	// Mark the peer as connected for this session type
 	SetPeerConnectionState( peerNum, CONNECTION_ESTABLISHED );
-	
+
 	// Update their heart beat to current
 	newPeer.lastHeartBeat = Sys_Milliseconds();
 
@@ -1763,11 +1763,11 @@ int idLobby::HandleInitialPeerConnection( idBitMsg & msg, const lobbyAddress_t &
 		newPeer.loaded = false;
 		newPeer.inGame = false;
 	}
-	
+
 	// Write out current match parms
 	parms.Write( outmsg );
 
-	// Send list of existing users to this new peer 
+	// Send list of existing users to this new peer
 	// (the users from the new peer will also be in this list, since we already called AddUsersFromMsg)
 	outmsg.WriteByte( GetNumLobbyUsers() );
 
@@ -2044,12 +2044,12 @@ idLobby::GenerateSessionID
 */
 idPacketProcessor::sessionId_t idLobby::GenerateSessionID() const {
 	idPacketProcessor::sessionId_t sessionID = EncodeSessionID( Sys_Milliseconds() );
-	
+
 	// Make sure we can use it
 	while ( !SessionIDCanBeUsedForInBand( sessionID ) ) {
 		sessionID = IncrementSessionID( sessionID );
 	}
-	
+
 	return sessionID;
 }
 
@@ -2066,7 +2066,7 @@ bool idLobby::SessionIDCanBeUsedForInBand( idPacketProcessor::sessionId_t sessio
 	if ( sessionID == idPacketProcessor::SESSION_ID_CONNECTIONLESS_PARTY ) {
 		return false;
 	}
-	
+
 	if ( sessionID == idPacketProcessor::SESSION_ID_CONNECTIONLESS_GAME ) {
 		return false;
 	}
@@ -2087,18 +2087,18 @@ idPacketProcessor::sessionId_t idLobby::IncrementSessionID( idPacketProcessor::s
 	// Increment, taking into account valid id's
 	while ( 1 ) {
 		uint32 key = 0;
-		
+
 		DecodeSessionID( sessionID, key );
-		
+
 		key++;
-		
+
 		sessionID = EncodeSessionID( key );
-	
+
 		if ( SessionIDCanBeUsedForInBand( sessionID ) ) {
 			break;
 		}
 	}
-	
+
 	return sessionID;
 }
 
@@ -2202,7 +2202,7 @@ void idLobby::HandleHelloAck( int p, idBitMsg & msg ) {
 idLobby::GetLobbyUserName
 ========================
 */
-const char * idLobby::GetLobbyUserName( lobbyUserID_t lobbyUserID ) const { 
+const char * idLobby::GetLobbyUserName( lobbyUserID_t lobbyUserID ) const {
 	const int index = GetLobbyUserIndexByID( lobbyUserID );
 	const lobbyUser_t * user = GetLobbyUser( index );
 
@@ -2342,17 +2342,17 @@ idPlayerProfile * idLobby::GetProfileFromLobbyUser( lobbyUserID_t lobbyUserID ) 
 	idPlayerProfile * profile = NULL;
 
 	idLocalUser * localUser = GetLocalUserFromLobbyUserIndex( userIndex );
-	
+
 	if ( localUser != NULL ) {
 		profile = localUser->GetProfile();
 	}
-	
+
 	if ( profile == NULL ) {
 		// Whoops
 		profile = session->GetSignInManager().GetDefaultProfile();
 		//idLib::Warning( "Returning fake profile until the code is fixed to handle NULL profiles." );
 	}
-	
+
 	return profile;
 }
 
@@ -2411,23 +2411,23 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 	peer_t & peer = peers[p];
 
 	int reliableType = msg.ReadByte();
-	
+
 	//idLib::Printf(" Received reliable msg: %i \n", reliableType );
 
 	const lobbyType_t actingGameStateLobbyType = GetActingGameStateLobbyType();
 
-	if ( reliableType == RELIABLE_HELLO ) {		
+	if ( reliableType == RELIABLE_HELLO ) {
 		VERIFY_FROM_CONNECTING_HOST( p, lobbyType, RELIABLE_HELLO );
 		// This is sent from the host acking a request to join the game lobby
 		HandleHelloAck( p, msg );
-		return;		
+		return;
 	} else if ( reliableType == RELIABLE_USER_CONNECT_REQUEST ) {
 		VERIFY_CONNECTED_PEER( p, lobbyType, RELIABLE_USER_CONNECT_REQUEST );
 
 		// This message is sent from a peer requesting for a new user to join the game lobby
 		// This will be sent while we are in a game lobby as a host.  otherwise, denied.
 		NET_VERBOSE_PRINT( "NET: RELIABLE_USER_CONNECT_REQUEST (%s) from %s\n", GetLobbyName(), peer.address.ToString() );
-		
+
 		idSession::sessionState_t expectedState = ( lobbyType == TYPE_PARTY ) ? idSession::PARTY_LOBBY : idSession::GAME_LOBBY;
 
 		if ( sessionCB->GetState() == expectedState && IsHost() && NumFreeSlots() > 0 ) {	// This assumes only one user in the msg
@@ -2440,7 +2440,7 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 	} else if ( reliableType == RELIABLE_USER_CONNECT_DENIED ) {
 		// This message is sent back from the host when a RELIABLE_PARTY_USER_CONNECT_REQUEST failed
 		VERIFY_FROM_HOST( p, lobbyType, RELIABLE_PARTY_USER_CONNECT_DENIED );
-		
+
 		// Remove this user from the sign-in manager, so we don't keep trying to add them
 		if ( !sessionCB->GetSignInManager().RemoveLocalUserByHandle( localUserHandle_t( msg.ReadLong() ) ) ) {
 			NET_VERBOSE_PRINT( "NET: RELIABLE_PARTY_USER_CONNECT_DENIED, local user not found\n" );
@@ -2508,7 +2508,7 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 		}
 
 		ApplySnapshotDelta( p, snapNum );
-		
+
 		//idLib::Printf( "NET: Peer %d Ack'd snapshot %d\n", p, snapNum );
 		NET_VERBOSESNAPSHOT_PRINT_LEVEL( 2, va( "NET: Peer %d Ack'd snapshot %d\n", p, snapNum ) );
 
@@ -2529,7 +2529,7 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 		sessionCB->EndMatchInternal();
 
 	}  else if ( reliableType == RELIABLE_ENDMATCH_PREMATURE ) {
-		VERIFY_FROM_HOST( p, actingGameStateLobbyType, RELIABLE_ENDMATCH_PREMATURE );	
+		VERIFY_FROM_HOST( p, actingGameStateLobbyType, RELIABLE_ENDMATCH_PREMATURE );
 
 		sessionCB->EndMatchInternal( true );
 
@@ -2556,7 +2556,7 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 		respondToArbitrate = true;
 	} else if ( reliableType == RELIABLE_ARBITRATE_OK ) {
 		VERIFY_CONNECTED_PEER( p, TYPE_GAME, RELIABLE_ARBITRATE_OK );
-		
+
 		NET_VERBOSE_PRINT( "NET: Got an arbitration ok from %d\n", p );
 
 		everyoneArbitrated = true;
@@ -2588,13 +2588,13 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 	} else if ( reliableType == RELIABLE_UPDATE_SESSION_USER ) {
 		VERIFY_FROM_HOST( p, lobbyType, RELIABLE_UPDATE_SESSION_USER );
 		HandleUpdateSessionUser( msg );
-	} else if ( reliableType == RELIABLE_CONNECT_AND_MOVE_TO_LOBBY ) {		
+	} else if ( reliableType == RELIABLE_CONNECT_AND_MOVE_TO_LOBBY ) {
 		VERIFY_FROM_HOST( p, lobbyType, RELIABLE_CONNECT_AND_MOVE_TO_LOBBY );
-		
+
 		NET_VERBOSE_PRINT( "NET: RELIABLE_CONNECT_AND_MOVE_TO_LOBBY\n" );
 
 		if ( IsHost() ) {
-			idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: We are the host.\n" ); 
+			idLib::Printf( "RELIABLE_CONNECT_AND_MOVE_TO_LOBBY: We are the host.\n" );
 			return;
 		}
 
@@ -2611,21 +2611,21 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 	} else if ( reliableType == RELIABLE_PARTY_CONNECT_OK ) {
 		VERIFY_FROM_HOST( p, TYPE_PARTY, RELIABLE_PARTY_CONNECT_OK );
 		if ( !sessionCB->GetGameLobby().waitForPartyOk ) {
-			idLib::Printf( "RELIABLE_PARTY_CONNECT_OK: Wasn't waiting for ok.\n" ); 
+			idLib::Printf( "RELIABLE_PARTY_CONNECT_OK: Wasn't waiting for ok.\n" );
 		}
 		sessionCB->GetGameLobby().waitForPartyOk = false;
-	} else if ( reliableType == RELIABLE_PARTY_LEAVE_GAME_LOBBY ) {		
+	} else if ( reliableType == RELIABLE_PARTY_LEAVE_GAME_LOBBY ) {
 		VERIFY_FROM_HOST( p, TYPE_PARTY, RELIABLE_PARTY_LEAVE_GAME_LOBBY );
-		
+
 		NET_VERBOSE_PRINT( "NET: RELIABLE_PARTY_LEAVE_GAME_LOBBY\n" );
-		
+
 		if ( sessionCB->GetState() != idSession::GAME_LOBBY ) {
-			idLib::Printf( "RELIABLE_PARTY_LEAVE_GAME_LOBBY: Not in a game lobby, ignoring.\n" ); 
+			idLib::Printf( "RELIABLE_PARTY_LEAVE_GAME_LOBBY: Not in a game lobby, ignoring.\n" );
 			return;
 		}
 
 		if ( IsHost() ) {
-			idLib::Printf( "RELIABLE_PARTY_LEAVE_GAME_LOBBY: Host of party, ignoring.\n" ); 
+			idLib::Printf( "RELIABLE_PARTY_LEAVE_GAME_LOBBY: Host of party, ignoring.\n" );
 			return;
 		}
 
@@ -2660,13 +2660,13 @@ idLobby::GetTotalOutgoingRate
 */
 int idLobby::GetTotalOutgoingRate() {
 	int totalSendRate = 0;
-	for ( int p = 0; p < peers.Num(); p++ ) {		
+	for ( int p = 0; p < peers.Num(); p++ ) {
 		const peer_t & peer = peers[p];
-		
+
 		if ( !peer.IsConnected() ) {
 			continue;
 		}
-		
+
 		const idPacketProcessor & proc = *peer.packetProc;
 
 		totalSendRate += proc.GetOutgoingRateBytes();
@@ -2685,7 +2685,7 @@ void idLobby::DrawDebugNetworkHUD() const {
 	int		totalRecvRate = 0;
 	float	totalSentMB = 0.0f;
 	float	totalRecvMB = 0.0f;
-	
+
 	const float Y_OFFSET	= 20.0f;
 	const float X_OFFSET	= 20.0f;
 	const float Y_SPACING	= 15.0f;
@@ -2702,30 +2702,30 @@ void idLobby::DrawDebugNetworkHUD() const {
 	renderSystem->DrawSmallStringExt( idMath::Ftoi( X_OFFSET ), idMath::Ftoi( curY ), "------------------------------------------------------------------------------------------------------------------------------------", colorGreen, false );
 	curY += Y_SPACING;
 
-	for ( int p = 0; p < peers.Num(); p++ ) {		
+	for ( int p = 0; p < peers.Num(); p++ ) {
 		const peer_t & peer = peers[p];
-		
+
 		if ( !peer.IsConnected() ) {
 			continue;
 		}
-		
+
 		const idPacketProcessor & proc = *peer.packetProc;
-		
+
 		totalSendRate += proc.GetOutgoingRateBytes();
 		totalRecvRate += proc.GetIncomingRateBytes();
 		float sentKps = (float)proc.GetOutgoingRateBytes() / 1024.0f;
 		float recvKps = (float)proc.GetIncomingRateBytes() / 1024.0f;
 		float sentMB = (float)proc.GetOutgoingBytes() / ( 1024.0f * 1024.0f );
 		float recvMB = (float)proc.GetIncomingBytes() / ( 1024.0f * 1024.0f );
-		
+
 		totalSentMB += sentMB;
 		totalRecvMB += recvMB;
-		
+
 		idVec4 color = sentKps > 20.0f ? colorRed : colorGreen;
 
 		int resourcePercent = 0;
 		idStr name = peer.address.ToString();
-		
+
 		name += lobbyType == TYPE_PARTY ? "(P": "(G";
 		name += host == p ? ":H)" : ":C)";
 
@@ -2738,9 +2738,9 @@ void idLobby::DrawDebugNetworkHUD() const {
 
 	float totalSentKps = (float)totalSendRate / 1024.0f;
 	float totalRecvKps = (float)totalRecvRate / 1024.0f;
-	
+
 	idVec4 color = totalSentKps > 100.0f ? colorRed : colorGreen;
-	
+
 	renderSystem->DrawSmallStringExt( X_OFFSET, curY, va( "# %20s | %2.02f KB/s | %2.02f KB/s | %2.02f MB | %2.02f MB", "", totalSentKps, totalRecvKps, totalSentMB, totalRecvMB ), color, false );
 	curY += Y_SPACING;
 
@@ -2767,8 +2767,8 @@ void idLobby::DrawDebugNetworkHUD2() const {
 	const float Y_SPACING	= 15.0f;
 
 	float	curY = Y_OFFSET;
-	
-	renderSystem->DrawFilled( idVec4( 0.0f, 0.0f, 0.0f, 0.7f ), X_OFFSET - 10.0f, curY - 10.0f, 550, (peers.Num() + 4) * Y_SPACING + 20.0f );	
+
+	renderSystem->DrawFilled( idVec4( 0.0f, 0.0f, 0.0f, 0.7f ), X_OFFSET - 10.0f, curY - 10.0f, 550, (peers.Num() + 4) * Y_SPACING + 20.0f );
 
 	const char* stateName = session->GetStateString();
 
@@ -2799,7 +2799,7 @@ void idLobby::DrawDebugNetworkHUD2() const {
 		// should probably complement that with a bandwidth reading
 		// right now I am mostly concerned about fragmentation and the latency spikes it will cause
 		idVec4 color = proc.TickFragmentAccumulator() ? colorRed : colorGreen;
-		
+
 		int rLoaded = peers[ p ].numResources;
 		int rTotal = 0;
 
@@ -2898,17 +2898,17 @@ void idLobby::DrawDebugNetworkHUD_ServerSnapshotMetrics( bool draw ) {
 
 		peer.debugGraphs.SetNum( GRAPH_MAX, NULL );
 		for ( int i=0; i < GRAPH_MAX; i++ ) {
-			// Initialize graphs 
+			// Initialize graphs
 			if ( peer.debugGraphs[i] == NULL ) {
 				peer.debugGraphs[i] = console->CreateGraph( 500 );
 				if ( !verify( peer.debugGraphs[i] != NULL ) ) {
 					continue;
 				}
-				
+
 				peer.debugGraphs[i]->SetPosition( X_OFFSET - 10.0f + width, curY - 10.0f, width , Y_SPACING * numLines );
 			}
-			
-			peer.debugGraphs[i]->Enable( true );		
+
+			peer.debugGraphs[i]->Enable( true );
 		}
 
 		renderSystem->DrawFilled( idVec4( 0.0f, 0.0f, 0.0f, 0.7f ), X_OFFSET - 10.0f, curY - 10.0f, width, ( Y_SPACING * numLines ) + 20.0f );
@@ -2930,12 +2930,12 @@ void idLobby::DrawDebugNetworkHUD_ServerSnapshotMetrics( bool draw ) {
 			float upstreamQueuedRate = session->GetUpstreamQueueRate();
 			int queuedBytes = session->GetQueuedBytes();
 			renderSystem->DrawSmallStringExt( X_OFFSET, curY, va( "Queued: %d | Dropping: %2.02f kB/s Queue: %2.02f kB/s ", queuedBytes, upstreamDropRate / 1024.0f, upstreamQueuedRate / 1024.0f ), color, false );
-			
+
 		}
 
-		curY += Y_SPACING;		
+		curY += Y_SPACING;
 
-		
+
 
 		if ( peer.debugGraphs[GRAPH_SNAPSENT] != NULL ) {
 			if ( peer.lastSnapTime > lastTime ) {
@@ -2957,11 +2957,11 @@ void idLobby::DrawDebugNetworkHUD_ServerSnapshotMetrics( bool draw ) {
 		}
 
 
-		if ( peer.debugGraphs[GRAPH_INCOMINGREPORTED] != NULL ) {			
+		if ( peer.debugGraphs[GRAPH_INCOMINGREPORTED] != NULL ) {
 			idVec4 lineColor = colorYellow;
 			extern idCVar net_peer_throttle_bps_peer_threshold_pct;
 			extern idCVar net_peer_throttle_bps_host_threshold;
-			
+
 			if ( peer.packetProc->GetOutgoingRateBytes() > net_peer_throttle_bps_host_threshold.GetFloat() ) {
 				float pct = peer.packetProc->GetOutgoingRateBytes() > 0.0f ? peer.receivedBps / peer.packetProc->GetOutgoingRateBytes() : 0.0f;
 				if ( pct < net_peer_throttle_bps_peer_threshold_pct.GetFloat() ) {
@@ -2975,7 +2975,7 @@ void idLobby::DrawDebugNetworkHUD_ServerSnapshotMetrics( bool draw ) {
 			peer.debugGraphs[GRAPH_INCOMINGREPORTED]->SetFillMode( idDebugGraph::GRAPH_LINE );
 			peer.debugGraphs[GRAPH_INCOMINGREPORTED]->SetValue(-1, idMath::ClampFloat( 0.0f, 1.0f, peer.receivedBps / net_debughud3_bps_max.GetFloat() ), lineColor );
 		}
-	
+
 
 
 		// Skip down
@@ -3002,7 +3002,7 @@ void idLobby::CheckHeartBeats() {
 	}
 
 	if ( timeoutInMs > 0 ) {
-		for ( int p = 0; p < peers.Num(); p++ ) {		
+		for ( int p = 0; p < peers.Num(); p++ ) {
 			if ( peers[p].IsConnected() ) {
 
 				bool peerTimeout = false;
@@ -3011,13 +3011,13 @@ void idLobby::CheckHeartBeats() {
 					peerTimeout = true;
 				}
 
-				// if reliable queue is almost full, disconnect the peer. 
-				// (this seems reasonable since the reliable queue is set to 64 currently. In practice we should never 
+				// if reliable queue is almost full, disconnect the peer.
+				// (this seems reasonable since the reliable queue is set to 64 currently. In practice we should never
 				// have more than 3 or 4 queued)
 				if ( peers[ p ].packetProc->NumQueuedReliables() > idPacketProcessor::MAX_RELIABLE_QUEUE - 1 ) {
 					peerTimeout = true;
 				}
-				
+
 				if( peerTimeout ) {
 					// Disconnect the peer from any sessions we are a host of
 					if ( IsHost() ) {
@@ -3040,7 +3040,7 @@ void idLobby::CheckHeartBeats() {
 	}
 
 	if ( IsHost() && lobbyType == GetActingGameStateLobbyType() ) {
-		for ( int p = 0; p < peers.Num(); p++ ) {		
+		for ( int p = 0; p < peers.Num(); p++ ) {
 			if ( !peers[p].IsConnected() ) {
 				continue;
 			}
@@ -3074,7 +3074,7 @@ bool idLobby::IsLosingConnectionToHost() const {
 	}
 
 	// return true if reliable queue is more than half full
-	// (this seems reasonable since the reliable queue is set to 64 currently. In practice we should never 
+	// (this seems reasonable since the reliable queue is set to 64 currently. In practice we should never
 	// have more than 3 or 4 queued)
 	if ( peers[ host ].packetProc->NumQueuedReliables() > idPacketProcessor::MAX_RELIABLE_QUEUE / 2 ) {
 		return true;
@@ -3114,7 +3114,7 @@ idLobby::ShouldRelaunchMigrationGame
 returns true if we are hosting a migrated game and we had valid migration data
 ========================
 */
-bool idLobby::ShouldRelaunchMigrationGame() const { 
+bool idLobby::ShouldRelaunchMigrationGame() const {
 	if ( IsMigrating() ) {
 		return false;		// Don't relaunch until all clients have reconnected
 	}
@@ -3266,11 +3266,11 @@ void idLobby::ServerUpdateBandwidthTest() {
 		// Not doing a test
 		return;
 	}
-	
+
 	if ( !verify( IsHost() ))  {
 		return;
 	}
-	
+
 	int time = Sys_Milliseconds();
 
 	if ( bandwidthChallengeFinished ) {
@@ -3322,11 +3322,11 @@ void idLobby::ServerUpdateBandwidthTest() {
 
 		unsigned int randomSize = Min( (unsigned int)(sizeof(buffer) - 12), (unsigned int)session->GetTitleStorageInt( "net_bw_test_packetSizeBytes", net_bw_test_packetSizeBytes.GetInteger() ) );
 		msg.WriteLong( randomSize );
-		
+
 		for ( unsigned int j=0; j < randomSize; j++ ) {
 			msg.WriteByte( random.RandomInt( 255 ) );
 		}
-		
+
 		unsigned int checksum = MD5_BlockChecksum( &buffer[8], randomSize );
 		msg.WriteLong( checksum );
 
@@ -3350,7 +3350,7 @@ void idLobby::ServerUpdateBandwidthTest() {
 			NET_VERBOSE_PRINT("Net: finished sending BWC to peers. Waiting until %d to hear back\n", bandwidthChallengeEndTime );
 		}
 	}
-	
+
 	if ( recAll ) {
 		bandwidthChallengeFinished = true;
 		bandwidthChallengeStartTime = 0;
@@ -3409,7 +3409,7 @@ void idLobby::ClientUpdateBandwidthTest() {
 	msg.WriteLong( bandwidthChallengeNumGoodSeq );
 
 	// Send the overall average bandwidth in KBS
-	// Note that sending the number of good packets is not enough. If the packets going out are fragmented, and we 
+	// Note that sending the number of good packets is not enough. If the packets going out are fragmented, and we
 	// drop fragments, the number of good sequences will be lower than the bandwidth we actually received.
 	int totalIncomingBytes = peers[host].packetProc->GetIncomingBytes() - peers[host].bandwidthTestBytes;
 	msg.WriteLong( totalIncomingBytes );
@@ -3455,7 +3455,7 @@ void idLobby::HandleBandwidhTestValue( int p, idBitMsg & msg ) {
 	float bytesPct = peers[p].bandwidthTestBytes > 0 ? (float) totalReceivedBytes / (float)peers[p].bandwidthTestBytes : -1.0f;
 
 	// Calculate overall bandwidth for the test. That is, total amount received over time.
-	// We may want to expand this to also factor in an average instantaneous rate. 
+	// We may want to expand this to also factor in an average instantaneous rate.
 	// For now we are mostly concerned with culling out poor performing clients
 	float peerKBS = -1.0f;
 	if ( verify( totalTime > 0 ) ) {
@@ -3481,12 +3481,12 @@ void idLobby::HandleBandwidhTestValue( int p, idBitMsg & msg ) {
 	idLib::Printf("  %sEffective downstream: %.2fkbs (host: %.2fkbs) -> %.2f%\n\n", ( failedRate ? "^1" : "^2" ), peerKBS, outgoingKBS, pctKBS );
 
 	// If shittConnection(totalTime, totalGoodSeq/totalSeq, totalReceivedBytes/totalSentBytes)
-	//	throttle this user: 
+	//	throttle this user:
 	//	peers[p].throttledSnapRate = baseSnapRate * 2
-	if ( failedRate || failedByte || failedSeq ) {		
+	if ( failedRate || failedByte || failedSeq ) {
 		ThrottlePeerSnapRate( p );
 	}
-	
+
 
 	// See if we are finished
 	peers[p].bandwidthChallengeResults = true;
@@ -3565,7 +3565,7 @@ void idLobby::PumpPings() {
 		PingPeers();
 		// Send the hosts calculated ping values to each peer to everyone has updated ping times
 		SendPingValues();
-		// Do bandwidth testing 
+		// Do bandwidth testing
 		ServerUpdateBandwidthTest();
 		// Send Migration Data
 		SendMigrationGameData();
@@ -3656,7 +3656,7 @@ void idLobby::HandlePingValues( idBitMsg & msg ) {
 			u->pingMs = 0;
 		}
 	}
-	
+
 	// Stuff our ping in the hosts slot
 	if ( peerIndexOnHost != -1 && verify( peerIndexOnHost >= 0 && peerIndexOnHost < MAX_PEERS ) ) {
 		peers[host].lastPingRtt = packet.pings[ peerIndexOnHost ];
@@ -3673,15 +3673,15 @@ Other than connectionless sends, this should be the chokepoint for sending packe
 */
 bool idLobby::SendAnotherFragment( int p ) {
 	peer_t & peer = peers[p];
-	
+
 	if ( !peer.IsConnected() ) {	// Not connected to any mode (party or game), so no need to send
 		return false;
 	}
-	
+
 	if ( !peer.packetProc->HasMoreFragments() ) {
 		return false;		// No fragments to send for this peer
 	}
-	
+
 	if ( !CanSendMoreData( p ) ) {
 		return false;		// We need to throttle the sends so we don't saturate the connection
 	}
@@ -3692,17 +3692,17 @@ bool idLobby::SendAnotherFragment( int p ) {
 		NET_VERBOSE_PRINT("Too soon to send another packet. Delta: %d \n", ( time-peer.lastFragmentSendTime) );
 		return false;		// Too soon to send another fragment
 	}
-	
+
 	peer.lastFragmentSendTime = time;
 
 	bool sentFragment = false;
-	
+
 	while ( true ) {
 		idBitMsg msg;
 		// We use the final packet size here because it has been processed, and no more headers will be added
-		byte buffer[ idPacketProcessor::MAX_FINAL_PACKET_SIZE ];	
+		byte buffer[ idPacketProcessor::MAX_FINAL_PACKET_SIZE ];
 		msg.InitWrite( buffer, sizeof( buffer ) );
-		
+
 		if ( !peers[p].packetProc->GetSendFragment( time, peers[p].sessionID, msg ) ) {
 			break;
 		}
@@ -3710,7 +3710,7 @@ bool idLobby::SendAnotherFragment( int p ) {
 		const bool useDirectPort = ( lobbyType == TYPE_GAME_STATE );
 
 		msg.BeginReading();
-		sessionCB->SendRawPacket( peers[p].address, msg.GetReadData(), msg.GetSize(), useDirectPort ); 
+		sessionCB->SendRawPacket( peers[p].address, msg.GetReadData(), msg.GetSize(), useDirectPort );
 		sentFragment = true;
 		break;		// Comment this out to send all fragments in one burst
 	}
@@ -3718,7 +3718,7 @@ bool idLobby::SendAnotherFragment( int p ) {
 	if ( peer.packetProc->HasMoreFragments() ) {
 		NET_VERBOSE_PRINT("More packets left after ::SendAnotherFragment\n");
 	}
-		
+
 	return sentFragment;
 }
 
@@ -3749,7 +3749,7 @@ idLobby::ProcessOutgoingMsg
 void idLobby::ProcessOutgoingMsg( int p, const void * data, int size, bool isOOB, int userData ) {
 
 	peer_t & peer = peers[p];
-	
+
 	if ( peer.GetConnectionState() != CONNECTION_ESTABLISHED ) {
 		idLib::Printf( "peer.GetConnectionState() != CONNECTION_ESTABLISHED\n" );
 		return;	// Peer not fully connected for this session type, return
@@ -3760,7 +3760,7 @@ void idLobby::ProcessOutgoingMsg( int p, const void * data, int size, bool isOOB
 	}
 
 	int currentTime = Sys_Milliseconds();
-	
+
 	// if ( currentTime - peer.lastProcTime < 30 ) {
 	//	 idLib::Printf("ProcessOutgoingMsg called within %dms %s\n", (currentTime - peer.lastProcTime), GetLobbyName() );
 	// }
@@ -3768,11 +3768,11 @@ void idLobby::ProcessOutgoingMsg( int p, const void * data, int size, bool isOOB
 	peer.lastProcTime = currentTime;
 
 	if ( !isOOB ) {
-		// Keep track of the last time an in-band packet was sent 
+		// Keep track of the last time an in-band packet was sent
 		// (used for things like knowing when reliables could have been last sent)
 		peer.lastInBandProcTime = peer.lastProcTime;
 	}
-		
+
 	idBitMsg msg;
 	msg.InitRead( (byte*)data, size );
 	peer.packetProc->ProcessOutgoing( currentTime, msg, isOOB, userData );
@@ -3786,15 +3786,15 @@ idLobby::ResendReliables
 void idLobby::ResendReliables( int p ) {
 
 	peer_t & peer = peers[p];
-	
+
 	if ( !peer.IsConnected() ) {
 		return;
 	}
-	
+
 	if ( peer.packetProc->HasMoreFragments() ) {
 		return;		// We can't send more data while fragments are still being sent out
 	}
-	
+
 	if ( !CanSendMoreData( p ) ) {
 		return;
 	}
@@ -3836,27 +3836,27 @@ idLobby::PumpPackets
 */
 void idLobby::PumpPackets() {
 	int newTime = Sys_Milliseconds();
-		
-	for ( int p = 0; p < peers.Num(); p++ ) {		
+
+	for ( int p = 0; p < peers.Num(); p++ ) {
 		if ( peers[p].IsConnected() ) {
 			peers[p].packetProc->RefreshRates( newTime );
 		}
 	}
 
 	// Resend reliable msg's (do this before we send out the fragments)
-	for ( int p = 0; p < peers.Num(); p++ ) {		
+	for ( int p = 0; p < peers.Num(); p++ ) {
 		ResendReliables( p );
 	}
-	
+
 	// If we haven't sent anything to our peers in a long time, make sure to send an empty packet (so our heartbeat gets updated) so we don't get disconnected
 	// NOTE - We used to only send these to the host, but the host needs to also send these to clients
-	for ( int p = 0; p < peers.Num(); p++ ) {		
+	for ( int p = 0; p < peers.Num(); p++ ) {
 		if ( !peers[p].IsConnected() || peers[p].packetProc->HasMoreFragments() ) {
 			continue;
 		}
 		if ( newTime - peers[p].lastProcTime > 1000 * PEER_HEARTBEAT_IN_SECONDS ) {
 			//NET_VERBOSE_PRINT( "NET: ProcessOutgoing Heartbeat %s\n", GetLobbyName() );
-			ProcessOutgoingMsg( p, NULL, 0, false, 0 );		
+			ProcessOutgoingMsg( p, NULL, 0, false, 0 );
 		}
 	}
 
@@ -3882,7 +3882,7 @@ void idLobby::UpdateMatchParms( const idMatchParameters & p ) {
 	if ( lobbyBackend != NULL ) {
 		lobbyBackend->UpdateMatchParms( parms );
 	}
-	
+
 	SendMatchParmsToPeers();
 }
 
@@ -4040,7 +4040,7 @@ idLobby::reliablePlayerToPlayerHeader_t::Write
 */
 bool idLobby::reliablePlayerToPlayerHeader_t::Write( idLobby * lobby, idBitMsg & msg ) {
 
-	
+
 	if ( !verify( lobby->GetLobbyUser( fromSessionUserIndex ) != NULL ) ) {
 		return false;
 	}
@@ -4048,7 +4048,7 @@ bool idLobby::reliablePlayerToPlayerHeader_t::Write( idLobby * lobby, idBitMsg &
 	if ( !verify( lobby->GetLobbyUser( toSessionUserIndex ) != NULL ) ) {
 		return false;
 	}
-	
+
 	lobby->GetLobbyUser( fromSessionUserIndex )->lobbyUserID.WriteToMsg( msg );
 	lobby->GetLobbyUser( toSessionUserIndex )->lobbyUserID.WriteToMsg( msg );
 
@@ -4083,7 +4083,7 @@ bool idLobby::AllPeersInGame() const {
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 

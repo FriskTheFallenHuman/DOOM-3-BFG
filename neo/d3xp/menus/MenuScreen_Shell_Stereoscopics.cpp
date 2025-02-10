@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ void idMenuScreen_Shell_Stereoscopics::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -135,7 +135,7 @@ void idMenuScreen_Shell_Stereoscopics::Update() {
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -252,7 +252,7 @@ bool idMenuScreen_Shell_Stereoscopics::HandleAction( idWidgetAction & action, co
 			if ( options == NULL ) {
 				return true;
 			}
-			
+
 			int selectionIndex = options->GetFocusIndex();
 			if ( parms.Num() > 0 ) {
 				selectionIndex = parms[0].ToInteger();
@@ -261,7 +261,7 @@ bool idMenuScreen_Shell_Stereoscopics::HandleAction( idWidgetAction & action, co
 			if ( selectionIndex != options->GetFocusIndex() ) {
 				options->SetViewIndex( options->GetViewOffset() + selectionIndex );
 				options->SetFocusIndex( selectionIndex );
-			}	
+			}
 			stereoData.AdjustField( selectionIndex, 1 );
 			options->Update();
 
@@ -328,7 +328,7 @@ void idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::CommitDa
 
 	if ( IsDataChanged() ) {
 		cvarSystem->SetModifiedFlags( CVAR_ARCHIVE );
-	}	
+	}
 
 	// make the committed fields into the backup fields
 	originalFields = fields;
@@ -340,7 +340,7 @@ idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::AdjustField
 ========================
 */
 void idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::AdjustField( const int fieldIndex, const int adjustAmount ) {
-	
+
 	if ( fieldIndex == STEREO_FIELD_ENABLE ) {
 		int numOptions = NUM_STEREO_ENABLE;
 		if ( !renderSystem->HasQuadBufferSupport() ) {
@@ -376,7 +376,7 @@ void idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::AdjustFi
 
 /*
 ========================
-idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::IsDataChanged	
+idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::IsDataChanged
 ========================
 */
 idSWFScriptVar idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::GetField( const int fieldIndex ) const {
@@ -388,7 +388,7 @@ idSWFScriptVar idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings
 
 /*
 ========================
-idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::IsDataChanged	
+idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::IsDataChanged
 ========================
 */
 bool idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::IsDataChanged() const {

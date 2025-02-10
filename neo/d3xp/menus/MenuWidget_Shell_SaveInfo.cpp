@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ void idMenuWidget_Shell_SaveInfo::Update() {
 	sortedSaves.Sort( idSort_SavesByDate() );
 
 	for ( int slot = 0; slot < sortedSaves.Num(); ++slot ) {
-		const idSaveGameDetails & details = sortedSaves[slot];	
+		const idSaveGameDetails & details = sortedSaves[slot];
 		if ( forSaveScreen && details.slotName.Icmp( "autosave" ) == 0 ) {
 			sortedSaves.RemoveIndex( slot );
 			slot--;
@@ -60,8 +60,8 @@ void idMenuWidget_Shell_SaveInfo::Update() {
 
 	idStr info;
 	if ( loadIndex >= 0 && sortedSaves.Num() != 0 && loadIndex < sortedSaves.Num() ) {
-		const idSaveGameDetails & details = sortedSaves[ loadIndex ];		
-		
+		const idSaveGameDetails & details = sortedSaves[ loadIndex ];
+
 		info.Append( Sys_TimeStampToStr( details.date ) );
 		info.Append( "\n" );
 
@@ -127,7 +127,7 @@ void idMenuWidget_Shell_SaveInfo::ObserveEvent( const idMenuWidget & widget, con
 
 	switch ( event.type ) {
 		case WIDGET_EVENT_FOCUS_ON: {
-			const idMenuWidget_DynamicList * const list = dynamic_cast< const idMenuWidget_DynamicList * const >( listWidget );			
+			const idMenuWidget_DynamicList * const list = dynamic_cast< const idMenuWidget_DynamicList * const >( listWidget );
 			loadIndex = list->GetViewIndex();
 
 			const saveGameDetailsList_t & detailList = session->GetSaveGameManager().GetEnumeratedSavegames();

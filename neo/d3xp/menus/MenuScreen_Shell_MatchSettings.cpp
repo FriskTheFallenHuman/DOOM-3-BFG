@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ void idMenuScreen_Shell_MatchSettings::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -122,7 +122,7 @@ void idMenuScreen_Shell_MatchSettings::Update() {
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -220,7 +220,7 @@ bool idMenuScreen_Shell_MatchSettings::HandleAction( idWidgetAction & action, co
 			if ( selectionIndex != options->GetFocusIndex() ) {
 				options->SetViewIndex( options->GetViewOffset() + selectionIndex );
 				options->SetFocusIndex( selectionIndex );
-			}						
+			}
 
 			matchData.AdjustField( selectionIndex, 1 );
 			options->Update();
@@ -289,7 +289,7 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::LoadData(
 
 	int fragLimit = matchParameters.serverInfo.GetInt( "si_fragLimit" );
 	fields[ MATCH_FIELD_SCORE ].SetInteger( fragLimit );
-	
+
 	originalFields = fields;
 }
 
@@ -374,10 +374,10 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::AdjustFie
 
 		if ( matchParameters.gameMode < 0 ) {
 			matchParameters.gameMode = modes.Num() - 1;
-		} 
+		}
 		matchParameters.gameMode %= modes.Num();
 		updateMap = false;
-		if ( ( maps[matchParameters.gameMap].supportedModes & BIT(matchParameters.gameMode) ) == 0 ) {			
+		if ( ( maps[matchParameters.gameMap].supportedModes & BIT(matchParameters.gameMode) ) == 0 ) {
 			for ( int i = 0; i < maps.Num(); ++i ) {
 				if ( ( maps[i].supportedModes & BIT(matchParameters.gameMode) ) != 0 ) {
 					matchParameters.gameMap = i;
@@ -389,7 +389,7 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::AdjustFie
 
 		session->UpdateMatchParms( matchParameters );
 		idStr val;
-		
+
 		GetModeName( matchParameters.gameMode, val );
 		si_mode.SetInteger( matchParameters.gameMode );
 		fields[ MATCH_FIELD_MODE ].SetString( val );
@@ -444,7 +444,7 @@ idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::IsDataChanged
 ========================
 */
 bool idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::IsDataChanged() const {
-	
+
 	if ( fields[ MATCH_FIELD_TIME ].ToString() != originalFields[ MATCH_FIELD_TIME ].ToString() ) {
 		return true;
 	}

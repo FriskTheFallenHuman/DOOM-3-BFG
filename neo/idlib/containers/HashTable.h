@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ If you have questions concerning this license or the applicable additional terms
 
 /*
 ================================================================================================
-idHashNodeT is a generic node for a HashTable. It is specialized by the 
+idHashNodeT is a generic node for a HashTable. It is specialized by the
 StringHashNode and CStringHashNode template classes.
 ================================================================================================
 */
-template< typename _key_, class _value_ > 
+template< typename _key_, class _value_ >
 class idHashNodeT {
 public:
-	idHashNodeT() 
+	idHashNodeT()
 		:	next( NULL ) {
 	}
 
@@ -69,8 +69,8 @@ public:
 
 /*
 ================================================
-idHashNodeT is a HashNode that provides for partial 
-specialization for the HashTable, allowing the String class's Cmp function to be used 
+idHashNodeT is a HashNode that provides for partial
+specialization for the HashTable, allowing the String class's Cmp function to be used
 for inserting values in sorted order.
 ================================================
 */
@@ -99,9 +99,9 @@ public:
 
 /*
 ================================================
-idHashNodeT is a HashNode that provides for a partial specialization 
-for the HashTable, allowing the String class's Cmp function to 
-be used for inserting values in sorted order. It also ensures that a copy of the the key is 
+idHashNodeT is a HashNode that provides for a partial specialization
+for the HashTable, allowing the String class's Cmp function to
+be used for inserting values in sorted order. It also ensures that a copy of the the key is
 stored in a String (to more closely model the original implementation of the HashTable).
 ================================================
 */
@@ -112,7 +112,7 @@ public:
 		:	key( key ),
 		value( value ),
 		next( next ) {
-	} 
+	}
 
 	static int	GetHash( const char* const & key, const int tableMask ) {
 		return ( idStr::Hash( key ) & tableMask );
@@ -132,9 +132,9 @@ public:
 ================================================
 idHashTableT is a general implementation of a hash table data type. It is
 slower than the HashIndex, but it can also be used for LinkedLists and other data structures,
-rather than just indexes and arrays. 
+rather than just indexes and arrays.
 
-It uses an arbitrary key type. For String keys, use the StringHashTable template 
+It uses an arbitrary key type. For String keys, use the StringHashTable template
 specialization.
 ================================================
 */
@@ -253,7 +253,7 @@ ID_INLINE _value_ & idHashTableT<_key_,_value_>::Set( const _key_ & key, const _
 	int hash = hashnode_t::GetHash( key, tableSizeMask );
 	hashnode_t ** nextPtr = &(heads[ hash ] );
 	hashnode_t * node = * nextPtr;
-	for ( ; 
+	for ( ;
 		node != NULL;
 		nextPtr = &(node->next), node = *nextPtr ) {
 			int s = node->Compare( node->key, key );

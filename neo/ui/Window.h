@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ typedef enum {
 } wexpRegister_t;
 
 typedef struct {
-	wexpOpType_t opType;	
+	wexpOpType_t opType;
 	int	a, b, c, d;
 } wexpOp_t;
 
@@ -147,11 +147,11 @@ public:
 	{
 		delete mEvent;
 	}
-	size_t Size() 
+	size_t Size()
 	{
 		return sizeof(*this) + mEvent->Size();
 	}
-	
+
 	idStr				mName;
 	idGuiScriptList*	mEvent;
 };
@@ -365,14 +365,14 @@ protected:
 	float actualX;					// physical coords
 	float actualY;					// ''
 	int	  childID;					// this childs id
-	unsigned int flags;             // visible, focus, mouseover, cursor, border, etc.. 
+	unsigned int flags;             // visible, focus, mouseover, cursor, border, etc..
 	int lastTimeRun;				//
 	idRectangle drawRect;			// overall rect
 	idRectangle clientRect;			// client area
 	idVec2	origin;
 
 	int timeLine;					// time stamp used for various fx
-	float xOffset;			
+	float xOffset;
 	float yOffset;
 	float forceAspectWidth;
 	float forceAspectHeight;
@@ -390,8 +390,8 @@ protected:
 	unsigned char cursor;					//
 	signed char	textAlign;
 
-	idWinBool	noTime;					// 
-	idWinBool	visible;				// 
+	idWinBool	noTime;					//
+	idWinBool	visible;				//
 	idWinBool	noEvents;
 	idWinRectangle rect;				// overall rect
 	idWinVec4	backColor;
@@ -402,17 +402,17 @@ protected:
 	idWinFloat	textScale;
 	idWinFloat	rotate;
 	idWinStr	text;
-	idWinBackground	backGroundName;			// 
+	idWinBackground	backGroundName;			//
 
 	idList<idWinVar*, TAG_OLD_UI> definedVars;
 	idList<idWinVar*, TAG_OLD_UI> updateVars;
 
 	idRectangle textRect;			// text extented rect
-	const idMaterial *background;         // background asset  
+	const idMaterial *background;         // background asset
 
 	idWindow *parent;				// parent window
-	idList<idWindow*, TAG_OLD_UI> children;		// child windows	
-	idList<drawWin_t, TAG_OLD_UI> drawWindows;		
+	idList<idWindow*, TAG_OLD_UI> children;		// child windows
+	idList<drawWin_t, TAG_OLD_UI> drawWindows;
 
 	idWindow *focusedChild;			// if a child window has the focus
 	idWindow *captureChild;			// if a child window has mouse capture

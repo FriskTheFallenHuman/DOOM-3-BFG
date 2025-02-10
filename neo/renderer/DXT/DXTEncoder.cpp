@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -318,7 +318,7 @@ void SwapColors( byte *c1, byte *c2 ) {
 ========================
 idDxtEncoder::GetMinMaxColorsMaxDist
 
-Finds the two RGB colors in a 4x4 block furthest apart. Also finds the two alpha values 
+Finds the two RGB colors in a 4x4 block furthest apart. Also finds the two alpha values
 furthest apart.
 
 params: colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -355,7 +355,7 @@ void idDxtEncoder::GetMinMaxColorsMaxDist( const byte *colorBlock, byte *minColo
 ========================
 idDxtEncoder::GetMinMaxColorsLuminance
 
-Finds the two RGB colors in a 4x4 block furthest apart based on luminance. Also finds the two 
+Finds the two RGB colors in a 4x4 block furthest apart based on luminance. Also finds the two
 alpha values furthest apart.
 
 params: colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -609,7 +609,7 @@ int idDxtEncoder::GetSquareNormalYError( const byte *colorBlock, const unsigned 
 ========================
 idDxtEncoder::GetMinMaxColorsHQ
 
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to 
+Uses an exhaustive search to find the two RGB colors that produce the least error when used to
 compress the 4x4 block. Also finds the minimum and maximum alpha values.
 
 params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -702,7 +702,7 @@ int idDxtEncoder::GetMinMaxColorsHQ( const byte *colorBlock, byte *minColor, byt
 								continue;
 							}
 
-							minColor565 = (unsigned short)( ( i0 << 11 ) | ( i1 << 5 ) | ( i2 << 0 ) ); 
+							minColor565 = (unsigned short)( ( i0 << 11 ) | ( i1 << 5 ) | ( i2 << 0 ) );
 							maxColor565 = (unsigned short)( ( j0 << 11 ) | ( j1 << 5 ) | ( j2 << 0 ) );
 
 							if ( !noBlack ) {
@@ -784,7 +784,7 @@ int idDxtEncoder::GetSquareCTX1Error( const byte *colorBlock, const byte *color0
 ========================
 idDxtEncoder::GetMinMaxCTX1HQ
 
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to 
+Uses an exhaustive search to find the two RGB colors that produce the least error when used to
 compress the 4x4 block. Also finds the minimum and maximum alpha values.
 
 params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -876,7 +876,7 @@ int idDxtEncoder::GetMinMaxCTX1HQ( const byte *colorBlock, byte *minColor, byte 
 ========================
 idDxtEncoder::GetMinMaxNormalYHQ
 
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to 
+Uses an exhaustive search to find the two RGB colors that produce the least error when used to
 compress the 4x4 block. Also finds the minimum and maximum alpha values.
 
 params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -1194,7 +1194,7 @@ int idDxtEncoder::GetSquareNormalsDXT1Error( const int *colorBlock, const unsign
 ========================
 idDxtEncoder::GetMinMaxNormalsDXT1HQ
 
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to 
+Uses an exhaustive search to find the two RGB colors that produce the least error when used to
 compress the 4x4 block. Also finds the minimum and maximum alpha values.
 
 params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -1423,7 +1423,7 @@ int idDxtEncoder::GetSquareNormalsDXT5Error( const int *normalBlock, const byte 
 ========================
 idDxtEncoder::GetMinMaxNormalsDXT5HQ
 
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to 
+Uses an exhaustive search to find the two RGB colors that produce the least error when used to
 compress the 4x4 block. Also finds the minimum and maximum alpha values.
 
 params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -1561,7 +1561,7 @@ int idDxtEncoder::GetMinMaxNormalsDXT5HQ( const byte *colorBlock, byte *minColor
 ========================
 idDxtEncoder::GetMinMaxNormalsDXT5HQFast
 
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to 
+Uses an exhaustive search to find the two RGB colors that produce the least error when used to
 compress the 4x4 block. Also finds the minimum and maximum alpha values.
 
 params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
@@ -4496,7 +4496,7 @@ void idDxtEncoder::EncodeNormalRGBIndices( byte *outBuf, const byte min, const b
 
 	unsigned short maskedMax5 = (max & C565_5_MASK) >> 3;
 	unsigned short maskedMin5 = (min & C565_5_MASK) >> 3;
-	
+
 	unsigned short smax = (maskedMax5 << 11) | (maskedMax << 3) | maskedMax5;
 	unsigned short smin = (maskedMin5 << 11) | (maskedMin << 3) | maskedMin5;
 

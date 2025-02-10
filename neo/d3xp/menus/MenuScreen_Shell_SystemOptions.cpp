@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ void idMenuScreen_Shell_SystemOptions::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -162,7 +162,7 @@ void idMenuScreen_Shell_SystemOptions::Update() {
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -192,9 +192,9 @@ idMenuScreen_Shell_SystemOptions::ShowScreen
 ========================
 */
 void idMenuScreen_Shell_SystemOptions::ShowScreen( const mainMenuTransition_t transitionType ) {
-	
+
 	systemData.LoadData();
-	
+
 	idMenuScreen::ShowScreen( transitionType );
 }
 
@@ -253,7 +253,7 @@ bool idMenuScreen_Shell_SystemOptions::HandleAction( idWidgetAction & action, co
 	if ( menuData == NULL ) {
 		return true;
 	}
-	
+
 	if ( menuData->ActiveScreen() != SHELL_AREA_SYSTEM_OPTIONS ) {
 		return false;
 	}
@@ -470,7 +470,7 @@ void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::AdjustFi
 
 /*
 ========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::GetField	
+idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::GetField
 ========================
 */
 idSWFScriptVar idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::GetField( const int fieldIndex ) const {
@@ -523,7 +523,7 @@ idSWFScriptVar idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings
 
 /*
 ========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataChanged	
+idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataChanged
 ========================
 */
 bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataChanged() const {

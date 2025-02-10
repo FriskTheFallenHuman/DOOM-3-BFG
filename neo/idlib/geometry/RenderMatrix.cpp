@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -193,7 +193,7 @@ public:
 			}
 			char buffer[1024];
 			sprintf( buffer, "{ { %d, %d, %d, %d, %d, %d, %d }, %d }, // %s = %d%s\n",
-								frontPolygons[0], frontPolygons[1], frontPolygons[2], frontPolygons[3], 
+								frontPolygons[0], frontPolygons[1], frontPolygons[2], frontPolygons[3],
 								frontPolygons[4], frontPolygons[5], frontPolygons[6],
 								numFrontPolygons, bits, i, comment );
 			OutputDebugString( buffer );
@@ -441,7 +441,7 @@ public:
 			}
 			char buffer[1024];
 			sprintf( buffer, "{ { %d, %d, %d, %d, %d, %d, %d }, %d }, // %s = %d%s\n",
-								silhouetteVertices[0], silhouetteVertices[1], silhouetteVertices[2], silhouetteVertices[3], 
+								silhouetteVertices[0], silhouetteVertices[1], silhouetteVertices[2], silhouetteVertices[3],
 								silhouetteVertices[4], silhouetteVertices[5], silhouetteVertices[6], numSilhouetteVertices, bits, i, comment );
 			OutputDebugString( buffer );
 		}
@@ -666,12 +666,12 @@ void idRenderMatrix::CreateProjectionMatrix( float xMin, float xMax, float yMin,
 
 	out[0][0] = 2.0f * zNear / width;
 	out[0][1] = 0.0f;
-	out[0][2] = ( xMax + xMin ) / width;	// normally 0	
+	out[0][2] = ( xMax + xMin ) / width;	// normally 0
 	out[0][3] = 0.0f;
 
 	out[1][0] = 0.0f;
 	out[1][1] = 2.0f * zNear / height;
-	out[1][2] = ( yMax + yMin ) / height;	// normally 0	
+	out[1][2] = ( yMax + yMin ) / height;	// normally 0
 	out[1][3] = 0.0f;
 
 	if ( zFar <= zNear ) {
@@ -866,12 +866,12 @@ void idRenderMatrix::InverseOffsetScaleForBounds( const idRenderMatrix & src, co
 	out[0][1] = scale[0] * src[0][1];
 	out[0][2] = scale[0] * src[0][2];
 	out[0][3] = scale[0] * ( src[0][3] + offset[0] );
-						
+
 	out[1][0] = scale[1] * src[1][0];
 	out[1][1] = scale[1] * src[1][1];
 	out[1][2] = scale[1] * src[1][2];
 	out[1][3] = scale[1] * ( src[1][3] + offset[1] );
-						
+
 	out[2][0] = scale[2] * src[2][0];
 	out[2][1] = scale[2] * src[2][1];
 	out[2][2] = scale[2] * src[2][2];
@@ -4201,7 +4201,7 @@ void idRenderMatrix::GetFrustumPlanes( idPlane planes[6], const idRenderMatrix &
 		planes[0][1] = frustum[0][1];
 		planes[0][2] = frustum[0][2];
 		planes[0][3] = frustum[0][3];
- 
+
 		// bottom: inside(p) = p * frustum[1] > 0
 		planes[2][0] = frustum[1][0];
 		planes[2][1] = frustum[1][1];
@@ -4219,7 +4219,7 @@ void idRenderMatrix::GetFrustumPlanes( idPlane planes[6], const idRenderMatrix &
 		planes[0][1] = frustum[3][1] + frustum[0][1];
 		planes[0][2] = frustum[3][2] + frustum[0][2];
 		planes[0][3] = frustum[3][3] + frustum[0][3];
- 
+
 		// bottom: inside(p) = p * frustum[1] > -( p * frustum[3] )
 		planes[2][0] = frustum[3][0] + frustum[1][0];
 		planes[2][1] = frustum[3][1] + frustum[1][1];
@@ -4244,7 +4244,7 @@ void idRenderMatrix::GetFrustumPlanes( idPlane planes[6], const idRenderMatrix &
 	planes[3][1] = frustum[3][1] - frustum[1][1];
 	planes[3][2] = frustum[3][2] - frustum[1][2];
 	planes[3][3] = frustum[3][3] - frustum[1][3];
- 
+
 	// far: inside(p) = p * frustum[2] < p * frustum[3]
 	planes[5][0] = frustum[3][0] - frustum[2][0];
 	planes[5][1] = frustum[3][1] - frustum[2][1];

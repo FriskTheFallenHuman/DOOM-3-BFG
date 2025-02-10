@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ idMenuWidget::RemoveAllChildren
 ========================
 */
 void idMenuWidget::RemoveAllChildren() {
-	
+
 	for ( int i = 0; i < children.Num(); ++ i ) {
 
 		assert( children[ i ]->GetParent() == this );
@@ -302,7 +302,7 @@ idSWF * idMenuWidget::GetSWFObject() {
 		return menuData->GetGUI();
 	}
 
-	return NULL;	
+	return NULL;
 }
 
 /*
@@ -416,7 +416,7 @@ void idMenuWidget::SetFocusIndex( const int index, bool skipSound ) {
 
 	if ( oldIndex != focusIndex && !skipSound ) {
 		if ( menuData != NULL ) {
-			menuData->PlaySound( GUI_SOUND_FOCUS );	
+			menuData->PlaySound( GUI_SOUND_FOCUS );
 		}
 	}
 
@@ -486,7 +486,7 @@ bool idMenuWidget::HandleAction( idWidgetAction & action, const idWidgetEvent & 
 	if ( GetParent() != NULL ) {
 		handled = GetParent()->HandleAction( action, event, widget );
 	} else {
-		
+
 		if ( forceHandled ) {
 			return false;
 		}
@@ -495,7 +495,7 @@ bool idMenuWidget::HandleAction( idWidgetAction & action, const idWidgetEvent & 
 		if ( data != NULL ) {
 			return data->HandleAction( action, event, widget, false );
 		}
-	}	
+	}
 
 	return handled;
 }

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 
 const idEventDef EV_Thread_Execute( "<execute>", NULL );
 const idEventDef EV_Thread_SetCallback( "<script_setcallback>", NULL );
-																	
+
 // script callable events
 const idEventDef EV_Thread_TerminateThread( "terminate", "d" );
 const idEventDef EV_Thread_Pause( "pause", NULL );
@@ -276,7 +276,7 @@ idThread::idThread
 */
 idThread::idThread( idEntity *self, const function_t *func ) {
 	assert( self );
-	
+
 	Init();
 	SetThreadName( self->name );
 	interpreter.EnterObjectFunction( self, func, false );
@@ -431,7 +431,7 @@ void idThread::Init() {
 
 	threadNum = threadIndex;
 	threadList.Append( this );
-	
+
 	creationTime = gameLocal.time;
 	lastExecuteTime = 0;
 	manualControl = false;
@@ -468,19 +468,19 @@ idThread::DisplayInfo
 ================
 */
 void idThread::DisplayInfo() {
-	gameLocal.Printf( 
+	gameLocal.Printf(
 		"%12i: '%s'\n"
 		"        File: %s(%d)\n"
 		"     Created: %d (%d ms ago)\n"
-		"      Status: ", 
-		threadNum, threadName.c_str(), 
-		interpreter.CurrentFile(), interpreter.CurrentLine(), 
+		"      Status: ",
+		threadNum, threadName.c_str(),
+		interpreter.CurrentFile(), interpreter.CurrentLine(),
 		creationTime, gameLocal.time - creationTime );
 
 	if ( interpreter.threadDying ) {
 		gameLocal.Printf( "Dying\n" );
 	} else if ( interpreter.doneProcessing ) {
-		gameLocal.Printf( 
+		gameLocal.Printf(
 			"Paused since %d (%d ms)\n"
 			"      Reason: ",  lastExecuteTime, gameLocal.time - lastExecuteTime );
 		if ( waitingForThread ) {
@@ -926,8 +926,8 @@ void idThread::WaitFrame() {
 
 /***********************************************************************
 
-  Script callable events  
-	
+  Script callable events
+
 ***********************************************************************/
 
 /*
@@ -1433,7 +1433,7 @@ void idThread::Event_OnSignal( int signal, idEntity *ent, const char *func ) {
 		Error( "Entity not found" );
 		return;
 	}
-	
+
 	if ( ( signal < 0 ) || ( signal >= NUM_SIGNALS ) ) {
 		Error( "Signal out of range" );
 	}
@@ -1456,7 +1456,7 @@ void idThread::Event_ClearSignalThread( int signal, idEntity *ent ) {
 		Error( "Entity not found" );
 		return;
 	}
-	
+
 	if ( ( signal < 0 ) || ( signal >= NUM_SIGNALS ) ) {
 		Error( "Signal out of range" );
 	}
@@ -1722,7 +1722,7 @@ void idThread::Event_StrLeft( const char *string, int num ) {
 
 /*
 ================
-idThread::Event_StrRight 
+idThread::Event_StrRight
 ================
 */
 void idThread::Event_StrRight( const char *string, int num ) {
@@ -1819,7 +1819,7 @@ void idThread::Event_RadiusDamage( const idVec3 &origin, idEntity *inflictor, id
 idThread::Event_IsClient
 ================
 */
-void idThread::Event_IsClient() { 
+void idThread::Event_IsClient() {
 	idThread::ReturnFloat( common->IsClient() );
 }
 
@@ -1828,7 +1828,7 @@ void idThread::Event_IsClient() {
 idThread::Event_IsMultiplayer
 ================
 */
-void idThread::Event_IsMultiplayer() { 
+void idThread::Event_IsMultiplayer() {
 	idThread::ReturnFloat( common->IsMultiplayer() );
 }
 
@@ -1837,7 +1837,7 @@ void idThread::Event_IsMultiplayer() {
 idThread::Event_GetFrameTime
 ================
 */
-void idThread::Event_GetFrameTime() { 
+void idThread::Event_GetFrameTime() {
 	idThread::ReturnFloat( MS2SEC( gameLocal.time - gameLocal.previousTime ) );
 }
 
@@ -1846,7 +1846,7 @@ void idThread::Event_GetFrameTime() {
 idThread::Event_GetTicsPerSecond
 ================
 */
-void idThread::Event_GetTicsPerSecond() { 
+void idThread::Event_GetTicsPerSecond() {
 	idThread::ReturnFloat( com_engineHz_latched );
 }
 

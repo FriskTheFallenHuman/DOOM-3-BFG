@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ class idSerializer {
 public:
 	idSerializer( idBitMsg & msg_, bool writing_) : msg( &msg_ ), writing( writing_ )
 #ifdef SERIALIZE_SANITYCHECK
-	,magic( 0 ) 
+	,magic( 0 )
 #endif
 	{ }
 
@@ -132,7 +132,7 @@ public:
 	void	SerializeBytes( void * bytes, int numBytes ) { SanityCheck(); for ( int i = 0 ; i < numBytes ; i++ ) { Serialize( ((uint8 *)bytes)[i] ); } };
 
 	bool	SerializeBoolNonRef( bool value )	{ SanityCheck(); if ( writing ) { msg->WriteBool(value); }		else { value = msg->ReadBool(); } return value; }		// We return a value so we can support bit fields (can't pass by reference)
-	
+
 
 #ifdef SERIALIZE_NO_QUANT
 	template< int _max_, int _numBits_ >
@@ -155,8 +155,8 @@ public:
 
 	void	Serialize( idMat3 & axis);			// Raw 3x3 matrix serialize
 	void	SerializeC( idMat3 & axis);			// Uses compressed quaternion
-	
-	template< typename _type_ >  
+
+	template< typename _type_ >
 	void	SerializeListElement( const idList<_type_* > & list, const _type_ *&element );
 
 	void	SerializePacked(int & original);
@@ -196,7 +196,7 @@ public:
 
 	// serialize an angle, normalized to between 0 to 360 and quantized to 16 bits
 	void	SerializeAngle( float & value ) {
-				SanityCheck(); 
+				SanityCheck();
 				if ( writing ) {
 					float nAngle = idMath::AngleNormalize360( value );
 					assert( nAngle >= 0.0f ); // should never get a negative angle
@@ -209,19 +209,19 @@ public:
 
 			}
 
-	//void	Serialize( degrees_t & value )	{ 
-	//			SanityCheck(); 
+	//void	Serialize( degrees_t & value )	{
+	//			SanityCheck();
 	//			float angle = value.Get();
 	//			Serialize( angle );
 	//			value.Set( angle );
 	//		}
-	//void	SerializeAngle( degrees_t & value )	{ 
-	//			SanityCheck(); 
+	//void	SerializeAngle( degrees_t & value )	{
+	//			SanityCheck();
 	//			float angle = value.Get();
 	//			SerializeAngle( angle );
 	//			value.Set( angle );
 	//		}
-	//void	Serialize( radians_t & value ) { 
+	//void	Serialize( radians_t & value ) {
 	//			SanityCheck();
 	//			// convert to degrees
 	//			degrees_t d( value.Get() * idMath::M_RAD2DEG );
@@ -231,7 +231,7 @@ public:
 	//				value.Set( d.Get() * idMath::M_DEG2RAD );
 	//			}
 	//		}
-	//void	SerializeAngle( radians_t & value ) { 
+	//void	SerializeAngle( radians_t & value ) {
 	//			SanityCheck();
 	//			// convert to degrees
 	//			degrees_t d( value.Get() * idMath::M_RAD2DEG );
@@ -249,7 +249,7 @@ public:
 	//	Serialize( value.b );
 	//	Serialize( value.a );
 	//}
-	
+
 	void	SanityCheck() {
 #ifdef SERIALIZE_SANITYCHECK
 		if ( writing ) {
@@ -298,18 +298,18 @@ public:
 	idSerializerScopedBlock( idSerializer &ser_, int maxSizeBytes_ ) {
 		ser = &ser_;
 		maxSizeBytes = maxSizeBytes_;
-	
+
 		startByte = ser->IsReading() ? ser->GetMsg().GetReadCount() : ser->GetMsg().GetSize();
 		startWriteBits = ser->GetMsg().GetWriteBit();
 	}
 
 	~idSerializerScopedBlock() {
-	
+
 		// Serialize remaining bits
 		while ( ser->GetMsg().GetWriteBit() != startWriteBits ) {
 			ser->SerializeBoolNonRef( false );
 		}
-	
+
 		// Verify we didn't go over
 		int endByte = ser->IsReading() ? ser->GetMsg().GetReadCount() : ser->GetMsg().GetSize();
 		int sizeBytes = endByte - startByte;
@@ -332,7 +332,7 @@ public:
 private:
 	idSerializer * ser;
 	int maxSizeBytes;
-	
+
 	int startByte;
 	int startWriteBits;
 };
@@ -376,7 +376,7 @@ ID_INLINE void idSerializer::SerializeQ( idMat3 &axis, int bits ) {
 		msg->WriteBits( idMath::Ftoi( out.x * scale ), -bits);
 		msg->WriteBits( idMath::Ftoi( out.y * scale ), -bits);
 		msg->WriteBits( idMath::Ftoi( out.z * scale ), -bits);
-	
+
 	} else if ( IsReading() ) {
 		idQuat quat;
 		idVec3 in;
@@ -441,7 +441,7 @@ ID_INLINE void idSerializer::SerializeC( idMat3 & axis ) {
 idSerializer::SerializeListElement
 ========================
 */
-template< typename _type_ >  
+template< typename _type_ >
 ID_INLINE void idSerializer::SerializeListElement( const idList<_type_* > & list, const _type_ *&element ) {
 	SanityCheck();
 
@@ -462,7 +462,7 @@ idSerializer::SerializePacked
 Writes out 7 bits at a time, using every 8th bit to signify more bits exist
 
 NOTE - Signed values work with this function, but take up more bytes
-Use SerializeSPacked if you anticipate lots of negative values 
+Use SerializeSPacked if you anticipate lots of negative values
 ========================
 */
 ID_INLINE void idSerializer::SerializePacked(int & original) {
@@ -531,7 +531,7 @@ ID_INLINE void idSerializer::SerializeSPacked(int & value) {
 		uint32 uvalue	= byte & 0x3f;
 		bool sgn		= (byte & 0x40) ? true : false;
 		int32 shift		= 6;
-		
+
 		while ( byte & 0x80 && shift < 32 ) {
 			byte = msg->ReadByte();		// Read byte
 			uvalue |= (byte & 0x7F) << shift;

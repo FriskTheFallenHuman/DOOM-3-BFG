@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,14 +46,14 @@ public:
 	virtual void		PostParse();
 	virtual void		GainFocus();
 	virtual size_t		Allocated(){return idWindow::Allocated();};
-	
+
 	virtual idWinVar *	GetWinVarByName(const char *_name, bool winLookup = false, drawWin_t** owner = NULL );
-	
+
 	virtual void 		HandleBuddyUpdate(idWindow *buddy);
 	virtual void		Activate(bool activate, idStr &act);
-	
+
 	void				RunNamedEvent( const char* eventName );
-	
+
 private:
 
 	virtual bool		ParseInternalVar(const char *name, idTokenParser *src);
@@ -63,11 +63,11 @@ private:
 						// false: write to the cvar system
 						// force == true overrides liveUpdate 0
 	void				UpdateCvar( bool read, bool force = false );
-	
+
 	void				CommonInit();
 	void				EnsureCursorVisible();
 	void				InitScroller( bool horizontal );
-	
+
 	int					maxChars;
 	int					paintOffset;
 	int					cursorPos;
@@ -82,7 +82,7 @@ private:
 	float				sizeBias;
 	int					textIndex;
 	int					lastTextLength;
-	bool				forceScroll;	
+	bool				forceScroll;
 	idWinBool			password;
 
 	idWinStr			cvarStr;

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ void idMenuScreen_Shell_ModeSelect::Initialize( idMenuHandler * data ) {
 	AddChild( helpWidget );
 
 	const idStrList & modes = common->GetModeDisplayList();
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 	for ( int i = 0; i < modes.Num(); ++i ) {
 		idList< idStr > option;
 		option.Append( modes[i] );
@@ -78,10 +78,10 @@ void idMenuScreen_Shell_ModeSelect::Initialize( idMenuHandler * data ) {
 		buttonWidget->RegisterEventObserver( helpWidget );
 		options->AddChild( buttonWidget );
 	}
-	options->Initialize( data );	
+	options->Initialize( data );
 
 	btnBack = new (TAG_SWF) idMenuWidget_Button();
-	btnBack->Initialize( data );	
+	btnBack->Initialize( data );
 	btnBack->SetLabel( "#str_swf_multiplayer" );
 	btnBack->SetSpritePath( GetSpritePath(), "info", "btnBack" );
 	btnBack->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_GO_BACK );
@@ -121,7 +121,7 @@ void idMenuScreen_Shell_ModeSelect::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -193,7 +193,7 @@ bool idMenuScreen_Shell_ModeSelect::HandleAction( idWidgetAction & action, const
 			int selectionIndex = options->GetViewIndex();
 			if ( parms.Num() == 1 ) {
 				selectionIndex = parms[0].ToInteger();
-			}	
+			}
 
 			if ( options->GetFocusIndex() != selectionIndex ) {
 				options->SetFocusIndex( selectionIndex );
@@ -211,7 +211,7 @@ bool idMenuScreen_Shell_ModeSelect::HandleAction( idWidgetAction & action, const
 
 			// Update flags for game lobby.
 			matchParameters.matchFlags = DefaultPartyFlags | DefaultPublicGameFlags;
-			
+
 			cvarSystem->MoveCVarsToDict( CVAR_SERVERINFO, matchParameters.serverInfo );
 
 			// Force a default value for the si_timelimit and si_fraglimit for quickmatch

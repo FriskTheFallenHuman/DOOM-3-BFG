@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ bool idSaveGameProcessorLoadFiles::InitLoadFiles( const char * folder_, const sa
 	if ( !idSaveGameProcessor::Init() ) {
 		return false;
 	}
-	
+
 	parms.directory = AddSaveFolderPrefix( folder_, type );
 	parms.description.slotName = folder_;
 	parms.mode = SAVEGAME_MBF_LOAD;
@@ -160,7 +160,7 @@ bool idSaveGameProcessorSaveFiles::InitSave( const char * folder, const saveFile
 
 /*
 ========================
-idSaveGameProcessorSaveFiles::Process 
+idSaveGameProcessorSaveFiles::Process
 ========================
 */
 bool idSaveGameProcessorSaveFiles::Process() {
@@ -194,7 +194,7 @@ bool idSaveGameProcessorEnumerateGames::Process() {
 	return false;
 }
 
-#pragma endregion 
+#pragma endregion
 
 /*
 ========================
@@ -239,10 +239,10 @@ saveGameHandle_t idSessionLocal::SaveGameAsync( const char * name, const saveFil
 
 	// Done this way so we know it will be shutdown properly on early exit or exception
 	struct local_t {
-		local_t( idSaveLoadParms * localparms ) : parms( localparms ) { 
+		local_t( idSaveLoadParms * localparms ) : parms( localparms ) {
 			// Prepare background renderer
 		}
-		~local_t() { 
+		~local_t() {
 			// Shutdown background renderer
 		}
 		idSaveLoadParms * parms;
@@ -319,7 +319,7 @@ void idSessionLocal::OnSaveCompleted( idSaveLoadParms * parms ) {
 ========================
 idSessionLocal::LoadGameSync
 
-We still want to use the savegame manager because we could have file system operations in flight and need to 
+We still want to use the savegame manager because we could have file system operations in flight and need to
 ========================
 */
 saveGameHandle_t idSessionLocal::LoadGameSync( const char * name, saveFileEntryList_t & files ) {
@@ -327,20 +327,20 @@ saveGameHandle_t idSessionLocal::LoadGameSync( const char * name, saveFileEntryL
 	saveGameHandle_t handle = 0;
 
 	{
-		// Put in a local block so everything will go in the global heap before the map change, but the heap is 
+		// Put in a local block so everything will go in the global heap before the map change, but the heap is
 		// automatically popped out on early return or exception
 		// You cannot be in the global heap during a map change...
 		//idScopedGlobalHeap everythingGoesInTheGlobalHeap;
 
 		// Done this way so we know it will be shutdown properly on early exit or exception
 		struct local_t {
-			local_t( idSaveLoadParms * parms_ ) : parms( parms_ ) { 
+			local_t( idSaveLoadParms * parms_ ) : parms( parms_ ) {
 				// Prepare background renderer or loadscreen with what you want to show
 				{
 					// with mode: SAVE_GAME_MODE_LOAD
 				}
 			}
-			~local_t() { 
+			~local_t() {
 				// Shutdown background renderer or loadscreen
 				{
 				}
@@ -383,7 +383,7 @@ saveGameHandle_t idSessionLocal::LoadGameSync( const char * name, saveFileEntryL
 		if ( !LoadGameCheckDescriptionFile( parms ) ) {
 			return 0;
 		}
-		
+
 		// Checks to see if loaded map is from a DLC map and if that DLC is active
 		if ( !IsDLCAvailable( parms.description.GetMapName() ) ) {
 			parms.errorCode = SAVEGAME_E_DLC_NOT_FOUND;
@@ -414,13 +414,13 @@ saveGameHandle_t idSessionLocal::EnumerateSaveGamesSync() {
 
 	// Done this way so we know it will be shutdown properly on early exit or exception
 	struct local_t {
-		local_t() { 
+		local_t() {
 			// Prepare background renderer or loadscreen with what you want to show
 			{
 				// with mode: SAVE_GAME_MODE_ENUMERATE
 			}
 		}
-		~local_t() { 
+		~local_t() {
 			// Shutdown background renderer or loadscreen
 			{
 			}
@@ -493,7 +493,7 @@ void idSessionLocal::OnEnumerationCompleted( idSaveLoadParms * parms ) {
 	std::sort( parms->detailList.Ptr(), parms->detailList.Ptr() + parms->detailList.Num() );
 
 	if ( parms->GetError() == SAVEGAME_E_NONE ) {
-		// Copy into the maintained list 
+		// Copy into the maintained list
 		saveGameDetailsList_t & detailsList = session->GetSaveGameManager().GetEnumeratedSavegamesNonConst();
 		//mem.PushHeap();
 		detailsList = parms->detailList;	// copies new list into the savegame manager's reference
@@ -527,13 +527,13 @@ saveGameHandle_t idSessionLocal::DeleteSaveGameSync( const char * name ) {
 
 	// Done this way so we know it will be shutdown properly on early exit or exception
 	struct local_t {
-		local_t() { 
+		local_t() {
 			// Prepare background renderer or loadscreen with what you want to show
 			{
 				// with mode: SAVE_GAME_MODE_DELETE
 			}
 		}
-		~local_t() { 
+		~local_t() {
 			// Shutdown background renderer or loadscreen
 			{
 			}
@@ -790,7 +790,7 @@ void OutputDetailList( const saveGameDetailsList_t & savegameList ) {
 			"\t\tTime: %s\n",
 			savegameList[i].slotName.c_str(),
 			savegameList[i].damaged ? S_COLOR_RED "CORRUPT" : S_COLOR_GREEN "OK",
-			savegameList[i].damaged ? "?" : savegameList[i].descriptors.GetString( SAVEGAME_DETAIL_FIELD_MAP, "" ), 
+			savegameList[i].damaged ? "?" : savegameList[i].descriptors.GetString( SAVEGAME_DETAIL_FIELD_MAP, "" ),
 			Sys_TimeStampToStr( savegameList[i].date )
 			);
 	}

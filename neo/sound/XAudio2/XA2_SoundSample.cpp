@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ void idSoundSample_XAudio2::WriteAllSamples( const idStr &sampleName ) {
 			idFile *fileOut = fileSystem->OpenFileWrite( outName, "fs_basepath" );
 			samplePC->WriteGeneratedSample( fileOut );
 			delete fileOut;
-		} 
+		}
 	}
 	delete samplePC;
 }
@@ -281,7 +281,7 @@ bool idSoundSample_XAudio2::LoadWav( const idStr & filename ) {
 		buffers[0].bufferSize = totalBufferSize;
 		buffers[0].numSamples = playLength;
 		buffers[0].buffer = AllocBuffer( totalBufferSize, GetName() );
-		
+
 
 		wave.Read( buffers[0].buffer, totalBufferSize );
 
@@ -300,7 +300,7 @@ bool idSoundSample_XAudio2::LoadWav( const idStr & filename ) {
 		buffers[0].bufferSize = totalBufferSize;
 		buffers[0].numSamples = playLength;
 		buffers[0].buffer  = AllocBuffer( totalBufferSize, GetName() );
-		
+
 		wave.Read( buffers[0].buffer, totalBufferSize );
 
 		buffers[0].buffer = GPU_CONVERT_CPU_TO_CPU_CACHED_READONLY_ADDRESS( buffers[0].buffer );

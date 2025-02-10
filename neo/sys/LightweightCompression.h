@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,11 +28,11 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LIGHTWEIGHT_COMPRESSION_H__
 #define __LIGHTWEIGHT_COMPRESSION_H__
 
-		
+
 struct lzwCompressionData_t {
 	static const int	LZW_DICT_BITS	= 12;
 	static const int	LZW_DICT_SIZE	= 1 << LZW_DICT_BITS;
-	
+
 	uint8					dictionaryK[LZW_DICT_SIZE];
 	uint16					dictionaryW[LZW_DICT_SIZE];
 
@@ -40,7 +40,7 @@ struct lzwCompressionData_t {
 	int						codeBits;
 
 	int						codeWord;
-	
+
 	uint64					tempValue;
 	int						tempBits;
 	int						bytesWritten;
@@ -71,7 +71,7 @@ public:
 	int		AddToDict( int w, int k );
 	bool	BumpBits();
 	int		End();
-	
+
 	int		Length() const { return lzwData->bytesWritten; }
 	int		GetReadCount() const { return bytesRead; }
 
@@ -79,56 +79,56 @@ public:
 	void	Restore();
 
 	bool	IsOverflowed() { return overflowed; }
-	
+
 	int		Write( const void * data, int length ) {
 		uint8 * src = (uint8*)data;
-		
+
 		for ( int i = 0; i < length && !IsOverflowed(); i++ ) {
 			WriteByte( src[i] );
 		}
-		
+
 		return length;
 	}
 
 	int		Read( void * data, int length, bool ignoreOverflow = false ) {
 		uint8 * src = (uint8*)data;
-		
+
 		for ( int i = 0; i < length; i++ ) {
 			int byte = ReadByte( ignoreOverflow );
-			
+
 			if ( byte == -1 ) {
 				return i;
 			}
-			
+
 			src[i] = (uint8)byte;
 		}
-		
+
 		return length;
 	}
 
 	int		WriteR( const void * data, int length ) {
 		uint8 * src = (uint8*)data;
-		
+
 		for ( int i = 0; i < length && !IsOverflowed(); i++ ) {
 			WriteByte( src[length - i - 1] );
 		}
-		
+
 		return length;
 	}
 
 	int		ReadR( void * data, int length, bool ignoreOverflow = false ) {
 		uint8 * src = (uint8*)data;
-		
+
 		for ( int i = 0; i < length; i++ ) {
 			int byte = ReadByte( ignoreOverflow );
-			
+
 			if ( byte == -1 ) {
 				return i;
 			}
-			
+
 			src[length - i - 1] = (uint8)byte;
 		}
-		
+
 		return length;
 	}
 
@@ -144,17 +144,17 @@ public:
 	static const int DICTIONARY_HASH_BITS	= 10;
 	static const int MAX_DICTIONARY_HASH	= 1 << DICTIONARY_HASH_BITS;
 	static const int HASH_MASK				= MAX_DICTIONARY_HASH - 1;
-	
+
 private:
 	void ClearHash();
-		
+
 	lzwCompressionData_t *	lzwData;
 	uint16					hash[MAX_DICTIONARY_HASH];
 	uint16					nextHash[lzwCompressionData_t::LZW_DICT_SIZE];
-	
+
 	// Used by DecompressBlock
 	int					oldCode;
-		
+
 	uint8 *				data;		// Read/write
 	int					maxSize;
 	bool				overflowed;
@@ -164,8 +164,8 @@ private:
 	uint8				block[LZW_BLOCK_SIZE];
 	int					blockSize;
 	int					blockIndex;
-	
-	// saving/restoring when overflow (when writing). 
+
+	// saving/restoring when overflow (when writing).
 	// Must call End directly after restoring (dictionary is bad so can't keep writing)
 	int					savedBytesWritten;
 	int					savedCodeWord;
@@ -184,7 +184,7 @@ class idZeroRunLengthCompressor {
 public:
 	idZeroRunLengthCompressor() : zeroCount( 0 ), destStart( NULL ) {
 	}
-	
+
 	void Start( uint8 * dest_, idLZWCompressor * comp_, int maxSize_ );
 	bool WriteRun();
 	bool WriteByte( uint8 value );

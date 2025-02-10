@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ static void R_HeightmapToNormalMap( byte *data, int width, int height, float sca
 			dir2[1] = a1 * scale;
 			dir2[2] = 1;
 			dir2.NormalizeFast();
-	
+
 			dir += dir2;
 			dir.NormalizeFast();
 
@@ -383,7 +383,7 @@ static bool R_ParseImageProgram_r( idLexer &src, byte **pic, int *width, int *he
 
 	src.ReadToken( &token );
 
-	// Since all interaction shaders now assume YCoCG diffuse textures.  We replace all entries for the intrinsic 
+	// Since all interaction shaders now assume YCoCG diffuse textures.  We replace all entries for the intrinsic
 	// _black texture to the black texture on disk.  Doing this will cause a YCoCG compliant texture to be generated.
 	// Without a YCoCG compliant black texture we will get color artifacts for any interaction
 	// material that specifies the _black texture.
@@ -410,7 +410,7 @@ static bool R_ParseImageProgram_r( idLexer &src, byte **pic, int *width, int *he
 		src.ReadToken( &token );
 		AppendToken( token );
 		scale = token.GetFloatValue();
-		
+
 		// process it
 		if ( pic ) {
 			R_HeightmapToNormalMap( *pic, *width, *height, scale );
@@ -442,7 +442,7 @@ static bool R_ParseImageProgram_r( idLexer &src, byte **pic, int *width, int *he
 			}
 			return false;
 		}
-		
+
 		// process it
 		if ( pic ) {
 			R_AddNormalMaps( *pic, *width, *height, pic2, width2, height2 );
@@ -493,7 +493,7 @@ static bool R_ParseImageProgram_r( idLexer &src, byte **pic, int *width, int *he
 			}
 			return false;
 		}
-		
+
 		// process it
 		if ( pic ) {
 			R_ImageAdd( *pic, *width, *height, pic2, width2, height2 );
@@ -568,8 +568,8 @@ static bool R_ParseImageProgram_r( idLexer &src, byte **pic, int *width, int *he
 			int		c;
 			c = *width * *height * 4;
 			for ( i = 0 ; i < c ; i+=4 ) {
-				(*pic)[i+1] = 
-				(*pic)[i+2] = 
+				(*pic)[i+1] =
+				(*pic)[i+2] =
 				(*pic)[i+3] = (*pic)[i];
 			}
 		}
@@ -591,8 +591,8 @@ static bool R_ParseImageProgram_r( idLexer &src, byte **pic, int *width, int *he
 			c = *width * *height * 4;
 			for ( i = 0 ; i < c ; i+=4 ) {
 				(*pic)[i+3] = ( (*pic)[i+0] + (*pic)[i+1] + (*pic)[i+2] ) / 3;
-				(*pic)[i+0] = 
-				(*pic)[i+1] = 
+				(*pic)[i+0] =
+				(*pic)[i+1] =
 				(*pic)[i+2] = 255;
 			}
 		}

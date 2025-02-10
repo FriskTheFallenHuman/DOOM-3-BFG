@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ idChoiceWindow::~idChoiceWindow() {
 
 void idChoiceWindow::RunNamedEvent( const char* eventName ) {
 	idStr event, group;
-	
+
 	if ( !idStr::Cmpn( eventName, "cvar read ", 10 ) ) {
 		event = eventName;
 		group = event.Mid( 10, event.Length() - 10 );
@@ -102,7 +102,7 @@ void idChoiceWindow::UpdateVars( bool read, bool force ) {
 				cvarStr.Set( cvar->GetString() );
 			} else {
 				cvar->SetString( cvarStr.c_str() );
-			}	
+			}
 		}
 		if ( !read && guiStr.NeedsUpdate() ) {
 			guiStr.Set( va( "%i", currentChoice ) );
@@ -193,7 +193,7 @@ const char *idChoiceWindow::HandleEvent(const sysEvent_t *event, bool *updateVis
 	if ( runAction2 ) {
 		RunScript( ON_ACTIONRELEASE );
 	}
-	
+
 	return cmd;
 }
 
@@ -210,7 +210,7 @@ void idChoiceWindow::UpdateChoice() {
 	if ( !updateStr.Num() ) {
 		return;
 	}
-	UpdateVars( true );	
+	UpdateVars( true );
 	updateStr.Update();
 	if ( choiceType == 0 ) {
 		// ChoiceType 0 stores current as an integer in either cvar or gui
@@ -268,7 +268,7 @@ idWinVar *idChoiceWindow::GetWinVarByName(const char *_name, bool fixup, drawWin
 	if ( idStr::Icmp( _name, "updateGroup" ) == 0 ) {
 		return &updateGroup;
 	}
-	
+
 	return idWindow::GetWinVarByName(_name, fixup, owner);
 }
 
@@ -316,7 +316,7 @@ void idChoiceWindow::UpdateChoicesAndVals() {
 				if (token == "-") {
 					negNum = true;
 					continue;
-				} 
+				}
 				if (token == ";") {
 					if (str2.Length()) {
 						str2.StripTrailingWhitespace();

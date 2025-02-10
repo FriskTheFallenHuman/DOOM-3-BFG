@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ public:
 	// possibly having a shader to specify the shadow sorting order
 	// (FIXME: actually try making shadow hulls?  we never did.)
 	surfaceInteraction_t *	surfaces;
-	
+
 	// get space from here, if NULL, it is a pre-generated shadow volume from dmap
 	idRenderEntityLocal *	entityDef;
 	idRenderLightLocal *	lightDef;

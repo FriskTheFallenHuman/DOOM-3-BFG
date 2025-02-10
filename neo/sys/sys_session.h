@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ const int DefaultPrivateGameFlags	= MATCH_JOIN_IN_PROGRESS | MATCH_REQUIRE_PARTY
 
 /*
 ================================================
-idMatchParameters 
+idMatchParameters
 ================================================
 */
 class idMatchParameters {
@@ -277,7 +277,7 @@ public:
 	virtual int							GetNumLobbyUsers() const = 0;
 	virtual int							GetNumActiveLobbyUsers() const = 0;
 	virtual bool						IsLobbyUserConnected( int index ) const = 0;
-	
+
 	virtual lobbyUserID_t				GetLobbyUserIdByOrdinal( int userIndex ) const = 0;
 	virtual	int							GetLobbyUserIndexFromLobbyUserID( lobbyUserID_t lobbyUserID ) const = 0;
 
@@ -340,7 +340,7 @@ public:
 
 /*
 ================================================
-idSession 
+idSession
 ================================================
 */
 class idSession {
@@ -377,7 +377,7 @@ public:
 	virtual void			ShutdownSoundRelatedSystems() = 0;
 
 	//=====================================================================================================
-	// Lobby management 
+	// Lobby management
 	//=====================================================================================================
 	virtual void			CreatePartyLobby( const idMatchParameters & parms_ ) = 0;
 	virtual void			FindOrCreateMatch( const idMatchParameters & parms_ ) = 0;
@@ -401,7 +401,7 @@ public:
 	virtual bool			WasMigrationGame() const = 0;
 	virtual bool			ShouldRelaunchMigrationGame() const = 0;
 	virtual bool			WasGameLobbyCoalesced() const = 0;
-	
+
 	virtual bool			GetMigrationGameData( idBitMsg & msg, bool reading ) = 0;
 	virtual bool			GetMigrationGameDataUser( lobbyUserID_t lobbyUserID, idBitMsg & msg, bool reading ) = 0;
 
@@ -528,7 +528,7 @@ public:
 
 	// Returns the known list of savegames, must first enumerate for the savegames ( via session->Enumerate() )
 	virtual const saveGameDetailsList_t & GetEnumeratedSavegames() const = 0;
-	
+
 	// These are on session and not idGame so it can persist across game deallocations
 	virtual void					SetCurrentSaveSlot( const char * slotName ) = 0;
 	virtual const char *			GetCurrentSaveSlot() const = 0;
@@ -619,12 +619,12 @@ protected:
 idSession::idGetInputRouting
 ========================
 */
-ID_INLINE int idSession::GetInputRouting( int inputRouting[ MAX_INPUT_DEVICES ] ) { 
+ID_INLINE int idSession::GetInputRouting( int inputRouting[ MAX_INPUT_DEVICES ] ) {
 	for ( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {
 		inputRouting[ i ] = -1;
 	}
 	inputRouting[0] = 0;
-	return 1; 
+	return 1;
 }
 
 extern idSession * session;

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -536,7 +536,7 @@ Handles history and console scrollback
 ====================
 */
 void idConsoleLocal::KeyDownEvent( int key ) {
-	
+
 	// Execute F key bindings
 	if ( key >= K_F1 && key <= K_F12 ) {
 		idKeyInput::ExecKeyBinding( key );
@@ -961,7 +961,7 @@ void idConsoleLocal::DrawNotify() {
 			continue;
 		}
 		text_p = text + (i % TOTAL_LINES)*LINE_WIDTH;
-		
+
 		for ( x = 0; x < LINE_WIDTH; x++ ) {
 			if ( ( text_p[x] & 0xff ) == ' ' ) {
 				continue;
@@ -1022,7 +1022,7 @@ void idConsoleLocal::DrawSolidConsole( float frac ) {
 	i = version.Length();
 
 	for ( x = 0; x < i; x++ ) {
-		renderSystem->DrawSmallChar( LOCALSAFE_WIDTH - ( i - x ) * SMALLCHAR_WIDTH, 
+		renderSystem->DrawSmallChar( LOCALSAFE_WIDTH - ( i - x ) * SMALLCHAR_WIDTH,
 			(lines-(SMALLCHAR_HEIGHT+SMALLCHAR_HEIGHT/4)), version[x] );
 
 	}
@@ -1044,7 +1044,7 @@ void idConsoleLocal::DrawSolidConsole( float frac ) {
 		y -= SMALLCHAR_HEIGHT;
 		rows--;
 	}
-	
+
 	row = display;
 
 	if ( x == 0 ) {
@@ -1060,7 +1060,7 @@ void idConsoleLocal::DrawSolidConsole( float frac ) {
 		}
 		if ( current - row >= TOTAL_LINES ) {
 			// past scrollback wrap point
-			continue;	
+			continue;
 		}
 
 		text_p = text + (row % TOTAL_LINES)*LINE_WIDTH;
@@ -1094,7 +1094,7 @@ ForceFullScreen is used by the editor
 */
 void idConsoleLocal::Draw( bool forceFullScreen ) {
 	if ( forceFullScreen ) {
-		// if we are forced full screen because of a disconnect, 
+		// if we are forced full screen because of a disconnect,
 		// we want the console closed when we go back to a session state
 		Close();
 		// we are however catching keyboard input
@@ -1132,7 +1132,7 @@ void idConsoleLocal::Draw( bool forceFullScreen ) {
 
 /*
 ========================
-idConsoleLocal::PrintOverlay 
+idConsoleLocal::PrintOverlay
 ========================
 */
 void idConsoleLocal::PrintOverlay( idOverlayHandle &handle, justify_t justify, const char *text, ... ) {
@@ -1239,7 +1239,7 @@ void idConsoleLocal::DestroyGraph( idDebugGraph * graph ) {
 
 /*
 ========================
-idConsoleLocal::DrawDebugGraphs 
+idConsoleLocal::DrawDebugGraphs
 ========================
 */
 void idConsoleLocal::DrawDebugGraphs() {

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -170,7 +170,7 @@ public:	// common physics interface
 	virtual bool				IsGroundClipModel( int entityNum, int id ) const = 0;
 								// set the master entity for objects bound to a master
 	virtual void				SetMaster( idEntity *master, const bool orientated = true ) = 0;
-								// set pushed state	
+								// set pushed state
 	virtual void				SetPushed( int deltaTime ) = 0;
 	virtual const idVec3 &		GetPushedLinearVelocity( const int id = 0 ) const = 0;
 	virtual const idVec3 &		GetPushedAngularVelocity( const int id = 0 ) const = 0;

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 
 /*
 ================================================
-idStrStatic 
+idStrStatic
 ================================================
 */
 template< int _size_ >
@@ -49,63 +49,63 @@ public:
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 				}
-	ID_INLINE	idStrStatic( const idStrStatic & text ) : 
+	ID_INLINE	idStrStatic( const idStrStatic & text ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					idStr::operator=( text );
 				}
 
-	ID_INLINE	idStrStatic( const idStr & text ) : 
+	ID_INLINE	idStrStatic( const idStr & text ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					idStr::operator=( text );
 				}
 
-	ID_INLINE	idStrStatic( const idStrStatic & text, int start, int end ) : 
+	ID_INLINE	idStrStatic( const idStrStatic & text, int start, int end ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					CopyRange( text.c_str(), start, end );
 				}
 
-	ID_INLINE	idStrStatic( const char * text ) : 
+	ID_INLINE	idStrStatic( const char * text ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					idStr::operator=( text );
 				}
 
-	ID_INLINE	idStrStatic( const char * text, int start, int end ) : 
+	ID_INLINE	idStrStatic( const char * text, int start, int end ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					CopyRange( text, start, end );
 				}
 
-	ID_INLINE	explicit idStrStatic( const bool b ) : 
+	ID_INLINE	explicit idStrStatic( const bool b ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					idStr::operator=( b );
 				}
 
-	ID_INLINE	explicit idStrStatic( const char c ) : 
+	ID_INLINE	explicit idStrStatic( const char c ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					idStr::operator=( c );
 				}
 
-	ID_INLINE	explicit idStrStatic( const int i ) : 
+	ID_INLINE	explicit idStrStatic( const int i ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
 					idStr::operator=( i );
 				}
 
-	ID_INLINE	explicit idStrStatic( const unsigned u ) : 
+	ID_INLINE	explicit idStrStatic( const unsigned u ) :
 					idStr() {
 					buffer[ 0 ] = '\0';
 					SetStaticBuffer( buffer, _size_ );
@@ -122,4 +122,4 @@ public:
 private:
 	char		buffer[ _size_ ];
 };
-#endif	// __STRSTATIC_H__ 
+#endif	// __STRSTATIC_H__

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ void idMenuScreen_PDA_UserEmails::Initialize( idMenuHandler * data ) {
 	emailInfo.SetSpritePath( GetSpritePath(), "info", "email" );
 	emailInfo.Initialize( data );
 	emailInfo.SetScrollbar( &emailScrollbar );
-	emailInfo.AddChild( &emailScrollbar );	
+	emailInfo.AddChild( &emailScrollbar );
 	emailInfo.RegisterEventObserver( this );
 	emailInfo.AddEventAction( WIDGET_EVENT_ROLL_OVER ).Set( WIDGET_ACTION_EMAIL_HOVER, 1 );
 	emailInfo.AddEventAction( WIDGET_EVENT_ROLL_OUT ).Set( WIDGET_ACTION_EMAIL_HOVER, 0 );
@@ -111,7 +111,7 @@ void idMenuScreen_PDA_UserEmails::Initialize( idMenuHandler * data ) {
 		  }
 	private:
 		idMenuWidget_InfoBox * widget;
-	};	
+	};
 
 	if ( GetSWFObject() != NULL ) {
 		GetSWFObject()->SetGlobal( "refreshInfoBox", new (TAG_SWF) idInfoBoxRefresh( &emailInfo ) );
@@ -171,14 +171,14 @@ void idMenuScreen_PDA_UserEmails::Update() {
 				if ( menuData->GetPlatform() != 2 ) {
 					buttonInfo->label = "#str_00395";
 				}
-				buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );			
+				buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
 			} else {
 				buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 				if ( menuData->GetPlatform() != 2 ) {
 					buttonInfo->label = "#str_01345";
 				}
-				buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );								
+				buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
 				idMenuWidget_DynamicList * pdaList = dynamic_cast< idMenuWidget_DynamicList * >( menuData->GetChildFromIndex( PDA_WIDGET_PDA_LIST ) );
 				if ( pdaList != NULL ) {
@@ -236,7 +236,7 @@ void idMenuScreen_PDA_UserEmails::HideScreen( const mainMenuTransition_t transit
 					pdaSprite->PlayFrame( "rollOn" );
 				}
 			}
-		} 
+		}
 	}
 
 	idMenuScreen::HideScreen( transitionType );
@@ -287,10 +287,10 @@ bool idMenuScreen_PDA_UserEmails::ScrollCorrectList( idWidgetAction & action, co
 
 	bool handled = false;
 	bool leftScroll = false;
-	if ( event.type == WIDGET_EVENT_SCROLL_UP_LSTICK || event.type == WIDGET_EVENT_SCROLL_DOWN_LSTICK || 
+	if ( event.type == WIDGET_EVENT_SCROLL_UP_LSTICK || event.type == WIDGET_EVENT_SCROLL_DOWN_LSTICK ||
 		event.type == WIDGET_EVENT_SCROLL_UP || event.type == WIDGET_EVENT_SCROLL_DOWN ) {
 			leftScroll = true;
-	} 
+	}
 
 	if ( readingEmails ) {
 		if ( leftScroll && !scrollEmailInfo ) {
@@ -316,7 +316,7 @@ bool idMenuScreen_PDA_UserEmails::ScrollCorrectList( idWidgetAction & action, co
 		if ( pdaList != NULL ) {
 			pdaList->HandleAction( action, event, pdaList );
 			handled = true;
-		}		
+		}
 	}
 
 	return handled;
@@ -334,7 +334,7 @@ void idMenuScreen_PDA_UserEmails::ShowEmail( bool show ) {
 	if ( menuGUI != NULL ) {
 		idSWFScriptObject & root = menuGUI->GetRootObject();
 		pdaSprite = root.GetNestedSprite( "pda_persons" );
-	
+
 		if ( show && !readingEmails ) {
 
 			scrollEmailInfo = false;
@@ -365,7 +365,7 @@ void idMenuScreen_PDA_UserEmails::ShowEmail( bool show ) {
 			if ( pdaSprite != NULL ) {
 				pdaSprite->SetVisible( true );
 				pdaSprite->PlayFrame( "rollOn" );
-			
+
 				if ( menuData != NULL ) {
 					idMenuWidget_DynamicList * pdaList = dynamic_cast< idMenuWidget_DynamicList * const >( menuData->GetChildFromIndex( PDA_WIDGET_PDA_LIST ) );
 					if ( pdaList != NULL ) {
@@ -373,7 +373,7 @@ void idMenuScreen_PDA_UserEmails::ShowEmail( bool show ) {
 					}
 				}
 			}
-		} 
+		}
 	}
 
 
@@ -391,7 +391,7 @@ bool idMenuScreen_PDA_UserEmails::HandleAction( idWidgetAction & action, const i
 	if ( menuData == NULL ) {
 		return true;
 	}
-	
+
 	if ( menuData->ActiveScreen() != PDA_AREA_USER_EMAIL ) {
 		return false;
 	}

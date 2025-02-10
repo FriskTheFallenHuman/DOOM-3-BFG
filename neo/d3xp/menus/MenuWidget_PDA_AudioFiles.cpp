@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ idMenuWidget_PDA_AudioFiles::Initialize
 void idMenuWidget_PDA_AudioFiles::Initialize( idMenuHandler * data ) {
 
 	idMenuWidget_DynamicList * pdaAudioList = new (TAG_SWF) idMenuWidget_DynamicList();
-	
+
 	pdaAudioList->SetSpritePath( GetSpritePath(), "info", "options" );
 	pdaAudioList->SetNumVisibleOptions( MAX_AUDIO_ITEMS );
 	pdaAudioList->SetWrappingAllowed( true );
@@ -115,16 +115,16 @@ void idMenuWidget_PDA_AudioFiles::Update() {
 				const idDeclAudio *aud = NULL;
 				for ( int index = 0; index < pda->GetNumAudios(); ++index ) {
 					idList< idStr > audioName;
-					aud = pda->GetAudioByIndex( index );						
+					aud = pda->GetAudioByIndex( index );
 					if ( aud != NULL ) {
 						audioName.Append( aud->GetAudioName() );
 					} else {
 						audioName.Append( "" );
-					}		
+					}
 					audioFileNames.Append( audioName );
 				}
 			}
-			
+
 			audioList->SetListData( audioFileNames );
 			if ( audioList->BindSprite( root ) ) {
 				audioList->Update();
@@ -172,7 +172,7 @@ void idMenuWidget_PDA_AudioFiles::ObserveEvent( const idMenuWidget & widget, con
 			if ( audioList != NULL ) {
 				audioList->SetFocusIndex( 0 );
 				audioList->SetViewIndex( 0 );
-			}			
+			}
 			break;
 		}
 		case WIDGET_EVENT_FOCUS_OFF: {

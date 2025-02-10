@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ private:
 	idInterpreter				interpreter;
 
 	idDict						spawnArgs;
-								
+
 	int 						threadNum;
 	idStr 						threadName;
 
@@ -189,9 +189,9 @@ private:
 	void						Event_DrawText( const char *text, const idVec3 &origin, float scale, const idVec3 &color, const int align, const float lifetime );
 	void						Event_InfluenceActive();
 
-public:							
+public:
 								CLASS_PROTOTYPE( idThread );
-								
+
 								idThread();
 								idThread( idEntity *self, const function_t *func );
 								idThread( const function_t *func );
@@ -213,7 +213,7 @@ public:
 	void						WaitMS( int time );
 	void						WaitSec( float time );
 	void						WaitFrame();
-								
+
 								// NOTE: If this is called from within a event called by this thread, the function arguments will be invalid after calling this function.
 	void						CallFunction( const function_t	*func, bool clearStack );
 
@@ -225,12 +225,12 @@ public:
 	static void					ListThreads_f( const idCmdArgs &args );
 	static void					Restart();
 	static void					ObjectMoveDone( int threadnum, idEntity *obj );
-								
+
 	static idList<idThread*>&	GetThreads ();
-	
+
 	bool						IsDoneProcessing ();
-	bool						IsDying			 ();	
-								
+	bool						IsDying			 ();
+
 	void						End();
 	static void					KillThread( const char *name );
 	static void					KillThread( int num );
@@ -255,7 +255,7 @@ public:
 
 	void						Error( VERIFY_FORMAT_STRING const char *fmt, ... ) const;
 	void						Warning( VERIFY_FORMAT_STRING const char *fmt, ... ) const;
-								
+
 	static idThread				*CurrentThread();
 	static int					CurrentThreadNum();
 	static bool					BeginMultiFrameEvent( idEntity *ent, const idEventDef *event );
@@ -311,7 +311,7 @@ idThread::GetThreads
 */
 ID_INLINE idList<idThread*>& idThread::GetThreads () {
 	return threadList;
-}	
+}
 
 /*
 ================

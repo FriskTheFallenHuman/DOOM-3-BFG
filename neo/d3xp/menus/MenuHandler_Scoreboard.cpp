@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void idMenuHandler_Scoreboard::Update() {
 
 			if ( nextScreen > SCOREBOARD_AREA_INVALID && nextScreen < SCOREBOARD_NUM_AREAS && menuScreens[ nextScreen ] != NULL ) {
 				menuScreens[ nextScreen ]->UpdateCmds();
-				menuScreens[ nextScreen ]->ShowScreen( static_cast<mainMenuTransition_t>(transition) );			
+				menuScreens[ nextScreen ]->ShowScreen( static_cast<mainMenuTransition_t>(transition) );
 			}
 		}
 
@@ -84,7 +84,7 @@ void idMenuHandler_Scoreboard::Update() {
 idMenuHandler_Scoreboard::ActivateMenu
 ========================
 */
-void idMenuHandler_Scoreboard::TriggerMenu() {	
+void idMenuHandler_Scoreboard::TriggerMenu() {
 	nextScreen = activationScreen;
 }
 
@@ -100,7 +100,7 @@ void idMenuHandler_Scoreboard::ActivateMenu( bool show ) {
 	idPlayer * player = gameLocal.GetLocalPlayer();
 	if ( player == NULL ) {
 		return;
-	}  	
+	}
 
 	if ( show ) {
 
@@ -177,7 +177,7 @@ void idMenuHandler_Scoreboard::Initialize( const char * swfFile, idSoundWorld * 
 			gameLocal.mpGame.SetScoreboardActive( false );
 			return idSWFScriptVar();
 		}
-	};	
+	};
 
 	if ( gui != NULL ) {
 		gui->SetGlobal( "closeScoreboard", new idScoreboardGUIClose() );
@@ -271,7 +271,7 @@ idMenuHandler_Scoreboard::AddPlayerInfo
 ========================
 */
 void idMenuHandler_Scoreboard::AddPlayerInfo( int index, voiceStateDisplay_t voiceState, int team, idStr name, int score, int wins, int ping, idStr spectateData ) {
-	
+
 	scoreboardInfo_t info;
 	idList< idStr > values;
 	values.Append( name );
@@ -293,7 +293,7 @@ void idMenuHandler_Scoreboard::AddPlayerInfo( int index, voiceStateDisplay_t voi
 		blueInfo.Append( info );
 	} else {
 		redInfo.Append( info );
-	} 
+	}
 }
 
 /*
@@ -495,7 +495,7 @@ idMenuHandler_Scoreboard::UpdateScoreboardSelection
 ========================
 */
 void idMenuHandler_Scoreboard::UpdateScoreboardSelection() {
-	
+
 	if ( nextScreen == SCOREBOARD_AREA_DEFAULT || activationScreen == SCOREBOARD_AREA_DEFAULT ) {
 		idMenuScreen_Scoreboard * screen = dynamic_cast< idMenuScreen_Scoreboard * >( menuScreens[ SCOREBOARD_AREA_DEFAULT ] );
 		if ( screen ) {

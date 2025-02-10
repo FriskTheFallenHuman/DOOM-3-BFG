@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ idCVar net_interpolationCatchupRate( "net_interpolationCatchupRate", "1.3", CVAR
 idCVar net_interpolationFallbackRate( "net_interpolationFallbackRate", "0.95", CVAR_FLOAT, "Scale interpolationg rate when we fall behind");
 idCVar net_interpolationBaseRate( "net_interpolationBaseRate", "1.0", CVAR_FLOAT, "Scale interpolationg rate when we fall behind");
 
-// Enabled a dynamic ideal snap buffer window: we will scale the distance and size 
+// Enabled a dynamic ideal snap buffer window: we will scale the distance and size
 idCVar net_optimalDynamic( "net_optimalDynamic", "1", CVAR_BOOL, "How fast to add to our optimal time buffer when we are playing snapshots faster than server is feeding them to us");
 
 // These values are used instead if net_optimalDynamic is 0 (don't scale by actual snap rate/interval)
@@ -187,13 +187,13 @@ void idCommonLocal::SendUsercmds( int localClientNum ) {
 	idSerializer ser( msg, true );
 	usercmd_t empty;
 	usercmd_t * last = &empty;
-	
+
 	usercmd_t * cmdBuffer[NUM_USERCMD_SEND];
 	const int numCmds = userCmdMgr.GetPlayerCmds( localClientNum, cmdBuffer, NUM_USERCMD_SEND );
 	msg.WriteByte( numCmds );
 	for ( int i = 0; i < numCmds; i++ ) {
 		cmdBuffer[i]->Serialize( ser, *last );
-		
+
 		last = cmdBuffer[i];
 	}
 	session->SendUsercmds( msg );
@@ -296,7 +296,7 @@ void idCommonLocal::ProcessSnapshot( idSnapShot & ss ) {
 
 
 	// Set server game time here so that it accurately reflects the time when this frame was saved out, in case any serialize function needs it.
-	int oldTime = Game()->GetServerGameTimeMs();		
+	int oldTime = Game()->GetServerGameTimeMs();
 	Game()->SetServerGameTimeMs( snapCurrent.serverTime );
 
 	Game()->ClientReadSnapshot( ss ); //, &oldss );
@@ -318,7 +318,7 @@ void idCommonLocal::NetReadUsercmds( int clientNum, idBitMsg & msg ) {
 		idLib::Warning( "NetReadUsercmds: Trying to read commands from invalid clientNum %d", clientNum );
 		return;
 	}
-	
+
 	// TODO: This shouldn't actually happen. Figure out why it does.
 	// Seen on clients when another client leaves a match.
 	if ( msg.GetReadData() == NULL ) {
@@ -326,7 +326,7 @@ void idCommonLocal::NetReadUsercmds( int clientNum, idBitMsg & msg ) {
 	}
 
 	idSerializer ser( msg, false );
-	
+
 	usercmd_t fakeCmd;
 	usercmd_t * base = &fakeCmd;
 
@@ -343,7 +343,7 @@ void idCommonLocal::NetReadUsercmds( int clientNum, idBitMsg & msg ) {
 	for ( int i = 0; i < numCmds; i++ ) {
 		usercmd_t newCmd;
 		newCmd.Serialize( ser, *base );
-		
+
 		lastCmd = newCmd;
 		base = &lastCmd;
 
@@ -357,7 +357,7 @@ void idCommonLocal::NetReadUsercmds( int clientNum, idBitMsg & msg ) {
 			}
 		}
 	}
-	
+
 	// Push the commands into the buffer.
 	for ( int i = 0; i < newCmdBuffer.Num(); ++i ) {
 		userCmdMgr.PutUserCmdForPlayer( clientNum, newCmdBuffer[i] );
@@ -374,7 +374,7 @@ void idCommonLocal::ProcessNextSnapshot() {
 		idLib::Printf("No snapshots to process.\n");
 		return;		// No snaps to process
 	}
-	ProcessSnapshot( receivedSnaps[ readSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE ] );		
+	ProcessSnapshot( receivedSnaps[ readSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE ] );
 	readSnapshotIndex++;
 }
 
@@ -392,7 +392,7 @@ int idCommonLocal::CalcSnapTimeBuffered( int & totalBufferedTime, int & totalRec
 	totalRecvTime = snapTimeDelta;
 
 	// oldSS = last ss we deserialized
-	int lastBuffTime = oldss.GetTime();		
+	int lastBuffTime = oldss.GetTime();
 	int lastRecvTime = oldss.GetRecvTime();
 
 	// receivedSnaps[readSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE] = next buffered snapshot we haven't processed yet (might not exist)
@@ -411,7 +411,7 @@ int idCommonLocal::CalcSnapTimeBuffered( int & totalBufferedTime, int & totalRec
 	totalRecvTime = static_cast<float>( initialBaseTicksPerSec ) * static_cast<float>( totalRecvTime / 1000.0f ); // convert realMS to gameMS
 
 	// remove time we've already interpolated over
-	int timeLeft = totalBufferedTime - Min< int >( snapRate, snapCurrentTime ); 
+	int timeLeft = totalBufferedTime - Min< int >( snapRate, snapCurrentTime );
 
 	//idLib::Printf( "CalcSnapTimeBuffered. timeLeft: %d totalRecvTime: %d, totalTimeBuffered: %d\n", timeLeft, totalRecvTime, totalBufferedTime );
 	return timeLeft;
@@ -430,7 +430,7 @@ void idCommonLocal::InterpolateSnapshot( netTimes_t & prev, netTimes_t & next, f
 	Game()->SetInterpolation( fraction, serverTime, prev.serverTime, next.serverTime );
 
 	//Game()->RunFrame( &userCmdMgr, &ret, true );
-	
+
 }
 
 /*
@@ -487,12 +487,12 @@ void idCommonLocal::RunNetworkSnapshotFrame() {
 				snapRate = 100;
 			}
 
-			float fraction = (float)snapCurrentTime / (float)snapRate;		
+			float fraction = (float)snapCurrentTime / (float)snapRate;
 			if ( !IsValid( fraction ) ) {
 				idLib::Warning("Interpolation Fraction invalid: snapCurrentTime %d / snapRate %d", (int)snapCurrentTime, (int)snapRate );
 				fraction = 0.0f;
 			}
-			
+
 			InterpolateSnapshot( snapPrevious, snapCurrent, fraction, true );
 
 			// Default to a snap scale of 1
@@ -599,7 +599,7 @@ void idCommonLocal::ExecuteReliableMessages() {
 idCommonLocal::ResetNetworkingState
 ========================
 */
-void idCommonLocal::ResetNetworkingState() {	
+void idCommonLocal::ResetNetworkingState() {
 	snapTime		= 0;
 	snapTimeWrite	= 0;
 	snapCurrentTime	= 0;
@@ -616,14 +616,14 @@ void idCommonLocal::ResetNetworkingState() {
 	optimalTimeBuffered	= 0.0f;
 	optimalPCTBuffer	= 0.5f;
 	optimalTimeBufferedWindow = 0.0;
-	
+
 	// Clear snapshot queue
 	for ( int i = 0; i < RECEIVE_SNAPSHOT_BUFFER_SIZE; i++ ) {
 		receivedSnaps[i].Clear();
 	}
 
 	userCmdMgr.SetDefaults();
-	
+
 	snapCurrent.localTime	= -1;
 	snapPrevious.localTime	= -1;
 	snapCurrent.serverTime	= -1;

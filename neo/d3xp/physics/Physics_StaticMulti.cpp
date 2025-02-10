@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ void idPhysics_StaticMulti::SetClipModel( idClipModel *model, float density, int
 	current.SetNum( i+1 );
 	clipModels.SetNum( i+1 );
 
-	// Assure that on first setup, our next/previous is the same as current. 
+	// Assure that on first setup, our next/previous is the same as current.
 	previous.SetNum( current.Num() );
 	next.SetNum( previous.Num() );
 	for( int curIdx = 0; curIdx < current.Num(); curIdx++ ) {

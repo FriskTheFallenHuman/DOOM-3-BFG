@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ saveGameCheck_t
 ================================================
 */
 struct saveGameCheck_t {
-	saveGameCheck_t() { 
+	saveGameCheck_t() {
 		exists = false;
 		autosaveExists = false;
 		autosaveFolder = NULL;
@@ -135,7 +135,7 @@ struct saveGameCheck_t {
 
 /*
 ================================================
-idSaveGameDetails 
+idSaveGameDetails
 ================================================
 */
 class idSaveGameDetails {
@@ -178,7 +178,7 @@ typedef idList< idFile_SaveGame *, TAG_SAVEGAMES > saveFileEntryList_t;
 
 /*
 ================================================
-idSaveLoadParms 
+idSaveLoadParms
 ================================================
 */
 class idSaveLoadParms {
@@ -236,21 +236,21 @@ private:
 
 /*
 ================================================
-saveGameThreadArgs_t 
+saveGameThreadArgs_t
 ================================================
 */
 struct saveGameThreadArgs_t {
 	saveGameThreadArgs_t() :
 		saveLoadParms( NULL ) {
 	}
-	
+
 
 	idSaveLoadParms *		saveLoadParms;
 };
 
 /*
 ================================================
-idSaveGameThread 
+idSaveGameThread
 ================================================
 */
 class idSaveGameThread : public idSysThread {
@@ -276,7 +276,7 @@ public:
 
 /*
 ================================================
-idSaveGameProcessor 
+idSaveGameProcessor
 ================================================
 */
 class idSaveGameProcessor {
@@ -295,7 +295,7 @@ public:
 	// Basic init
 	virtual bool			Init();
 
-	// This method should returns true if the processor has additional sub-states to 
+	// This method should returns true if the processor has additional sub-states to
 	// manage.  The saveGameManager will retain the current state and Process() will be called again. When this method
 	// returns false Process() will not be called again. For example, during save, you might want to load other files
 	// and save them somewhere else, return true until you are done with the entire state.
@@ -337,7 +337,7 @@ public:
 
 	// Returns if this processor is currently working
 	bool					IsWorking() const { return working; }
-	
+
 	// This is a way to tell the processor which errors shouldn't be handled by the processor or system.
 	void					SetSkipSystemErrorDialogMask( const int errorMask ) { parms.skipErrorDialogMask = errorMask; }
 	int						GetSkipSystemErrorDialogMask() const { return parms.skipErrorDialogMask; }
@@ -360,7 +360,7 @@ protected:
 	int					savegameLogicTestIterator;
 
 private:
-	bool				init;	
+	bool				init;
 	bool				working;
 
 	idStaticList< idCallback *, MAX_COMPLETED_CALLBACKS >	completedCallbacks;
@@ -368,7 +368,7 @@ private:
 
 /*
 ================================================
-idSaveGameManager 
+idSaveGameManager
 
 Why all the object-oriented nonsense?
 - Savegames need to be processed asynchronously, saving/loading/deleting files should happen during the game frame
@@ -407,7 +407,7 @@ public:
 	// This queues up processors and executes them serially
 	// Returns whether or not the processor is immediately executed
 	saveGameHandle_t		ExecuteProcessor( idSaveGameProcessor * processor );
-	
+
 	// Synchronous version, CompletedCallback is NOT called.
 	saveGameHandle_t		ExecuteProcessorAndWait( idSaveGameProcessor * processor );
 
@@ -430,7 +430,7 @@ public:
 	void					ShowRetySaveDialog();
 	void					ClearRetryInfo();
 	void					RetrySave();
-	// This will cause the processor to cancel execution, the completion callback will be called 
+	// This will cause the processor to cancel execution, the completion callback will be called
 	void					CancelWithHandle( const saveGameHandle_t & handle );
 
 	const saveGameDetailsList_t & GetEnumeratedSavegames() const { return enumeratedSaveGames; }

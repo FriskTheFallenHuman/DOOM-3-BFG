@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ public:
 	// it's also convenient because Flash also uses 1 based frame numbers
 	uint16	currentFrame;
 	uint16	frameCount;
-	
+
 	// the sprite this is an instance of
 	idSWFSprite * sprite;
 
@@ -130,7 +130,7 @@ public:
 	float moveToSpeed;
 
 	int stereoDepth;
-	
+
 	idSWFScriptObject * scriptObject;
 
 	// children display entries

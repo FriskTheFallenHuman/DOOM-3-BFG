@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ idSWFScriptVar idSWFScriptFunction_Script::Call( idSWFScriptObject * thisObject,
 
 	// We assume scope[0] is the global scope
 	assert( scope.Num() > 0 );
-	
+
 	if ( thisObject == NULL ) {
 		thisObject = scope[0];
 	}
@@ -427,10 +427,10 @@ idSWFScriptVar idSWFScriptFunction_Script::Run( idSWFScriptObject * thisObject, 
 		}
 
 		switch ( code ) {
-			case Action_Return: 
+			case Action_Return:
 				callstackLevel--;
 				return stack.A();
-			case Action_End: 
+			case Action_End:
 				callstackLevel--;
 				return idSWFScriptVar();
 			case Action_NextFrame:
@@ -788,13 +788,13 @@ idSWFScriptVar idSWFScriptFunction_Script::Run( idSWFScriptObject * thisObject, 
 
 				uint16 numParms = bitstream.ReadU16();
 
-				// The number of registers is from 0 to 255, although valid values are 1 to 256. 
+				// The number of registers is from 0 to 255, although valid values are 1 to 256.
 				// There must always be at least one register for DefineFunction2, to hold "this" or "super" when required.
-				uint8 numRegs = bitstream.ReadU8() + 1; 
+				uint8 numRegs = bitstream.ReadU8() + 1;
 
 				// Note that SWF byte-ordering causes the flag bits to be reversed per-byte
 				// from how the swf_file_format_spec_v10.pdf document describes the ordering in ActionDefineFunction2.
-				// PreloadThisFlag is byte 0, not 7, PreloadGlobalFlag is 8, not 15.  
+				// PreloadThisFlag is byte 0, not 7, PreloadGlobalFlag is 8, not 15.
 				uint16 flags = bitstream.ReadU16();
 
 				newFunction->AllocParameters( numParms );
@@ -1229,7 +1229,7 @@ void idSWF::Invoke( const char * functionName, const idSWFParmList & parms, idSW
 
 		if ( scriptVar.IsFunction() ) {
 			scriptVar.GetFunction()->Call( NULL, parms );
-		}	
+		}
 	}
 }
 

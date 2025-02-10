@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void idMenuScreen_Shell_GameOptions::Initialize( idMenuHandler * data ) {
 	AddChild( btnBack );
 
 	idMenuWidget_ControlButton * control;
-	
+
 	control = new (TAG_SWF) idMenuWidget_ControlButton();
 	control->SetOptionType( OPTION_SLIDER_TEXT );
 	control->SetLabel( "#str_swf_fov" );
@@ -75,7 +75,7 @@ void idMenuScreen_Shell_GameOptions::Initialize( idMenuHandler * data ) {
 	control->SetupEvents( DEFAULT_REPEAT_TIME, options->GetChildren().Num() );
 	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, options->GetChildren().Num() );
 	options->AddChild( control );
-	
+
 	control = new (TAG_SWF) idMenuWidget_ControlButton();
 	control->SetOptionType( OPTION_SLIDER_TOGGLE );
 	control->SetLabel( "#str_swf_checkpoints" );
@@ -115,7 +115,7 @@ void idMenuScreen_Shell_GameOptions::Initialize( idMenuHandler * data ) {
 	control->SetupEvents( DEFAULT_REPEAT_TIME, options->GetChildren().Num() );
 	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, options->GetChildren().Num() );
 	options->AddChild( control );
-	
+
 	control = new (TAG_SWF) idMenuWidget_ControlButton();
 	control->SetOptionType( OPTION_SLIDER_TOGGLE );
 	control->SetLabel( "#str_swf_flashlight_shadows" );
@@ -145,7 +145,7 @@ void idMenuScreen_Shell_GameOptions::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -154,7 +154,7 @@ void idMenuScreen_Shell_GameOptions::Update() {
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -210,11 +210,11 @@ bool idMenuScreen_Shell_GameOptions::HandleAction( idWidgetAction & action, cons
 	if ( menuData == NULL ) {
 		return true;
 	}
-	
+
 	if ( menuData->ActiveScreen() != SHELL_AREA_GAME_OPTIONS ) {
 		return false;
 	}
-	
+
 	widgetAction_t actionType = action.GetType();
 	const idSWFParmList & parms = action.GetParms();
 
@@ -233,11 +233,11 @@ bool idMenuScreen_Shell_GameOptions::HandleAction( idWidgetAction & action, cons
 			if ( parms.Num() > 0 ) {
 				selectionIndex = parms[0].ToInteger();
 			}
-						
+
 			if ( selectionIndex != options->GetFocusIndex() ) {
 				options->SetViewIndex( options->GetViewOffset() + selectionIndex );
 				options->SetFocusIndex( selectionIndex );
-			}						
+			}
 
 			systemData.AdjustField( selectionIndex, 1 );
 			options->Update();
@@ -285,7 +285,7 @@ idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::idMenuDataSource_
 idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::LoadData
 ========================
 */
-void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::LoadData() {	
+void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::LoadData() {
 	fields[ GAME_FIELD_FOV ].SetInteger( g_fov.GetFloat() );
 	fields[ GAME_FIELD_CHECKPOINTS ].SetBool( g_checkpoints.GetBool() );
 	fields[ GAME_FIELD_AUTO_SWITCH ].SetBool( ui_autoSwitch.GetBool() );
@@ -324,12 +324,12 @@ void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::CommitData()
 idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::AdjustField
 ========================
 */
-void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::AdjustField( const int fieldIndex, const int adjustAmount ) {	
+void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::AdjustField( const int fieldIndex, const int adjustAmount ) {
 	if ( fieldIndex == GAME_FIELD_FOV ) {
 		fields[ fieldIndex ].SetInteger( idMath::ClampInt( MIN_FOV, MAX_FOV, fields[ fieldIndex ].ToInteger() + adjustAmount * 5 ) );
 	} else {
 		fields[ fieldIndex ].SetBool( !fields[ fieldIndex ].ToBool() );
-	} 
+	}
 }
 
 /*
@@ -338,7 +338,7 @@ idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::IsDataChanged
 ========================
 */
 bool idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::IsDataChanged() const {
-	
+
 	if ( fields[ GAME_FIELD_FOV ].ToInteger() != originalFields[ GAME_FIELD_FOV ].ToInteger() ) {
 		return true;
 	}

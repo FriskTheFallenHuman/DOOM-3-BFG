@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ void idPVS::FrontPortalPVS() const {
 			}
 
 			for ( p = 0; p < area->numPortals; p++ ) {
-	
+
 				p2 = area->portals[p];
 
 				// if we the whole area is not at the front we need to check
@@ -456,7 +456,7 @@ void idPVS::AddPassageBoundaries( const idWinding &source, const idWinding &pass
 	idPlane		plane;
 
 
-	// check all combinations	
+	// check all combinations
 	for ( i = 0; i < source.GetNumPoints(); i++ ) {
 
 		l = (i + 1) % source.GetNumPoints();
@@ -623,7 +623,7 @@ void idPVS::CreatePassages() const {
 					}
 
 					p = &pvsPortals[(byteNum << 3) + bitNum];
-	
+
 					if ( p->areaNum == source->areaNum ) {
 						continue;
 					}

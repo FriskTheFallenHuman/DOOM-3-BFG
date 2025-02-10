@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -112,22 +112,22 @@ void idBitMsg::WriteBits( int value, int numBits ) {
 	if ( numBits != 32 ) {
 		if ( numBits > 0 ) {
 			if ( value > ( 1 << numBits ) - 1 ) {
-				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d", 
+				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d",
 									  value, numBits );
 
 			} else if ( value < 0 ) {
-				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d", 
+				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d",
 									  value, numBits );
 			}
 		} else {
 			const unsigned shift = ( -1 - numBits );
 			int r = 1 << shift;
 			if ( value > r - 1 ) {
-				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d", 
+				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d",
 									  value, numBits );
 
 			} else if ( value < -r ) {
-				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d", 
+				idLib::FatalError( "idBitMsg::WriteBits: value overflow %d %d",
 									  value, numBits );
 			}
 		}
@@ -144,16 +144,16 @@ void idBitMsg::WriteBits( int value, int numBits ) {
 
 	// Merge value with possible previous leftover
 	tempValue |= (((int64)value) & maskForNumBits64[numBits] ) << writeBit;
-	
+
 	writeBit += numBits;
-	
+
 	// Flush 8 bits (1 byte) at a time
 	while ( writeBit >= 8 ) {
 		writeData[curSize++] = tempValue & 255;
 		tempValue >>= 8;
 		writeBit -= 8;
 	}
-	
+
 	// Write leftover now, in case this is the last WriteBits call
 	if ( writeBit > 0 ) {
 		writeData[curSize] = tempValue & 255;
@@ -339,7 +339,7 @@ idBitMsg::ReadString
 */
 int idBitMsg::ReadString( char * buffer, int bufferSize ) const {
 	int	l, c;
-	
+
 	ReadByteAlign();
 	l = 0;
 	while( 1 ) {
@@ -360,7 +360,7 @@ int idBitMsg::ReadString( char * buffer, int bufferSize ) const {
 			l++;
 		}
 	}
-	
+
 	buffer[l] = 0;
 	return l;
 }
@@ -497,13 +497,13 @@ idVec3 idBitMsg::BitsToDir( int bits, int numBits ) {
 	max = ( 1 << ( numBits - 1 ) ) - 1;
 	invMax = 1.0f / max;
 
-	dir.x = sign[( bits >> ( numBits * 3 - 1 ) ) & 1] * ( ( bits >> ( numBits * 2 ) ) & max ) 
+	dir.x = sign[( bits >> ( numBits * 3 - 1 ) ) & 1] * ( ( bits >> ( numBits * 2 ) ) & max )
 					* invMax;
 
-	dir.y = sign[( bits >> ( numBits * 2 - 1 ) ) & 1] * ( ( bits >> ( numBits * 1 ) ) & max ) 
+	dir.y = sign[( bits >> ( numBits * 2 - 1 ) ) & 1] * ( ( bits >> ( numBits * 1 ) ) & max )
 					* invMax;
 
-	dir.z = sign[( bits >> ( numBits * 1 - 1 ) ) & 1] * ( ( bits >> ( numBits * 0 ) ) & max ) 
+	dir.z = sign[( bits >> ( numBits * 1 - 1 ) ) & 1] * ( ( bits >> ( numBits * 0 ) ) & max )
 					* invMax;
 
 	dir.NormalizeFast();

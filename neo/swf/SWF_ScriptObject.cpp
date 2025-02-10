@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -480,7 +480,7 @@ idSWFScriptVar idSWFScriptObject::GetNestedVar( const char * arg1, const char * 
 	const char * const args[] = { arg1, arg2, arg3, arg4, arg5, arg6 };
 	const int numArgs = sizeof( args ) / sizeof( const char * );
 
-	idStaticList< const char *, numArgs > vars;	
+	idStaticList< const char *, numArgs > vars;
 	for ( int i = 0; i < numArgs && args[ i ] != NULL; ++i ) {
 		vars.Append( args[ i ] );
 	}

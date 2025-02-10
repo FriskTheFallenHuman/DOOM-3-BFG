@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public:
 	virtual void				PostConnectFromMsg( idBitMsg & msg ) {}
 	virtual void				Shutdown();
 	virtual void				GetOwnerAddress( lobbyAddress_t & outAddr );
-	virtual void				SetIsJoinable( bool joinable );	
+	virtual void				SetIsJoinable( bool joinable );
 	virtual lobbyConnectInfo_t	GetConnectInfo();
 	virtual bool				IsOwnerOfConnectInfo( const lobbyConnectInfo_t & connectInfo ) const;
 	virtual void				Pump();
@@ -59,7 +59,7 @@ public:
 	virtual void				FinishBecomeHost();
 
 	virtual void			RegisterUser( lobbyUser_t * user, bool isLocal );
-	virtual void			UnregisterUser( lobbyUser_t * user, bool isLocal );	
+	virtual void			UnregisterUser( lobbyUser_t * user, bool isLocal );
 
 private:
 
@@ -67,4 +67,4 @@ private:
 	netadr_t				address;
 };
 
-#endif	// __SYS_LOBBY_BACKEND_DIRECT_H__ 
+#endif	// __SYS_LOBBY_BACKEND_DIRECT_H__

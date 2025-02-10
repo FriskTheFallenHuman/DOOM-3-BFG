@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 /*
 ==============================================================
 
-  File and preload manifests. 
+  File and preload manifests.
 
 ==============================================================
 */
@@ -89,7 +89,7 @@ private:
 	idStr filename;
 };
 
-// image preload 
+// image preload
 struct imagePreload_s {
 	imagePreload_s() {
 		filter = 0;
@@ -109,7 +109,7 @@ struct imagePreload_s {
 		f->ReadBig( usage );
 		f->ReadBig( cubeMap );
 	}
-	bool operator==( const imagePreload_s &b ) const { 
+	bool operator==( const imagePreload_s &b ) const {
 		return ( filter == b.filter && repeat == b.repeat && usage == b.usage && cubeMap == b.cubeMap );
 	}
 	int filter;
@@ -132,7 +132,7 @@ struct preloadEntry_s {
 	preloadEntry_s() {
 		resType = 0;
 	}
-	bool operator==( const preloadEntry_s &b ) const { 
+	bool operator==( const preloadEntry_s &b ) const {
 		bool ret = ( resourceName.Icmp( b.resourceName ) == 0 );
 		if ( ret && resType == PRELOAD_IMAGE ) {
 			// this should never matter but...

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -480,7 +480,7 @@ private:			// CollisionMap_load.cpp
 	cm_model_t *	LoadBinaryModel( const char *fileName, ID_TIME_T sourceTimeStamp );
 	cm_model_t *	LoadBinaryModelFromFile( idFile *fileIn, ID_TIME_T sourceTimeStamp );
 	void			WriteBinaryModel( cm_model_t *model, const char *fileName, ID_TIME_T sourceTimeStamp );
-	void			WriteBinaryModelToFile( cm_model_t *model, idFile *fileOut, ID_TIME_T sourceTimeStamp ); 
+	void			WriteBinaryModelToFile( cm_model_t *model, idFile *fileOut, ID_TIME_T sourceTimeStamp );
 	bool			TrmFromModel_r( idTraceModel &trm, cm_node_t *node );
 	bool			TrmFromModel( const cm_model_t *model, idTraceModel &trm );
 

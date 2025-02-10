@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void idMenuScreen_Shell_Dev::Initialize( idMenuHandler * data ) {
 	AddChild( options );
 
 	btnBack = new (TAG_SWF) idMenuWidget_Button();
-	btnBack->Initialize( data );	
+	btnBack->Initialize( data );
 	btnBack->SetLabel( "MAIN MENU" );
 	btnBack->SetSpritePath( GetSpritePath(), "info", "btnBack" );
 	btnBack->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_GO_BACK );
@@ -141,8 +141,8 @@ void idMenuScreen_Shell_Dev::SetupDevOptions() {
 	devOptions.Append( devOption_t( "game/pdas", "PDAs" ) );
 	devOptions.Append( devOption_t( "testmaps/test_box", "Box" ) );
 
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
-	
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
+
 	for ( int i = 0; i < devOptions.Num(); ++i ) {
 		idList< idStr > option;
 		option.Append( devOptions[ i ].name );
@@ -175,7 +175,7 @@ void idMenuScreen_Shell_Dev::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -240,7 +240,7 @@ bool idMenuScreen_Shell_Dev::HandleAction( idWidgetAction & action, const idWidg
 			menuData->SetNextScreen( SHELL_AREA_ROOT, MENU_TRANSITION_SIMPLE );
 			return true;
 		}
-		case WIDGET_ACTION_PRESS_FOCUSED: {	
+		case WIDGET_ACTION_PRESS_FOCUSED: {
 			if ( options == NULL ) {
 				return true;
 			}
@@ -248,7 +248,7 @@ bool idMenuScreen_Shell_Dev::HandleAction( idWidgetAction & action, const idWidg
 			int selectionIndex = options->GetViewIndex();
 			if ( parms.Num() == 1 ) {
 				selectionIndex = parms[0].ToInteger();
-			}	
+			}
 
 			if ( options->GetFocusIndex() != selectionIndex - options->GetViewOffset() ) {
 				options->SetFocusIndex( selectionIndex );

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 
 /*
 ================================================
-idSnapshotProcessor 
+idSnapshotProcessor
 ================================================
 */
 class idSnapshotProcessor {
@@ -39,10 +39,10 @@ public:
 
 	idSnapshotProcessor();
 	~idSnapshotProcessor();
-	
+
 	void Reset( bool cstor = false );
-	
-	// TrySetPendingSnapshot Sets the currently pending snap.  
+
+	// TrySetPendingSnapshot Sets the currently pending snap.
 	// No new snaps will be sent until this snap has been fully sent.
 	// Returns true of the newly supplied snapshot was accepted (there were no pending snaps)
 	bool TrySetPendingSnapshot( idSnapShot & ss );
@@ -71,10 +71,10 @@ public:
 	void SanityCheckDeltas();
 	// HasPendingSnap will return true if there is more of the last TrySetPendingSnapshot to be sent
 	bool HasPendingSnap() const { return hasPendingSnap; }
-			
+
 	idSnapShot * GetBaseState() { return &baseState; }
 	idSnapShot * GetPendingSnap(){ return &pendingSnap; }
-	
+
 	int GetSnapSequence() { return snapSequence; }
 	int GetBaseSequence() { return baseSequence; }
 	int GetFullSnapBaseSequence() { return lastFullSnapBaseSequence; }
@@ -94,7 +94,7 @@ public:
 private:
 
 	// Internal commands to set up, and flush the compressors
-	static const int MAX_SNAP_SIZE			= idPacketProcessor::MAX_MSG_SIZE;	
+	static const int MAX_SNAP_SIZE			= idPacketProcessor::MAX_MSG_SIZE;
 	static const int MAX_SNAPSHOT_QUEUE_MEM	= 64 * 1024;	// 64k
 
 	// sequence number of the last snapshot we sent/received
@@ -109,11 +109,11 @@ private:
 
 	idSnapShot		pendingSnap;		// Current snap waiting to be fully sent
 	bool			hasPendingSnap;		// true if pendingSnap is still waiting to be sent
-		
+
 	struct jobMemory_t {
 		static const int MAX_LZW_DELTAS		= 1;			// FIXME: cleanup the old multiple delta support completely
 
-		// @TODO this is a hack fix to allow online to load into coop (where there are lots of entities).  
+		// @TODO this is a hack fix to allow online to load into coop (where there are lots of entities).
 		// The real solution should be coming soon.
 		// Doom MP: we encountered the same problem, going from 1024 to 4096 as well until a better solution is in place
 		// (initial, useless, exchange of func_statics is killing us)
@@ -131,14 +131,14 @@ private:
 		// Output memory from jobs
 		idArray<lzwDelta_t, MAX_LZW_DELTAS>	lzwDeltas;			// Info about each pending delta output from jobs
 		idArray<byte, MAX_LZW_MEM>		lzwMem;				// Memory for output from lzw jobs
-	
+
 		lzwInOutData_t	lzwInOutData;						// In/Out data used so lzw data can persist across lzw jobs
 	};
 
 	jobMemory_t *	jobMemory;
 
 	idSnapShot		submittedState;
-	
+
 	idSnapShot		templateStates;			// holds default snapshot states for some newly spawned object
 	idSnapShot		submittedTemplateStates;
 

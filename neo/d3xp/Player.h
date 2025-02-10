@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 
 	Player entity.
-	
+
 ===============================================================================
 */
 
@@ -63,7 +63,7 @@ const int	NUM_QUICK_SLOTS = 4;
 const int MAX_WEAPONS = 32;
 
 const int DEAD_HEARTRATE = 0;			// fall to as you die
-const int LOWHEALTH_HEARTRATE_ADJ = 20; // 
+const int LOWHEALTH_HEARTRATE_ADJ = 20; //
 const int DYING_HEARTRATE = 30;			// used for volumen calc when dying/dead
 const int BASE_HEARTRATE = 70;			// default
 const int ZEROSTAMINA_HEARTRATE = 115;  // no stamina
@@ -97,7 +97,7 @@ struct idLevelTriggerInfo {
 
 // powerups - the "type" in item .def must match
 enum {
-	BERSERK = 0, 
+	BERSERK = 0,
 	INVISIBILITY,
 	MEGAHEALTH,
 	ADRENALINE,
@@ -208,10 +208,10 @@ public:
 
 	void					SetInventoryAmmoForType( const int ammoType, const int amount );
 	void					SetClipAmmoForWeapon( const int weapon, const int amount );
-	
+
 	int						GetInventoryAmmoForType( const int ammoType ) const;
 	int						GetClipAmmoForWeapon( const int weapon ) const;
-	
+
 	void					WriteAmmoToSnapshot( idBitMsg & msg ) const;
 	void					ReadAmmoFromSnapshot( const idBitMsg & msg, int ownerEntityNumber );
 
@@ -385,7 +385,7 @@ public:
 	int						spawnedTime;		// when client first enters the game
 
 	bool					carryingFlag;		// is the player carrying the flag?
-    
+
 	idEntityPtr<idEntity>	teleportEntity;		// while being teleported, this is set to the entity we'll use for exit
 	int						teleportKiller;		// entity number of an entity killing us at teleporter exit
 	bool					lastManOver;		// can't respawn in last man anymore (srv only)
@@ -674,7 +674,7 @@ public:
 
 	int						GetClientFireCount() const { return clientFireCount; }
 	void					IncrementFireCount() { ++clientFireCount; }
-	
+
 	void					ShowRespawnHudMessage();
 	void					HideRespawnHudMessage();
 
@@ -688,7 +688,7 @@ public:
 private:
 	// Stats & achievements
 	idAchievementManager	achievementManager;
-	
+
 	int						playedTimeSecs;
 	int						playedTimeResidual;
 
@@ -716,7 +716,7 @@ private:
 	int						landChange;
 	int						landTime;
 
-	
+
 	int						currentWeapon;
 	idPredictedValue< int >	idealWeapon;
 	int						previousWeapon;
@@ -766,7 +766,7 @@ private:
 	int						focusTime;
 	idAFEntity_Vehicle *	focusVehicle;
 	idUserInterface *		cursor;
-	
+
 	// full screen guis track mouse movements directly
 	int						oldMouseX;
 	int						oldMouseY;
@@ -804,7 +804,7 @@ private:
 	bool					isTelefragged;			// proper obituaries
 	int						serverOverridePositionTime;
 	int						clientFireCount;
-	
+
 	idPlayerIcon			playerIcon;
 
 	bool					selfSmooth;
@@ -863,7 +863,7 @@ private:
 	void					Event_GetMove();
 	void					Event_GetViewAngles();
 	void					Event_StopFxFov();
-	void					Event_EnableWeapon();	
+	void					Event_EnableWeapon();
 	void					Event_DisableWeapon();
 	void					Event_GetCurrentWeapon();
 	void					Event_GetPreviousWeapon();

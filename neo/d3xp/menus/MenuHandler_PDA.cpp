@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,12 +42,12 @@ void idMenuHandler_PDA::Update() {
 	if ( gui == NULL || !gui->IsActive() ) {
 		return;
 	}
-	
+
 	if ( activeScreen != nextScreen ) {
 
 		if ( nextScreen == PDA_AREA_INVALID ) {
 			menuScreens[ activeScreen ]->HideScreen( static_cast<mainMenuTransition_t>(transition) );
-			
+
 			idMenuWidget_CommandBar * cmdBar = dynamic_cast< idMenuWidget_CommandBar * >( GetChildFromIndex( PDA_WIDGET_CMD_BAR ) );
 			if ( cmdBar != NULL ) {
 				cmdBar->ClearAllButtons();
@@ -70,14 +70,14 @@ void idMenuHandler_PDA::Update() {
 				edging->PlayFrame( "rollOff" );
 			}
 
-		} else {		
+		} else {
 			if ( activeScreen > PDA_AREA_INVALID && activeScreen < PDA_NUM_AREAS && menuScreens[ activeScreen ] != NULL ) {
 				menuScreens[ activeScreen ]->HideScreen( static_cast<mainMenuTransition_t>(transition) );
 			}
 
 			if ( nextScreen > PDA_AREA_INVALID && nextScreen < PDA_NUM_AREAS && menuScreens[ nextScreen ] != NULL ) {
 				menuScreens[ nextScreen ]->UpdateCmds();
-				menuScreens[ nextScreen ]->ShowScreen( static_cast<mainMenuTransition_t>(transition) );			
+				menuScreens[ nextScreen ]->ShowScreen( static_cast<mainMenuTransition_t>(transition) );
 			}
 		}
 
@@ -122,17 +122,17 @@ void idMenuHandler_PDA::ActivateMenu( bool show ) {
 	if ( show ) {
 		// Add names to pda
 		idPlayer * player = gameLocal.GetLocalPlayer();
-		if ( player == NULL ) {	
+		if ( player == NULL ) {
 			return;
 		}
 
 		pdaNames.Clear();
-		for ( int j = 0; j < player->GetInventory().pdas.Num(); j++ ) {		
+		for ( int j = 0; j < player->GetInventory().pdas.Num(); j++ ) {
 			const idDeclPDA * pda = player->GetInventory().pdas[ j ];
 			idList< idStr > names;
-			names.Append( pda->GetPdaName() );	
+			names.Append( pda->GetPdaName() );
 			pdaNames.Append( names );
-		}	
+		}
 		idMenuWidget_DynamicList * pdaList = dynamic_cast< idMenuWidget_DynamicList * >( GetChildFromIndex( PDA_WIDGET_PDA_LIST ) );
 		if ( pdaList != NULL ) {
 			pdaList->SetListData( pdaNames );
@@ -146,7 +146,7 @@ void idMenuHandler_PDA::ActivateMenu( bool show ) {
 		idMenuWidget_NavBar * navBar = dynamic_cast< idMenuWidget_NavBar * >( GetChildFromIndex( PDA_WIDGET_NAV_BAR ) );
 		if ( navBar != NULL ) {
 			navBar->SetListHeadings( navOptions );
-			navBar->SetFocusIndex( 0 );			
+			navBar->SetFocusIndex( 0 );
 			navBar->Update();
 		}
 
@@ -262,11 +262,11 @@ void idMenuHandler_PDA::Initialize( const char * swfFile, idSoundWorld * sw ) {
 	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK ) );
 	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK ) );
 	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ) );
-	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );	
+	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_DOWN ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN ) );
 	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_UP ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER, WIDGET_EVENT_SCROLL_UP ) );
 	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_DOWN_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_RELEASE ) );
-	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_UP_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE ) );	
+	pdaList.AddEventAction( WIDGET_EVENT_SCROLL_UP_RELEASE ).Set( new (TAG_SWF) idWidgetActionHandler( &pdaList, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE ) );
 
 	menuScreens[ PDA_AREA_USER_DATA ]->RegisterEventObserver( &pdaList );
 	menuScreens[ PDA_AREA_USER_EMAIL ]->RegisterEventObserver( &pdaList );
@@ -297,7 +297,7 @@ void idMenuHandler_PDA::Initialize( const char * swfFile, idSoundWorld * sw ) {
 			}
 			return idSWFScriptVar();
 		}
-	};	
+	};
 
 	if ( gui != NULL ) {
 		gui->SetGlobal( "closePDA", new idPDAGGUIClose() );
@@ -350,10 +350,10 @@ bool idMenuHandler_PDA::HandleAction( idWidgetAction & action, const idWidgetEve
 	if ( activeScreen == PDA_AREA_INVALID ) {
 		return true;
 	}
-	
+
 	widgetAction_t actionType = action.GetType();
 	const idSWFParmList & parms = action.GetParms();
-	
+
 	if ( event.type == WIDGET_EVENT_COMMAND ) {
 		if ( menuScreens[ activeScreen ] != NULL && !forceHandled ) {
 			if ( menuScreens[ activeScreen ]->HandleAction( action, event, widget, true ) ) {
@@ -404,7 +404,7 @@ bool idMenuHandler_PDA::HandleAction( idWidgetAction & action, const idWidgetEve
 					nextScreen = 0;
 				}
 
-				if ( delta < 0 ) {					
+				if ( delta < 0 ) {
 					transition = MENU_TRANSITION_BACK;
 				} else {
 					transition = MENU_TRANSITION_ADVANCE;
@@ -415,7 +415,7 @@ bool idMenuHandler_PDA::HandleAction( idWidgetAction & action, const idWidgetEve
 		}
 		case WIDGET_ACTION_PDA_SELECT_NAV: {
 			int index = parms[0].ToInteger();
-			
+
 			if ( index == -1 && activeScreen == PDA_AREA_USER_EMAIL ) {
 				idMenuScreen_PDA_UserEmails * screen = dynamic_cast< idMenuScreen_PDA_UserEmails * const >( menuScreens[ PDA_AREA_USER_EMAIL ] );
 				if ( screen ) {
@@ -442,14 +442,14 @@ bool idMenuHandler_PDA::HandleAction( idWidgetAction & action, const idWidgetEve
 					nextScreen = index;
 					transition = MENU_TRANSITION_ADVANCE;
 				}
-			}			
+			}
 			return true;
 		}
 		case WIDGET_ACTION_SELECT_PDA_AUDIO: {
 			if ( activeScreen == PDA_AREA_USER_DATA ) {
 				int index = parms[0].ToInteger();
 				idMenuWidget_DynamicList * pdaList = dynamic_cast< idMenuWidget_DynamicList * >( GetChildFromIndex( PDA_WIDGET_PDA_LIST ) );
-				
+
 				bool change = false;
 				if ( pdaList != NULL ) {
 					int pdaIndex = pdaList->GetViewIndex();
@@ -552,7 +552,7 @@ idMenuHandler_PDA::GetMenuScreen
 void idMenuHandler_PDA::UdpateVideoPlaying( bool playing ) {
 
 	if ( playing != videoPlaying ) {
-		if ( activeScreen == PDA_AREA_VIDEO_DISKS && menuScreens[ activeScreen ] != NULL ) {		
+		if ( activeScreen == PDA_AREA_VIDEO_DISKS && menuScreens[ activeScreen ] != NULL ) {
 			idPlayer * player = gameLocal.GetLocalPlayer();
 			if ( !playing ) {
 				player->EndVideoDisk();
@@ -567,8 +567,8 @@ void idMenuHandler_PDA::UdpateVideoPlaying( bool playing ) {
 			}
 		}
 
-		videoPlaying = playing;		
-	}	
+		videoPlaying = playing;
+	}
 }
 
  /*

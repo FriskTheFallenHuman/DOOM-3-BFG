@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ void idMenuScreen_Shell_Settings::Initialize( idMenuHandler * data ) {
 	SetSpritePath( "menuSettings" );
 
 	options = new (TAG_SWF) idMenuWidget_DynamicList();
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;	
+	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 	idList< idStr > option;
 
 	option.Append( "#str_04158" );	// controls
@@ -98,7 +98,7 @@ void idMenuScreen_Shell_Settings::Initialize( idMenuHandler * data ) {
 	options->Initialize( data );
 
 	btnBack = new (TAG_SWF) idMenuWidget_Button();
-	btnBack->Initialize( data );	
+	btnBack->Initialize( data );
 	idMenuHandler_Shell * handler = dynamic_cast< idMenuHandler_Shell * >( data );
 	if ( handler != NULL && handler->GetInGame() ) {
 		btnBack->SetLabel( "#str_swf_pause_menu" );
@@ -143,7 +143,7 @@ void idMenuScreen_Shell_Settings::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -212,7 +212,7 @@ bool idMenuScreen_Shell_Settings::HandleAction( idWidgetAction & action, const i
 			switch ( parms[0].ToInteger() ) {
 				case SETTING_CMD_CONTROLS: {
 					menuData->SetNextScreen( SHELL_AREA_CONTROLS, MENU_TRANSITION_SIMPLE );
-					break;	
+					break;
 				}
 				case SETTING_CMD_GAMEPLAY: {
 					menuData->SetNextScreen( SHELL_AREA_GAME_OPTIONS, MENU_TRANSITION_SIMPLE );
@@ -232,7 +232,7 @@ bool idMenuScreen_Shell_Settings::HandleAction( idWidgetAction & action, const i
 				int selectionIndex = options->GetViewIndex();
 				if ( parms.Num() == 1 ) {
 					selectionIndex = parms[0].ToInteger();
-				}	
+				}
 
 				if ( options->GetFocusIndex() != selectionIndex ) {
 					options->SetFocusIndex( selectionIndex );

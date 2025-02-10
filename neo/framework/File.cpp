@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -267,7 +267,7 @@ int idFile::Printf( const char *fmt, ... ) {
 	// so notepad formats the lines correctly
   	idStr	work( buf );
  	work.Replace( "\n", "\r\n" );
-  
+
   	return Write( work.c_str(), work.Length() );
 }
 
@@ -394,7 +394,7 @@ int idFile::ReadBool( bool &value ) {
 int idFile::ReadString( idStr &string ) {
 	int len;
 	int result = 0;
-	
+
 	ReadInt( len );
 	if ( len >= 0 ) {
 		string.Fill( ' ', len );
@@ -778,7 +778,7 @@ int idFile_Memory::Write( const void *buffer, int len ) {
 			memcpy( newPtr, filePtr, allocated );
 		}
 		allocated += extra;
-		curPtr = newPtr + ( curPtr - filePtr );		
+		curPtr = newPtr + ( curPtr - filePtr );
 		if ( filePtr ) {
 			Mem_Free( filePtr );
 		}
@@ -847,7 +847,7 @@ void idFile_Memory::PreAllocate( size_t len ) {
 			memcpy( newPtr, filePtr, allocated );
 		}
 		allocated = len;
-		curPtr = newPtr + ( curPtr - filePtr );		
+		curPtr = newPtr + ( curPtr - filePtr );
 		if ( filePtr != NULL ) {
 			Mem_Free( filePtr );
 		}
@@ -929,7 +929,7 @@ int idFile_Memory::Seek( long offset, fsOrigin_t origin ) {
 
 /*
 ========================
-idFile_Memory::SetMaxLength 
+idFile_Memory::SetMaxLength
 ========================
 */
 void idFile_Memory::SetMaxLength( size_t len ) {

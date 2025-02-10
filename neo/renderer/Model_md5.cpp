@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -691,7 +691,7 @@ bool idRenderModelMD5::LoadBinaryModel( idFile * file, const ID_TIME_T sourceTim
 		} else {
 			meshes[i].shader = declManager->FindMaterial( materialName );
 		}
-		
+
 		file->ReadBig( meshes[i].numVerts );
 		file->ReadBig( meshes[i].numTris );
 
@@ -712,7 +712,7 @@ bool idRenderModelMD5::LoadBinaryModel( idFile * file, const ID_TIME_T sourceTim
 
 		srfTriangles_t	tri;
 		memset( &tri, 0, sizeof( srfTriangles_t ) );
-		
+
 		if ( deform.numOutputVerts > 0 ) {
 			R_AllocStaticTriSurfVerts( &tri, deform.numOutputVerts );
 			deform.verts = tri.verts;
@@ -727,7 +727,7 @@ bool idRenderModelMD5::LoadBinaryModel( idFile * file, const ID_TIME_T sourceTim
 			file->ReadBigArray( deform.indexes, deform.numIndexes );
 			file->ReadBigArray( deform.silIndexes, deform.numIndexes );
 		}
-		
+
 		if ( deform.numMirroredVerts > 0 ) {
 			R_AllocStaticTriSurfMirroredVerts( &tri, deform.numMirroredVerts );
 			deform.mirroredVerts = tri.mirroredVerts;
@@ -988,7 +988,7 @@ void idRenderModelMD5::Print() const {
 		totalVerts += mesh->NumVerts();
 		totalTris += mesh->NumTris();
 		common->Printf( "%2i: %5i %5i %s\n", i, mesh->NumVerts(), mesh->NumTris(), mesh->shader->GetName() );
-	}	
+	}
 	common->Printf( "-----\n" );
 	common->Printf( "%4i verts.\n", totalVerts );
 	common->Printf( "%4i tris.\n", totalTris );
@@ -1051,7 +1051,7 @@ void idRenderModelMD5::DrawJoints( const renderEntity_t *ent, const viewDef_t *v
 
 	num = ent->numJoints;
 	joint = ent->joints;
-	md5Joint = joints.Ptr();	
+	md5Joint = joints.Ptr();
 	for( i = 0; i < num; i++, joint++, md5Joint++ ) {
 		pos = ent->origin + joint->ToVec3() * ent->axis;
 		if ( md5Joint->parent ) {
@@ -1254,9 +1254,9 @@ idRenderModel *idRenderModelMD5::InstantiateDynamicModel( const struct renderEnt
 	for ( int i = 0; i < meshes.Num(); i++, mesh++ ) {
 		// avoid deforming the surface if it will be a nodraw due to a skin remapping
 		const idMaterial *shader = mesh->shader;
-		
+
 		shader = R_RemapShaderBySkin( shader, ent->customSkin, ent->customShader );
-		
+
 		if ( !shader || ( !shader->IsDrawn() && !shader->SurfaceCastsShadow() ) ) {
 			staticModel->DeleteSurfaceWithId( i );
 			mesh->surfaceNum = -1;
@@ -1282,7 +1282,7 @@ idRenderModel *idRenderModelMD5::InstantiateDynamicModel( const struct renderEnt
 
 		// the deformation of the tangents can be deferred until each surface is added to the view
 		surf->geometry->staticModelWithJoints = staticModel;
-	
+
 		staticModel->bounds.AddBounds( surf->geometry->bounds );
 	}
 

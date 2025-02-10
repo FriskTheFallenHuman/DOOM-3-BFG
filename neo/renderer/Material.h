@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ typedef enum {
 } expRegister_t;
 
 typedef struct {
-	expOpType_t		opType;	
+	expOpType_t		opType;
 	int				a, b, c;
 } expOp_t;
 
@@ -514,7 +514,7 @@ public:
 	const int			GetStereoEye() const { return stereoEye; }
 
 						// this is only used by the gui system to force sorting order
-						// on images referenced from tga's instead of materials. 
+						// on images referenced from tga's instead of materials.
 						// this is done this way as there are 2000 tgas the guis use
 	void				SetSort( float s ) const { sort = s; };
 
@@ -582,11 +582,11 @@ public:
 						// Regs should point to a float array large enough to hold GetNumRegisters() floats.
 						// FloatTime is passed in because different entities, which may be running in parallel,
 						// can be in different time groups.
-	void				EvaluateRegisters( 
-							float *			registers, 
+	void				EvaluateRegisters(
+							float *			registers,
 							const float		localShaderParms[MAX_ENTITY_SHADER_PARMS],
-							const float		globalShaderParms[MAX_GLOBAL_SHADER_PARMS], 
-							const float		floatTime, 
+							const float		globalShaderParms[MAX_GLOBAL_SHADER_PARMS],
+							const float		floatTime,
 							idSoundEmitter *soundEmitter ) const;
 
 						// if a material only uses constants (no entityParm or globalparm references), this
@@ -651,9 +651,9 @@ private:
 	float				polygonOffset;
 
 	int					contentFlags;		// content flags
-	int					surfaceFlags;		// surface flags	
+	int					surfaceFlags;		// surface flags
 	mutable int			materialFlags;		// material flags
-	
+
 	decalInfo_t			decalInfo;
 
 
@@ -668,7 +668,7 @@ private:
 	materialCoverage_t	coverage;
 	cullType_t			cullType;			// CT_FRONT_SIDED, CT_BACK_SIDED, or CT_TWO_SIDED
 	bool				shouldCreateBackSides;
-	
+
 	bool				fogLight;
 	bool				blendLight;
 	bool				ambientLight;
@@ -678,7 +678,7 @@ private:
 
 	int					numOps;
 	expOp_t *			ops;				// evaluate to make expressionRegisters
-																										
+
 	int					numRegisters;																			//
 	float *				expressionRegisters;
 
@@ -686,7 +686,7 @@ private:
 
 	int					numStages;
 	int					numAmbientStages;
-																										
+
 	shaderStage_t *		stages;
 
 	struct mtrParsingData_s	*pd;			// only used during parsing

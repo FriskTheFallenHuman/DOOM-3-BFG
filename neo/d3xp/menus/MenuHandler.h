@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ enum pdaAreas_t {
 	PDA_AREA_USER_DATA,
 	PDA_AREA_USER_EMAIL,
 	PDA_AREA_VIDEO_DISKS,
-	PDA_AREA_INVENTORY,		
+	PDA_AREA_INVENTORY,
 	PDA_NUM_AREAS
 };
 
@@ -181,9 +181,9 @@ public:
 	}
 
 	bool operator!=( const mpScoreboardInfo & otherInfo ) const {
-		
+
 		if ( otherInfo.score != score || otherInfo.wins != wins || otherInfo.ping != ping ||
-			otherInfo.spectateData != spectateData || otherInfo.name != name || otherInfo.team != team || 
+			otherInfo.spectateData != spectateData || otherInfo.name != name || otherInfo.team != team ||
 			otherInfo.playerNum != playerNum || otherInfo.voiceState != voiceState ) {
 				return true;
 		}
@@ -205,7 +205,7 @@ public:
 	voiceStateDisplay_t voiceState;
 	int score;
 	int wins;
-	int ping;	
+	int ping;
 	int team;
 	int playerNum;
 	idStr spectateData;
@@ -235,7 +235,7 @@ public:
 	virtual int				ActiveScreen() { return activeScreen; }
 	virtual int				NextScreen() { return nextScreen; }
 	virtual int				MenuTransition() { return transition; }
-	virtual idMenuScreen *	GetMenuScreen( int index ) { return NULL; }	
+	virtual idMenuScreen *	GetMenuScreen( int index ) { return NULL; }
 	virtual void			SetNextScreen( int screen, int trans ) { nextScreen = screen; transition = trans; }
 
 	virtual void			StartWidgetActionRepeater( idMenuWidget * widget, const idWidgetAction & action, const idWidgetEvent & event );
@@ -247,7 +247,7 @@ public:
 	virtual int				GetPlatform( bool realPlatform = false );
 	virtual void			PlaySound( menuSounds_t type, int channel = -1 );
 	virtual void			StopSound( int channel = SCHANNEL_ANY );
-	
+
 	idMenuWidget_CommandBar *	GetCmdBar() { return cmdBar; }
 
 protected:
@@ -262,7 +262,7 @@ protected:
 	actionRepeater_t			actionRepeater;
 	idMenuScreen *				menuScreens[MAX_SCREEN_AREAS];
 	idList< idMenuWidget *, TAG_IDLIB_LIST_MENU>	children;
-	
+
 	idStaticList< idStr, NUM_GUI_SOUNDS >		sounds;
 
 	idMenuWidget_CommandBar *	cmdBar;
@@ -291,7 +291,7 @@ idMenuHandler_Shell
 */
 class idMenuHandler_Shell : public idMenuHandler {
 public:
-	idMenuHandler_Shell() : 
+	idMenuHandler_Shell() :
 		state( SHELL_STATE_INVALID ),
 		nextState( SHELL_STATE_INVALID ),
 		smallFrameShowing( false ),
@@ -321,7 +321,7 @@ public:
 	virtual bool			HandleAction( idWidgetAction & action, const idWidgetEvent & event, idMenuWidget * widget, bool forceHandled = false );
 	virtual idMenuScreen *	GetMenuScreen( int index );
 	virtual bool			HandleGuiEvent( const sysEvent_t * sev );
-	
+
 	void					UpdateSavedGames();
 	void					ShowSmallFrame( bool show );
 	void					ShowMPFrame( bool show );
@@ -369,7 +369,7 @@ private:
 	bool					waitForBinding;
 	const char *			waitBind;
 	//idSysSignal				deviceRequestedSignal;
-		
+
 	idList<const char *, TAG_IDLIB_LIST_MENU>	mpGameModes;
 	idList<mpMap_t, TAG_IDLIB_LIST_MENU>			mpGameMaps;
 	idMenuWidget_MenuBar *	menuBar;
@@ -398,7 +398,7 @@ idMenuHandler_PDA
 */
 class idMenuHandler_PDA : public idMenuHandler {
 public:
-	idMenuHandler_PDA() : 
+	idMenuHandler_PDA() :
 		audioLogPlaying( false ),
 		videoPlaying( false ),
 		audioFile( NULL ) {
@@ -414,11 +414,11 @@ public:
 	void					UpdateAudioLogPlaying( bool playing );
 	void					UdpateVideoPlaying( bool playing );
 	void					ClearVideoPlaying() { videoPlaying = false; }
-	
+
 	bool					PlayPDAAudioLog( int pdaIndex, int audioIndex );
 	virtual void			Cleanup();
 
-protected: 
+protected:
 
 	bool							audioLogPlaying;
 	bool							videoPlaying;

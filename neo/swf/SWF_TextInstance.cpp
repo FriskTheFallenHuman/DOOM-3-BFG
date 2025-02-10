@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ void idSWFTextInstance::StartParagraphText( int time ) {
 		int swapIndex = rnd.RandomInt( indexArray.Num() );
 		int val = indexArray[index];
 		indexArray[index] = indexArray[swapIndex];
-		indexArray[swapIndex] = val;		
+		indexArray[swapIndex] = val;
 	}
 }
 
@@ -251,7 +251,7 @@ idStr idSWFTextInstance::GetParagraphText( int time ) {
 			if ( prevReplaceIndex >= text.Length() ) {
 				generatingText = false;
 				return text;
-			} 
+			}
 
 			randomtext[prevReplaceIndex] = text[prevReplaceIndex];
 			prevReplaceIndex++;
@@ -323,7 +323,7 @@ idStr idSWFTextInstance::GetRandomText( int time ) {
 
 			if ( randomtext.Length() >= 10 ) {
 				waitTime = waitTime / 3;
-			} 
+			}
 
 			if ( time - rndTime >= waitTime ) {
 				rndTime = time;
@@ -437,7 +437,7 @@ bool idSWFTextInstance::UpdateSubtitle( int time ) {
 				} else {
 					text = subtitleText;//subtitleText = "";
 					subInitialLine = false;
-				}				
+				}
 			}
 
 			if ( subNextStartIndex + 1 >= text.Length( ) ) {
@@ -619,7 +619,7 @@ int idSWFTextInstance::CalcMaxScroll( int numLines ) {
 		return maxscroll;
 	}
 
-	const idSWFEditText * shape = editText;	
+	const idSWFEditText * shape = editText;
 	if ( !( shape->flags & SWF_ET_MULTILINE ) ) {
 		return 0;
 	}
@@ -628,7 +628,7 @@ int idSWFTextInstance::CalcMaxScroll( int numLines ) {
 		return 0;
 	}
 
-	idSWFDictionaryEntry * fontEntry = swf->FindDictionaryEntry( shape->fontID, SWF_DICT_FONT );	
+	idSWFDictionaryEntry * fontEntry = swf->FindDictionaryEntry( shape->fontID, SWF_DICT_FONT );
 	if ( fontEntry == NULL ) {
 		return 0;
 	}
@@ -675,7 +675,7 @@ int idSWFTextInstance::CalcMaxScroll( int numLines ) {
 				currentLine->Append( '\n' );
 				x = bounds.tl.x;
 				y += linespacing;
-				currentLine = &textLines.Alloc();			
+				currentLine = &textLines.Alloc();
 				lastbreak = 0;
 				charIndex++;
 				continue;
@@ -726,7 +726,7 @@ int idSWFTextInstance::CalcMaxScroll( int numLines ) {
 			lastbreakX = x;
 		}
 	}
-		
+
 	maxscroll = textLines.Num() - maxLines;
 	if ( maxscroll < 0 ) {
 		maxscroll = 0;
@@ -736,12 +736,12 @@ int idSWFTextInstance::CalcMaxScroll( int numLines ) {
 
 int idSWFTextInstance::CalcNumLines() {
 
-	const idSWFEditText * shape = editText;	
+	const idSWFEditText * shape = editText;
 	if ( !( shape->flags & SWF_ET_MULTILINE ) ) {
 		return 1;
 	}
 
-	idSWFDictionaryEntry * fontEntry = swf->FindDictionaryEntry( shape->fontID, SWF_DICT_FONT );	
+	idSWFDictionaryEntry * fontEntry = swf->FindDictionaryEntry( shape->fontID, SWF_DICT_FONT );
 	if ( fontEntry == NULL ) {
 		return 1;
 	}
@@ -817,7 +817,7 @@ int idSWFTextInstance::CalcNumLines() {
 					if ( lastbreak != 0 ) {
 						charIndex = charIndex - ( charIndex - lastbreak );
 					}
-					x = bounds.tl.x;					
+					x = bounds.tl.x;
 					lastbreak = 0;
 				}
 			} else {
@@ -850,7 +850,7 @@ idSWFScriptObject_TextInstancePrototype
 #define SWF_TEXT_NATIVE_VAR_SET( x ) SetNative( #x, &swfScriptVar_##x );
 
 idSWFScriptObject_TextInstancePrototype::idSWFScriptObject_TextInstancePrototype() {
-	
+
 	SWF_TEXT_FUNCTION_SET( onKey );
 	SWF_TEXT_FUNCTION_SET( onChar );
 	SWF_TEXT_FUNCTION_SET( generateRnd );
@@ -971,14 +971,14 @@ SWF_TEXT_NATIVE_VAR_DEFINE_SET( mode ) {
 	pThis->renderMode = swfTextRenderMode_t(mode);
 }
 
-SWF_TEXT_NATIVE_VAR_DEFINE_SET( scroll ) { 
+SWF_TEXT_NATIVE_VAR_DEFINE_SET( scroll ) {
 	SWF_TEXT_PTHIS_SET( "scroll" );
 
 	int time = Sys_Milliseconds();
 	if ( time >= pThis->scrollTime ) {
 		pThis->scrollTime = Sys_Milliseconds() + swf_textScrollSpeed.GetInteger();
 		pThis->scroll = value.ToInteger();
-	} 
+	}
 }
 
 SWF_TEXT_NATIVE_VAR_DEFINE_SET( maxscroll ) {
@@ -988,27 +988,27 @@ SWF_TEXT_NATIVE_VAR_DEFINE_SET( maxscroll ) {
 
 SWF_TEXT_NATIVE_VAR_DEFINE_GET( textColor ) {
 	SWF_TEXT_PTHIS_GET( "textColor" );
-	
+
 	int r = ( pThis->color.r << 16 );
 	int g = ( pThis->color.g << 8 );
 	int b = pThis->color.b;
 
 	int textColor = r | g | b;
-	
-	return textColor; 
+
+	return textColor;
 }
 
 SWF_TEXT_NATIVE_VAR_DEFINE_SET( textColor ) {
 	SWF_TEXT_PTHIS_SET( "textColor" );
 
-	int textColor = value.ToInteger(); 
+	int textColor = value.ToInteger();
 	int r = ( textColor >> 16 ) & 0xFF;
 	int g = ( textColor >> 8 ) & 0x00FF;
 	int b = textColor & 0x0000FF;
 
 	pThis->color.r = r;
 	pThis->color.g = g;
-	pThis->color.b = b;	
+	pThis->color.b = b;
 }
 
 SWF_TEXT_FUNCTION_DEFINE( clearTimingInfo ) {
@@ -1108,7 +1108,7 @@ SWF_TEXT_FUNCTION_DEFINE( onChar ) {
 	SWF_TEXT_PTHIS_FUNC( "onChar" );
 
 	int keyCode = parms[0].ToInteger();
-	
+
 	if ( keyCode < 32 || keyCode == 127 ) {
 			return false;
 	}

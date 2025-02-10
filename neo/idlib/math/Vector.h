@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ ID_INLINE bool idVec2::Compare( const idVec2 &a, const float epsilon ) const {
 	if ( idMath::Fabs( x - a.x ) > epsilon ) {
 		return false;
 	}
-			
+
 	if ( idMath::Fabs( y - a.y ) > epsilon ) {
 		return false;
 	}
@@ -230,7 +230,7 @@ ID_INLINE void idVec2::SnapInt() {
 ID_INLINE idVec2 idVec2::operator-() const {
 	return idVec2( -x, -y );
 }
-	
+
 ID_INLINE idVec2 idVec2::operator-( const idVec2 &a ) const {
 	return idVec2( x - a.x, y - a.y );
 }
@@ -316,7 +316,7 @@ ID_INLINE float *idVec2::ToFloatPtr() {
 //===============================================================
 
 class idVec3 {
-public:	
+public:
 	float			x;
 	float			y;
 	float			z;
@@ -508,7 +508,7 @@ ID_INLINE bool idVec3::Compare( const idVec3 &a, const float epsilon ) const {
 	if ( idMath::Fabs( x - a.x ) > epsilon ) {
 		return false;
 	}
-			
+
 	if ( idMath::Fabs( y - a.y ) > epsilon ) {
 		return false;
 	}
@@ -768,9 +768,9 @@ ID_INLINE void idVec3::OrthogonalBasis( idVec3 &left, idVec3 &up ) const {
 
 ID_INLINE void idVec3::ProjectOntoPlane( const idVec3 &normal, const float overBounce ) {
 	float backoff;
-	
+
 	backoff = *this * normal;
-	
+
 	if ( overBounce != 1.0 ) {
 		if ( backoff < 0 ) {
 			backoff *= overBounce;
@@ -817,7 +817,7 @@ struct idTupleSize< idVec3 > {
 //===============================================================
 
 class idVec4 {
-public:	
+public:
 	float			x;
 	float			y;
 	float			z;
@@ -980,7 +980,7 @@ ID_INLINE bool idVec4::Compare( const idVec4 &a, const float epsilon ) const {
 	if ( idMath::Fabs( x - a.x ) > epsilon ) {
 		return false;
 	}
-			
+
 	if ( idMath::Fabs( y - a.y ) > epsilon ) {
 		return false;
 	}
@@ -1128,7 +1128,7 @@ ID_INLINE float& idVec5::operator[]( int index ) {
 	return ( &x )[ index ];
 }
 
-ID_INLINE idVec5 &idVec5::operator=( const idVec3 &a ) { 
+ID_INLINE idVec5 &idVec5::operator=( const idVec3 &a ) {
 	x = a.x;
 	y = a.y;
 	z = a.z;
@@ -1164,7 +1164,7 @@ ID_INLINE float *idVec5::ToFloatPtr() {
 //===============================================================
 
 class idVec6 {
-public:	
+public:
 					idVec6();
 					explicit idVec6( const float *a );
 					explicit idVec6( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
@@ -1322,7 +1322,7 @@ ID_INLINE bool idVec6::Compare( const idVec6 &a, const float epsilon ) const {
 	if ( idMath::Fabs( p[0] - a[0] ) > epsilon ) {
 		return false;
 	}
-			
+
 	if ( idMath::Fabs( p[1] - a[1] ) > epsilon ) {
 		return false;
 	}
@@ -1430,7 +1430,7 @@ ID_INLINE float *idVec6::ToFloatPtr() {
 //===============================================================
 
 class idPolar3 {
-public:	
+public:
 	float			radius, theta, phi;
 
 					idPolar3();
@@ -1455,7 +1455,7 @@ ID_INLINE idPolar3::idPolar3( const float radius, const float theta, const float
 	this->theta = theta;
 	this->phi = phi;
 }
-	
+
 ID_INLINE void idPolar3::Set( const float radius, const float theta, const float phi ) {
 	assert( radius > 0 );
 	this->radius = radius;
@@ -1475,7 +1475,7 @@ ID_INLINE idPolar3 idPolar3::operator-() const {
 	return idPolar3( radius, -theta, -phi );
 }
 
-ID_INLINE idPolar3 &idPolar3::operator=( const idPolar3 &a ) { 
+ID_INLINE idPolar3 &idPolar3::operator=( const idPolar3 &a ) {
 	radius = a.radius;
 	theta = a.theta;
 	phi = a.phi;

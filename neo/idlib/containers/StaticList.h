@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -136,9 +136,9 @@ ID_INLINE void idStaticList<type,size>::Clear() {
 ========================
 idList<_type_,_tag_>::Sort
 
-Performs a QuickSort on the list using the supplied sort algorithm.  
+Performs a QuickSort on the list using the supplied sort algorithm.
 
-Note:	The data is merely moved around the list, so any pointers to data within the list may 
+Note:	The data is merely moved around the list, so any pointers to data within the list may
 		no longer be valid.
 ========================
 */
@@ -368,7 +368,7 @@ ID_INLINE int idStaticList<type,size>::Append( type const & obj ) {
 ================
 idStaticList<type,size>::Insert
 
-Increases the size of the list by at leat one element if necessary 
+Increases the size of the list by at leat one element if necessary
 and inserts the supplied data into it.
 
 Returns the index of the new element, or -1 when list is full.
@@ -511,7 +511,7 @@ ID_INLINE int idStaticList<type,size>::FindNull() const {
 idStaticList<type,size>::IndexOf
 
 Takes a pointer to an element in the list and returns the index of the element.
-This is NOT a guarantee that the object is really in the list. 
+This is NOT a guarantee that the object is really in the list.
 Function will assert in debug builds if pointer is outside the bounds of the list,
 but remains silent in release builds.
 ================
@@ -560,13 +560,13 @@ ID_INLINE bool idStaticList<type,size>::RemoveIndex( int index ) {
 ========================
 idList<_type_,_tag_>::RemoveIndexFast
 
-Removes the element at the specified index and moves the last element into its spot, rather 
-than moving the whole array down by one. Of course, this doesn't maintain the order of 
-elements! The number of elements in the list is reduced by one.  
+Removes the element at the specified index and moves the last element into its spot, rather
+than moving the whole array down by one. Of course, this doesn't maintain the order of
+elements! The number of elements in the list is reduced by one.
 
-return:	bool	- false if the data is not found in the list.  
+return:	bool	- false if the data is not found in the list.
 
-NOTE:	The element is not destroyed, so any memory used by it may not be freed until the 
+NOTE:	The element is not destroyed, so any memory used by it may not be freed until the
 		destruction of the list.
 ========================
 */
@@ -602,7 +602,7 @@ ID_INLINE bool idStaticList<type,size>::Remove( type const & obj ) {
 	if ( index >= 0 ) {
 		return RemoveIndex( index );
 	}
-	
+
 	return false;
 }
 

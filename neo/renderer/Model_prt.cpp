@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ idRenderModel *idRenderModelPrt::InstantiateDynamicModel( const struct renderEnt
 			steppingRandom.RandomInt();
 			steppingRandom2.RandomInt();
 
-			// calculate local age for this index 
+			// calculate local age for this index
 			int	bunchOffset = stage->particleLife * 1000 * stage->spawnBunching * index / stage->totalParticles;
 
 			int particleAge = stageAge - bunchOffset;
@@ -187,7 +187,7 @@ idRenderModel *idRenderModelPrt::InstantiateDynamicModel( const struct renderEnt
 
 			int	inCycleTime = particleAge - particleCycle * stage->cycleMsec;
 
-			if ( renderEntity->shaderParms[SHADERPARM_PARTICLE_STOPTIME] && 
+			if ( renderEntity->shaderParms[SHADERPARM_PARTICLE_STOPTIME] &&
 				g.renderView->time[renderEntity->timeGroup] - inCycleTime >= renderEntity->shaderParms[SHADERPARM_PARTICLE_STOPTIME]*1000 ) {
 				// don't fire any more particles
 				continue;

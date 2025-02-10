@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -312,7 +312,7 @@ ID_INLINE void idParallelJobList_Threads::AddJob( jobRun_t function, void * data
 	} else {
 		// debug output to show us what is overflowing
 		int currentJobCount[MAX_REGISTERED_JOBS] = {};
-		
+
 		for ( int i = 0; i < jobList.Num(); ++i ) {
 			const char * jobName = GetJobName( jobList[ i ].function );
 			for ( int j = 0; j < numRegisteredJobs; ++j ) {
@@ -971,7 +971,7 @@ idJobThread::AddJobList
 void idJobThread::AddJobList( idParallelJobList_Threads * jobList ) {
 	// must lock because multiple threads may try to add new job lists at the same time
 	addJobMutex.Lock();
-	// wait until there is space available because in rare cases multiple versions of the same job lists may still be queued 
+	// wait until there is space available because in rare cases multiple versions of the same job lists may still be queued
 	while( lastJobList - firstJobList >= MAX_JOBLISTS ) {
 		Sys_Yield();
 	}
@@ -1075,10 +1075,10 @@ extern void Sys_CPUCount( int & logicalNum, int & coreNum, int & packageNum );
 // http://download.microsoft.com/download/5/7/7/577a5684-8a83-43ae-9272-ff260a9c20e2/Hyper-thread_Windows.doc
 //
 //											Physical	Logical (Cores + HT)
-// Windows XP Home Edition					1			2 
-// Windows XP Professional					2			4 
-// Windows Server 2003, Standard Edition	4			8 
-// Windows Server 2003, Enterprise Edition	8			16 
+// Windows XP Home Edition					1			2
+// Windows XP Professional					2			4
+// Windows Server 2003, Standard Edition	4			8
+// Windows Server 2003, Enterprise Edition	8			16
 // Windows Server 2003, Datacenter Edition	32			32
 //
 // Windows Vista							?			?

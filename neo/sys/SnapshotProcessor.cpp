@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,13 +70,13 @@ idSnapshotProcessor::Reset
 void idSnapshotProcessor::Reset( bool cstor ) {
 	hasPendingSnap	= false;
 	snapSequence	= INITIAL_SNAP_SEQUENCE;
-	baseSequence	= -1;	
+	baseSequence	= -1;
 	lastFullSnapBaseSequence = -1;
 
 	if ( !cstor && net_debugBaseStates.GetBool() ) {
 		idLib::Printf( "NET: Reset snapshot base");
 	}
-	
+
 	baseState.Clear();
 	submittedState.Clear();
 	pendingSnap.Clear();
@@ -123,7 +123,7 @@ bool idSnapshotProcessor::ApplyDeltaToSnapshot( idSnapShot & snap, const char * 
 #ifdef STRESS_LZW_MEM
 // When this defined, we'll stress the lzw compressor with the smallest possible buffer, and detect when we need to grow it to make
 // sure we are gacefully detecting the situation.
-static int g_maxlwMem = 100;		
+static int g_maxlwMem = 100;
 #endif
 
 /*
@@ -138,7 +138,7 @@ void idSnapshotProcessor::SubmitPendingSnap( int visIndex, uint8 * objMemory, in
 
 	assert( hasPendingSnap );
 	assert( jobMemory->lzwInOutData.numlzwDeltas == 0 );
-	
+
 	assert( net_optimalSnapDeltaSize.GetInteger() < jobMemory_t::MAX_LZW_MEM - 128 );		// Leave padding
 
 	jobMemory->lzwInOutData.lzwDeltas		= jobMemory->lzwDeltas.Ptr();
@@ -169,19 +169,19 @@ void idSnapshotProcessor::SubmitPendingSnap( int visIndex, uint8 * objMemory, in
 	submitInfo.maxObjMemory		= objMemorySize;
 	submitInfo.lzwParms			= jobMemory->lzwParms.Ptr();
 	submitInfo.maxDeltaParms	= jobMemory->lzwParms.Num();
-	
-	
-	// Use a copy of base state to avoid race conditions. 
+
+
+	// Use a copy of base state to avoid race conditions.
 	// The main thread could change it behind the jobs backs.
 	submittedState				= baseState;
 	submittedTemplateStates		= templateStates;
 
 	submitInfo.templateStates	= &submittedTemplateStates;
-	
+
 	submitInfo.oldSnap			= &submittedState;
 	submitInfo.visIndex			= visIndex;
 	submitInfo.baseSequence		= baseSequence;
-		
+
 	submitInfo.lzwInOutData		= &jobMemory->lzwInOutData;
 
 	pendingSnap.SubmitWriteDeltaToJobs( submitInfo );
@@ -219,12 +219,12 @@ int idSnapshotProcessor::GetPendingSnapDelta( byte * outBuffer, int maxLength ) 
 		// This can happen if there wasn't enough maxlzwMem to process one full obj in a single delta
 		idLib::Error( "GetPendingSnapDelta: Delta failed." );
 	}
-		
+
 	uint8 * deltaData = &jobMemory->lzwMem[jobMemory->lzwDeltas[0].offset];
-	
+
 	int deltaSequence		= 0;
 	int deltaBaseSequence	= 0;
-	PeekDeltaSequence( (const char *)deltaData, size, deltaSequence, deltaBaseSequence );	
+	PeekDeltaSequence( (const char *)deltaData, size, deltaSequence, deltaBaseSequence );
 	// sanity check: does the compressed data we are about to send have the sequence number we expect
 	assert( deltaSequence == jobMemory->lzwDeltas[0].snapSequence );
 
@@ -234,7 +234,7 @@ int idSnapshotProcessor::GetPendingSnapDelta( byte * outBuffer, int maxLength ) 
 
 	// Copy to out buffer
 	memcpy( outBuffer, deltaData, size );
-	
+
 	// Set the sequence to what this delta actually belongs to
 	assert( jobMemory->lzwDeltas[0].snapSequence == snapSequence + 1 );
 	snapSequence = jobMemory->lzwDeltas[0].snapSequence;
@@ -244,11 +244,11 @@ int idSnapshotProcessor::GetPendingSnapDelta( byte * outBuffer, int maxLength ) 
 	// Copy to delta buffer
 	// NOTE - We don't need to save this delta off if peer has already ack'd this basestate.
 	// This can happen due to the fact that we defer the processing of snap deltas on jobs.
-	// When we start processing a delta, we use the currently ack'd basestate.  If while we were processing 
-	// the delta, the client acks a new basestate, we can get into this situation.  In this case, we simply don't 
+	// When we start processing a delta, we use the currently ack'd basestate.  If while we were processing
+	// the delta, the client acks a new basestate, we can get into this situation.  In this case, we simply don't
 	// store the delta, since it will just take up space, and just get removed anyways during ApplySnapshotDelta.
 	//	 (and cause lots of spam when it sees the delta's basestate doesn't match the current ack'd one)
-	if ( deltaBaseSequence >= baseSequence ) {	
+	if ( deltaBaseSequence >= baseSequence ) {
 		if ( !deltas.Append( snapSequence, deltaData, size ) ) {
 			int resendLength = deltas.ItemLength( deltas.Num() - 1 );
 
@@ -306,12 +306,12 @@ bool idSnapshotProcessor::ReceiveSnapshotDelta( const byte * deltaData, int delt
 	PeekDeltaSequence( (const char *)deltaData, deltaLength, deltaSequence, deltaBaseSequence );
 
 	//idLib::Printf("Incoming snapshot: %i, %i\n", deltaSequence, deltaBaseSequence );
-	
+
 	if ( deltaSequence <= snapSequence ) {
 		NET_VERBOSESNAPSHOT_PRINT( "Rejecting old delta: %d (snapSequence: %d \n", deltaSequence, snapSequence );
 		return false;		// Completely reject older out of order deltas
 	}
-	
+
 	// Bring the base state up to date with the basestate this delta was compared to
 	ApplySnapshotDelta( visIndex, deltaBaseSequence );
 
@@ -326,7 +326,7 @@ bool idSnapshotProcessor::ReceiveSnapshotDelta( const byte * deltaData, int delt
 		idLib::Printf( "NET: ReceiveSnapshotDelta: No room to append delta %d/%d \n", deltaSequence, deltaBaseSequence );
 		return false;
 	}
-	
+
 	// Update our snapshot sequence number to the newer one we just got (now that it's safe)
 	snapSequence = deltaSequence;
 
@@ -338,7 +338,7 @@ bool idSnapshotProcessor::ReceiveSnapshotDelta( const byte * deltaData, int delt
 		NET_VERBOSESNAPSHOT_PRINT( "\n" );
 	}
 
-		
+
 	if ( baseSequence != deltaBaseSequence ) {
 		// NOTE - With recent fixes, this should no longer be possible unless the delta is trashed
 		// We should probably disconnect from the server when this happens now.
@@ -360,7 +360,7 @@ bool idSnapshotProcessor::ReceiveSnapshotDelta( const byte * deltaData, int delt
 
 	// Make a copy of the basestate the server used to create this delta, and then apply and return it
 	outSnap = baseState;
-	
+
 	fullSnap = ApplyDeltaToSnapshot( outSnap, (const char *)deltaData, deltaLength, visIndex );
 
 	// We received a new delta
@@ -389,7 +389,7 @@ bool idSnapshotProcessor::ApplySnapshotDelta( int visIndex, int snapshotNumber )
 		// On the server, this can happen because the client is continuously/redundantly sending acks
 		// Once the server has ack'd a certain base sequence, it will need to ignore all the redundant ones.
 		// On the client, this will only happen due to out of order, or dropped packets.
-		
+
 		if ( !common->IsServer() ) {
 			// these should be printed every time on the clients
 			// printing on server is not useful / results in tons of spam
@@ -397,7 +397,7 @@ bool idSnapshotProcessor::ApplySnapshotDelta( int visIndex, int snapshotNumber )
 				NET_VERBOSESNAPSHOT_PRINT("NET: Got snapshot but ignored... deltas.Num(): %d snapshotNumber: %d \n", deltas.Num(), snapshotNumber );
 			} else {
 				NET_VERBOSESNAPSHOT_PRINT("NET: Got snapshot but ignored... deltas.ItemSequence( 0 ): %d != snapshotNumber: %d \n   ", deltas.ItemSequence( 0 ), snapshotNumber );
-				
+
 				for ( int i=0; i < deltas.Num(); i++ ) {
 					NET_VERBOSESNAPSHOT_PRINT("%d ", deltas.ItemSequence(i) );
 				}
@@ -418,7 +418,7 @@ bool idSnapshotProcessor::ApplySnapshotDelta( int visIndex, int snapshotNumber )
 	assert( deltaSequence > baseSequence );
 
 	if ( baseSequence != deltaBaseSequence ) {
-		// NOTE - This should no longer happen with recent fixes.  
+		// NOTE - This should no longer happen with recent fixes.
 		// We should probably disconnect from the server if this happens. (packets are trashed most likely)
 		NET_VERBOSESNAPSHOT_PRINT( "NET: Got snapshot %d but baseSequence does not match. baseSequence: %d deltaBaseSequence: %d. \n", snapshotNumber, baseSequence, deltaBaseSequence );
 		return false;
@@ -428,12 +428,12 @@ bool idSnapshotProcessor::ApplySnapshotDelta( int visIndex, int snapshotNumber )
 	if ( ApplyDeltaToSnapshot( baseState, (const char *)deltas.ItemData( 0 ), deltas.ItemLength( 0 ), visIndex ) ) {
 		lastFullSnapBaseSequence = deltaSequence;
 	}
-	
+
 	baseSequence = deltaSequence;		// This is now our new base sequence
 
 	// Remove deltas that we no longer need
 	RemoveDeltasForOldBaseSequence();
-	
+
 	// Sanity check deltas
 	SanityCheckDeltas();
 
@@ -443,13 +443,13 @@ bool idSnapshotProcessor::ApplySnapshotDelta( int visIndex, int snapshotNumber )
 /*
 ========================
 idSnapshotProcessor::RemoveDeltasForOldBaseSequence
-Remove deltas for basestate we no longer have. We know we can remove them, because we will never 
+Remove deltas for basestate we no longer have. We know we can remove them, because we will never
 be able to apply them, since the basestate needed to generate a full snap from these deltas is gone.
 
 Ways we can get deltas based on basestate we no longer have:
 	1. Server sends sequence 50 based on 49.  It then sends sequence 51 based on 49.
 	   Client acks 50, server applies it to 49, 50 is new base state.
-	   Server now has a delta sequence 51 based on 49 that it won't ever be able to apply (50 is new basestate).	
+	   Server now has a delta sequence 51 based on 49 that it won't ever be able to apply (50 is new basestate).
 
 This is annoying, because it makes a lot of our sanity checks incorrectly fire off for benign issues.
 Here is a series of events that make the old ( baseSequence != deltaBaseSequence ) assert:
@@ -462,7 +462,7 @@ Client
 
 The client above will ack 51, even though he can't even apply that delta.  To get around this, we simply don't
 allow delta to exist in the list, unless their basestate is the current basestate we maintain.
-This allows us to put sanity checks in place that don't fire off during benign conditions, and allow us 
+This allows us to put sanity checks in place that don't fire off during benign conditions, and allow us
 to truly check for trashed conditions.
 
 ========================
@@ -475,7 +475,7 @@ void idSnapshotProcessor::RemoveDeltasForOldBaseSequence() {
 		int deltaBaseSequence	= 0;
 		baseState.PeekDeltaSequence( (const char *)deltas.ItemData( i ), deltas.ItemLength( i ), deltaSequence, deltaBaseSequence );
 		if ( deltaBaseSequence < baseSequence ) {
-			// Remove this delta, and all deltas before this one 
+			// Remove this delta, and all deltas before this one
 			deltas.RemoveOlderThan( deltas.ItemSequence( i ) + 1 );
 			break;
 		}
@@ -493,7 +493,7 @@ void idSnapshotProcessor::SanityCheckDeltas() {
 	int deltaBaseSequence		= 0;
 	int lastDeltaSequence		= -1;
 	int lastDeltaBaseSequence	= -1;
-	
+
 	for ( int i = 0; i < deltas.Num(); i++ ) {
 		baseState.PeekDeltaSequence( (const char *)deltas.ItemData( i ), deltas.ItemLength( i ), deltaSequence, deltaBaseSequence );
 		assert( deltaSequence == deltas.ItemSequence( i ) );	// Make sure delta stored in compressed form matches the one stored in the data queue

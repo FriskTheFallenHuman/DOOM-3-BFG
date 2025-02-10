@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ Sys_AllocHook
 	called for every malloc/new/free/delete
 ==================
 */
-int Sys_AllocHook( int nAllocType, void *pvData, size_t nSize, int nBlockUse, long lRequest, const unsigned char * szFileName, int nLine ) 
+int Sys_AllocHook( int nAllocType, void *pvData, size_t nSize, int nBlockUse, long lRequest, const unsigned char * szFileName, int nLine )
 {
 	CrtMemBlockHeader	*pHead;
 	byte				*temp;
@@ -421,8 +421,8 @@ ID_TIME_T Sys_FileTimeStamp( idFileHandle fp ) {
 	GetFileTime( fp, NULL, NULL, &writeTime );
 
 	/*
-		FILETIME = number of 100-nanosecond ticks since midnight 
-		1 Jan 1601 UTC. time_t = number of 1-second ticks since 
+		FILETIME = number of 100-nanosecond ticks since midnight
+		1 Jan 1601 UTC. time_t = number of 1-second ticks since
 		midnight 1 Jan 1970 UTC. To translate, we subtract a
 		FILETIME representation of midnight, 1 Jan 1970 from the
 		time in question and divide by the number of 100-ns ticks
@@ -623,7 +623,7 @@ char *Sys_GetClipboardData() {
 				data = (char *)Mem_Alloc( GlobalSize( hClipboardData ) + 1, TAG_CRAP );
 				strcpy( data, cliptext );
 				GlobalUnlock( hClipboardData );
-				
+
 				strtok( data, "\n\r\b" );
 			}
 		}
@@ -688,7 +688,7 @@ If waitMsec is -1, don't wait for the process to exit
 Other waitMsec values will allow the workFn to be called at those intervals.
 ========================
 */
-bool Sys_Exec(	const char * appPath, const char * workingPath, const char * args, 
+bool Sys_Exec(	const char * appPath, const char * workingPath, const char * args,
 	execProcessWorkFunction_t workFn, execOutputFunction_t outputFn, const int waitMS,
 	unsigned int & exitCode ) {
 		exitCode = 0;
@@ -705,7 +705,7 @@ bool Sys_Exec(	const char * appPath, const char * workingPath, const char * args
 		HANDLE hStdInRead;
 		HANDLE hStdInWrite;
 		CreatePipe( &hStdInRead, &hStdInWrite, &secAttr, 0 );
-		SetHandleInformation( hStdInWrite, HANDLE_FLAG_INHERIT, 0 );										
+		SetHandleInformation( hStdInWrite, HANDLE_FLAG_INHERIT, 0 );
 
 		STARTUPINFO si;
 		memset( &si, 0, sizeof( si ) );
@@ -753,12 +753,12 @@ bool Sys_Exec(	const char * appPath, const char * workingPath, const char * args
 		BOOL result = CreateProcess( imageName, (LPSTR)cmdLine, NULL, NULL, TRUE, 0, NULL, workingPath, &si, &pi );
 
 		if ( result == FALSE ) {
-			TCHAR szBuf[1024]; 
+			TCHAR szBuf[1024];
 			LPVOID lpMsgBuf;
-			DWORD dw = GetLastError(); 
+			DWORD dw = GetLastError();
 
 			FormatMessage(
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+				FORMAT_MESSAGE_ALLOCATE_BUFFER |
 				FORMAT_MESSAGE_FROM_SYSTEM,
 				NULL,
 				dw,
@@ -857,7 +857,7 @@ Sys_DLL_GetProcAddress
 =====================
 */
 void *Sys_DLL_GetProcAddress( int dllHandle, const char *procName ) {
-	return GetProcAddress( (HINSTANCE)dllHandle, procName ); 
+	return GetProcAddress( (HINSTANCE)dllHandle, procName );
 }
 
 /*
@@ -879,7 +879,7 @@ void Sys_DLL_Unload( int dllHandle ) {
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 			(LPTSTR) &lpMsgBuf,
 			0,
-			NULL 
+			NULL
 		);
 		Sys_Error( "Sys_DLL_Unload: FreeLibrary failed - %s (%d)", lpMsgBuf, lastError );
 	}
@@ -948,12 +948,12 @@ void Sys_PumpEvents() {
 
 		// save the msg time, because wndprocs don't have access to the timestamp
 		if ( win32.sysMsgTime && win32.sysMsgTime > (int)msg.time ) {
-			// don't ever let the event times run backwards	
+			// don't ever let the event times run backwards
 //			common->Printf( "Sys_PumpEvents: win32.sysMsgTime (%i) > msg.time (%i)\n", win32.sysMsgTime, msg.time );
 		} else {
 			win32.sysMsgTime = msg.time;
 		}
- 
+
 		TranslateMessage (&msg);
       	DispatchMessage (&msg);
 	}
@@ -1017,7 +1017,7 @@ sysEvent_t Sys_GetEvent() {
 		return eventQue[ ( eventTail - 1 ) & MASK_QUED_EVENTS ];
 	}
 
-	// return the empty event 
+	// return the empty event
 	memset( &ev, 0, sizeof( ev ) );
 
 	return ev;
@@ -1339,7 +1339,7 @@ void EmailCrashReport( LPSTR messageText ) {
 
 	lastEmailTime = Sys_Milliseconds();
 
-	HINSTANCE mapi = LoadLibrary( "MAPI32.DLL" ); 
+	HINSTANCE mapi = LoadLibrary( "MAPI32.DLL" );
 	if( mapi ) {
 		LPMAPISENDMAIL	MAPISendMail = ( LPMAPISENDMAIL )GetProcAddress( mapi, "MAPISendMail" );
 		if( MAPISendMail ) {
@@ -1393,7 +1393,7 @@ EXCEPTION_DISPOSITION __cdecl _except_handler( struct _EXCEPTION_RECORD *Excepti
 										ContextRecord->FloatSave.DataSelector );
 
 
-	sprintf( msg, 
+	sprintf( msg,
 		"Please describe what you were doing when DOOM 3 crashed!\n"
 		"If this text did not pop into your email client please copy and email it to programmers@idsoftware.com\n"
 			"\n"
@@ -1520,7 +1520,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		Sys_ShowConsole( 0, false );
 	}
 
-#ifdef SET_THREAD_AFFINITY 
+#ifdef SET_THREAD_AFFINITY
 	// give the main thread an affinity for the first cpu
 	SetThreadAffinityMask( GetCurrentThread(), 1 );
 #endif
@@ -1567,7 +1567,7 @@ __declspec( naked ) void clrstk() {
         xchg    eax,esp
         mov     eax,dword ptr [eax]		; copy the return address
         push    eax
-        
+
         ; clear to zero
         push	edi
         push	ecx
@@ -1580,7 +1580,7 @@ __declspec( naked ) void clrstk() {
         rep	stosd
         pop		ecx
         pop		edi
-        
+
         ret
 	}
 }

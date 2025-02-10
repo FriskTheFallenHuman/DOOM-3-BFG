@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -267,7 +267,7 @@ private:
 	// Demos can be recorded and played at the same time when splicing.
 	idDemoFile *		readDemo;
 	idDemoFile *		writeDemo;
-	
+
 	bool				menuActive;
 	idSoundWorld *		menuSoundWorld;			// so the game soundWorld can be muted
 
@@ -281,7 +281,7 @@ private:
 	struct mapSpawnData_t {
 		idFile_SaveGame *	savegameFile;				// Used for loading a save game
 		idFile_SaveGame *	stringTableFile;			// String table read from save game loaded
-		idFile_SaveGamePipelined *pipelineFile;			
+		idFile_SaveGamePipelined *pipelineFile;
 		int					savegameVersion;			// Version of the save game we're loading
 		idDict				persistentPlayerInfo;		// Used for transitioning from map to map
 	};
@@ -292,7 +292,7 @@ private:
 	bool				insideUpdateScreen;		// true while inside ::UpdateScreen()
 
 	idUserCmdMgr		userCmdMgr;
-	
+
 	int					nextUsercmdSendTime;	// Next time to send usercmds
 	int					nextSnapshotSendTime;	// Next time to send a snapshot
 
@@ -313,7 +313,7 @@ private:
 										// used for comparisons with the new snapshot for com_drawSnapshot
 
 	// This is ultimately controlled by net_maxBufferedSnapshots by running double speed, but this is the hard max before seeing visual popping
-	static const int RECEIVE_SNAPSHOT_BUFFER_SIZE = 16;			
+	static const int RECEIVE_SNAPSHOT_BUFFER_SIZE = 16;
 
 	int				readSnapshotIndex;
 	int				writeSnapshotIndex;
@@ -349,7 +349,7 @@ private:
 	bool				syncNextGameFrame;
 
 	bool				aviCaptureMode;		// if true, screenshots will be taken and sound captured
-	idStr				aviDemoShortName;	// 
+	idStr				aviDemoShortName;	//
 	int					aviDemoFrameCount;
 
 	enum timeDemo_t {
@@ -421,7 +421,7 @@ private:
 
 	void	ExitMenu();
 	bool	MenuEvent( const sysEvent_t * event );
-	
+
 	void	StartMenu( bool playIntro = false );
 	void	GuiFrameEvents();
 
@@ -446,7 +446,7 @@ private:
 	int		NetworkFrame();
 	void	SendSnapshots();
 	void	SendUsercmds( int localClientNum );
-	
+
 	void	LoadLoadingGui(const char *mapName, bool & hellMap );
 
 	// Meant to be used like:
@@ -468,7 +468,7 @@ private:
 	void	MoveToNewMap( const char * mapName, bool devmap );
 
 	void	PlayIntroGui();
-	
+
 	void	ScrubSaveGameFileName( idStr &saveFileName ) const;
 };
 

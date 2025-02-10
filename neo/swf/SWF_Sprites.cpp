@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -244,7 +244,7 @@ void idSWFSprite::Write( idFile * f ) {
 		f->Write( doInitActions[i].Ptr(), doInitActions[i].Length() );
 	}
 
-	f->WriteBig( commands.Num() ); 
+	f->WriteBig( commands.Num() );
 	for ( int i = 0; i < commands.Num(); i++ ) {
 		f->WriteBig( commands[i].tag );
 		f->WriteBig( commands[i].stream.Length() );
@@ -252,6 +252,6 @@ void idSWFSprite::Write( idFile * f ) {
 
 	f->WriteBig( doInitActions.Num() );
 	for ( int i = 0; i < doInitActions.Num(); i++ ){
-		f->WriteBig( doInitActions[i].Length() ); 
+		f->WriteBig( doInitActions[i].Length() );
 	}
 }

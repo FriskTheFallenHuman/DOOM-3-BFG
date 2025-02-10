@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ idPhysics_Static::Interpolate
 ================
 */
 bool idPhysics_Static::Interpolate( const float fraction ) {
-	
+
 	// We only interpolate if we actually get snapshots.
 	if( self->GetNumSnapshotsReceived() >= 1 ) {
 		current = InterpolateStaticPState( previous, next, fraction );
@@ -569,7 +569,7 @@ void idPhysics_Static::ClipTranslation( trace_t &results, const idVec3 &translat
 	} else {
 		gameLocal.clip.Translation( results, current.origin, current.origin + translation,
 			clipModel, current.axis, MASK_SOLID, self );
-	}	
+	}
 }
 
 /*
@@ -893,7 +893,7 @@ staticInterpolatePState_t ConvertPStateToInterpolateState( const staticPState_t 
 ReadStaticInterpolatePStateFromSnapshot
 ================
 */
-staticInterpolatePState_t ReadStaticInterpolatePStateFromSnapshot( const idBitMsg & msg ) { 
+staticInterpolatePState_t ReadStaticInterpolatePStateFromSnapshot( const idBitMsg & msg ) {
 	staticInterpolatePState_t state;
 
 	state.origin = ReadFloatArray< idVec3 >( msg );
@@ -913,7 +913,7 @@ InterpolateStaticPState
 */
 staticPState_t InterpolateStaticPState( const staticInterpolatePState_t & previous, const staticInterpolatePState_t & next, float fraction ) {
 	staticPState_t result;
-	
+
 	result.origin = Lerp( previous.origin, next.origin, fraction );
 	result.axis = idQuat().Slerp( previous.axis, next.axis, fraction ).ToMat3();
 

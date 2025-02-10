@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ idCommonLocal::idCommonLocal
 */
 idCommonLocal::idCommonLocal() :
 	readSnapshotIndex( 0 ),
-	writeSnapshotIndex( 0 ),	
+	writeSnapshotIndex( 0 ),
 	optimalTimeBuffered( 0.0f ),
 	optimalTimeBufferedWindow( 0.0f ),
 	optimalPCTBuffer( 0.5f ),
@@ -438,7 +438,7 @@ CONSOLE_COMMAND( printMemInfo, "prints memory debugging data", NULL ) {
 		return;
 	}
 
-	f->Printf( "total(%s ) image(%s ) model(%s ) sound(%s ): %s\n", idStr::FormatNumber( mi.assetTotals ).c_str(), idStr::FormatNumber( mi.imageAssetsTotal ).c_str(), 
+	f->Printf( "total(%s ) image(%s ) model(%s ) sound(%s ): %s\n", idStr::FormatNumber( mi.assetTotals ).c_str(), idStr::FormatNumber( mi.imageAssetsTotal ).c_str(),
 		idStr::FormatNumber( mi.modelAssetsTotal ).c_str(), idStr::FormatNumber( mi.soundAssetsTotal ).c_str(), mi.filebase.c_str() );
 
 	fileSystem->CloseFile( f );
@@ -575,7 +575,7 @@ void idCommonLocal::CheckStartupStorageRequirements() {
 			idStr savePath( savepath );
 			if ( savePath.Length() >= 3 ) {
 				if ( savePath[ 1 ] == ':' && savePath[ 2 ] == '\\' &&
-					( ( savePath[ 0 ] >= 'A' && savePath[ 0 ] <= 'Z' ) || 
+					( ( savePath[ 0 ] >= 'A' && savePath[ 0 ] <= 'Z' ) ||
 					( savePath[ 0 ] >= 'a' && savePath[ 0 ] <= 'z' ) ) ) {
 						savePath = savePath.Left( 3 );
 						availableSpace = Sys_GetDriveFreeSpaceInBytes( savePath );
@@ -640,7 +640,7 @@ idCommonLocal::FilterLangList
 ===============
 */
 void idCommonLocal::FilterLangList( idStrList* list, idStr lang ) {
-	
+
 	idStr temp;
 	for( int i = 0; i < list->Num(); i++ ) {
 		temp = (*list)[i];
@@ -668,7 +668,7 @@ void idCommonLocal::InitLanguageDict() {
 	//to add new strings to the english language dictionary
 	idFileList*	langFiles;
 	langFiles =  fileSystem->ListFilesTree( "strings", ".lang", true );
-	
+
 	idStrList langList = langFiles->GetList();
 
 	// Loop through the list and filter
@@ -1035,7 +1035,7 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		// if any archived cvars are modified after this, we will trigger a writing of the config file
 		cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
-		
+
 		// init OpenGL, which will open a window and connect sound and input hardware
 		renderSystem->InitOpenGL();
 
@@ -1272,7 +1272,7 @@ void idCommonLocal::Shutdown() {
 	// shut down the event loop
 	printf( "eventLoop->Shutdown();\n" );
 	eventLoop->Shutdown();
-	
+
 	// shutdown the decl manager
 	printf( "declManager->Shutdown();\n" );
 	declManager->Shutdown();
@@ -1283,7 +1283,7 @@ void idCommonLocal::Shutdown() {
 
 	printf( "commonDialog.Shutdown();\n" );
 	commonDialog.Shutdown();
-	
+
 	// unload the game dll
 	printf( "UnloadGameDLL();\n" );
 	UnloadGameDLL();
@@ -1346,7 +1346,7 @@ void idCommonLocal::CreateMainMenu() {
 		renderSystem->BeginLevelLoad();
 		soundSystem->BeginLevelLoad();
 		uiManager->BeginLevelLoad();
-		
+
 		// create main inside an "empty" game level load - so assets get
 		// purged automagically when we transition to a "real" map
 		game->Shell_CreateMenu( false );
@@ -1419,9 +1419,9 @@ bool idCommonLocal::WaitForSessionState( idSession::sessionState_t desiredState 
 		if ( sessionState == desiredState ) {
 			return true;
 		}
-		if ( sessionState != idSession::LOADING && 
-			sessionState != idSession::SEARCHING && 
-			sessionState != idSession::CONNECTING && 
+		if ( sessionState != idSession::LOADING &&
+			sessionState != idSession::SEARCHING &&
+			sessionState != idSession::CONNECTING &&
 			sessionState != idSession::BUSY &&
 			sessionState != desiredState ) {
 				return false;
@@ -1483,7 +1483,7 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t *event ) {
 
 				game->Shell_ClosePause();
 			}
-		} 
+		}
 	}
 
 	// let the pull-down console take it if desired
@@ -1493,7 +1493,7 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t *event ) {
 	if ( session->ProcessInputEvent( event ) ) {
 		return true;
 	}
-	
+
 	if ( Dialog().IsDialogActive() ) {
 		Dialog().HandleDialogEvent( event );
 		return true;
@@ -1524,8 +1524,8 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t *event ) {
 idCommonLocal::ResetPlayerInput
 ========================
 */
-void idCommonLocal::ResetPlayerInput( int playerIndex ) { 
-	userCmdMgr.ResetPlayer( playerIndex ); 
+void idCommonLocal::ResetPlayerInput( int playerIndex ) {
+	userCmdMgr.ResetPlayer( playerIndex );
 }
 
 /*

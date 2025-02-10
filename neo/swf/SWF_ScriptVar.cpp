@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ idStr idSWFScriptVar::ToString() const {
 		case SWF_VAR_NULL:		return "[null]";
 		case SWF_VAR_UNDEF:		return "[undefined]";
 		case SWF_VAR_OBJECT:	return value.object->DefaultValue( true ).ToString();
-		case SWF_VAR_FUNCTION:	
+		case SWF_VAR_FUNCTION:
 			if ( swf_debugShowAddress.GetBool() ) {
 				return va( "[function:%p]", value.function );
 			} else {
@@ -386,7 +386,7 @@ const char * idSWFScriptVar::TypeOf() const {
 	case SWF_VAR_BOOL:		return "boolean";
 	case SWF_VAR_INTEGER:	return "number";
 
-	case SWF_VAR_OBJECT:	
+	case SWF_VAR_OBJECT:
 		if ( value.object->GetSprite() != NULL ) {
 			return "movieclip";
 		} else if ( value.object->GetText() != NULL ) {

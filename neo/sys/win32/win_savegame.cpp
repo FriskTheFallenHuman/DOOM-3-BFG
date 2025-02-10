@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -453,7 +453,7 @@ idSaveGameThread::EnumerateFiles
 int idSaveGameThread::EnumerateFiles() {
 	idSaveLoadParms * callback = data.saveLoadParms;
 	idStr folder = "savegame";
-	
+
 	folder.AppendPath( callback->directory );
 
 	callback->files.Clear();
@@ -530,7 +530,7 @@ int idSaveGameThread::DeleteFiles() {
 		fullpath.AppendPath( file->GetName() );
 		fileSystem->RemoveFile( fullpath );
 	}
-	
+
 	int ret = ERROR_SUCCESS;
 	if ( fileSystem->IsFolder( folder, "fs_savePath" ) == FOLDER_YES ) {
 		// get listing of all the files, but filter out below
@@ -584,7 +584,7 @@ int idSaveGameThread::DeleteAll() {
 			if ( fileSystem->IsFolder( files->GetFile( i ), "fs_savePath" ) == FOLDER_YES ) {
 				fileSystem->RemoveDir( files->GetFile( i ) );
 			} else {
-				fileSystem->RemoveFile( files->GetFile( i ) );	
+				fileSystem->RemoveFile( files->GetFile( i ) );
 			}
 		}
 		fileSystem->FreeFileList( files );
@@ -683,7 +683,7 @@ void Sys_SaveGameCheck( bool & exists, bool & autosaveExists ) {
 
 			if ( fileSystem->IsFolder( directory, "fs_savePath" ) == FOLDER_YES ) {
 				exists = true;
-				
+
 				idLib::PrintfIf( saveGame_verbose.GetBool(), "found savegame: %s\n", fileList[i].c_str() );
 
 				if ( idStr::Icmp( fileList[i].c_str(), autosaveFolder ) == 0 ) {

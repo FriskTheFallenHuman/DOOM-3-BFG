@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ int LocalizeMap(const char* mapName, idLangDict &langDict, ListHash& listHash, i
 	common->Printf("Localizing Map '%s'\n", mapName);
 
 	int strCount = 0;
-	
+
 	idMapFile map;
 	if ( map.Parse(mapName, false, false ) ) {
 		int count = map.GetNumEntities();
@@ -181,13 +181,13 @@ int LocalizeMap(const char* mapName, idLangDict &langDict, ListHash& listHash, i
 					for(int k = 0; k < list->Num(); k++) {
 
 						idStr val = ent->epairs.GetString((*list)[k], "");
-						
+
 						if(val.Length() && classname == "info_location" && (*list)[k] == "location") {
 							hasLocation = true;
 						}
 
 						if(val.Length() && TestMapVal(val)) {
-							
+
 							if(!hasLocation || (*list)[k] == "location") {
 								//Localize it!!!
 								strCount++;
@@ -227,7 +227,7 @@ int LocalizeMap(const char* mapName, idLangDict &langDict, ListHash& listHash, i
 			idStr bak = file.Left(file.Length() - 4);
 			bak.Append(".bak_loc");
 			fileSystem->CopyFile( file, bak );
-			
+
 			map.Write( mapName, ".map" );
 		}
 	}
@@ -248,7 +248,7 @@ CONSOLE_COMMAND( localizeMaps, "localize maps", NULL ) {
 	}
 
 	int strCount = 0;
-	
+
 	bool count = false;
 	bool dictUpdate = false;
 	bool write = false;
@@ -289,7 +289,7 @@ CONSOLE_COMMAND( localizeMaps, "localize maps", NULL ) {
 	}
 
 	common->SetRefreshOnPrint( true );
-	
+
 	ListHash listHash;
 	LoadMapLocalizeData(listHash);
 
@@ -303,7 +303,7 @@ CONSOLE_COMMAND( localizeMaps, "localize maps", NULL ) {
 		GetFileList("z:/d3xp/d3xp/maps/game", "*.map", files);
 		for ( int i = 0; i < files.Num(); i++ ) {
 			idStr file =  fileSystem->OSPathToRelativePath(files[i]);
-			strCount += LocalizeMap(file, strTable, listHash, excludeList, write);		
+			strCount += LocalizeMap(file, strTable, listHash, excludeList, write);
 		}
 	}
 
@@ -368,7 +368,7 @@ CONSOLE_COMMAND( localizeGuis, "localize guis", NULL ) {
 		} else {
 			files = fileSystem->ListFilesTree( "guis", "*.pd", true, "d3xp" );
 		}
-		
+
 		for ( int i = 0; i < files->GetNumFiles(); i++ ) {
 			commonLocal.LocalizeGui( files->GetFile( i ), strTable );
 		}
@@ -384,8 +384,8 @@ CONSOLE_COMMAND( localizeGuiParmsTest, "Create test files that show gui parms lo
 
 	common->SetRefreshOnPrint( true );
 
-	idFile *localizeFile = fileSystem->OpenFileWrite( "gui_parm_localize.csv" ); 
-	idFile *noLocalizeFile = fileSystem->OpenFileWrite( "gui_parm_nolocalize.csv" ); 
+	idFile *localizeFile = fileSystem->OpenFileWrite( "gui_parm_localize.csv" );
+	idFile *noLocalizeFile = fileSystem->OpenFileWrite( "gui_parm_nolocalize.csv" );
 
 	idStrList excludeList;
 	LoadGuiParmExcludeList(excludeList);
@@ -394,7 +394,7 @@ CONSOLE_COMMAND( localizeGuiParmsTest, "Create test files that show gui parms lo
 	GetFileList("z:/d3xp/d3xp/maps/game", "*.map", files);
 
 	for ( int i = 0; i < files.Num(); i++ ) {
-		
+
 		common->Printf("Testing Map '%s'\n", files[i].c_str());
 		idMapFile map;
 
@@ -419,7 +419,7 @@ CONSOLE_COMMAND( localizeGuiParmsTest, "Create test files that show gui parms lo
 			}
 		}
 	}
-	
+
 	fileSystem->CloseFile( localizeFile );
 	fileSystem->CloseFile( noLocalizeFile );
 
@@ -435,8 +435,8 @@ CONSOLE_COMMAND( localizeMapsTest, "Create test files that shows which strings w
 
 	common->SetRefreshOnPrint( true );
 
-	idFile *localizeFile = fileSystem->OpenFileWrite( "map_localize.csv" ); 
-	
+	idFile *localizeFile = fileSystem->OpenFileWrite( "map_localize.csv" );
+
 	idStrList files;
 	GetFileList("z:/d3xp/d3xp/maps/game", "*.map", files);
 
@@ -451,7 +451,7 @@ CONSOLE_COMMAND( localizeMapsTest, "Create test files that shows which strings w
 			for ( int j = 0; j < count; j++ ) {
 				idMapEntity *ent = map.GetEntity( j );
 				if ( ent ) {
-					
+
 					//Temp code to get a list of all entity key value pairs
 					/*idStr classname = ent->epairs.GetString("classname");
 					if(classname == "worldspawn" || classname == "func_static" || classname == "light" || classname == "speaker" || classname.Left(8) == "trigger_") {
@@ -464,7 +464,7 @@ CONSOLE_COMMAND( localizeMapsTest, "Create test files that shows which strings w
 					}*/
 
 					idStr classname = ent->epairs.GetString("classname");
-					
+
 					//Hack: for info_location
 					bool hasLocation = false;
 
@@ -475,13 +475,13 @@ CONSOLE_COMMAND( localizeMapsTest, "Create test files that shows which strings w
 						for(int k = 0; k < list->Num(); k++) {
 
 							idStr val = ent->epairs.GetString((*list)[k], "");
-							
+
 							if(classname == "info_location" && (*list)[k] == "location") {
 								hasLocation = true;
 							}
 
 							if(val.Length() && TestMapVal(val)) {
-								
+
 								if(!hasLocation || (*list)[k] == "location") {
 									idStr out = va("%s,%s,%s\r\n", val.c_str(), (*list)[k].c_str(), file.c_str());
 									localizeFile->Write( out.c_str(), out.Length() );
@@ -601,7 +601,7 @@ void idCommonLocal::LocalizeGui( const char *fileName, idLangDict &langDict ) {
 	if ( fileSystem->ReadFile( fileName, (void**)&buffer ) > 0 ) {
 		src.LoadMemory( buffer, strlen(buffer), fileName );
 		if ( src.IsLoaded() ) {
-			idFile *outFile = fileSystem->OpenFileWrite( fileName ); 
+			idFile *outFile = fileSystem->OpenFileWrite( fileName );
 			common->Printf( "Processing %s\n", fileName );
 
 			const bool captureToImage = false;

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ This functions just defaults the session users to the signin manager local users
 ========================
 */
 lobbyUser_t idLobby::CreateLobbyUserFromLocalUser( const idLocalUser * localUser ) {
-		
+
 	lobbyUser_t lobbyUser;
 	idStr::Copynz( lobbyUser.gamertag, localUser->GetGamerTag(), sizeof( lobbyUser.gamertag ) );
 	lobbyUser.peerIndex			= -1;
@@ -284,9 +284,9 @@ void idLobby::InitSessionUsersFromLocalUsers( bool onlineMatch ) {
 	FreeAllUsers();
 
 	// Copy all local users from sign in mgr to the session user list
-	for ( int i = 0; i < sessionCB->GetSignInManager().GetNumLocalUsers(); i++ ) {		
+	for ( int i = 0; i < sessionCB->GetSignInManager().GetNumLocalUsers(); i++ ) {
 		idLocalUser * localUser = sessionCB->GetSignInManager().GetLocalUserByIndex( i );
-		
+
 		// Make sure this user can join lobbies
 		if ( onlineMatch && !localUser->CanPlayOnline() ) {
 			continue;
@@ -301,7 +301,7 @@ void idLobby::InitSessionUsersFromLocalUsers( bool onlineMatch ) {
 		if ( verify( createdUser != NULL ) && migrationInfo.persistUntilGameEndsData.wasMigratedHost ) {
 			createdUser->migrationGameData = migrationInfo.persistUntilGameEndsData.ourGameData;
 			NET_VERBOSE_PRINT( "NET: Migration game data set for local user %s at index %d \n", createdUser->gamertag, migrationInfo.persistUntilGameEndsData.ourGameData );
-		}		
+		}
 	}
 }
 
@@ -321,7 +321,7 @@ int idLobby::GetLobbyUserIndexByLocalUserHandle( const localUserHandle_t localUs
 			return i;		// Found it
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -345,7 +345,7 @@ idLocalUser * idLobby::GetLocalUserFromLobbyUserIndex( int lobbyUserIndex ) {
 	if ( lobbyUser == NULL ) {
 		return NULL;
 	}
-	
+
 	return sessionCB->GetSignInManager().GetLocalUserByHandle( lobbyUser->lobbyUserID.GetLocalUserHandle() );
 }
 
@@ -361,12 +361,12 @@ lobbyUser_t * idLobby::GetSessionUserFromLocalUser( const idLocalUser * localUse
 	}
 
 	int sessionUserIndex = GetLobbyUserIndexByLocalUserHandle( localUser->GetLocalUserHandle() );
-	
+
 	if ( sessionUserIndex != -1 ) {
 		assert( IsSessionUserIndexLocal( sessionUserIndex ) );
 		return GetLobbyUser( sessionUserIndex );
 	}
-	
+
 	return NULL;
 }
 
@@ -374,12 +374,12 @@ lobbyUser_t * idLobby::GetSessionUserFromLocalUser( const idLocalUser * localUse
 ========================
 idLobby::RemoveUsersWithDisconnectedPeers
 Go through each user, and remove the ones that have a peer marked as disconnected
-NOTE - This should only be called from the host.  The host will call RemoveSessionUsersByIDList, 
+NOTE - This should only be called from the host.  The host will call RemoveSessionUsersByIDList,
 which will forward the action to the connected peers.
 ========================
 */
 void idLobby::RemoveUsersWithDisconnectedPeers() {
-	if ( !verify( IsHost() ) ) {	
+	if ( !verify( IsHost() ) ) {
 		// We're not allowed to do this unless we are the host of this session type
 		// If we are the host, RemoveSessionUsersByIDList will forward the call to peers.
 		return;
@@ -396,9 +396,9 @@ void idLobby::RemoveUsersWithDisconnectedPeers() {
 		}
 
 		if ( user->peerIndex == -1 ) {
-			// Wanting to know if this actually happens.  
+			// Wanting to know if this actually happens.
 			// If this is a user on the hosts machine, IsSessionUserIndexLocal should catch it above.
-			assert( false );		
+			assert( false );
 			// The user is on the host.
 			// The host's peer is disconnected via other mechanisms that I don't have a firm
 			// grasp on yet.
@@ -434,13 +434,13 @@ void idLobby::RemoveSessionUsersByIDList( idList< lobbyUserID_t > & usersToRemov
 	for ( int i = 0; i < usersToRemoveByID.Num(); i++ ) {
 		for ( int u = 0; u < GetNumLobbyUsers(); u++ ) {
 			lobbyUser_t * user = GetLobbyUser( u );
-			
+
 			if ( user->IsDisconnected() ) {
 				// User already disconnected from session  but not removed from the list.
 				// This will happen when users are removed during the game.
 				continue;
 			}
-			
+
 			if ( user->lobbyUserID == usersToRemoveByID[i] ) {
 				if ( lobbyType == TYPE_GAME ) {
 					idLib::Printf( "NET: %s left the game.\n", user->gamertag );
@@ -454,7 +454,7 @@ void idLobby::RemoveSessionUsersByIDList( idList< lobbyUserID_t > & usersToRemov
 				// a disconnection HUD message.
 				SaveDisconnectedUser( *user );
 				FreeUser( user );
-				
+
 				break;
 			}
 		}
@@ -526,10 +526,10 @@ void idLobby::SendPeersMicStatusToNewUsers( int peerNumber ) {
 		if ( user->peerIndex == peerNumber ) {
 			continue;
 		}
-		
+
 		int talkerIndex = sessionCB->GetVoiceChat()->FindTalkerByUserId( user->lobbyUserID, lobbyType );
 		bool state = sessionCB->GetVoiceChat()->GetHeadsetState( talkerIndex );
-		
+
 		idLib::Printf( "Packing headset state %d for user %d %s\n", state, i, user->gamertag );
 		user->lobbyUserID.WriteToMsg( outmsg );
 		outmsg.WriteBool( state );
@@ -553,18 +553,18 @@ void idLobby::SendNewUsersToPeers( int skipPeer, int userStart, int numUsers ) {
 	}
 
 	assert( GetNumLobbyUsers() - userStart == numUsers );
-	
+
 	byte buffer[ idPacketProcessor::MAX_PACKET_SIZE ];
 	idBitMsg outmsg( buffer, sizeof( buffer ) );
 
 	// Write number of users
 	outmsg.WriteByte( numUsers );
-	
+
 	// Fill up the msg with all the users
 	for ( int u = userStart; u < GetNumLobbyUsers(); u++ ) {
 		GetLobbyUser( u )->WriteToMsg( outmsg );
 	}
-	
+
 	// Send the msg to all peers (except the skipPeer, or peers not connected to this session type)
 	for ( int p = 0; p < peers.Num(); p++ ) {
 		if ( p == skipPeer || peers[p].GetConnectionState() != CONNECTION_ESTABLISHED ) {
@@ -680,13 +680,13 @@ If we are the host, we will forward this to all peers except the peer that we ju
 void idLobby::AddUsersFromMsg( idBitMsg & msg, int fromPeer ) {
 	int userStart	= GetNumLobbyUsers();
 	int numNewUsers = msg.ReadByte();
-	
+
 	assert( lobbyBackend != NULL );
 
 	// Add the new users to our own list
 	for ( int u = 0; u < numNewUsers; u++ ) {
 		lobbyUser_t newUser;
-		
+
 		// Read in the new user
 		newUser.ReadFromMsg( msg );
 
@@ -695,7 +695,7 @@ void idLobby::AddUsersFromMsg( idBitMsg & msg, int fromPeer ) {
 		if ( IsHost() ) {
 			if ( fromPeer != -1 ) {		// -1 means this is the host adding his own users, and this stuff is already computed
 				// local users will already have this information filled out.
-				newUser.address		= peers[ fromPeer ].address; 
+				newUser.address		= peers[ fromPeer ].address;
 				newUser.peerIndex	= fromPeer;
 				if ( lobbyType == TYPE_PARTY ) {
 					newUser.partyToken = GetPartyTokenAsHost();
@@ -705,7 +705,7 @@ void idLobby::AddUsersFromMsg( idBitMsg & msg, int fromPeer ) {
 			assert( fromPeer == host );
 			// The host sends us all user addresses, except his local users, so we compute that here
 			if ( newUser.peerIndex == -1 ) {
-				newUser.address	= peers[ fromPeer ].address;		
+				newUser.address	= peers[ fromPeer ].address;
 			}
 		}
 
@@ -735,11 +735,11 @@ void idLobby::AddUsersFromMsg( idBitMsg & msg, int fromPeer ) {
 		assert( appendedUser->lobbyUserID == newUser.lobbyUserID );	// paranoia
 		RegisterUser( appendedUser );
 	}
-	
+
 	// Forward list of the new users to all other peers
 	if ( IsHost() ) {
 		SendNewUsersToPeers( fromPeer, userStart, numNewUsers );
-		
+
 		// Set the lobbies skill level
 		lobbyBackend->UpdateLobbySkill( GetAverageSessionLevel() );
 	}
@@ -772,12 +772,12 @@ idLobby::HandleHeadsetStateChange
 */
 void idLobby::HandleHeadsetStateChange( int fromPeer, idBitMsg & msg ) {
 	int userCount = msg.ReadLong();
-	
+
 	for ( int i = 0; i < userCount; ++i ) {
 		lobbyUserID_t lobbyUserID;
 		lobbyUserID.ReadFromMsg( msg );
 		bool state = msg.ReadBool();
-		
+
 		int talkerIndex = sessionCB->GetVoiceChat()->FindTalkerByUserId( lobbyUserID, lobbyType );
 		sessionCB->GetVoiceChat()->SetHeadsetState( talkerIndex, state );
 
@@ -840,7 +840,7 @@ void idLobby::CreateUserUpdateMessage( int userIndex, idBitMsg & msg ) {
 /*
 ========================
 idLobby::UpdateLocalSessionUsers
-======================== 
+========================
 */
 void idLobby::UpdateLocalSessionUsers() {
 	for ( int i = 0; i < GetNumLobbyUsers(); i++ ) {
@@ -892,12 +892,12 @@ void idLobby::HandleUserConnectFailure( int p, idBitMsg & inMsg, int reliableTyp
 	inMsg.ReadByte();		// Num users
 	lobbyUser_t user;
 	user.ReadFromMsg( inMsg );
-	
+
 	// Not enough room, send failure ack
 	byte buffer[ idPacketProcessor::MAX_PACKET_SIZE ];
 	idBitMsg msg( buffer, sizeof( buffer ) );
 	user.lobbyUserID.GetLocalUserHandle().WriteToMsg( msg );		// Let peer know which user failed to connect
-	
+
 	// Send it
 	QueueReliableMessage( p, reliableType, msg.GetReadData(), msg.GetSize() );
 }
@@ -913,13 +913,13 @@ void idLobby::ProcessUserDisconnectMsg( idBitMsg & msg ) {
 
 	// Convert the msg into a list of id's
 	const int numUsers			= msg.ReadByte();
-	
+
 	for ( int u = 0; u < numUsers; u++ ) {
 		lobbyUserID_t lobbyUserID;
 		lobbyUserID.ReadFromMsg( msg );
 		removeList.Append( lobbyUserID );
 	}
-	
+
 	RemoveSessionUsersByIDList( removeList );
 }
 
@@ -951,10 +951,10 @@ void idLobby::RequestLocalUserJoin( idLocalUser * localUser ) {
 
 	// Construct a msg that contains the user connect request
 	lobbyUser_t lobbyUser = CreateLobbyUserFromLocalUser( localUser );
-	
+
 	byte buffer[ idPacketProcessor::MAX_PACKET_SIZE ];
 	idBitMsg msg( buffer, sizeof( buffer ) );
-	
+
 	msg.WriteByte( 1 );					// 1 user
 	lobbyUser.WriteToMsg( msg );		// Write user
 
@@ -981,27 +981,27 @@ void idLobby::RequestSessionUserDisconnect( int sessionUserIndex ) {
 		// This is so we accurately reflect the local user list through the session users in the menus, etc.
 		// FIXME:
 		// This is a total hack, and we should really look at better separation of local users/session users
-		// and not rely on session users while in the menus. 
+		// and not rely on session users while in the menus.
 		FreeUser( GetLobbyUser( sessionUserIndex ) );
 		return;
 	}
-	
+
 	lobbyUser_t * lobbyUser = GetLobbyUser( sessionUserIndex );
 
 	if ( !verify( lobbyUser != NULL ) ) {
 		return;
 	}
-	
+
 	if ( lobbyUser->disconnecting == true ) {
 		return;		// Already disconnecting
 	}
 
 	byte buffer[ idPacketProcessor::MAX_PACKET_SIZE ];
 	idBitMsg msg( buffer, sizeof( buffer ) );
-	
+
 	msg.WriteByte( 1 );	// 1 user
 	lobbyUser->lobbyUserID.WriteToMsg( msg );
-	
+
 	if ( IsHost() ) {
 		idBitMsg readMsg;
 		readMsg.InitRead( msg.GetReadData(), msg.GetSize() );
@@ -1011,7 +1011,7 @@ void idLobby::RequestSessionUserDisconnect( int sessionUserIndex ) {
 	} else {
 		// Send the message
 		QueueReliableMessage( host, RELIABLE_USER_DISCONNECT_REQUEST, msg.GetReadData(), msg.GetSize() );
-		
+
 		// Mark user as disconnecting to make sure we don't keep sending the request
 		lobbyUser->disconnecting = true;
 	}
@@ -1025,8 +1025,8 @@ As local users come and go, this function will detect that, and send msg's to th
 add/remove the users from the session.
 ========================
 */
-void idLobby::SyncLobbyUsersWithLocalUsers( bool allowLocalJoins, bool onlineMatch ) {		
-	
+void idLobby::SyncLobbyUsersWithLocalUsers( bool allowLocalJoins, bool onlineMatch ) {
+
 	if ( lobbyBackend == NULL ) {
 		return;
 	}
@@ -1039,7 +1039,7 @@ void idLobby::SyncLobbyUsersWithLocalUsers( bool allowLocalJoins, bool onlineMat
 		// If we are allowed to do so, allow local users to join the session user list
 		for ( int i = 0; i < sessionCB->GetSignInManager().GetNumLocalUsers(); i++ ) {
 			idLocalUser * localUser = sessionCB->GetSignInManager().GetLocalUserByIndex( i );
-						
+
 			if ( GetSessionUserFromLocalUser( localUser ) != NULL ) {
 				continue;		// Already in the lobby
 			}
@@ -1047,14 +1047,14 @@ void idLobby::SyncLobbyUsersWithLocalUsers( bool allowLocalJoins, bool onlineMat
 			if ( localUser->IsJoiningLobby( lobbyType ) ) {
 				continue;		// Already joining lobby if this type
 			}
-			
+
 			if ( onlineMatch && !localUser->CanPlayOnline() ) {
 				continue;		// Not allowed to join this type of lobby
 			}
-			
+
 			localUser->SetJoiningLobby( lobbyType, true );		// We'll reset this when we get the ack for this request
 			RequestLocalUserJoin( localUser );
-		}	
+		}
 	}
 
 	// Find session users that are no longer allowed to be in the list
@@ -1069,7 +1069,7 @@ void idLobby::SyncLobbyUsersWithLocalUsers( bool allowLocalJoins, bool onlineMat
 		}
 
 		idLocalUser * localUser = GetLocalUserFromLobbyUserIndex( i );
-		
+
 		if ( localUser == NULL || ( onlineMatch && !localUser->CanPlayOnline() ) ) {
 			// Either the session user is no longer in the local user list,
 			//	or not allowed to join online lobbies.
@@ -1146,7 +1146,7 @@ bool idLobby::ValidateConnectedUser( const lobbyUser_t * user ) const {
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -1338,7 +1338,7 @@ idLobby::QueueReliablePlayerToPlayerMessage
 ========================
 */
 void idLobby::QueueReliablePlayerToPlayerMessage( int fromSessionUserIndex, int toSessionUserIndex, reliablePlayerToPlayer_t type, const byte * data, int dataLen ) {
-	
+
 	reliablePlayerToPlayerHeader_t info;
 	info.fromSessionUserIndex = fromSessionUserIndex;
 	info.toSessionUserIndex = toSessionUserIndex;

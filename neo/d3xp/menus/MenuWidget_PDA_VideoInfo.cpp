@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ void idMenuWidget_PDA_VideoInfo::Update() {
 
 	idSWFTextInstance * txtHeading = GetSprite()->GetScriptObject()->GetNestedText( "txtName" );
 	idSWFTextInstance * txtInfo = GetSprite()->GetScriptObject()->GetNestedText( "txtInfo" );
-	
+
 	int numVideos = player->GetInventory().videos.Num();
 	if ( numVideos != 0 ) {
 		const idDeclVideo * video = player->GetVideo( videoIndex );
@@ -100,7 +100,7 @@ void idMenuWidget_PDA_VideoInfo::ObserveEvent( const idMenuWidget & widget, cons
 						videoSprite->SetMaterial( video->GetPreview() );
 					}
 				}
-			}			
+			}
 
 			if ( GetParent() != NULL ) {
 				idMenuScreen_PDA_VideoDisks * screen = dynamic_cast< idMenuScreen_PDA_VideoDisks * const >( GetParent() );

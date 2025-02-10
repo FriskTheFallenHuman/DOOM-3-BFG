@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ void idMenuScreen_Shell_Gamepad::Initialize( idMenuHandler * data ) {
 
 	if ( data != NULL ) {
 		menuGUI = data->GetGUI();
-	} 
+	}
 
 	SetSpritePath( "menuGamepad" );
 
@@ -86,7 +86,7 @@ void idMenuScreen_Shell_Gamepad::Initialize( idMenuHandler * data ) {
 	control->SetLabel( "#str_swf_gamepad_config" );	// Gamepad Configuration
 	control->SetDescription( "#str_swf_config_desc" );
 	control->RegisterEventObserver( helpWidget );
-	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_COMMAND, GAMEPAD_CMD_CONFIG );	
+	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_COMMAND, GAMEPAD_CMD_CONFIG );
 	options->AddChild( control );
 #endif
 
@@ -174,7 +174,7 @@ void idMenuScreen_Shell_Gamepad::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -186,7 +186,7 @@ void idMenuScreen_Shell_Gamepad::Update() {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-		}		
+		}
 	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
@@ -372,13 +372,13 @@ idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::idMenuDataSource_G
 idMenuScreen_Shell_Gamepad::idMenuDataSource_AudioSettings::LoadData
 ========================
 */
-void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::LoadData() {	
+void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::LoadData() {
 	idPlayerProfile * profile = session->GetProfileFromMasterLocalUser();
 
 	fields[ GAMEPAD_FIELD_INVERT ].SetBool( in_invertLook.GetBool() );
 	fields[ GAMEPAD_FIELD_LEFTY ].SetBool( profile ? profile->GetLeftyFlip() : false );
 	fields[ GAMEPAD_FIELD_VIBRATE ].SetBool( in_joystickRumble.GetBool() );
-	fields[ GAMEPAD_FIELD_HOR_SENS ].SetFloat( 100.0f * ( ( joy_yawSpeed.GetFloat() - 100.0f ) / 300.0f ) );	
+	fields[ GAMEPAD_FIELD_HOR_SENS ].SetFloat( 100.0f * ( ( joy_yawSpeed.GetFloat() - 100.0f ) / 300.0f ) );
 	fields[ GAMEPAD_FIELD_VERT_SENS ].SetFloat( 100.0f * ( ( joy_pitchSpeed.GetFloat() - 60.0f ) / 200.0f ) );
 	fields[ GAMEPAD_FIELD_ACCELERATION ].SetBool( joy_gammaLook.GetBool() );
 	fields[ GAMEPAD_FIELD_THRESHOLD ].SetBool( joy_mergedThreshold.GetBool() );
@@ -451,7 +451,7 @@ bool idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::IsDataChanged
 	if ( fields[ GAMEPAD_FIELD_VERT_SENS ].ToFloat() != originalFields[ GAMEPAD_FIELD_VERT_SENS ].ToFloat() ) {
 		return true;
 	}
-	
+
 	if ( fields[ GAMEPAD_FIELD_ACCELERATION ].ToBool() != originalFields[ GAMEPAD_FIELD_ACCELERATION ].ToBool() ) {
 		return true;
 	}

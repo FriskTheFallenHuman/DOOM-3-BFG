@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ void idGameLocal::SyncPlayersWithLobbyUsers( bool initial ) {
 	idStaticList< lobbyUserID_t, MAX_CLIENTS > newLobbyUsers;
 
 	// First, loop over lobby users, and see if we find a lobby user that we haven't registered
-	for ( int i = 0; i < lobby.GetNumLobbyUsers(); i++ ) {	
+	for ( int i = 0; i < lobby.GetNumLobbyUsers(); i++ ) {
 		lobbyUserID_t lobbyUserID1 = lobby.GetLobbyUserIdByOrdinal( i );
 
 		if ( !lobbyUserID1.IsValid() ) {
@@ -142,7 +142,7 @@ void idGameLocal::SyncPlayersWithLobbyUsers( bool initial ) {
 			if ( player == NULL ) {
 				continue;
 			}
-			
+
 			lobbyUserID_t lobbyUserID2 = lobbyUserIDs[j];
 
 			if ( lobbyUserID1 == lobbyUserID2 ) {
@@ -163,9 +163,9 @@ void idGameLocal::SyncPlayersWithLobbyUsers( bool initial ) {
 		if ( player == NULL ) {
 			continue;
 		}
-		
+
 		lobbyUserID_t lobbyUserID = lobbyUserIDs[i];
-		
+
 		if ( !lobby.IsLobbyUserValid( lobbyUserID ) ) {
 			delete entities[ i ];
 			mpGame.DisconnectClient( i );
@@ -394,7 +394,7 @@ void idGameLocal::ServerWriteSnapshot( idSnapShot & ss ) {
 		msg.WriteBits( spawnIds[ ent->entityNumber ], 32 - GENTITYNUM_BITS );
 		msg.WriteBits( ent->GetType()->typeNum, idClass::GetTypeNumBits() );
 		msg.WriteBits( ServerRemapDecl( -1, DECL_ENTITYDEF, ent->entityDefNumber ), entityDefBits );
-		
+
 		msg.WriteBits( ent->GetPredictedKey(), 32 );
 
 		if ( ent->fl.networkSync ) {
@@ -450,7 +450,7 @@ void idGameLocal::ServerProcessEntityNetworkEventQueue() {
 		}
 
 		idEntityPtr< idEntity > entPtr;
-			
+
 		if( !entPtr.SetSpawnId( event->spawnId ) ) {
 			NetworkEventWarning( event, "Entity does not exist any longer, or has not been spawned yet." );
 		} else {
@@ -577,7 +577,7 @@ void idGameLocal::ServerProcessReliableMessage( int clientNum, int type, const i
 
 			idPlayer & victim = static_cast< idPlayer & >( *gameLocal.entities[victimNum] );
 			idPlayer & attacker = static_cast< idPlayer & >( *gameLocal.entities[attackerNum] );
-			
+
 			if ( victim.GetPhysics() == NULL ) {
 				break;
 			}
@@ -602,13 +602,13 @@ void idGameLocal::ServerProcessReliableMessage( int clientNum, int type, const i
 
 			trace_t tr;
 			gameLocal.clip.Translation( tr, muzzleOrigin, targetLocation, NULL, mat3_identity, MASK_SHOT_RENDERMODEL, &attacker );
-			
+
 			idEntity * hitEnt = gameLocal.entities[ tr.c.entityNum ];
 			if ( hitEnt != &victim ) {
 				break;
 			}
 			const idDeclEntityDef *damageDef = static_cast<const idDeclEntityDef *>( declManager->DeclByIndex( DECL_ENTITYDEF, damageDefIndex, false ) );
-			
+
 			if ( damageDef != NULL ) {
 				victim.Damage( NULL, gameLocal.entities[attackerNum], dir, damageDef->GetName(), damageScale, location );
 			}
@@ -774,7 +774,7 @@ void idGameLocal::ClientReadSnapshot( const idSnapShot & ss ) {
 					// now mark us as no longer predicted
 					predictedEntity->BecomeReplicated();
 #endif
-				} 
+				}
 				//TODO make this work with non-client preditced entities
 				/* else {
 					idLib::Warning( "Could not find predicted entity - key: %d. EntityIndex: %d", predictedKey, entityNum );
@@ -883,7 +883,7 @@ void idGameLocal::ClientProcessEntityNetworkEventQueue() {
 		}
 
 		idEntityPtr< idEntity > entPtr;
-			
+
 		if( !entPtr.SetSpawnId( event->spawnId ) ) {
 			if( !gameLocal.entities[ event->spawnId & ( ( 1 << GENTITYNUM_BITS ) - 1 ) ] ) {
 				// if new entity exists in this position, silently ignore
@@ -1095,7 +1095,7 @@ idGameLocal::Tokenize
 void idGameLocal::Tokenize( idStrList &out, const char *in ) {
 	char buf[ MAX_STRING_CHARS ];
 	char *token, *next;
-	
+
 	idStr::Copynz( buf, in, MAX_STRING_CHARS );
 	token = buf;
 	next = strchr( token, ';' );
@@ -1110,7 +1110,7 @@ void idGameLocal::Tokenize( idStrList &out, const char *in ) {
 			next = strchr( token, ';' );
 		} else {
 			token = NULL;
-		}		
+		}
 	}
 }
 
@@ -1151,13 +1151,13 @@ uint32  idGameLocal::GeneratePredictionKey( idWeapon * weapon, idPlayer * player
 		}
 
 		predictedKey |= ( peerIndex << 28 );
-		
+
 		return predictedKey;
 	}
 
 	uint32 predictedKey = idEntity::INVALID_PREDICTION_KEY;
 	int peerIndex		= -1;
-	
+
 	// Get key - fireCount or throwCount
 	//if ( weapon != NULL ) {
 	if ( common->IsClient() ) {
@@ -1170,14 +1170,14 @@ uint32  idGameLocal::GeneratePredictionKey( idWeapon * weapon, idPlayer * player
 	//}
 
 	// Get peer index
-	if ( common->IsServer() ) {		
+	if ( common->IsServer() ) {
 		peerIndex = session->GetActingGameStateLobbyBase().PeerIndexFromLobbyUser( lobbyUserIDs[ playerAttacker->entityNumber ] );
 	} else {
 		peerIndex = session->GetActingGameStateLobbyBase().PeerIndexOnHost();
 	}
 
 	if ( cg_predictedSpawn_debug.GetBool() ) {
-		idLib::Printf("GeneratePredictionKey. predictedKey: %d peedIndex: %d\n", predictedKey, peerIndex ); 
+		idLib::Printf("GeneratePredictionKey. predictedKey: %d peedIndex: %d\n", predictedKey, peerIndex );
 	}
 
 	predictedKey |= ( peerIndex << 28 );
@@ -1268,7 +1268,7 @@ entityNetEvent_t* idEventQueue::RemoveLast() {
 	if ( !end ) {
 		start = NULL;
 	} else {
-		end->next = NULL;		
+		end->next = NULL;
 	}
 
 	event->next = NULL;
@@ -1312,7 +1312,7 @@ void idEventQueue::Enqueue( entityNetEvent_t *event, outOfOrderBehaviour_t behav
 			cur->next = event;
 		}
 		return;
-	} 
+	}
 
 	// add the new event
 	event->next = NULL;

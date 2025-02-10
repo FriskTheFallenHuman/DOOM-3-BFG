@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ extern idCVar in_useJoystick;
 idMenuHandler::~idMenuHandler
 ================================================
 */
-idMenuHandler::idMenuHandler() { 
+idMenuHandler::idMenuHandler() {
 	scrollingMenu = false;
 	scrollCounter = 0;
 	activeScreen = -1;
@@ -61,7 +61,7 @@ idMenuHandler::~idMenuHandler
 ================================================
 */
 idMenuHandler::~idMenuHandler() {
-	Cleanup();	
+	Cleanup();
 }
 
 /*
@@ -118,7 +118,7 @@ int idMenuHandler::GetPlatform( bool realPlatform ) {
 		return 0;
 	}
 
-	return platform;	
+	return platform;
 }
 
 /*
@@ -146,7 +146,7 @@ void idMenuHandler::PlaySound( menuSounds_t type, int channel ) {
 	}
 
 	gui->PlaySound( sounds[ type ], c );
-	
+
 }
 
 /*
@@ -256,7 +256,7 @@ void idMenuHandler::ActivateMenu( bool show ) {
 
 	gui->SetGlobal( "updateMenuDisplay", new (TAG_SWF) idSWFScriptFunction_updateMenuDisplay( gui, this ) );
 	gui->SetGlobal( "activateMenus", new (TAG_SWF) idSWFScriptFunction_activateMenu( this ) );
-	
+
 	gui->Activate( show );
 }
 
@@ -293,7 +293,7 @@ idMenuHandler::UpdateMenuDisplay
 ================================================
 */
 void idMenuHandler::UpdateMenuDisplay( int menu ) {
-	
+
 	if ( menuScreens[ menu ] != NULL ) {
 		menuScreens[ menu ]->Update();
 	}
@@ -313,7 +313,7 @@ bool idMenuHandler::HandleGuiEvent( const sysEvent_t * sev ) {
 		return gui->HandleEvent( sev );
 	}
 
-	return false; 
+	return false;
 }
 
 /*
@@ -355,7 +355,7 @@ bool idMenuHandler::HandleAction( idWidgetAction & action, const idWidgetEvent &
 			int repeatDelay = DEFAULT_REPEAT_TIME;
 			if ( parms.Num() >= 3 ) {
 				repeatDelay = parms[2].ToInteger();
-			} 
+			}
 			repeatAction.Set( repeatActionType, parms[ 1 ], repeatDelay );
 			StartWidgetActionRepeater( widget, repeatAction, event );
 			return true;

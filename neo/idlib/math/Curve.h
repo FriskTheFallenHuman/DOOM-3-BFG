@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ protected:
 
 	idList<float>		times;			// knots
 	idList<type>		values;			// knot values
-	
+
 	mutable int			currentIndex;	// cached index for fast lookup
 	mutable bool		changed;		// set whenever the curve changes
 
@@ -1973,7 +1973,7 @@ ID_INLINE float idCurve_BSpline<type>::BasisSecondDerivative( const int index, c
 
 template< class type >
 class idCurve_UniformCubicBSpline : public idCurve_BSpline<type> {
-	
+
 public:
 						idCurve_UniformCubicBSpline();
 
@@ -2142,7 +2142,7 @@ ID_INLINE void idCurve_UniformCubicBSpline<type>::BasisSecondDerivative( const i
 
 template< class type >
 class idCurve_NonUniformBSpline : public idCurve_BSpline<type> {
-	
+
 public:
 						idCurve_NonUniformBSpline();
 
@@ -2328,7 +2328,7 @@ ID_INLINE void idCurve_NonUniformBSpline<type>::BasisSecondDerivative( const int
 
 template< class type >
 class idCurve_NURBS : public idCurve_NonUniformBSpline<type> {
-	
+
 public:
 						idCurve_NURBS();
 

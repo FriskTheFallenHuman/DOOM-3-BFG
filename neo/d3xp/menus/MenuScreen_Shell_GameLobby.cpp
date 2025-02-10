@@ -3,9 +3,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -201,7 +201,7 @@ void idMenuScreen_Shell_GameLobby::Update() {
 
 		} else if ( session->GetActivePlatformLobbyBase().IsPeer() ) {
 
-			if ( !isPeer ) {			
+			if ( !isPeer ) {
 
 				menuOptions.Clear();
 				idList< idStr > option;
@@ -221,7 +221,7 @@ void idMenuScreen_Shell_GameLobby::Update() {
 
 				options->SetListData( menuOptions );
 			}
-			
+
 			isPeer = true;
 			isHost = false;
 		}
@@ -231,7 +231,7 @@ void idMenuScreen_Shell_GameLobby::Update() {
 		idMenuWidget_CommandBar * cmdBar = menuData->GetCmdBar();
 		if ( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
-			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;			
+			idMenuWidget_CommandBar::buttonInfo_t * buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
 			if ( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
@@ -257,7 +257,7 @@ void idMenuScreen_Shell_GameLobby::Update() {
 				buttonInfo->action.Set( WIDGET_ACTION_JOY4_ON_PRESS );
 			}
 		}
-	}		
+	}
 
 	if ( btnBack != NULL ) {
 		btnBack->BindSprite( root );
@@ -277,7 +277,7 @@ void idMenuScreen_Shell_GameLobby::ShowScreen( const mainMenuTransition_t transi
 		options->SetFocusIndex( 0 );
 		options->SetViewIndex( 0 );
 	}
-	
+
 	isHost = false;
 	isPeer = false;
 
@@ -308,12 +308,12 @@ void idMenuScreen_Shell_GameLobby::ShowScreen( const mainMenuTransition_t transi
 			}
 
 			options->SetListData( menuOptions );
-		} 
+		}
 
 		longCountdown = Sys_Milliseconds() + WAIT_START_TIME_LONG;
 		longCountRemaining = longCountdown;
 		shortCountdown = Sys_Milliseconds() + WAIT_START_TIME_SHORT;
-	} 
+	}
 
 	idSWFScriptObject & root = GetSWFObject()->GetRootObject();
 	if ( BindSprite( root ) ) {
@@ -533,7 +533,7 @@ bool idMenuScreen_Shell_GameLobby::HandleAction( idWidgetAction & action, const 
 }
 
 /*
-========================	
+========================
 idMenuScreen_Shell_GameLobby::UpdateLobby
 ========================
 */
@@ -571,7 +571,7 @@ void idMenuScreen_Shell_GameLobby::UpdateLobby() {
 						shortCountdown = Sys_Milliseconds() + WAIT_START_TIME_SHORT;
 					} else {
 						shortCountdown = timeRemaining;
-					}				
+					}
 					longCountRemaining = timeRemaining;
 					if ( timeRemaining < 0 ) {
 						timeRemaining = 0;
@@ -610,7 +610,7 @@ void idMenuScreen_Shell_GameLobby::UpdateLobby() {
 					waitTime->SetText( status );
 				} else {
 					waitTime->SetText( "" );
-				}				
+				}
 				waitTime->SetStrokeInfo( true, 0.75f, 2.0f );
 			}
 		}
@@ -656,7 +656,7 @@ void idMenuScreen_Shell_GameLobby::UpdateLobby() {
 		if ( privacy != NULL ) {
 			if ( isPeer || !privateGameLobby ) {
 				privacy->SetText( "" );
-			} else {				
+			} else {
 				int bitSet = ( matchParameters.matchFlags & MATCH_INVITE_ONLY );
 				bool privacySet = ( bitSet != 0 ? true : false );
 				if ( privacySet ) {

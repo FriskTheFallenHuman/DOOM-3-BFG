@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ void idMenuWidget_ScrollBar::Update() {
 	if ( node != NULL && nodeSprite != NULL ) {
 		node->Set( "onDrag", new ( TAG_SWF ) WrapWidgetSWFEvent( this, WIDGET_EVENT_DRAG_START, 0 ) );
 		node->Set( "onRelease", new ( TAG_SWF ) WrapWidgetSWFEvent( this, WIDGET_EVENT_DRAG_STOP, 0 ) );
-	
+
 		const idMenuWidget_DynamicList * const list = dynamic_cast< const idMenuWidget_DynamicList * const >( GetParent() );
 		if ( list != NULL ) {
 			float percent = 0.0f;
@@ -138,16 +138,16 @@ void idMenuWidget_ScrollBar::CalcTopAndBottom() {
 idMenuWidget_ScrollBar::CalculatePosition
 ========================
 */
-void idMenuWidget_ScrollBar::CalculatePosition( float x, float y ) {	
+void idMenuWidget_ScrollBar::CalculatePosition( float x, float y ) {
 	if ( GetSprite() == NULL ) {
 		return;
 	}
 
-	if ( y >= yTop && y <= yBot ) {		
+	if ( y >= yTop && y <= yBot ) {
 		float range = yBot - yTop;
 		float val = y - yTop;
 
-		float percent = val / range;		
+		float percent = val / range;
 		idSWFSpriteInstance * node = GetSprite()->GetScriptObject()->GetNestedSprite( "node" );
 		if ( node != NULL ) {
 			node->SetYPos( percent * range );
@@ -162,18 +162,18 @@ void idMenuWidget_ScrollBar::CalculatePosition( float x, float y ) {
 			int newOffset = ( int )( ( ( percent * segment ) * 100.0f ) );
 
 			if ( newOffset >= maxScroll ) {
-				int i = 1; 
+				int i = 1;
 				i = i;
 			}
 
-			if ( newOffset != offset ) {	
+			if ( newOffset != offset ) {
 
 				int viewIndex = list->GetViewIndex();
 				list->SetViewOffset( newOffset );
 				idLib::Printf( "newOffset = %d\n", newOffset );
 				if ( viewIndex < newOffset ) {
 					viewIndex = newOffset;
-					list->SetViewIndex( viewIndex );					
+					list->SetViewIndex( viewIndex );
 				} else if ( viewIndex > ( newOffset + list->GetNumVisibleOptions() - 1 ) ) {
 					viewIndex = ( newOffset + list->GetNumVisibleOptions() - 1 );
 					list->SetViewIndex( viewIndex );

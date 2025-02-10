@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class idVoiceChatMgr {
 public:
 	idVoiceChatMgr() : activeLobbyType( -1 ), activeGroupIndex( 0 ), sendFrame( 0 ), disableVoiceReasons( 0 ), sendGlobal( false )  {}
 	virtual			~idVoiceChatMgr() {}
-	
+
 	virtual void	Init( void * pXAudio2 );
 	virtual void	Shutdown();
 
@@ -47,7 +47,7 @@ public:
 	void			UnregisterTalker( lobbyUser_t * user, int lobbyType, bool isLocal );
 	void			GetActiveLocalTalkers( idStaticList< int, MAX_PLAYERS > & localTalkers );
 	void			GetRecipientsForTalker( int talkerIndex, idStaticList< const lobbyAddress_t *, MAX_PLAYERS > & recipients );
-	
+
 	void			SetTalkerGroup( const lobbyUser_t * user, int lobbyType, int groupIndex );
 
 	void			SetActiveLobby( int lobbyType );
@@ -88,12 +88,12 @@ protected:
 	};
 
 	struct talker_t {
-		talker_t() : 
-			user( NULL ), 
-			isLocal( false ), 
-			lobbyType( -1 ), 
-			groupIndex( -1 ), 
-			registered( false ), 
+		talker_t() :
+			user( NULL ),
+			isLocal( false ),
+			lobbyType( -1 ),
+			groupIndex( -1 ),
+			registered( false ),
 			registeredSuccess( false ),
 			machineIndex( -1 ),
 			isMuted( false ),
@@ -129,10 +129,10 @@ protected:
 	int		AddMachine( const lobbyAddress_t & address, int lobbyType );
 	void	RemoveMachine( int machineIndex, int lobbyType );
 	void	UpdateRegisteredTalkers();
-	
+
 	idStaticList< talker_t, MAX_PLAYERS * 2 >			talkers;			// * 2 to account for handling both session types
 	idStaticList< remoteMachine_t, MAX_PLAYERS * 2 >	remoteMachines;		// * 2 to account for handling both session types
-	
+
 	int						activeLobbyType;
 	int						activeGroupIndex;
 	int						sendFrame;
@@ -141,4 +141,4 @@ protected:
 };
 
 
-#endif	// __SYS_VOICECHATMGR_H__ 
+#endif	// __SYS_VOICECHATMGR_H__

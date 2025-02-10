@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -279,7 +279,7 @@ idSoundWorldLocal::Update
 */
 void idSoundWorldLocal::Update() {
 
-	if ( s_noSound.GetBool() ) { 
+	if ( s_noSound.GetBool() ) {
 		return;
 	}
 
@@ -391,7 +391,7 @@ void idSoundWorldLocal::Update() {
 	// it smoothly change frame to frame.
 	// ------------------
 	const int uncushionedChannels = maxEmitterChannels - s_cushionFadeChannels.GetInteger();
-	currentCushionDB = AdjustForCushionChannels( activeEmitterChannels, uncushionedChannels, 
+	currentCushionDB = AdjustForCushionChannels( activeEmitterChannels, uncushionedChannels,
 		currentCushionDB, s_cushionFadeRate.GetFloat() * secondsPerFrame );
 
 	// ------------------
@@ -402,7 +402,7 @@ void idSoundWorldLocal::Update() {
 	idStr showVoiceTable;
 	bool showVoices = s_showVoices.GetBool();
 	if ( showVoices ) {
-		showVoiceTable.Format( "currentCushionDB: %5.1f  freeVoices: %i zombieVoices: %i buffers:%i/%i\n", currentCushionDB, 
+		showVoiceTable.Format( "currentCushionDB: %5.1f  freeVoices: %i zombieVoices: %i buffers:%i/%i\n", currentCushionDB,
 			soundSystemLocal.hardware.GetNumFreeVoices(), soundSystemLocal.hardware.GetNumZombieVoices(),
 			soundSystemLocal.activeStreamBufferContexts.Num(), soundSystemLocal.freeStreamBufferContexts.Num() );
 	}
@@ -798,7 +798,7 @@ void idSoundWorldLocal::ProcessDemoCommand( idDemoFile * readDemo ) {
 			readDemo->ReadVec3( origin );
 			readDemo->ReadMat3( axis );
 			readDemo->ReadInt( listenerId );
-			
+
 			PlaceListener( origin, axis, listenerId );
 		};
 		break;

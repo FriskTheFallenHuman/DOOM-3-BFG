@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ idLobby::UpdateSnaps
 ========================
 */
 void idLobby::UpdateSnaps() {
-	
+
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
 	SCOPED_PROFILE_EVENT( "UpdateSnaps" );
@@ -70,7 +70,7 @@ void idLobby::UpdateSnaps() {
 #if 0
 	uint64 startTimeMicroSec = Sys_Microseconds();
 #endif
-	
+
 	haveSubmittedSnaps = false;
 
 	if ( !SendCompletedSnaps() ) {
@@ -81,7 +81,7 @@ void idLobby::UpdateSnaps() {
 
 	for ( int p = 0; p < peers.Num(); p++ ) {
 		peer_t & peer = peers[p];
-	
+
 		if ( !peer.IsConnected() ) {
 			continue;
 		}
@@ -91,7 +91,7 @@ void idLobby::UpdateSnaps() {
 			if ( SubmitPendingSnap( p ) ) {
 				peer.needToSubmitPendingSnap = false;	// only clear this if we actually submitted the snap
 			}
-			
+
 		}
 	}
 
@@ -114,14 +114,14 @@ bool idLobby::SendCompletedSnaps() {
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
 	bool sentAllSubmitted = true;
-	
+
 	for ( int p = 0; p < peers.Num(); p++ ) {
 		peer_t & peer = peers[p];
-	
+
 		if ( !peer.IsConnected() ) {
 			continue;
 		}
-		
+
 		if ( peer.snapProc->PendingSnapReadyToSend() ) {
 			// Check to see if there are any snaps that were submitted that need to be sent out
 			SendCompletedPendingSnap( p );
@@ -132,7 +132,7 @@ bool idLobby::SendCompletedSnaps() {
 		if ( !peer.IsConnected() ) { // peer may have been dropped in "SendCompletedPendingSnap". ugh.
 			continue;
 		}
-		
+
 		if ( peer.snapProc->PendingSnapReadyToSend() ) {
 			// If we still have a submitted snap, we know we're not done
 			sentAllSubmitted = false;
@@ -141,7 +141,7 @@ bool idLobby::SendCompletedSnaps() {
 			}
 		}
 	}
-	
+
 	return sentAllSubmitted;
 }
 
@@ -162,7 +162,7 @@ idLobby::SubmitPendingSnap
 ========================
 */
 bool idLobby::SubmitPendingSnap( int p ) {
-	
+
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
 	peer_t & peer = peers[p];
@@ -194,14 +194,14 @@ bool idLobby::SubmitPendingSnap( int p ) {
 		return false;
 	}
 
-	peer.lastSnapJobTime = time;	
+	peer.lastSnapJobTime = time;
 	assert( !peer.snapProc->PendingSnapReadyToSend() );
-	
+
 	// Submit snapshot delta to jobs
 	peer.snapProc->SubmitPendingSnap( p + 1, objMemory, SNAP_OBJ_JOB_MEMORY, lzwData );
 
 	NET_VERBOSESNAPSHOT_PRINT_LEVEL( 2, va("  Submitted snapshot to jobList for peer %d. Since last jobsub: %d\n", p, timeFromLastSub ) );
-	
+
 	return true;
 }
 
@@ -215,21 +215,21 @@ void idLobby::SendCompletedPendingSnap( int p ) {
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
 	int time = Sys_Milliseconds();
-	
+
 	peer_t & peer = peers[p];
-	
+
 	if ( !peer.IsConnected() ) {
 		return;
 	}
-	
+
 	if ( peer.snapProc == NULL || !peer.snapProc->PendingSnapReadyToSend() ) {
 		return;
 	}
 
 	// If we have a pending snap ready to send, we better have a pending snap
 	assert( peer.snapProc->HasPendingSnap() );
-	
-	// Get the snap data blob now, even if we don't send it.  
+
+	// Get the snap data blob now, even if we don't send it.
 	// This is somewhat wasteful, but we have to do this to keep the snap job pipe ready to keep doing work
 	// If we don't do this, this peer will cause other peers to be starved of snapshots, when they may very well be ready to send a snap
 	byte buffer[ MAX_SNAP_SIZE ];
@@ -291,7 +291,7 @@ void idLobby::SendCompletedPendingSnap( int p ) {
 	if ( size != 0 ) {
 		if ( size > 0 ) {
 			NET_VERBOSESNAPSHOT_PRINT_LEVEL( 3, va("NET: (peer %d) Sending snapshot %d delta'd against %d. Since JobSub: %d Since LastSend: %d. Size: %d\n", p, peer.snapProc->GetSnapSequence(), peer.snapProc->GetBaseSequence(), timeFromJobSub, timeFromLastSend, size ) );
-			ProcessOutgoingMsg( p, buffer, size, false, 0 );	
+			ProcessOutgoingMsg( p, buffer, size, false, 0 );
 		} else if ( size < 0 ) {	// Size < 0 indicates the delta buffer filled up
 			// There used to be code here that would disconnect peers if they were in game and filled up the buffer
 			// This was causing issues in the playtests we were running (Doom 4 MP) and after some conversation
@@ -301,9 +301,9 @@ void idLobby::SendCompletedPendingSnap( int p ) {
 				NET_VERBOSESNAPSHOT_PRINT( "NET: (peerNum: %d - name: %s) Resending last snapshot delta %d because his delta list filled up. Since JobSub: %d Since LastSend: %d Delta Size: %d\n", p, GetPeerName( p ), peer.snapProc->GetSnapSequence(), timeFromJobSub, timeFromLastSend, size );
 			}
 		}
-	} 
+	}
 
-	// We calculate what our outgoing rate was for each sequence, so we can have a relative comparison 
+	// We calculate what our outgoing rate was for each sequence, so we can have a relative comparison
 	// for when the client reports what his downstream was in the same timeframe
 	if ( IsHost() && peer.snapProc != NULL && peer.snapProc->GetSnapSequence() > 0 ) {
 		//NET_VERBOSE_PRINT("^8  %i Rate: %.2f   SnapSeq: %d GetBaseSequence: %d\n", lastAppendedSequence, peer.packetProc->GetOutgoingRateBytes(), peer.snapProc->GetSnapSequence(), peer.snapProc->GetBaseSequence() );
@@ -336,7 +336,7 @@ void idLobby::CheckPeerThrottle( int p ) {
 	if ( session->GetTitleStorageInt( "net_peer_throttle_mode", net_peer_throttle_mode.GetInteger() ) == 0 ) {
 		return;
 	}
-	
+
 	if ( peer.receivedBps < 0.0f ) {
 		return;
 	}
@@ -351,7 +351,7 @@ void idLobby::CheckPeerThrottle( int p ) {
 		const int peer_throttle_minSnapSeq = session->GetTitleStorageInt( "net_peer_throttle_minSnapSeq", net_peer_throttle_minSnapSeq.GetInteger() );
 		if ( peer.snapProc->GetFullSnapBaseSequence() <= idSnapshotProcessor::INITIAL_SNAP_SEQUENCE + peer_throttle_minSnapSeq ) {
 			return;
-		} 
+		}
 	}
 
 	// This is bps throttling which compares the sent bytes per second to the reported received bps
@@ -363,7 +363,7 @@ void idLobby::CheckPeerThrottle( int p ) {
 
 			bool throttled = false;
 			float sentBps = peer.sentBpsHistory[ peer.receivedBpsIndex % MAX_BPS_HISTORY ];
-			
+
 			// Min outgoing rate from server (don't throttle if we are sending < 1k)
 			if ( sentBps > peer_throttle_bps_host_threshold ) {
 				float pct = peer.receivedBps / idMath::ClampFloat( 0.01f, static_cast<float>( BANDWIDTH_REPORTING_MAX ), sentBps ); // note the receivedBps is implicitly clamped on client end to 10k/sec
@@ -440,7 +440,7 @@ void idLobby::ApplySnapshotDelta( int p, int snapshotNumber ) {
 		snapDeltaAck.p				= p;
 		snapDeltaAck.snapshotNumber = snapshotNumber;
 
-		snapDeltaAckQueue.Append( snapDeltaAck );	
+		snapDeltaAckQueue.Append( snapDeltaAck );
 	} else {
 		ApplySnapshotDeltaInternal( p, snapshotNumber );
 	}
@@ -467,14 +467,14 @@ bool idLobby::ApplySnapshotDeltaInternal( int p, int snapshotNumber ) {
 	// on the server, player = peer number + 1, this only works as long as we don't support clients joining and leaving during game
 	// on the client, always 0
 	bool result = peer.snapProc->ApplySnapshotDelta( IsHost() ? p + 1 : 0, snapshotNumber );
-	
+
 	if ( result && IsHost() && peer.snapProc->HasPendingSnap() ) {
 		// Send more of the pending snap if we have one for this peer.
 		// The reason we can do this, is because we know more about this peers base state now.
 		// And since we maxed out the optimal snap delta size, we'll now be able
-		// to send more data, since we assume we'll get better and better delta compression as 
+		// to send more data, since we assume we'll get better and better delta compression as
 		// our version of this peers base state approaches parity with the peers actual state.
-		
+
 		// We don't send immediately, since we have to coordinate sending snaps for all peers in same place considering jobs.
 		peer.needToSubmitPendingSnap = true;
 		NET_VERBOSESNAPSHOT_PRINT( "NET: Sent more unsent snapshot data to peer %d for snapshot %d\n", p, snapshotNumber );
@@ -559,7 +559,7 @@ bool idLobby::AllPeersHaveBaseState() {
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
 	for ( int i = 0; i < peers.Num(); ++i ) {
-		
+
 		if ( !peers[i].IsConnected() ) {
 			continue;
 		}
@@ -667,7 +667,7 @@ idLobby::AllPeersHaveStaleSnapObj
 bool idLobby::AllPeersHaveStaleSnapObj( int objId ) {
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
-	for ( int i = 0; i < peers.Num(); i++ ) {	
+	for ( int i = 0; i < peers.Num(); i++ ) {
 		if ( !peers[i].IsConnected() ) {
 			continue;
 		}
@@ -691,7 +691,7 @@ idLobby::AllPeersHaveExpectedSnapObj
 bool idLobby::AllPeersHaveExpectedSnapObj( int objId ) {
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
-	for ( int i = 0; i < peers.Num(); i++ ) {	
+	for ( int i = 0; i < peers.Num(); i++ ) {
 		if ( !peers[i].IsConnected() ) {
 			continue;
 		}
@@ -723,11 +723,11 @@ idLobby::MarkSnapObjDeleted
 void idLobby::RefreshSnapObj( int objId ) {
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
-	for ( int i = 0; i < peers.Num(); i++ ) {	
+	for ( int i = 0; i < peers.Num(); i++ ) {
 		if ( !peers[i].IsConnected() ) {
 			continue;
 		}
-		
+
 		idSnapShot * baseState = peers[i].snapProc->GetBaseState();
 		idSnapShot::objectState_t * state = baseState->FindObjectByID( objId );
 		if ( state != NULL ) {
@@ -745,7 +745,7 @@ idLobby::MarkSnapObjDeleted
 void idLobby::MarkSnapObjDeleted( int objId ) {
 	assert( lobbyType == GetActingGameStateLobbyType() );
 
-	for ( int i = 0; i < peers.Num(); i++ ) {	
+	for ( int i = 0; i < peers.Num(); i++ ) {
 		if ( !peers[i].IsConnected() ) {
 			continue;
 		}

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ const char * idMultiplayerGame::skinNames[] = {
 	"skins/characters/player/marine_mp_grey",
 	"skins/characters/player/marine_mp_orange"
 };
-const idVec3 idMultiplayerGame::skinColors[] = { 
+const idVec3 idMultiplayerGame::skinColors[] = {
 	idVec3( 0.25f, 0.25f, 0.25f ), // light grey
 	idVec3( 1.00f, 0.00f, 0.00f ), // red
 	idVec3( 0.20f, 0.50f, 0.80f ), // blue
@@ -126,7 +126,7 @@ idMultiplayerGame::idMultiplayerGame() {
 
 	player_blue_flag = -1;
 	player_red_flag = -1;
-	
+
 	Clear();
 
 	scoreboardManager = NULL;
@@ -219,7 +219,7 @@ void idMultiplayerGame::Clear() {
 	memset( &playerState, 0 , sizeof( playerState ) );
 	lastWinner = -1;
 	pureReady = false;
-	
+
 	CleanupScoreboard();
 
 	fragLimitTimeout = 0;
@@ -239,7 +239,7 @@ void idMultiplayerGame::CleanupScoreboard() {
 	if ( scoreboardManager != NULL ) {
 		delete scoreboardManager;
 		scoreboardManager = NULL;
-	} 
+	}
 }
 
 /*
@@ -255,7 +255,7 @@ Gets number of captures in CTF game.
 int idMultiplayerGame::GetFlagPoints( int team )
 {
 	assert( team <= 1 );
-	
+
 	return teamPoints[ team ];
 }
 
@@ -417,7 +417,7 @@ void idMultiplayerGame::UpdateScoreboard( idMenuHandler_Scoreboard * scoreboard,
 
 			score = idMath::ClampInt( MP_PLAYER_MINFRAGS, MP_PLAYER_MAXFRAGS, playerState[ playerNum ].fragCount );
 
-			// HACK - 
+			// HACK -
 			if( gameLocal.gameType == GAME_LASTMAN && score == LASTMAN_NOLIVES ) {
 				score = 0;
 			}
@@ -479,7 +479,7 @@ void idMultiplayerGame::UpdateScoreboard( idMenuHandler_Scoreboard * scoreboard,
 	}
 
 	idStr gameInfo;
-	if ( gameState == GAMEREVIEW ) {		
+	if ( gameState == GAMEREVIEW ) {
 		int timeRemaining = nextStateSwitch - gameLocal.serverTime;
 		int ms = (int) ceilf( timeRemaining / 1000.0f );
 		if ( ms == 1 ) {
@@ -558,7 +558,7 @@ const char *idMultiplayerGame::GameTime() {
 		if ( ms < 0 ) {
 			ms = 0;
 		}
-	
+
 		s = ms / 1000;
 		m = s / 60;
 		s -= m * 60;
@@ -675,7 +675,7 @@ idPlayer *idMultiplayerGame::FragLimitHit() {
 idMultiplayerGame::TimeLimitHit
 ================
 */
-bool idMultiplayerGame::TimeLimitHit() {	
+bool idMultiplayerGame::TimeLimitHit() {
 	int timeLimit = gameLocal.serverInfo.GetInt( "si_timeLimit" );
 	if ( timeLimit ) {
 		if ( gameLocal.serverTime >= matchStartedTime + timeLimit * 60000 ) {
@@ -840,7 +840,7 @@ void idMultiplayerGame::UpdateWinsLosses( idPlayer *winner ) {
 					PlayGlobalSound( i, SND_YOULOSE );
 				}
 			} else if ( gameLocal.gameType == GAME_TOURNEY ) {
-				if ( player == winner ) { 
+				if ( player == winner ) {
 					playerState[ i ].wins++;
 					PlayGlobalSound( i, SND_YOUWIN );
 				} else if ( i == currentTourneyPlayer[ 0 ] || i == currentTourneyPlayer[ 1 ] ) {
@@ -874,7 +874,7 @@ void idMultiplayerGame::UpdateWinsLosses( idPlayer *winner ) {
 			}
 		}
 	}
-	
+
 	if ( winner ) {
 		lastWinner = winner->entityNumber;
 	} else {
@@ -981,7 +981,7 @@ void idMultiplayerGame::PlayerDeath( idPlayer *dead, idPlayer *killer, bool tele
 	if ( killer ) {
 		if ( gameLocal.gameType == GAME_LASTMAN ) {
 			playerState[ dead->entityNumber ].fragCount--;
-			
+
 		} else if ( IsGametypeTeamBased() ) { /* CTF */
 			if ( killer == dead || killer->team == dead->team ) {
 				// suicide or teamkill
@@ -1035,7 +1035,7 @@ void idMultiplayerGame::PlayerStats( int clientNum, char *data, const int len ) 
 	}
 
 	// find which team this player is on
-	ent = gameLocal.entities[ clientNum ]; 
+	ent = gameLocal.entities[ clientNum ];
 	if ( ent && ent->IsType( idPlayer::Type ) ) {
 		team = static_cast< idPlayer * >(ent)->team;
 	} else {
@@ -1085,7 +1085,7 @@ void idMultiplayerGame::NewState( gameState_t news, idPlayer *player ) {
 
 			teamPoints[0] = 0;
 			teamPoints[1] = 0;
-			
+
 			PlayGlobalSound( -1, SND_FIGHT );
 			matchStartedTime = gameLocal.serverTime;
 
@@ -1292,7 +1292,7 @@ void idMultiplayerGame::FillTourneySlots( ) {
 	}
 
 	idLib::Printf( "TOURNEY :> Player 1: %d Player 2: %d \n", currentTourneyPlayer[ 0 ], currentTourneyPlayer[ 1 ] );
-	
+
 
 }
 
@@ -1357,7 +1357,7 @@ void idMultiplayerGame::CycleTourneyPlayers( ) {
 	if ( lastWinner != -1 ) {
 		idEntity *ent = gameLocal.entities[ lastWinner ];
 		if ( ent && ent->IsType( idPlayer::Type ) ) {
-			currentTourneyPlayer[ 0 ] = lastWinner;		
+			currentTourneyPlayer[ 0 ] = lastWinner;
 		}
 	}
 	FillTourneySlots( );
@@ -1392,13 +1392,13 @@ bool idMultiplayerGame::Warmup() {
 void idMultiplayerGame::GameHasBeenWon() {
 
 
-	// Only allow leaderboard submissions within public games. 
+	// Only allow leaderboard submissions within public games.
 	const idMatchParameters & matchParameters = session->GetActingGameStateLobbyBase().GetMatchParms();
 
 	if( matchParameters.matchFlags & MATCH_RANKED ) {
 
 		// Upload all player's scores to the leaderboard.
-		for( int playerIdx = 0; playerIdx < gameLocal.numClients; playerIdx++ ) {		
+		for( int playerIdx = 0; playerIdx < gameLocal.numClients; playerIdx++ ) {
 
 			leaderboardStats_t stats = { playerState[ playerIdx ].fragCount, playerState[ playerIdx ].wins, playerState[ playerIdx ].teamFragCount, playerState[ playerIdx].deaths };
 
@@ -1409,7 +1409,7 @@ void idMultiplayerGame::GameHasBeenWon() {
 		session->LeaderboardFlush();
 	}
 
-	// Award Any players that have not died. An Achievement 
+	// Award Any players that have not died. An Achievement
 	for( int i = 0; i < gameLocal.numClients; i++ ) {
 		idPlayer * player = static_cast< idPlayer* >( gameLocal.entities[ i ] );
 		if ( player == NULL ) {
@@ -1469,7 +1469,7 @@ void idMultiplayerGame::Run() {
 			playerState[i].ping = lobby.GetLobbyUserQoS( gameLocal.lobbyUserIDs[i] );
 		}
 	}
-	
+
 	switch( gameState ) {
 		case GAMEREVIEW: {
 			if ( nextState == INACTIVE ) {
@@ -1555,7 +1555,7 @@ void idMultiplayerGame::Run() {
 				}
 				break;
 			}
-			
+
 			player = FragLimitHit();
 			if ( player ) {
 				// delay between detecting frag limit and ending game. let the death anims play
@@ -1602,7 +1602,7 @@ void idMultiplayerGame::Run() {
 				}
 				break;
 			}
-			
+
 			player = FragLeader();
 			if ( player ) {
 				if ( !fragLimitTimeout ) {
@@ -1654,9 +1654,9 @@ bool idMultiplayerGame::Draw( int clientNum ) {
 			return false;
 		}
 
-		// if the player you are viewing is holding a flag, hide it. 
+		// if the player you are viewing is holding a flag, hide it.
 		idEntity* flag = GetTeamFlag( viewPlayer->team ? 0 : 1 );
-		if( flag ) {			
+		if( flag ) {
 			if( viewPlayer->carryingFlag ) {
 				flag->Hide();
 			} else {
@@ -1796,7 +1796,7 @@ void idMultiplayerGame::UpdateHud( idPlayer *player, idMenuHandler_HUD * hudMana
 					hud->SetTeamScore( player->team, playerState[ player->entityNumber ].teamFragCount );
 				}
 			}
-		} 
+		}
 
 		if ( IsGametypeFlagBased() || IsGametypeTeamBased() ) {
 			hud->SetTeam( player->team );
@@ -1859,11 +1859,11 @@ idMultiplayerGame::AddChatLine
 void idMultiplayerGame::AddChatLine( const char *fmt, ... ) {
 	idStr temp;
 	va_list argptr;
-	
+
 	va_start( argptr, fmt );
 	vsprintf( temp, fmt, argptr );
 	va_end( argptr );
-	
+
 	gameLocal.Printf( "%s\n", temp.c_str() );
 
 	chatHistory[ chatHistoryIndex % NUM_CHAT_NOTIFY ].line = temp;
@@ -1977,7 +1977,7 @@ void idMultiplayerGame::ReadFromSnapshot( const idBitMsg &msg ) {
 	if ( newState != gameState && newState < STATE_COUNT ) {
 		gameLocal.DPrintf( "%s -> %s\n", GameStateStrings[ gameState ], GameStateStrings[ newState ] );
 		gameState = newState;
-		
+
 		switch( gameState ) {
 			case GAMEON: {
 				NewState_GameOn_ServerAndClient();
@@ -2172,7 +2172,7 @@ void idMultiplayerGame::PrintMessageEvent( msg_evt_t evt, int parm1, int parm2 )
 					AddChatLine( idLocalization::GetString( "#str_11121" ), lobby.GetLobbyUserName( gameLocal.lobbyUserIDs[parm2] ) );	// enemy
 				}
 			} else {
-				AddChatLine( idLocalization::GetString( "#str_11105" ), parm1 ? idLocalization::GetString( "#str_11110" ) : idLocalization::GetString( "#str_11111" ) );                       
+				AddChatLine( idLocalization::GetString( "#str_11105" ), parm1 ? idLocalization::GetString( "#str_11110" ) : idLocalization::GetString( "#str_11111" ) );
 			}
 			break;
 
@@ -2187,8 +2187,8 @@ void idMultiplayerGame::PrintMessageEvent( msg_evt_t evt, int parm1, int parm2 )
 				AddChatLine( idLocalization::GetString( "#str_11122" ), lobby.GetLobbyUserName( gameLocal.lobbyUserIDs[parm2] ) );	// your team
 			} else {
 				AddChatLine( idLocalization::GetString( "#str_11123" ), lobby.GetLobbyUserName( gameLocal.lobbyUserIDs[parm2] ) );	// enemy
-			}	
-			
+			}
+
 //			AddChatLine( idLocalization::GetString( "#str_11106" ), parm1 ? idLocalization::GetString( "#str_11110" ) : idLocalization::GetString( "#str_11111" ) );
 			break;
 
@@ -2276,7 +2276,7 @@ void idMultiplayerGame::CheckRespawns( idPlayer *spectator ) {
 				{
 					if ( gameState == WARMUP || gameState == COUNTDOWN || gameState == GAMEON ) {
 						p->ServerSpectate( false );
-					}				
+					}
 				} else if ( gameLocal.gameType == GAME_TOURNEY ) {
 					if ( i == currentTourneyPlayer[ 0 ] || i == currentTourneyPlayer[ 1 ] ) {
 						if ( gameState == WARMUP || gameState == COUNTDOWN || gameState == GAMEON ) {
@@ -2457,7 +2457,7 @@ void idMultiplayerGame::CheckAbortGame() {
 				idPlayer * player = static_cast< idPlayer * >( gameLocal.entities[ currentTourneyPlayer[ i ] ] );
 
 				if ( !gameLocal.entities[ currentTourneyPlayer[ i ] ] || player->spectating ) {
-					NewState( GAMEREVIEW );					
+					NewState( GAMEREVIEW );
 					return;
 				}
 			}
@@ -2601,11 +2601,11 @@ void idMultiplayerGame::SwitchToTeam( int clientNum, int oldteam, int newteam ) 
 		if ( i == clientNum ) {
 			continue;
 		}
-		idEntity * ent = gameLocal.entities[ i ]; 
+		idEntity * ent = gameLocal.entities[ i ];
 		if ( ent && ent->IsType( idPlayer::Type ) && static_cast< idPlayer * >(ent)->team == newteam ) {
 			playerState[ clientNum ].teamFragCount = playerState[ i ].teamFragCount;
 			break;
-		}	
+		}
 	}
 	if ( i == gameLocal.numClients ) {
 		// alone on this team
@@ -2687,7 +2687,7 @@ void idMultiplayerGame::ProcessChatMessage( int clientNum, bool team, const char
 		}
 	} else {
 		for ( i = 0; i < gameLocal.numClients; i++ ) {
-			ent = gameLocal.entities[ i ]; 
+			ent = gameLocal.entities[ i ];
 			if ( !ent || !ent->IsType( idPlayer::Type ) ) {
 				continue;
 			}
@@ -2832,7 +2832,7 @@ void idMultiplayerGame::VoiceChat( const idCmdArgs &args, bool team ) {
 	}
 
 	voc = args.Argv( 1 );
-	
+
 	spawnArgs = &gameLocal.GetLocalPlayer()->spawnArgs;
 
 	keyval = spawnArgs->MatchPrefix( "snd_voc_", NULL );
@@ -2918,7 +2918,7 @@ void idMultiplayerGame::ServerWriteInitialReliableMessages( int clientNum, lobby
 	outMsg.WriteShort( startFragLimit );
 	// send the powerup states and the spectate states
 	for( int i = 0; i < gameLocal.numClients; i++ ) {
-		idEntity * ent = gameLocal.entities[ i ]; 
+		idEntity * ent = gameLocal.entities[ i ];
 		if ( i != clientNum && ent && ent->IsType( idPlayer::Type ) ) {
 			outMsg.WriteByte( i );
 			outMsg.WriteBits( static_cast< idPlayer * >( ent )->inventory.powerups, 15 );
@@ -3034,7 +3034,7 @@ bool idMultiplayerGame::IsGametypeTeamBased() /* CTF */
 
 /*
 ================
-idMultiplayerGame::IsGametypeFlagBased 
+idMultiplayerGame::IsGametypeFlagBased
 ================
 */
 bool idMultiplayerGame::IsGametypeFlagBased()  {
@@ -3044,7 +3044,7 @@ bool idMultiplayerGame::IsGametypeFlagBased()  {
 	case GAME_DM:
 	case GAME_TOURNEY:
 	case GAME_LASTMAN:
-	case GAME_TDM:        
+	case GAME_TDM:
 		return false;
 	case GAME_CTF:
 		return true;
@@ -3053,7 +3053,7 @@ bool idMultiplayerGame::IsGametypeFlagBased()  {
 	}
 
 	return false;
-	
+
 }
 
 /*
@@ -3063,7 +3063,7 @@ idMultiplayerGame::GetTeamFlag
 */
 idItemTeam * idMultiplayerGame::GetTeamFlag( int team ) {
 	assert( team == 0 || team == 1 );
-	
+
 	if ( !IsGametypeFlagBased() || ( team != 0 && team != 1 ) ) /* CTF */
 		return NULL;
 
@@ -3156,11 +3156,11 @@ idMultiplayerGame::ReloadScoreboard
 ================
 */
 void idMultiplayerGame::ReloadScoreboard() {
-	
+
 	if ( scoreboardManager != NULL ) {
 		scoreboardManager->Initialize( "scoreboard", common->SW() );
 	}
-	
+
 	Precache();
 }
 

@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ void idDeviceContext::Init() {
 	colorWhite = idVec4(1, 1, 1, 1);
 	colorBlack = idVec4(0, 0, 0, 1);
 	colorNone = idVec4(0, 0, 0, 0);
-	cursorImages[CURSOR_ARROW] = declManager->FindMaterial("ui/assets/guicursor_arrow.tga");	
+	cursorImages[CURSOR_ARROW] = declManager->FindMaterial("ui/assets/guicursor_arrow.tga");
 	cursorImages[CURSOR_HAND] = declManager->FindMaterial("ui/assets/guicursor_hand.tga");
 	cursorImages[CURSOR_HAND_JOY1] = declManager->FindMaterial("ui/assets/guicursor_hand_cross.tga");
 	cursorImages[CURSOR_HAND_JOY2] = declManager->FindMaterial("ui/assets/guicursor_hand_circle.tga");
@@ -118,17 +118,17 @@ void idDeviceContext::SetTransformInfo(const idVec3 &org, const idMat3 &m) {
 	matIsIdentity = mat.IsIdentity();
 }
 
-// 
+//
 //  added method
 void idDeviceContext::GetTransformInfo(idVec3& org, idMat3& m )
 {
 	m = mat;
 	org = origin;
 }
-// 
+//
 
-void idDeviceContext::EnableClipping(bool b) { 
-	enableClipping = b; 
+void idDeviceContext::EnableClipping(bool b) {
+	enableClipping = b;
 };
 
 void idDeviceContext::PopClipRect() {
@@ -150,7 +150,7 @@ bool idDeviceContext::ClippedCoords(float *x, float *y, float *w, float *h, floa
 	int c = clipRects.Num();
 	while( --c > 0 ) {
 		idRectangle *clipRect = &clipRects[c];
- 
+
 		float ox = *x;
 		float oy = *y;
 		float ow = *w;
@@ -296,8 +296,8 @@ void idDeviceContext::DrawMaterial(float x, float y, float w, float h, const idM
 	renderSystem->SetColor(color);
 
 	float	s0, s1, t0, t1;
-// 
-//  handle negative scales as well	
+//
+//  handle negative scales as well
 	if ( scalex < 0 )
 	{
 		w *= -1;
@@ -308,7 +308,7 @@ void idDeviceContext::DrawMaterial(float x, float y, float w, float h, const idM
 		h *= -1;
 		scaley *= -1;
 	}
-// 
+//
 	if( w < 0 ) {	// flip about vertical
 		w  = -w;
 		s0 = 1 * scalex;
@@ -337,12 +337,12 @@ void idDeviceContext::DrawMaterial(float x, float y, float w, float h, const idM
 }
 
 void idDeviceContext::DrawMaterialRotated(float x, float y, float w, float h, const idMaterial *mat, const idVec4 &color, float scalex, float scaley, float angle) {
-	
+
 	renderSystem->SetColor(color);
 
 	float	s0, s1, t0, t1;
-	// 
-	//  handle negative scales as well	
+	//
+	//  handle negative scales as well
 	if ( scalex < 0 )
 	{
 		w *= -1;
@@ -353,7 +353,7 @@ void idDeviceContext::DrawMaterialRotated(float x, float y, float w, float h, co
 		h *= -1;
 		scaley *= -1;
 	}
-	// 
+	//
 	if( w < 0 ) {	// flip about vertical
 		w  = -w;
 		s0 = 1 * scalex;
@@ -382,7 +382,7 @@ void idDeviceContext::DrawMaterialRotated(float x, float y, float w, float h, co
 }
 
 void idDeviceContext::DrawStretchPicRotated(float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial *shader, float angle) {
-	
+
 	idFixedWinding winding;
 	winding.AddPoint( idVec5( x, y, 0.0f, s1, t1 ) );
 	winding.AddPoint( idVec5( x+w, y, 0.0f, s2, t1 ) );
@@ -416,7 +416,7 @@ void idDeviceContext::DrawStretchPicRotated(float x, float y, float w, float h, 
 		winding[i].ToVec3() *= rotz;
 		winding[i].ToVec3() += origTrans;
 	}
-	
+
 	DrawWinding( winding, shader );
 }
 
@@ -427,7 +427,7 @@ void idDeviceContext::DrawFilledRect( float x, float y, float w, float h, const 
 	}
 
 	renderSystem->SetColor(color);
-	
+
 	if (ClippedCoords(&x, &y, &w, &h, NULL, NULL, NULL, NULL)) {
 		return;
 	}
@@ -443,7 +443,7 @@ void idDeviceContext::DrawRect( float x, float y, float w, float h, float size, 
 	}
 
 	renderSystem->SetColor(color);
-	
+
 	if (ClippedCoords(&x, &y, &w, &h, NULL, NULL, NULL, NULL)) {
 		return;
 	}
@@ -469,7 +469,7 @@ void idDeviceContext::DrawMaterialRect( float x, float y, float w, float h, floa
 
 
 void idDeviceContext::SetCursor(int n) {
-	
+
 	if ( n > CURSOR_ARROW && n < CURSOR_COUNT ) {
 
 		keyBindings_t binds = idKeyInput::KeyBindingsFromBinding( "_use", true );
@@ -477,10 +477,10 @@ void idDeviceContext::SetCursor(int n) {
 		keyNum_t keyNum = K_NONE;
 		if ( in_useJoystick.GetBool() ) {
 			 keyNum = idKeyInput::StringToKeyNum( binds.gamepad.c_str() );
-		} 
+		}
 
 		if ( keyNum != K_NONE ) {
-			
+
 			if ( keyNum == K_JOY1 ) {
 				cursor = CURSOR_HAND_JOY1;
 			} else if ( keyNum == K_JOY2 ) {
@@ -866,11 +866,11 @@ OPTIMIZED VERSIONS
 
 // this is only called for the cursor and debug strings, and it should
 // scope properly with push/pop clipRect
-void idDeviceContextOptimized::EnableClipping(bool b) { 
+void idDeviceContextOptimized::EnableClipping(bool b) {
 	if ( b == enableClipping ) {
 		return;
 	}
-	enableClipping = b; 
+	enableClipping = b;
 	if ( !enableClipping ) {
 		PopClipRect();
 	} else {
@@ -1018,7 +1018,7 @@ int idDeviceContextOptimized::DrawText(float x, float y, float scale, idVec4 col
 	if (limit > 0 && len > limit) {
 		len = limit;
 	}
-	
+
 	int charIndex = 0;
 	while ( charIndex < drawText.Length() ) {
 		uint32 textChar = drawText.UTF8Char( charIndex );

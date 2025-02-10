@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").  
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -162,13 +162,13 @@ public:
 	//------------------------
 
 	template< memTag_t _t_ >
-	operator idList<_type_, _t_> & () { 
-		return *reinterpret_cast<idList<_type_, _t_> *>( this ); 
+	operator idList<_type_, _t_> & () {
+		return *reinterpret_cast<idList<_type_, _t_> *>( this );
 	}
 
 	template< memTag_t _t_>
-	operator const idList<_type_, _t_> & () const { 
-		return *reinterpret_cast<const idList<_type_, _t_> *>( this ); 
+	operator const idList<_type_, _t_> & () const {
+		return *reinterpret_cast<const idList<_type_, _t_> *>( this );
 	}
 
 	//------------------------
@@ -691,7 +691,7 @@ ID_INLINE int idList<_type_,_tag_>::Append( _type_ const & obj ) {
 ================
 idList<_type_,_tag_>::Insert
 
-Increases the size of the list by at leat one element if necessary 
+Increases the size of the list by at leat one element if necessary
 and inserts the supplied data into it.
 
 Returns the index of the new element.
@@ -841,7 +841,7 @@ ID_INLINE int idList<_type_,_tag_>::FindNull() const {
 idList<_type_,_tag_>::IndexOf
 
 Takes a pointer to an element in the list and returns the index of the element.
-This is NOT a guarantee that the object is really in the list. 
+This is NOT a guarantee that the object is really in the list.
 Function will assert in debug builds if pointer is outside the bounds of the list,
 but remains silent in release builds.
 ================
@@ -891,13 +891,13 @@ ID_INLINE bool idList<_type_,_tag_>::RemoveIndex( int index ) {
 ========================
 idList<_type_,_tag_>::RemoveIndexFast
 
-Removes the element at the specified index and moves the last element into its spot, rather 
-than moving the whole array down by one. Of course, this doesn't maintain the order of 
-elements! The number of elements in the list is reduced by one.  
+Removes the element at the specified index and moves the last element into its spot, rather
+than moving the whole array down by one. Of course, this doesn't maintain the order of
+elements! The number of elements in the list is reduced by one.
 
-return:	bool	- false if the data is not found in the list.  
+return:	bool	- false if the data is not found in the list.
 
-NOTE:	The element is not destroyed, so any memory used by it may not be freed until the 
+NOTE:	The element is not destroyed, so any memory used by it may not be freed until the
 		destruction of the list.
 ========================
 */
@@ -933,7 +933,7 @@ ID_INLINE bool idList<_type_,_tag_>::Remove( _type_ const & obj ) {
 	if ( index >= 0 ) {
 		return RemoveIndex( index );
 	}
-	
+
 	return false;
 }
 //
@@ -960,9 +960,9 @@ ID_INLINE bool idList<_type_,_tag_>::Remove( _type_ const & obj ) {
 ========================
 idList<_type_,_tag_>::SortWithTemplate
 
-Performs a QuickSort on the list using the supplied sort algorithm.  
+Performs a QuickSort on the list using the supplied sort algorithm.
 
-Note:	The data is merely moved around the list, so any pointers to data within the list may 
+Note:	The data is merely moved around the list, so any pointers to data within the list may
 		no longer be valid.
 ========================
 */
