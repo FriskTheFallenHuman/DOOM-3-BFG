@@ -27,7 +27,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 #pragma hdrstop
 #include "../idlib/precompiled.h"
-#include "zlib/zlib.h"
+#include "miniz/miniz.h"
 
 /*
 ========================
@@ -43,7 +43,7 @@ bool idSWF::Inflate( const byte * input, int inputSize, byte * output, int outpu
 			Mem_Free( ptr );
 		}
 	};
-	z_stream stream;
+	mz_stream stream;
 	memset( &stream, 0, sizeof( stream ) );
 	stream.next_in = (Bytef *)input;
 	stream.avail_in = inputSize;
@@ -51,9 +51,9 @@ bool idSWF::Inflate( const byte * input, int inputSize, byte * output, int outpu
 	stream.avail_out = outputSize;
 	stream.zalloc = local_swf_alloc_t::zalloc;
 	stream.zfree = local_swf_alloc_t::zfree;
-	inflateInit( &stream );
-	bool success = ( inflate( &stream, Z_FINISH ) == Z_STREAM_END );
-	inflateEnd( &stream );
+	mz_inflateInit( &stream );
+	bool success = ( mz_inflate( &stream, MZ_FINISH ) == MZ_STREAM_END );
+	mz_inflateEnd( &stream );
 
 	return success;
 }
