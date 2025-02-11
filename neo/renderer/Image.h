@@ -211,9 +211,35 @@ ID_INLINE idImage::idImage( const char * name ) : imgName( name ) {
 }
 
 
-// data is RGBA
-void	R_WriteTGA( const char *filename, const byte *data, int width, int height, bool flipVertical = false, const char * basePath = "fs_savepath" );
-// data is in top-to-bottom raster order unless flipVertical is set
+/*
+=================================================================
+
+IMAGE TYPES
+
+=================================================================
+*/
+
+enum idImageType {
+	TYPE_TGA = 0,
+	TYPE_BMP,
+	TYPE_PNG,
+	TYPE_JPEG
+};
+
+void	R_WriteImage( idImageType filetype, const char *filename, const byte *data, int bytesPerPixel, int width, int height, bool flipVertical = false, const char *basePath = "fs_savepath" );
+void	RB_LoadImage( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp );
+
+/*
+==================
+WriteScreenshotForSTBIW
+
+Callback to each stbi_write_* function
+==================
+*/
+ID_INLINE static void WriteScreenshotForSTBIW( void *context, void *data, int size ) {
+	idFile *f = ( idFile* )context;
+	f->Write( data, size );
+}
 
 
 

@@ -631,7 +631,7 @@ void R_CombineCubeImages_f( const idCmdArgs &args ) {
 		sprintf( filename, "%sCM%04i.tga", baseName.c_str(), frameNum );
 
 		common->Printf( "writing %s\n", filename );
-		R_WriteTGA( filename, combined, width, height*6 );
+		R_WriteImage( TYPE_TGA, filename, combined, 4, width, height*6 );
 	}
 	common->SetRefreshOnPrint( false );
 }

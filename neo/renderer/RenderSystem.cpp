@@ -961,7 +961,7 @@ void idRenderSystemLocal::CaptureRenderToFile( const char *fileName, bool fixAlp
 		data2[ i * 4 + 3 ] = 0xff;
 	}
 
-	R_WriteTGA( fileName, data2, rc.GetWidth(), rc.GetHeight(), true );
+	R_WriteImage( TYPE_TGA, fileName, data2, 4, rc.GetWidth(), rc.GetHeight(), true );
 
 	R_StaticFree( data );
 	R_StaticFree( data2 );

@@ -341,6 +341,7 @@ extern idCVar com_forceGenericSIMD;
 idCommonLocal::Frame
 =================
 */
+extern int g_screenshotFormat;
 void idCommonLocal::Frame() {
 	try {
 		SCOPED_PROFILE_EVENT( "Common::Frame" );
@@ -383,6 +384,7 @@ void idCommonLocal::Frame() {
 
 		// save the screenshot and audio from the last draw if needed
 		if ( aviCaptureMode ) {
+			g_screenshotFormat = 0;
 			idStr name = va("demos/%s/%s_%05i.tga", aviDemoShortName.c_str(), aviDemoShortName.c_str(), aviDemoFrameCount++ );
 			renderSystem->TakeScreenshot( com_aviDemoWidth.GetInteger(), com_aviDemoHeight.GetInteger(), name, com_aviDemoSamples.GetInteger(), NULL );
 

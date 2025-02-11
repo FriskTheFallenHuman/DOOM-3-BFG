@@ -40,319 +40,68 @@ If you have questions concerning this license or the applicable additional terms
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_HDR
 #define STBI_NO_LINEAR
-#define STBI_ONLY_JPEG // at least for now, only use it for JPEG
-//#if IMG_ENABLE_PNGS > 0
-//	#define STBI_ONLY_PNG
-//#endif
 #define STBI_NO_STDIO  // images are passed as buffers
 #include "stb/stb_image.h"
+#include "stb/stb_image_write.h"
+
+typedef struct {
+	const char*	ext;
+	void	( *ImageLoader )( const char *filename, unsigned char **pic, int *width, int *height, ID_TIME_T *timestamp );
+} imageExtToLoader_t;
+
+static imageExtToLoader_t imageLoaders[] = {
+	{"tga", RB_LoadImage},
+	{"bmp", RB_LoadImage},
+	{"png", RB_LoadImage},
+	{"jpg", RB_LoadImage},
+};
+
+static const int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
 /*
 ================
-R_WriteTGA
+R_WriteImage
 ================
 */
-void R_WriteTGA( const char *filename, const byte *data, int width, int height, bool flipVertical, const char * basePath ) {
-	byte	*buffer;
-	int		i;
-	int		bufferSize = width*height*4 + 18;
-	int     imgStart = 18;
-
-	idTempArray<byte> buf( bufferSize );
-	buffer = (byte *)buf.Ptr();
-	memset( buffer, 0, 18 );
-	buffer[2] = 2;		// uncompressed type
-	buffer[12] = width&255;
-	buffer[13] = width>>8;
-	buffer[14] = height&255;
-	buffer[15] = height>>8;
-	buffer[16] = 32;	// pixel size
-	if ( !flipVertical ) {
-		buffer[17] = (1<<5);	// flip bit, for normal top to bottom raster order
+void R_WriteImage( idImageType filetype, const char *filename, const byte *data, int bytesPerPixel, int width, int height, bool flipVertical, const char *basePath ) {
+	if ( bytesPerPixel != 4  && bytesPerPixel != 3 ) {
+		common->Error( "R_WriteImage( %s ): bytesPerPixel = %i not supported", filename, bytesPerPixel );
 	}
 
-	// swap rgb to bgr
-	for ( i=imgStart ; i<bufferSize ; i+=4 ) {
-		buffer[i] = data[i-imgStart+2];		// blue
-		buffer[i+1] = data[i-imgStart+1];		// green
-		buffer[i+2] = data[i-imgStart+0];		// red
-		buffer[i+3] = data[i-imgStart+3];		// alpha
-	}
-
-	fileSystem->WriteFile( filename, buffer, bufferSize, basePath );
-}
-
-static void LoadTGA( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp );
-static void LoadJPG( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp );
-
-/*
-========================================================================
-
-TGA files are used for 24/32 bit images
-
-========================================================================
-*/
-
-typedef struct _TargaHeader {
-	unsigned char 	id_length, colormap_type, image_type;
-	unsigned short	colormap_index, colormap_length;
-	unsigned char	colormap_size;
-	unsigned short	x_origin, y_origin, width, height;
-	unsigned char	pixel_size, attributes;
-} TargaHeader;
-
-
-/*
-=========================================================
-
-TARGA LOADING
-
-=========================================================
-*/
-
-/*
-=============
-LoadTGA
-=============
-*/
-static void LoadTGA( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp ) {
-	int		columns, rows, numPixels, fileSize, numBytes;
-	byte	*pixbuf;
-	int		row, column;
-	byte	*buf_p;
-	byte	*buffer;
-	TargaHeader	targa_header;
-	byte		*targa_rgba;
-
-	if ( !pic ) {
-		fileSystem->ReadFile( name, NULL, timestamp );
-		return;	// just getting timestamp
-	}
-
-	*pic = NULL;
-
-	//
-	// load the file
-	//
-	fileSize = fileSystem->ReadFile( name, (void **)&buffer, timestamp );
-	if ( !buffer ) {
+	idFileLocal file( fileSystem->OpenFileWrite( filename, basePath ) );
+	if ( file == NULL ) {
+		common->Printf( "R_WriteImage: Failed to open %s\n", filename );
 		return;
 	}
 
-	buf_p = buffer;
+	stbi_flip_vertically_on_write( flipVertical );
 
-	targa_header.id_length = *buf_p++;
-	targa_header.colormap_type = *buf_p++;
-	targa_header.image_type = *buf_p++;
-
-	targa_header.colormap_index = LittleShort ( *(short *)buf_p );
-	buf_p += 2;
-	targa_header.colormap_length = LittleShort ( *(short *)buf_p );
-	buf_p += 2;
-	targa_header.colormap_size = *buf_p++;
-	targa_header.x_origin = LittleShort ( *(short *)buf_p );
-	buf_p += 2;
-	targa_header.y_origin = LittleShort ( *(short *)buf_p );
-	buf_p += 2;
-	targa_header.width = LittleShort ( *(short *)buf_p );
-	buf_p += 2;
-	targa_header.height = LittleShort ( *(short *)buf_p );
-	buf_p += 2;
-	targa_header.pixel_size = *buf_p++;
-	targa_header.attributes = *buf_p++;
-
-	if ( targa_header.image_type != 2 && targa_header.image_type != 10 && targa_header.image_type != 3 ) {
-		common->Error( "LoadTGA( %s ): Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n", name );
+	switch ( filetype ) {
+		default:
+		case TYPE_TGA:
+			stbi_write_tga_to_func( WriteScreenshotForSTBIW, file, width, height, bytesPerPixel, data );
+			break;
+		case TYPE_BMP:
+			stbi_write_bmp_to_func( WriteScreenshotForSTBIW, file, width, height, bytesPerPixel, data );
+			break;
+		case TYPE_PNG:
+			//if ( r_screenshotQuality.GetInteger() > 9 ) {
+				// Since we use this cvar for jpeg quality, reset the cvar back at default values
+			//	r_screenshotQuality.SetInteger( 3 );
+			//}
+			//stbi_write_png_compression_level = idMath::ClampInt( 0, 9, r_screenshotQuality.GetInteger() );
+			stbi_write_png_to_func( WriteScreenshotForSTBIW, file, width, height, bytesPerPixel, data, bytesPerPixel * width );
+			break;
+		case TYPE_JPEG:
+			stbi_write_jpg_to_func( WriteScreenshotForSTBIW, file, width, height, bytesPerPixel, data, 100 /*idMath::ClampInt( 1, 100, r_screenshotQuality.GetInteger() )*/ );
+			break;
 	}
-
-	if ( targa_header.colormap_type != 0 ) {
-		common->Error( "LoadTGA( %s ): colormaps not supported\n", name );
-	}
-
-	if ( ( targa_header.pixel_size != 32 && targa_header.pixel_size != 24 ) && targa_header.image_type != 3 ) {
-		common->Error( "LoadTGA( %s ): Only 32 or 24 bit images supported (no colormaps)\n", name );
-	}
-
-	if ( targa_header.image_type == 2 || targa_header.image_type == 3 ) {
-		numBytes = targa_header.width * targa_header.height * ( targa_header.pixel_size >> 3 );
-		if ( numBytes > fileSize - 18 - targa_header.id_length ) {
-			common->Error( "LoadTGA( %s ): incomplete file\n", name );
-		}
-	}
-
-	columns = targa_header.width;
-	rows = targa_header.height;
-	numPixels = columns * rows;
-
-	if ( width ) {
-		*width = columns;
-	}
-	if ( height ) {
-		*height = rows;
-	}
-
-	targa_rgba = (byte *)R_StaticAlloc(numPixels*4, TAG_IMAGE);
-	*pic = targa_rgba;
-
-	if ( targa_header.id_length != 0 ) {
-		buf_p += targa_header.id_length;  // skip TARGA image comment
-	}
-
-	if ( targa_header.image_type == 2 || targa_header.image_type == 3 )
-	{
-		// Uncompressed RGB or gray scale image
-		for( row = rows - 1; row >= 0; row-- )
-		{
-			pixbuf = targa_rgba + row*columns*4;
-			for( column = 0; column < columns; column++)
-			{
-				unsigned char red,green,blue,alphabyte;
-				switch( targa_header.pixel_size )
-				{
-
-				case 8:
-					blue = *buf_p++;
-					green = blue;
-					red = blue;
-					*pixbuf++ = red;
-					*pixbuf++ = green;
-					*pixbuf++ = blue;
-					*pixbuf++ = 255;
-					break;
-
-				case 24:
-					blue = *buf_p++;
-					green = *buf_p++;
-					red = *buf_p++;
-					*pixbuf++ = red;
-					*pixbuf++ = green;
-					*pixbuf++ = blue;
-					*pixbuf++ = 255;
-					break;
-				case 32:
-					blue = *buf_p++;
-					green = *buf_p++;
-					red = *buf_p++;
-					alphabyte = *buf_p++;
-					*pixbuf++ = red;
-					*pixbuf++ = green;
-					*pixbuf++ = blue;
-					*pixbuf++ = alphabyte;
-					break;
-				default:
-					common->Error( "LoadTGA( %s ): illegal pixel_size '%d'\n", name, targa_header.pixel_size );
-					break;
-				}
-			}
-		}
-	}
-	else if ( targa_header.image_type == 10 ) {   // Runlength encoded RGB images
-		unsigned char red,green,blue,alphabyte,packetHeader,packetSize,j;
-
-		red = 0;
-		green = 0;
-		blue = 0;
-		alphabyte = 0xff;
-
-		for( row = rows - 1; row >= 0; row-- ) {
-			pixbuf = targa_rgba + row*columns*4;
-			for( column = 0; column < columns; ) {
-				packetHeader= *buf_p++;
-				packetSize = 1 + (packetHeader & 0x7f);
-				if ( packetHeader & 0x80 ) {        // run-length packet
-					switch( targa_header.pixel_size ) {
-						case 24:
-								blue = *buf_p++;
-								green = *buf_p++;
-								red = *buf_p++;
-								alphabyte = 255;
-								break;
-						case 32:
-								blue = *buf_p++;
-								green = *buf_p++;
-								red = *buf_p++;
-								alphabyte = *buf_p++;
-								break;
-						default:
-							common->Error( "LoadTGA( %s ): illegal pixel_size '%d'\n", name, targa_header.pixel_size );
-							break;
-					}
-
-					for( j = 0; j < packetSize; j++ ) {
-						*pixbuf++=red;
-						*pixbuf++=green;
-						*pixbuf++=blue;
-						*pixbuf++=alphabyte;
-						column++;
-						if ( column == columns ) { // run spans across rows
-							column = 0;
-							if ( row > 0) {
-								row--;
-							}
-							else {
-								goto breakOut;
-							}
-							pixbuf = targa_rgba + row*columns*4;
-						}
-					}
-				}
-				else {                            // non run-length packet
-					for( j = 0; j < packetSize; j++ ) {
-						switch( targa_header.pixel_size ) {
-							case 24:
-									blue = *buf_p++;
-									green = *buf_p++;
-									red = *buf_p++;
-									*pixbuf++ = red;
-									*pixbuf++ = green;
-									*pixbuf++ = blue;
-									*pixbuf++ = 255;
-									break;
-							case 32:
-									blue = *buf_p++;
-									green = *buf_p++;
-									red = *buf_p++;
-									alphabyte = *buf_p++;
-									*pixbuf++ = red;
-									*pixbuf++ = green;
-									*pixbuf++ = blue;
-									*pixbuf++ = alphabyte;
-									break;
-							default:
-								common->Error( "LoadTGA( %s ): illegal pixel_size '%d'\n", name, targa_header.pixel_size );
-								break;
-						}
-						column++;
-						if ( column == columns ) { // pixel packet run spans across rows
-							column = 0;
-							if ( row > 0 ) {
-								row--;
-							}
-							else {
-								goto breakOut;
-							}
-							pixbuf = targa_rgba + row*columns*4;
-						}
-					}
-				}
-			}
-			breakOut: ;
-		}
-	}
-
-	if ( (targa_header.attributes & (1<<5)) ) {			// image flp bit
-		if ( width != NULL && height != NULL ) {
-			R_VerticalFlip( *pic, *width, *height );
-		}
-	}
-
-	fileSystem->FreeFile( buffer );
 }
 
 /*
 =========================================================
 
-JPG LOADING
+PNG/TGA/BMP/JPG LOADING
 
 Interfaces with the huge stb
 =========================================================
@@ -360,27 +109,23 @@ Interfaces with the huge stb
 
 /*
 =============
-LoadJPG
+RB_LoadImage
 =============
 */
-static void LoadJPG( const char *filename, unsigned char **pic, int *width, int *height, ID_TIME_T *timestamp ) {
-	if( pic )
-	{
+void RB_LoadImage( const char *filename, unsigned char **pic, int *width, int *height, ID_TIME_T *timestamp ) {
+	if ( pic ) {
 		*pic = NULL;		// until proven otherwise
 	}
 
 	idFile* f = fileSystem->OpenFileRead( filename );
-	if( !f )
-	{
+	if ( !f ) {
 		return;
 	}
 	int len = f->Length();
-	if( timestamp )
-	{
+	if ( timestamp ) {
 		*timestamp = f->Timestamp();
 	}
-	if( !pic )
-	{
+	if ( !pic ) {
 		fileSystem->CloseFile( f );
 		return;	// just getting timestamp
 	}
@@ -389,22 +134,20 @@ static void LoadJPG( const char *filename, unsigned char **pic, int *width, int 
 	fileSystem->CloseFile( f );
 
 	int w = 0, h = 0, comp = 0;
-	byte* decodedImageData = stbi_load_from_memory( fbuffer, len, &w, &h, &comp, 4 );
+	byte *decodedImageData = stbi_load_from_memory( fbuffer, len, &w, &h, &comp, 4 );
 
 	Mem_Free( fbuffer );
 
-	if( decodedImageData == NULL )
-	{
-		common->Warning( "stb_image was unable to load JPG %s : %s\n",
-						 filename, stbi_failure_reason() );
+	if ( decodedImageData == NULL ) {
+		common->Warning( "stb_image was unable to load JPG %s : %s\n", filename, stbi_failure_reason() );
 		return;
 	}
 
 	// *pic must be allocated with R_StaticAlloc(), but stb_image allocates with malloc()
 	// (and as there is no R_StaticRealloc(), #define STBI_MALLOC etc won't help)
 	// so the decoded data must be copied once
-	int size = w * h * 4;
-	*pic = ( byte* )R_StaticAlloc( size );
+	int size = w*h*4;
+	*pic = (byte *)R_StaticAlloc( size );
 	memcpy( *pic, decodedImageData, size );
 	*width = w;
 	*height = h;
@@ -464,15 +207,35 @@ void R_LoadImage( const char *cname, byte **pic, int *width, int *height, ID_TIM
 	idStr ext;
 	name.ExtractFileExtension( ext );
 
-	if ( ext == "tga" ) {
-		LoadTGA( name.c_str(), pic, width, height, timestamp );            // try tga first
-		if ( ( pic && *pic == 0 ) || ( timestamp && *timestamp == -1 ) ) { //-V595
-			name.StripFileExtension();
-			name.DefaultFileExtension( ".jpg" );
-			LoadJPG( name.c_str(), pic, width, height, timestamp );
+	// try
+	if ( !ext.IsEmpty() ) {
+		// try only the image with the specified extension: default .tga
+		int i;
+		for ( i = 0; i < numImageLoaders; i++ ) {
+			if( !ext.Icmp( imageLoaders[i].ext ) )
+			{
+				imageLoaders[i].ImageLoader( name.c_str(), pic, width, height, timestamp );
+				break;
+			}
 		}
-	} else if ( ext == "jpg" ) {
-		LoadJPG( name.c_str(), pic, width, height, timestamp );
+
+		if ( i < numImageLoaders ) {
+			if ( ( pic && *pic == NULL ) || ( timestamp && *timestamp == FILE_NOT_FOUND_TIMESTAMP ) ) {
+				// image with the specified extension was not found so try all extensions
+				for ( i = 0; i < numImageLoaders; i++ ) {
+					name.SetFileExtension( imageLoaders[i].ext );
+					imageLoaders[i].ImageLoader( name.c_str(), pic, width, height, timestamp );
+
+					if ( pic && *pic != NULL ) {
+						break;
+					}
+
+					if ( !pic && timestamp && *timestamp != FILE_NOT_FOUND_TIMESTAMP ) {
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	if ( ( width && *width < 1 ) || ( height && *height < 1 ) ) {
