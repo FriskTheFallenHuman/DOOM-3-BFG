@@ -26,21 +26,10 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include <stdio.h>
-#include <malloc.h>
-#include <string.h>
-#include <math.h>
-#include <stdlib.h>
+#include "precompiled.h"
+#pragma hdrstop
 
 static const int SAMPLE_RATE = 60;
-
-enum errorCodes_t {
-	E_OK = 0,
-	E_ARGS,
-	E_OPEN_IN,
-	E_OPEN_OUT,
-	E_PROCESSING
-};
 
 struct chunk_t {
 	unsigned int id;
@@ -58,8 +47,6 @@ struct format_t {
 	unsigned short sampleSize;
 	unsigned short bitsPerSample;
 };
-
-#define SwapBytes( x, y ) { unsigned char t = (x); (x) = (y); (y) = t; }
 
 template<class type> static void Swap( type &c ) {
 	if ( sizeof( type ) == 1 ) {
@@ -135,7 +122,7 @@ bool Process( FILE * in, FILE * out ) {
 
 	int headerSize = WAVE_ReadHeader( in );
 	if ( headerSize == 0 ) {
-		printf( "Header invalid\n" );
+		common->Warning( "Header invalid\n" );
 		return false;
 	}
 
@@ -144,11 +131,11 @@ bool Process( FILE * in, FILE * out ) {
 
 	int numChunks = WAVE_ReadChunks( in, headerSize + 8, chunks, MAX_CHUNKS );
 	if ( numChunks == 0 ) {
-		printf( "No chunks\n" );
+		common->Warning( "No chunks\n" );
 		return false;
 	}
 	if ( numChunks > MAX_CHUNKS ) {
-		printf( "Too many chunks\n" );
+		common->Warning( "Too many chunks\n" );
 		return false;
 	}
 
@@ -159,11 +146,11 @@ bool Process( FILE * in, FILE * out ) {
 	for ( int i = 0; i < numChunks; i++ ) {
 		if ( chunks[i].id == 'fmt ' ) {
 			if ( foundFormat ) {
-				printf( "Found multiple format chunks\n" );
+				common->Warning( "Found multiple format chunks\n" );
 				return false;
 			}
 			if ( chunks[i].size < sizeof( format ) ) {
-				printf( "Format chunk too small\n" );
+				common->Warning( "Format chunk too small\n" );
 				return false;
 			}
 			fseek( in, chunks[i].offset, SEEK_SET );
@@ -172,7 +159,7 @@ bool Process( FILE * in, FILE * out ) {
 		}
 		if ( chunks[i].id == 'data' ) {
 			if ( dataOffset > 0 ) {
-				printf( "Found multiple data chunks\n" );
+				common->Warning( "Found multiple data chunks\n" );
 				return false;
 			}
 			dataOffset = chunks[i].offset;
@@ -180,35 +167,35 @@ bool Process( FILE * in, FILE * out ) {
 		}
 	}
 	if ( dataOffset == 0 ) {
-		printf( "Colud not find data chunk\n" );
+		common->Warning( "Colud not find data chunk\n" );
 		return false;
 	}
 	if ( !foundFormat ) {
-		printf( "Could not find fmt chunk\n" );
+		common->Warning( "Could not find fmt chunk\n" );
 		return false;
 	}
 	if ( format.formatTag != FORMAT_PCM ) {
-		printf( "Only PCM files supported (%d)\n", format.formatTag );
+		common->Warning( "Only PCM files supported (%d)\n", format.formatTag );
 		return false;
 	}
 	if ( format.bitsPerSample != 8 && format.bitsPerSample != 16 ) {
-		printf( "Only 8 or 16 bit files supported (%d)\n", format.bitsPerSample );
+		common->Warning( "Only 8 or 16 bit files supported (%d)\n", format.bitsPerSample );
 		return false;
 	}
 	if ( format.numChannels != 1 && format.numChannels != 2 ) {
-		printf( "Only stereo or mono files supported (%d)\n", format.numChannels );
+		common->Warning( "Only stereo or mono files supported (%d)\n", format.numChannels );
 		return false;
 	}
 	unsigned short expectedSampleSize = format.numChannels * format.bitsPerSample / 8;
 	if ( format.sampleSize != expectedSampleSize ) {
-		printf( "Invalid sampleSize (%d, expected %d)\n", format.sampleSize, expectedSampleSize );
+		common->Warning( "Invalid sampleSize (%d, expected %d)\n", format.sampleSize, expectedSampleSize );
 		return false;
 	}
 	unsigned int numSamples = dataSize / expectedSampleSize;
 
 	void * inputData = malloc( dataSize );
 	if ( inputData == NULL ) {
-		printf( "Out of memory\n" );
+		common->Warning( "Out of memory\n" );
 		return false;
 	}
 	fseek( in, dataOffset, SEEK_SET );
@@ -219,7 +206,7 @@ bool Process( FILE * in, FILE * out ) {
 	float * max = (float *)malloc( numOutputSamples * sizeof( float ) );
 	unsigned char * outputData = (unsigned char *)malloc( numOutputSamples );
 	if ( min == NULL || max == NULL || outputData == NULL ) {
-		printf( "Out of memory\n" );
+		common->Warning( "Out of memory\n" );
 		free( inputData );
 		free( min );
 		free( max );
@@ -290,43 +277,43 @@ bool Process( FILE * in, FILE * out ) {
 	free( max );
 	free( outputData );
 
-	printf( "Success\n" );
+	common->Printf( "Success\n" );
 	return true;
 }
 
-int main(int argc, char * argv[]) {
-
-	if ( argc < 2 ) {
-		printf( "Usage: %s <wav>\n", argv[0] );
-		return E_ARGS;
+void Amplitude_f( const idCmdArgs& args ) {
+	if ( args.Argc() != 2 ) {
+		common->Printf( "usage: amplitude <wav file>" );
+		return;
 	}
-	const char * inputFileName = argv[1];
 
-	printf( "Processing %s: ", inputFileName );
+	const char * inputFileName = args.Argv( 1 );
+
+	common->Printf( "Processing %s: \n", inputFileName );
 
 	FILE * in = NULL;
 	if ( fopen_s( &in, inputFileName, "rb" ) != 0 ) {
-		printf( "Could not open input file\n" );
-		return E_OPEN_IN;
+		common->Error( "Could not open input file\n" );
+		return;
 	}
 	char outputFileName[1024] = {0};
 	if ( strcpy_s( outputFileName, inputFileName ) != 0 ) {
-		printf( "Filename too long\n" );
-		return E_ARGS;
+		common->Error( "Filename too long\n" );
+		return;
 	}
 	char * dot = strrchr( outputFileName, '.' );
 	if ( dot == NULL ) {
 		dot = outputFileName + strlen( outputFileName );
 	}
 	if ( strcpy_s( dot, sizeof( outputFileName ) - ( dot - outputFileName ), ".amp" ) != 0 ) {
-		printf( "Filename too long\n" );
-		return E_ARGS;
+		common->Error( "Filename too long\n" );
+		return;
 	}
 
 	FILE * out = NULL;
 	if ( fopen_s( &out, outputFileName, "wb" ) != 0 ) {
-		printf( "Could not open output file %s\n", outputFileName );
-		return E_OPEN_OUT;
+		common->Error( "Could not open output file %s\n", outputFileName );
+		return;
 	}
 
 	bool success = Process( in, out );
@@ -336,8 +323,5 @@ int main(int argc, char * argv[]) {
 
 	if ( !success ) {
 		remove( outputFileName );
-		return E_PROCESSING;
 	}
-
-	return E_OK;
 }

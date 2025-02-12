@@ -100,7 +100,6 @@ workspace("Doom3")
 		filter({})
 	filter({}) -- Windows Scope
 
-	include("amplitude/amplitude.lua")
 	include("external/external.lua")
 	include("idlib/idlib.lua")
 	if _OPTIONS["dll"] then

@@ -52,4 +52,7 @@ void RunReach_f( const idCmdArgs &args );
 // video file encoding
 void RoQFileEncode_f( const idCmdArgs &args );
 
+// wav amplitude processort
+void Amplitude_f( const idCmdArgs &args );
+
 #endif	/* !__COMPILER_PUBLIC_H__ */
