@@ -129,7 +129,7 @@ void RB_LoadImage( const char *filename, unsigned char **pic, int *width, int *h
 		fileSystem->CloseFile( f );
 		return;	// just getting timestamp
 	}
-	byte* fbuffer = ( byte* )Mem_ClearedAlloc( len, TAG_JPG );
+	byte* fbuffer = ( byte* )Mem_ClearedAlloc( len, TAG_IMAGE );
 	f->Read( fbuffer, len );
 	fileSystem->CloseFile( f );
 
@@ -139,7 +139,7 @@ void RB_LoadImage( const char *filename, unsigned char **pic, int *width, int *h
 	Mem_Free( fbuffer );
 
 	if ( decodedImageData == NULL ) {
-		common->Warning( "stb_image was unable to load JPG %s : %s\n", filename, stbi_failure_reason() );
+		common->Warning( "stb_image was unable to load image %s : %s\n", filename, stbi_failure_reason() );
 		return;
 	}
 

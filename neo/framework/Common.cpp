@@ -79,8 +79,6 @@ float com_engineHz_latched = 60.0f; // Latched version of cvar, updated between 
 int64 com_engineHz_numerator = 100LL * 1000LL;
 int64 com_engineHz_denominator = 100LL * 60LL;
 
-HWND com_hwndMsg = NULL;
-
 #ifdef __DOOM_DLL__
 idGame *		game = NULL;
 idGameEdit *	gameEdit = NULL;
@@ -986,6 +984,9 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		// initialize processor specific SIMD implementation
 		InitSIMD();
+
+		// init commands
+		InitCommands();
 
 		// initialize the file system
 		fileSystem->Init();

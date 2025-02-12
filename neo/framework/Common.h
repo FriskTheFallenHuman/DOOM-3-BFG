@@ -125,6 +125,19 @@ extern idCVar		com_showMemoryUsage;
 extern idCVar		com_updateLoadSize;
 extern idCVar		com_productionMode;
 
+extern int			com_editors;			// current active editor(s)
+extern bool			com_editorActive;		// true if an editor has focus
+
+#ifdef _WIN32
+const char			DMAP_MSGID[] = "DMAPOutput";
+const char			DMAP_DONE[] = "DMAPDone";
+extern HWND			com_hwndMsg;
+extern bool			com_outputMsg;
+extern unsigned int	com_msgID;
+
+bool FindEditor();
+#endif
+
 struct MemInfo_t {
 	idStr			filebase;
 
@@ -194,6 +207,12 @@ public:
 								// If match is NULL, all set commands will be executed, otherwise
 								// only a set with the exact name.
 	virtual void				StartupVariable( const char * match ) = 0;
+
+								// Initializes a tool with the given dictionary.
+	virtual void				InitTool( const toolFlag_t tool, const idDict *dict ) = 0;
+
+								// Activates or deactivates a tool.
+	virtual void				ActivateTool( bool active ) = 0;
 
 								// Begins redirection of console output to the given buffer.
 	virtual void				BeginRedirect( char *buffer, int buffersize, void (*flush)( const char * ) ) = 0;

@@ -153,6 +153,7 @@ idRenderModel *idRenderModelPrt::InstantiateDynamicModel( const struct renderEnt
 			surf->geometry = R_AllocStaticTriSurf();
 			R_AllocStaticTriSurfVerts( surf->geometry, 4 * count );
 			R_AllocStaticTriSurfIndexes( surf->geometry, 6 * count );
+			R_AllocStaticTriSurfPlanes( surf->geometry, 6 * count ); // TODO: is this needed?
 		}
 
 		int numVerts = 0;
@@ -230,6 +231,7 @@ idRenderModel *idRenderModelPrt::InstantiateDynamicModel( const struct renderEnt
 		}
 
 		surf->geometry->tangentsCalculated = false;
+		surf->geometry->facePlanesCalculated = false;
 		surf->geometry->numVerts = numVerts;
 		surf->geometry->numIndexes = numIndexes;
 		surf->geometry->bounds = stage->bounds;		// just always draw the particles

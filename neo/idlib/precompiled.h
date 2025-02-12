@@ -104,8 +104,8 @@ const int MAX_EXPRESSION_REGISTERS = 4096;
 #include "../cm/CollisionModel.h"
 
 // AAS files and manager
-#include "../aas/AASFile.h"
-#include "../aas/AASFileManager.h"
+#include "../tools/compilers/aas/AASFile.h"
+#include "../tools/compilers/aas/AASFileManager.h"
 
 // game
 #include "../d3xp/Game.h"
@@ -147,6 +147,9 @@ const int MAX_EXPRESSION_REGISTERS = 4096;
 #include "../framework/Console.h"
 #include "../framework/DemoFile.h"
 #include "../framework/Common_dialog.h"
+
+// Compilers for map, model, video etc. processing.
+#include "../tools/compilers/compiler_public.h"
 
 #endif /* !GAME_DLL */
 

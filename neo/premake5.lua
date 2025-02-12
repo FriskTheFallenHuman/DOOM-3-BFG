@@ -120,11 +120,11 @@ workspace("Doom3")
 		pchheader("")
 
 		if _OPTIONS["dll"] then
-			files({"premake5.lua", "aas/**", "cm/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "ui/**" } )
+			files({"premake5.lua", "cm/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "tools/**", "ui/**" } )
 			removefiles({"framework/Session.cpp", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
 		else
-			files({"premake5.lua", "aas/**", "cm/**", "d3xp/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "ui/**" } )
-			removefiles({"d3xp/precompiled.cpp", "d3xp/EndLevel.*", "d3xp/gamesys/Callbacks.cpp", "d3xp/menus/MenuWidget_DevList.cpp", "framework/Session.cpp", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
+			files({"premake5.lua", "cm/**", "d3xp/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "tools/**", "ui/**" } )
+			removefiles({"d3xp/precompiled.cpp", "d3xp/EndLevel.*", "d3xp/gamesys/Callbacks.cpp", "d3xp/menus/MenuWidget_DevList.cpp", "framework/Session.cpp", "tools/compilers/roqvq/roq.m", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
 		end
 
 		filter("files:renderer/jobs/**.cpp")

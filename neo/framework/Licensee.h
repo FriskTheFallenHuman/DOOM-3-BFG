@@ -43,14 +43,15 @@ If you have questions concerning this license or the applicable additional terms
 
 #define CONFIG_FILE						"D3BFGConfig.cfg"
 
-// see ASYNC_PROTOCOL_VERSION
-// use a different major for each game
-#define ASYNC_PROTOCOL_MAJOR			1
-
 // <= Doom v1.1: 1. no DS_VERSION token ( default )
 // Doom v1.2:  2
 // Doom 3 BFG: 3
 #define RENDERDEMO_VERSION				3
+
+// editor info
+#define EDITOR_DEFAULT_PROJECT			"doom.qe4"
+#define EDITOR_REGISTRY_KEY				"DOOMRadiant"
+#define EDITOR_WINDOWTEXT				"DOOMEdit"
 
 // win32 info
 #define WIN32_CONSOLE_CLASS				"D3BFG_WinConsole"
