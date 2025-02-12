@@ -32,8 +32,8 @@ Event are used for scheduling tasks and for linking script commands.
 
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 
 #include "../Game_local.h"

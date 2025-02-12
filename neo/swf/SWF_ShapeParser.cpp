@@ -25,8 +25,8 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 #include "float.h"
 
 #pragma warning( disable: 4189 ) // local variable is initialized but not referenced

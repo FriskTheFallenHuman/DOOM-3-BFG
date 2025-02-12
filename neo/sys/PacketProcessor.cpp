@@ -26,8 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idLib/precompiled.h"
 
 idCVar net_maxRate( "net_maxRate", "50", CVAR_INTEGER, "max send rate in kilobytes per second" );
 

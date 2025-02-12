@@ -25,8 +25,8 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+#include "precompiled.h"
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 #include "Font.h"
 
 const char * DEFAULT_FONT = "Arial_Narrow";

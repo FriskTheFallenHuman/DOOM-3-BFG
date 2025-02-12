@@ -25,8 +25,8 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+#include "precompiled.h"
 #pragma hdrstop
-#include "../../idlib/precompiled.h"
 
 //#if defined( ID_VS2010 )
 //#include "../../../libs/dxsdk_June2010/include/xinput.h"
