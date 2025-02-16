@@ -402,8 +402,6 @@ void			Sys_SetLanguageFromSystem();
 const char *	Sys_DefaultLanguage();
 void			Sys_Quit();
 
-bool			Sys_AlreadyRunning();
-
 // note that this isn't journaled...
 char *			Sys_GetClipboardData();
 void			Sys_SetClipboardData( const char *string );
