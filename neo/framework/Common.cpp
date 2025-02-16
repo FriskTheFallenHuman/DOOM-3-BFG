@@ -978,10 +978,6 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		consoleUsed = com_allowConsole.GetBool();
 
-		if ( Sys_AlreadyRunning() ) {
-			Sys_Quit();
-		}
-
 		// initialize processor specific SIMD implementation
 		InitSIMD();
 
