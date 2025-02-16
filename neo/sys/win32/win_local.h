@@ -66,8 +66,6 @@ void	Sys_DestroyConsole();
 char	*Sys_ConsoleInput ();
 char	*Sys_GetCurrentUser();
 
-void	Win_SetErrorText( const char *text );
-
 cpuid_t	Sys_GetCPUId();
 
 // Input subsystem

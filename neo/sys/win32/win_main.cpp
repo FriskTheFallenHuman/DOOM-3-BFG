@@ -218,17 +218,17 @@ Show the early console as an error dialog
 void Sys_Error( const char *error, ... ) {
 	va_list		argptr;
 	char		text[4096];
-    MSG        msg;
 
 	va_start( argptr, error );
 	vsprintf( text, error, argptr );
 	va_end( argptr);
 
+#ifdef _DEBUG
 	Conbuf_AppendText( text );
 	Conbuf_AppendText( "\n" );
 
-	Win_SetErrorText( text );
 	Sys_ShowConsole( 1, true );
+#endif
 
 	timeEndPeriod( 1 );
 
@@ -236,20 +236,14 @@ void Sys_Error( const char *error, ... ) {
 
 	GLimp_Shutdown();
 
-	extern idCVar com_productionMode;
-	if ( com_productionMode.GetInteger() == 0 ) {
-		// wait for the user to quit
-		while ( 1 ) {
-			if ( !GetMessage( &msg, NULL, 0, 0 ) ) {
-				common->Quit();
-			}
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-		}
-	}
+#ifdef _DEBUG
 	Sys_DestroyConsole();
+#endif
 
-	exit (1);
+	if ( ::MessageBox( win32.hWnd, text, "Fatal Error", MB_OK | MB_ICONERROR ) ) {
+		common->Quit(); // notfy common system that we are quitting
+		exit (1);
+	}
 }
 
 /*
@@ -1514,11 +1508,15 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	}
 
 	// hide or show the early console as necessary
-	if ( win32.win_viewlog.GetInteger() ) {
+#ifndef _DEBUG
+	if( win32.win_viewlog.GetInteger() ) {
 		Sys_ShowConsole( 1, true );
 	} else {
 		Sys_ShowConsole( 0, false );
 	}
+#else
+	Sys_ShowConsole( 1, true );
+#endif
 
 #ifdef SET_THREAD_AFFINITY
 	// give the main thread an affinity for the first cpu
