@@ -355,6 +355,11 @@ static void RB_BindVariableStageImage( const textureStage_t *texture, const floa
 			cin.imageCr->Bind();
 			GL_SelectTexture( 2 );
 			cin.imageCb->Bind();
+		} else if( cin.image != NULL ) {
+			// Roq expects a single RBG image.
+			GL_SelectTexture( 0 );
+			cin.image->Bind();
+			renderProgManager.BindShader_TextureVertexColor();
 		} else {
 			globalImages->blackImage->Bind();
 			// because the shaders may have already been set - we need to make sure we are not using a bink shader which would

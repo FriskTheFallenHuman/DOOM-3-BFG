@@ -1247,7 +1247,7 @@ void idMaterial::ParseStage( idLexer &src, const textureRepeat_t trpDefault ) {
 					continue;
 				}
 			}
-			ts->cinematic = idCinematic::Alloc();
+			ts->cinematic = idCinematic::Alloc( token.c_str() );
 			ts->cinematic->InitFromFile( token.c_str(), loop );
 			continue;
 		}
@@ -2672,6 +2672,19 @@ int idMaterial::GetCinematicStartTime() const {
 		}
 	}
 	return -1;
+}
+
+/*
+=============
+idMaterial::CinematicIsPlaying
+=============
+*/
+bool idMaterial::CinematicIsPlaying() const {
+	if ( !stages || !stages[0].texture.cinematic ) {
+		return 0;
+	}
+
+	return stages[0].texture.cinematic->IsPlaying();
 }
 
 /*

@@ -565,6 +565,8 @@ public:
 
 	void				UpdateCinematic( int time ) const;
 
+	bool                CinematicIsPlaying() const;
+
 	//------------------------------------------------------------------
 
 						// gets an image for the editor to use

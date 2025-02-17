@@ -416,7 +416,7 @@ private:
 	void	LoadGameDLL();
 	void	UnloadGameDLL();
 	void	CleanupShell();
-	void	RenderBink( const char * path );
+	void	RenderVideo( const char * path );
 	void	RenderSplash();
 	void	FilterLangList( idStrList* list, idStr lang );
 	void	CheckStartupStorageRequirements();

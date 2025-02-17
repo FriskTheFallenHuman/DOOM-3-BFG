@@ -31,100 +31,56 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "tr_local.h"
 
-extern idCVar s_noSound;
-
 /*
 ==============
-idCinematic::InitCinematic
+idCinematicBink::~idCinematicBink
 ==============
 */
-void idCinematic::InitCinematic() {
-	idCinematicRoQ::InitCinematic();
-}
-
-/*
-==============
-idCinematic::ShutdownCinematic
-==============
-*/
-void idCinematic::ShutdownCinematic() {
-	idCinematicRoQ::ShutdownCinematic();
-}
-
-/*
-==============
-idCinematic::Alloc
-==============
-*/
-idCinematic * idCinematic::Alloc( const char *qpath ) {
-	if ( idStr::CheckExtension( qpath, ".roq" ) ) {
-		return new idCinematicRoQ();
-	} else if ( idStr::CheckExtension( qpath, ".bik" ) ) {
-		return new idCinematicBink();
-	} else {
-		return new idCinematic();
-	}
-}
-
-/*
-==============
-idCinematic::~idCinematic
-==============
-*/
-idCinematic::~idCinematic() {
+idCinematicBink::~idCinematicBink() {
 	Close();
 }
 
 /*
 ==============
-idCinematic::InitFromFile
+idCinematicBink::InitFromFile
 ==============
 */
-bool idCinematic::InitFromFile( const char *qpath, bool amilooping ) {
+bool idCinematicBink::InitFromFile( const char *qpath, bool amilooping ) {
 	return false;
 }
 
 /*
 ==============
-idCinematic::AnimationLength
+idCinematicBink::AnimationLength
 ==============
 */
-int idCinematic::AnimationLength() {
+int idCinematicBink::AnimationLength() {
 	return 0;
 }
 
 /*
 ==============
-idCinematic::GetStartTime
+idCinematicBink::GetStartTime
 ==============
 */
-int idCinematic::GetStartTime() {
+int idCinematicBink::GetStartTime() {
 	return -1;
 }
 
 /*
 ==============
-idCinematic::ResetTime
+idCinematicBink::ResetTime
 ==============
 */
-void idCinematic::ResetTime( int time ) {
+void idCinematicBink::ResetTime( int time ) {
 }
 
 /*
 ==============
-idCinematic::IsPlaying
+idCinematicBink::ImageForTime
 ==============
 */
-bool idCinematic::IsPlaying() const {
-	return false;
-}
-
-/*
-==============
-idCinematic::ImageForTime
-==============
-*/
-cinData_t idCinematic::ImageForTime( int milliseconds ) {
+cinData_t idCinematicBink::ImageForTime( int milliseconds ) {
 	cinData_t c;
 	memset( &c, 0, sizeof( c ) );
 	return c;
@@ -132,60 +88,25 @@ cinData_t idCinematic::ImageForTime( int milliseconds ) {
 
 /*
 ==============
-idCinematic::ExportToTGA
+idCinematicBink::ExportToTGA
 ==============
 */
-void idCinematic::ExportToTGA( bool skipExisting ) {
+void idCinematicBink::ExportToTGA( bool skipExisting ) {
 }
 
 /*
 ==============
-idCinematic::GetFrameRate
+idCinematicBink::GetFrameRate
 ==============
 */
-float idCinematic::GetFrameRate() const {
+float idCinematicBink::GetFrameRate() const {
 	return 30.0f;
 }
 
 /*
 ==============
-idCinematic::Close
+idCinematicBink::Close
 ==============
 */
-void idCinematic::Close() {
-}
-
-/*
-==============
-idSndWindow::InitFromFile
-==============
-*/
-bool idSndWindow::InitFromFile( const char *qpath, bool looping ) {
-	idStr fname = qpath;
-
-	fname.ToLower();
-	if ( !fname.Icmp( "waveform" ) ) {
-		showWaveform = true;
-	} else {
-		showWaveform = false;
-	}
-	return true;
-}
-
-/*
-==============
-idSndWindow::ImageForTime
-==============
-*/
-cinData_t idSndWindow::ImageForTime( int milliseconds ) {
-	return soundSystem->ImageForTime( milliseconds, showWaveform );
-}
-
-/*
-==============
-idSndWindow::AnimationLength
-==============
-*/
-int idSndWindow::AnimationLength() {
-	return -1;
+void idCinematicBink::Close() {
 }
