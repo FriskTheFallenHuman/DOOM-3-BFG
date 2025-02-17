@@ -166,8 +166,11 @@ void Sys_BindCrtHandlesToStdHandles( bool bindStdIn, bool bindStdOut, bool bindS
 ** Sys_CreateConsole
 */
 void Sys_CreateConsole() {
+#ifndef _DEBUG
 	// Dont waste resources if we didn't have the log opened
-	if ( win32.win_viewlog.GetBool() ) {
+	if ( win32.win_viewlog.GetBool() )
+#endif
+	{
 		// We allocate our console first
 		if( AllocConsole() ) {
 			// Update the C/C++ runtime standard input, output, and error targets to use the console window
@@ -193,7 +196,10 @@ void Sys_CreateConsole() {
 ** Sys_DestroyConsole
 */
 void Sys_DestroyConsole() {
-	if ( win32.win_viewlog.GetBool() ) {
+#ifndef _DEBUG
+	if ( win32.win_viewlog.GetBool() )
+#endif
+	{
 		// Delete critical section
 		Sys_ConsoleDeleteCriticalSection();
 		FreeConsole();
