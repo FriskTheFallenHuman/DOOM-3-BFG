@@ -25,8 +25,8 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#ifndef SYS_FILESYSTEM_H
-#define SYS_FILESYSTEM_H
+#ifndef __SYS_FILESYSTEM_H__
+#define __SYS_FILESYSTEM_H__
 
 void			Sys_Mkdir( const char *path );
 bool			Sys_Rmdir( const char *path );
@@ -50,4 +50,4 @@ const char *	Sys_CWD();
 
 const char *	Sys_LaunchPath();
 
-#endif
+#endif /* !__SYS_FILESYSTEM_H__ */

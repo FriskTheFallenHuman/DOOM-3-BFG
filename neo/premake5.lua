@@ -53,6 +53,11 @@ workspace("Doom3")
 		objdir("../build/out")
 	filter({})
 
+	filter("kind:SharedLib")
+		-- We don't want manifests for DLLs
+		flags({"NoManifest"})
+	filter({})
+
 	-- _Common.props
 	filter("system:Windows")
 		defines({"_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE", "_USE_32BIT_TIME_T"})

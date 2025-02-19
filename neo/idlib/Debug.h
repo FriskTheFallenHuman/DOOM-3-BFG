@@ -26,37 +26,37 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-/*
-===============================================================================
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
-	Definitions for information that is related to a licensee's game name and location.
+#include <stdint.h>
 
-===============================================================================
-*/
+const char *CleanupSourceCodeFileName( const char *fileName );
 
-#define GAME_NAME						"DOOM 3: BFG Edition"		// appears on window titles and errors
-#define SAVE_PATH						"\\id Software\\DOOM 3 BFG"
+// some utilities for getting debug information in runtime
+class idDebugSystem {
+public:
+	// captures call stack of function calling this one into specified binary blob
+	// len is: size of data buffer refore call, size of written data after call
+	// returns nonzero hash code of the call stack (same call stacks have equal hash codes)
+	static uint32 GetStack( uint8 *data, int &len );
 
-#define ENGINE_VERSION					"D3BFG 1"	// printed in console
+	// decodes previously captured call stack as an array of stack frames
+	// most recent stack frame goes first in the array
+	static void DecodeStack( uint8 *data, int len, idList<debugStackFrame_t, TAG_CRAP> &info );
 
-#define	BASE_GAMEDIR					"base"
+	// cleans the stack trace according to these rules:
+	//   cutWinMain: remove all stack frames above CRT "main" inclusive
+	//   shortenPath: remove path prefix ending at "doom3bfg" to make path relative to source code root
+	static void CleanStack( idList<debugStackFrame_t, TAG_CRAP>& info, bool cutWinMain = true, bool shortenPath = true);
 
-#define CONFIG_FILE						"D3BFGConfig.cfg"
+	// converts given call stack (array of stack frames) into readable string
+	// str and maxLen specify the receiving string buffer
+	static void StringifyStack( uint32 hash, const debugStackFrame_t *frames, int framesCnt, char *str, int maxLen );
 
-// base folder where the source code lives
-#define SOURCE_CODE_BASE_FOLDER			"neo"
+	// caller must copy the returned string immediately!
+	// note: does not allocate any memory in anyway
+	static const char *CleanupFileName( const char *fileName ) { return CleanupSourceCodeFileName( fileName ); }
+};
 
-// <= Doom v1.1: 1. no DS_VERSION token ( default )
-// Doom v1.2:  2
-// Doom 3 BFG: 3
-#define RENDERDEMO_VERSION				3
-
-// editor info
-#define EDITOR_DEFAULT_PROJECT			"doom.qe4"
-#define EDITOR_REGISTRY_KEY				"DOOMRadiant"
-#define EDITOR_WINDOWTEXT				"DOOMEdit"
-
-// win32 info
-#define WIN32_CONSOLE_CLASS				"D3BFG_WinConsole"
-#define	WIN32_WINDOW_CLASS_NAME			"D3BFG"
-#define	WIN32_FAKE_WINDOW_CLASS_NAME	"D3BFG_WGL_FAKE"
+#endif /* !__DEBUG_H__ */

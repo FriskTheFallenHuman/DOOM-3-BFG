@@ -1617,14 +1617,6 @@ void idSysLocal::StartProcess( const char *exePath, bool doexit ) {
 }
 
 /*
-==================
-Sys_SetFatalError
-==================
-*/
-void Sys_SetFatalError( const char *error ) {
-}
-
-/*
 ================
 Sys_SetLanguageFromSystem
 ================

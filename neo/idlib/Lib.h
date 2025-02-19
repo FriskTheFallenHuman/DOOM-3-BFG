@@ -68,6 +68,9 @@ public:
 	static void					Warning( const char *fmt, ... );
 	static void					WarningIf( const bool test, const char *fmt, ... );
 
+	// Crash handler
+	static void					PrintCallStack();
+
 	// the extra check for mainThreadInitialized is necessary for this to be accurate
 	// when called by startup code that happens before idLib::Init
 	static bool					IsMainThread() { return ( 0 == mainThreadInitialized ) || ( 1 == isMainThread ); }
@@ -150,76 +153,6 @@ void	SixtetsForInt( byte *out, int src);
 int		IntForSixtets( byte *in );
 
 /*
-================================================
-idException
-================================================
-*/
-class idException {
-public:
-	static const int MAX_ERROR_LEN = 2048;
-
-					idException( const char *text = "" ) {
-						strncpy( error, text, MAX_ERROR_LEN );
-					}
-
-	// this really, really should be a const function, but it's referenced too many places to change right now
-	const char *	GetError() {
-						return error;
-					}
-
-protected:
-	// if GetError() were correctly const this would be named GetError(), too
-	char *		GetErrorBuffer() {
-					return error;
-				}
-	int			GetErrorBufferSize() {
-					return MAX_ERROR_LEN;
-				}
-
-private:
-	friend class idFatalException;
-	static char error[MAX_ERROR_LEN];
-};
-
-/*
-================================================
-idFatalException
-================================================
-*/
-class idFatalException {
-public:
-	static const int MAX_ERROR_LEN = 2048;
-
-	idFatalException( const char *text = "" ) {
-		strncpy( idException::error, text, MAX_ERROR_LEN );
-	}
-
-	// this really, really should be a const function, but it's referenced too many places to change right now
-	const char *	GetError() {
-		return idException::error;
-	}
-
-protected:
-	// if GetError() were correctly const this would be named GetError(), too
-	char *		GetErrorBuffer() {
-		return idException::error;
-	}
-	int			GetErrorBufferSize() {
-		return MAX_ERROR_LEN;
-	}
-};
-
-/*
-================================================
-idNetworkLoadException
-================================================
-*/
-class idNetworkLoadException : public idException {
-public:
-	idNetworkLoadException( const char * text = "" ) : idException( text ) { }
-};
-
-/*
 ===============================================================================
 
 	idLib headers.
@@ -228,6 +161,7 @@ public:
 */
 
 // System
+#include "sys/sys_exceptions.h"
 #include "sys/sys_assert.h"
 #include "sys/sys_threading.h"
 
@@ -316,6 +250,7 @@ public:
 #include "Swap.h"
 #include "Callback.h"
 #include "ParallelJobList.h"
+#include "Debug.h"
 
 #include "SoftwareCache.h"
 
