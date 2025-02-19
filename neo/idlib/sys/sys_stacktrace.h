@@ -25,38 +25,19 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+#ifndef __SYS_STACKTRACE_H__
+#define __SYS_STACKTRACE_H__
 
-/*
-===============================================================================
+static const int MAX_LEN = 88;
 
-	Definitions for information that is related to a licensee's game name and location.
+struct debugStackFrame_t {
+	void* pointer;
+	char functionName[MAX_LEN];
+	char fileName[MAX_LEN];
+	int lineNumber;
+};
+void Sys_CaptureStackTrace( int ignoreFrames, uint8 *data, int &len );
+int Sys_GetStackTraceFramesCount( uint8 *data, int len );
+void Sys_DecodeStackTrace( uint8 *data, int len, debugStackFrame_t *frames );
 
-===============================================================================
-*/
-
-#define GAME_NAME						"DOOM 3: BFG Edition"		// appears on window titles and errors
-#define SAVE_PATH						"\\id Software\\DOOM 3 BFG"
-
-#define ENGINE_VERSION					"D3BFG 1"	// printed in console
-
-#define	BASE_GAMEDIR					"base"
-
-#define CONFIG_FILE						"D3BFGConfig.cfg"
-
-// base folder where the source code lives
-#define SOURCE_CODE_BASE_FOLDER			"neo"
-
-// <= Doom v1.1: 1. no DS_VERSION token ( default )
-// Doom v1.2:  2
-// Doom 3 BFG: 3
-#define RENDERDEMO_VERSION				3
-
-// editor info
-#define EDITOR_DEFAULT_PROJECT			"doom.qe4"
-#define EDITOR_REGISTRY_KEY				"DOOMRadiant"
-#define EDITOR_WINDOWTEXT				"DOOMEdit"
-
-// win32 info
-#define WIN32_CONSOLE_CLASS				"D3BFG_WinConsole"
-#define	WIN32_WINDOW_CLASS_NAME			"D3BFG"
-#define	WIN32_FAKE_WINDOW_CLASS_NAME	"D3BFG_WGL_FAKE"
+#endif /* !__SYS_STACKTRACE_H__ */

@@ -25,38 +25,70 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+#ifndef __SYS_EXCEPTIONS_H__
+#define __SYS_EXCEPTIONS_H__
+
+static const int MAX_ERROR_LEN = 2048;
 
 /*
-===============================================================================
-
-	Definitions for information that is related to a licensee's game name and location.
-
-===============================================================================
+================================================
+idException
+================================================
 */
+class idException {
+public:
+	idException( const char *text = "" ) {
+		strncpy( error, text, MAX_ERROR_LEN );
+	}
 
-#define GAME_NAME						"DOOM 3: BFG Edition"		// appears on window titles and errors
-#define SAVE_PATH						"\\id Software\\DOOM 3 BFG"
+	const char * GetError() {
+		return error;
+	}
 
-#define ENGINE_VERSION					"D3BFG 1"	// printed in console
+protected:
+	char * GetErrorBuffer() {
+		return error;
+	}
 
-#define	BASE_GAMEDIR					"base"
+	int GetErrorBufferSize() {
+		return MAX_ERROR_LEN;
+	}
 
-#define CONFIG_FILE						"D3BFGConfig.cfg"
+private:
+	friend class idFatalException;
+	static char error[MAX_ERROR_LEN];
+};
 
-// base folder where the source code lives
-#define SOURCE_CODE_BASE_FOLDER			"neo"
+/*
+================================================
+idFatalException
+================================================
+*/
+class idFatalException {
+public:
+	idFatalException( const char *text = "", bool doStackTrace = true, bool emergencyExit = false );
 
-// <= Doom v1.1: 1. no DS_VERSION token ( default )
-// Doom v1.2:  2
-// Doom 3 BFG: 3
-#define RENDERDEMO_VERSION				3
+	const char * GetError() {
+		return idException::error;
+	}
 
-// editor info
-#define EDITOR_DEFAULT_PROJECT			"doom.qe4"
-#define EDITOR_REGISTRY_KEY				"DOOMRadiant"
-#define EDITOR_WINDOWTEXT				"DOOMEdit"
+protected:
+	char * GetErrorBuffer() {
+		return idException::error;
+	}
+	int GetErrorBufferSize() {
+		return MAX_ERROR_LEN;
+	}
+};
 
-// win32 info
-#define WIN32_CONSOLE_CLASS				"D3BFG_WinConsole"
-#define	WIN32_WINDOW_CLASS_NAME			"D3BFG"
-#define	WIN32_FAKE_WINDOW_CLASS_NAME	"D3BFG_WGL_FAKE"
+/*
+================================================
+idNetworkLoadException
+================================================
+*/
+class idNetworkLoadException : public idException {
+public:
+	idNetworkLoadException( const char * text = "" ) : idException( text ) { }
+};
+
+#endif /* !__SYS_EXCEPTIONS_H__ */
