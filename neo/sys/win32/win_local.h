@@ -135,7 +135,7 @@ struct Win32Vars_t {
 	static idCVar	win_viewlog;
 	static idCVar	win_timerUpdate;
 
-	CRITICAL_SECTION criticalSections[MAX_CRITICAL_SECTIONS];
+	mutexHandle_t criticalSections[MAX_CRITICAL_SECTIONS];
 
 	HINSTANCE		hInstDI;			// direct input
 

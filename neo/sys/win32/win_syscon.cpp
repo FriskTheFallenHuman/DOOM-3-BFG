@@ -44,22 +44,6 @@ char consoleText[512];
 
 void Sys_ConsoleInputThread();
 
-CRITICAL_SECTION csConsoleInput;
-
-/*
-** Sys_ConsoleInittCriticalSection
-*/
-void Sys_ConsoleInitCriticalSection() {
-	InitializeCriticalSection( &csConsoleInput );
-}
-
-/*
-** Sys_ConsoleDeleteCriticalSection
-*/
-void Sys_ConsoleDeleteCriticalSection() {
-	DeleteCriticalSection( &csConsoleInput );
-}
-
 /*
 ** Sys_BindCrtHandlesToStdHandles
 ** https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows
@@ -166,29 +150,20 @@ void Sys_BindCrtHandlesToStdHandles( bool bindStdIn, bool bindStdOut, bool bindS
 ** Sys_CreateConsole
 */
 void Sys_CreateConsole() {
-#ifndef _DEBUG
-	// Dont waste resources if we didn't have the log opened
-	if ( win32.win_viewlog.GetBool() )
-#endif
-	{
-		// We allocate our console first
-		if( AllocConsole() ) {
-			// Update the C/C++ runtime standard input, output, and error targets to use the console window
-			Sys_BindCrtHandlesToStdHandles( true, true, true );
-			SetConsoleTitle( "Console Output" );
-			SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+	// We allocate our console first
+	if( AllocConsole() ) {
+		// Update the C/C++ runtime standard input, output, and error targets to use the console window
+		Sys_BindCrtHandlesToStdHandles( true, true, true );
+		SetConsoleTitle( "Console Output" );
+		SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
 
-			// Hide it by default
-			HWND window = FindWindowA( "ConsoleWindowClass", NULL );
-			ShowWindow( window, SW_SHOWDEFAULT);
+		// Hide it by default
+		HWND window = FindWindowA( "ConsoleWindowClass", NULL );
+		ShowWindow( window, SW_HIDE );
 
-			// Initialize critical section
-			Sys_ConsoleInitCriticalSection();
-
-			// Start the console input thread
-			std::thread consoleInputThread( Sys_ConsoleInputThread );
-			consoleInputThread.detach();
-		}
+		// Start the console input thread
+		std::thread consoleInputThread( Sys_ConsoleInputThread );
+		consoleInputThread.detach();
 	}
 }
 
@@ -197,39 +172,39 @@ void Sys_CreateConsole() {
 */
 void Sys_DestroyConsole() {
 #ifndef _DEBUG
-	if ( win32.win_viewlog.GetBool() )
-#endif
-	{
-		// Delete critical section
-		Sys_ConsoleDeleteCriticalSection();
-		FreeConsole();
+	// Dont waste resources if we didn't have the log opened
+	if ( !win32.win_viewlog.GetBool() ) {
+		return;
 	}
+#endif
+
+	FreeConsole();
 }
 
 /*
 ** Sys_ShowConsole
 */
-void Sys_ShowConsole( int visLevel, bool quitOnClose ) {
+void Sys_ShowConsole() {
 
 	HWND window = FindWindowA( "ConsoleWindowClass", NULL );
 	if ( !window ) {
 		return;
 	}
 
-	switch ( visLevel ) {
-		case 0:
-			ShowWindow( window, SW_HIDE );
-		break;
-		case 1:
-			ShowWindow( window, SW_SHOWNORMAL );
-		break;
-		case 2:
-			ShowWindow( window, SW_MINIMIZE );
-		break;
-		default:
-			Sys_Error( "Invalid visLevel %d sent to Sys_ShowConsole\n", visLevel );
-		break;
+	ShowWindow( window, SW_SHOWDEFAULT );
+}
+
+/*
+** Sys_HideConsole
+*/
+void Sys_HideConsole() {
+
+	HWND window = FindWindowA( "ConsoleWindowClass", NULL );
+	if ( !window ) {
+		return;
 	}
+
+	ShowWindow( window, SW_HIDE );
 }
 
 /*
@@ -247,10 +222,9 @@ void Sys_ConsoleInputThread() {
 			if ( ReadConsole( hConsole, buffer, sizeof( buffer ) - 1, &bytesRead, NULL ) ) {
 				buffer[bytesRead - 2] = '\0'; // Null-terminate the string and remove CRLF
 
-				// Enter critical section before updating shared data
-				EnterCriticalSection( &csConsoleInput );
-				strcpy(  returnedText, buffer );
-				LeaveCriticalSection( &csConsoleInput );
+				Sys_MutexLock( win32.criticalSections[CRITICAL_SECTION_ONE], true );
+				strcpy( returnedText, buffer );
+				Sys_MutexUnlock( win32.criticalSections[CRITICAL_SECTION_ONE] );
 			}
 		}
 		Sys_Sleep( 100 );
@@ -261,17 +235,24 @@ void Sys_ConsoleInputThread() {
 ** Sys_ConsoleInput
 */
 char *Sys_ConsoleInput() {
-	EnterCriticalSection( &csConsoleInput );
+#ifndef _DEBUG
+	// Dont waste resources if we didn't have the log opened
+	if ( !win32.win_viewlog.GetBool() ) {
+		return NULL;
+	}
+#endif
+
+	Sys_MutexLock( win32.criticalSections[CRITICAL_SECTION_ONE], false );
 
 	if ( returnedText[0] == 0 ) {
-		LeaveCriticalSection( &csConsoleInput );
+		Sys_MutexUnlock( win32.criticalSections[CRITICAL_SECTION_ONE] );
 		return NULL;
 	}
 
 	strcpy( consoleText, returnedText );
 	returnedText[0] = 0;
 
-	LeaveCriticalSection( &csConsoleInput );
+	Sys_MutexUnlock( win32.criticalSections[CRITICAL_SECTION_ONE] );
 
 	return consoleText;
 }

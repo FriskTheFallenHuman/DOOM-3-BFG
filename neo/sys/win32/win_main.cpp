@@ -224,7 +224,7 @@ void Sys_Error( const char *error, ... ) {
 	Conbuf_AppendText( text );
 	Conbuf_AppendText( "\n" );
 
-	Sys_ShowConsole( 1, true );
+	Sys_ShowConsole();
 #endif
 
 	timeEndPeriod( 1 );
@@ -1198,6 +1198,10 @@ Sys_Shutdown
 ================
 */
 void Sys_Shutdown() {
+	for ( int i = 0; i < MAX_CRITICAL_SECTIONS; i++ ) {
+		Sys_MutexDestroy( win32.criticalSections[i] );
+	}
+
 	CoUninitialize();
 }
 
@@ -1450,15 +1454,16 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	win32.hInstance = hInstance;
 	idStr::Copynz( sys_cmdline, lpCmdLine, sizeof( sys_cmdline ) );
 
+	// We need to create the mutexes before anything else
+	for ( int i = 0; i < MAX_CRITICAL_SECTIONS; i++ ) {
+		Sys_MutexCreate( win32.criticalSections[i] );
+	}
+
 	// done before Com/Sys_Init since we need this for error output
 	Sys_CreateConsole();
 
 	// no abort/retry/fail errors
 	SetErrorMode( SEM_FAILCRITICALERRORS );
-
-	for ( int i = 0; i < MAX_CRITICAL_SECTIONS; i++ ) {
-		InitializeCriticalSection( &win32.criticalSections[i] );
-	}
 
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
@@ -1484,12 +1489,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	// hide or show the early console as necessary
 #ifndef _DEBUG
 	if( win32.win_viewlog.GetInteger() ) {
-		Sys_ShowConsole( 1, true );
+		Sys_ShowConsole();
 	} else {
-		Sys_ShowConsole( 0, false );
+		Sys_HideConsole();
 	}
 #else
-	Sys_ShowConsole( 1, true );
+	Sys_ShowConsole();
 #endif
 
 #ifdef SET_THREAD_AFFINITY
