@@ -75,3 +75,22 @@ function linktimeoptimizationex(value)
 
 	linkoptions({"/LTCG:incremental"})
 end
+
+
+--[[
+	Get Architecture String
+	@purpose: Function to get the architecture has a string
+	@inputs: none
+]]
+function getArchitectureString()
+    local arch = os.hostarch()
+    if arch == "x86" or arch == "x86_64" then
+        return arch
+    elseif arch == "x86_64" then
+        return "x64"
+    elseif arch == "i386" then
+        return "x86"
+    else
+        return "unknown_arch"
+    end
+end

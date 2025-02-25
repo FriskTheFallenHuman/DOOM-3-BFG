@@ -41,7 +41,7 @@ workspace("Doom3")
 	--floatingpoint( "Fast" )
 	characterset( "ASCII" )
 
-	includedirs({".", "external", "idlib"})
+	includedirs({".", "external", "external/SDL3-3.2.4/include", "idlib"})
 	defines({"__DOOM__", "ID_PC"})
 	if _OPTIONS["dll"] then
 		defines({"__DOOM_DLL__"})
@@ -120,6 +120,20 @@ workspace("Doom3")
 		language("C++")
 		links({"external", "idLib"})
 
+		filter("system:windows")
+			libdirs({"external/SDL3-3.2.4/lib/" .. getArchitectureString()})
+		filter({})
+
+		filter("system:linux")
+			libdirs({"external/SDL3-3.2.4/lib/" .. getArchitectureString()})
+		filter({})
+
+		filter("system:macosx")
+			libdirs({"external/SDL3-3.2.4/lib/" .. getArchitectureString()})
+		filter({})
+
+		links({"SDL3"})
+
 		pchsource("framework/precompiled.cpp")
 		pchheader("")
 
@@ -134,5 +148,8 @@ workspace("Doom3")
 		filter("files:renderer/jobs/**.cpp")
 			flags({"NoPCH"})
 		filter({})
+
+		-- Copy the SDL3 File
+		--postbuildcommands({"{COPYFILE} %[default.config] %[../build/project.config]"})
 
 	group("")
