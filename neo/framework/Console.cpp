@@ -595,6 +595,8 @@ void idConsoleLocal::KeyDownEvent( int key ) {
 		idStr hist = consoleHistory.RetrieveFromHistory( false );
 		if ( !hist.IsEmpty() ) {
 			consoleField.SetBuffer( hist );
+		} else {
+			consoleField.Clear();	// DG: if no more lines are in the history, show a blank line again
 		}
 		return;
 	}
