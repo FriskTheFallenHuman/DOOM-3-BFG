@@ -232,6 +232,11 @@ float idConsoleLocal::DrawFPS( float y ) {
 
 	y += BIGCHAR_HEIGHT + 4;
 
+	// DG: "com_showFPS 2" means: show FPS only, like in classic doom3
+	if( com_showFPS.GetInteger() == 1 ) {
+		return y;
+	}
+
 	// print the resolution scale so we can tell when we are at reduced resolution
 	idStr resolutionText;
 	resolutionScale.GetConsoleText( resolutionText );
