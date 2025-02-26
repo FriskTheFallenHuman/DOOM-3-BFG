@@ -111,6 +111,7 @@ idStr idConsoleHistory::RetrieveFromHistory( bool backward ) {
 		upPoint--;
 	} else {
 		if ( downPoint >= numHistory ) {
+			upPoint = downPoint - 1;	// DG: without this you'll get the last-but-one command when pressing UP
 			return idStr( "" );
 		}
 		returnLine = downPoint;
