@@ -1032,16 +1032,21 @@ void R_TestVideo_f( const idCmdArgs &args ) {
 	tr.testImage = NULL;
 
 	if ( args.Argc() < 2 ) {
+		idSoundWorld *soundWorld = soundSystem->GetPlayingSoundWorld();
+		if( soundWorld ) {
+			soundWorld->PlayShaderDirectly( NULL ); // stop the sound
+		}
 		return;
 	}
 
 	tr.testImage = globalImages->ImageFromFile( "_scratch", TF_DEFAULT, TR_REPEAT, TD_DEFAULT );
-	tr.testVideo = idCinematic::Alloc( args.Argv( 1 ) );
-	tr.testVideo->InitFromFile( args.Argv( 1 ), true );
+	idStr fileName = args.Argv( 1 );
+	tr.testVideo = idCinematic::Alloc( fileName );
+	tr.testVideo->InitFromFile( fileName.c_str(), true );
 
 	cinData_t	cin;
 	cin = tr.testVideo->ImageForTime( 0 );
-	if ( cin.imageY == NULL ) {
+	if ( cin.imageY == NULL && cin.image == NULL ) {
 		delete tr.testVideo;
 		tr.testVideo = NULL;
 		tr.testImage = NULL;
@@ -1056,10 +1061,13 @@ void R_TestVideo_f( const idCmdArgs &args ) {
 	tr.testVideoStartTime = tr.primaryRenderView.time[1];
 
 	// try to play the matching wav file
-	idStr	wavString = args.Argv( ( args.Argc() == 2 ) ? 1 : 2 );
-	wavString.StripFileExtension();
-	wavString = wavString + ".wav";
-	common->SW()->PlayShaderDirectly( wavString.c_str() );
+	idSoundWorld *soundWorld = soundSystem->GetPlayingSoundWorld();
+	if( soundWorld ) {
+		idStr	wavString = args.Argv( ( args.Argc() == 2 ) ? 1 : 2 );
+		wavString.StripFileExtension();
+		wavString = wavString + ".wav";
+		soundWorld->PlayShaderDirectly( wavString.c_str() );
+	}
 }
 
 static int R_QsortSurfaceAreas( const void *a, const void *b ) {

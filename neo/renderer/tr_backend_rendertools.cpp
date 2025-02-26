@@ -2338,6 +2338,8 @@ void RB_TestImage() {
 			image = cin.imageY;
 			imageCr = cin.imageCr;
 			imageCb = cin.imageCb;
+		} else if ( cin.image != NULL ) {
+			image = cin.image;
 		} else {
 			tr.testImage = NULL;
 			return;
@@ -2375,7 +2377,7 @@ void RB_TestImage() {
 	scale[0] = w; // scale
 	scale[5] = h; // scale
 	scale[12] = halfScreenWidth - ( halfScreenWidth * w ); // translate
-	scale[13] = halfScreenHeight - ( halfScreenHeight * h ); // translate
+	scale[13] = halfScreenHeight - ( halfScreenHeight * h ) - h; // translate
 	scale[10] = 1.0f;
 	scale[15] = 1.0f;
 

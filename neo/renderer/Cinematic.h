@@ -74,7 +74,7 @@ public:
 
 	// allocates and returns a private subclass that implements the methods
 	// This should be used instead of new
-	static idCinematic	*Alloc( const char *qpath );
+	static idCinematic	*Alloc(  idStr &qpath  );
 
 	// frees all allocated memory
 	virtual				~idCinematic();
