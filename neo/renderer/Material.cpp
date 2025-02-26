@@ -1247,8 +1247,9 @@ void idMaterial::ParseStage( idLexer &src, const textureRepeat_t trpDefault ) {
 					continue;
 				}
 			}
-			ts->cinematic = idCinematic::Alloc( token.c_str() );
-			ts->cinematic->InitFromFile( token.c_str(), loop );
+			idStr fileName = token.c_str();
+			ts->cinematic = idCinematic::Alloc( fileName );
+			ts->cinematic->InitFromFile( fileName.c_str(), loop );
 			continue;
 		}
 
@@ -2630,6 +2631,11 @@ idMaterial::UpdateCinematic
 =============
 */
 void idMaterial::UpdateCinematic( int time ) const {
+	if( !stages || !stages[0].texture.cinematic || !tr.viewDef )
+	{
+		return;
+	}
+	stages[0].texture.cinematic->ImageForTime( tr.primaryRenderView.time[0] );
 }
 
 /*

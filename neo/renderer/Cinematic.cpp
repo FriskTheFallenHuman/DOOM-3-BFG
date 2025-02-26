@@ -56,14 +56,21 @@ void idCinematic::ShutdownCinematic() {
 idCinematic::Alloc
 ==============
 */
-idCinematic * idCinematic::Alloc( const char *qpath ) {
-	if ( idStr::CheckExtension( qpath, ".roq" ) ) {
-		return new idCinematicRoQ();
-	} else if ( idStr::CheckExtension( qpath, ".bik" ) ) {
-		return new idCinematicBink();
-	} else {
-		return new idCinematic();
+idCinematic * idCinematic::Alloc( idStr &qpath ) {
+	if( qpath.Find( '/' ) < 0 && qpath.Find( '\\' ) < 0 ) {
+		qpath.Insert( "video/", 0 );
 	}
+
+	qpath.SetFileExtension( ".bik" );
+	if( fileSystem->FindFile( qpath.c_str() ) == FIND_YES ) {
+		return new idCinematicBink();
+	}
+	qpath.SetFileExtension( ".roq" );
+	if( fileSystem->FindFile( qpath.c_str() ) == FIND_YES ) {
+		return new idCinematicRoQ();
+	}
+
+	return new idCinematic();
 }
 
 /*

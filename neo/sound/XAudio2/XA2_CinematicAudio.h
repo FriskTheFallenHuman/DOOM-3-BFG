@@ -26,63 +26,21 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#ifndef __CINEMATICBINK_H__
-#define __CINEMATICBINK_H__
+#ifndef __CINEMATIC_AUDIO_XA2_H__
+#define __CINEMATIC_AUDIO_XA2_H__
 
-#undef nullptr
-
-#include "libbinkdec/include/BinkDecoder.h"
-#include "../sound/CinematicAudio.h"
-
-/*
-===============================================================================
-
-	Bink cinematic
-
-===============================================================================
-*/
-
-class idCinematicBink : public idCinematic {
+class idCinematicAudio_XAudio2: public idCinematicAudio {
 public:
-public:
-					idCinematicBink();
-	virtual			~idCinematicBink();
-	virtual bool	InitFromFile( const char *qpath, bool amilooping );
-	virtual int		AnimationLength();
-	virtual cinData_t	ImageForTime( int milliseconds );
-	virtual void	Close();
-	virtual void	ResetTime( int time );
-	virtual int		GetStartTime();
-	virtual bool    IsPlaying() const;
-	virtual void	ExportToTGA( bool skipExisting = true );
-	virtual float	GetFrameRate() const;
+			idCinematicAudio_XAudio2();
+	virtual void	InitAudio( void *audioContext );
+	virtual void	PlayAudio( uint8 *data, int size );
+	virtual void	ResetAudio();
+	virtual void	ShutdownAudio();
 
 private:
-	int				animationLength;
-	int				startTime;
-	float			frameRate;
-	int				CIN_WIDTH, CIN_HEIGHT;
-	cinStatus_t		status;
-	bool			looping;
-
-	BinkHandle		binkHandle;
-
-	void			BinkDecReset();
-	bool			InitBinkFile( const char* qpath, bool amilooping );
-
-	YUVbuffer		yuvBuffer;
-	bool			hasFrame;
-	int				framePos;
-	int				numFrames;
-	idImage *		imgY;
-	idImage *		imgCr;
-	idImage *		imgCb;
-
-	uint32			audioTracks;
-	uint32			trackIndex;
-	idCinematicAudio *	cinematicAudio = NULL;
-
-	AudioInfo		binkInfo;
+	WAVEFORMATEX			voiceFormatcine = { 0 };
+	IXAudio2SourceVoice *	pMusicSourceVoice1;
+	XAUDIO2_BUFFER			Packet = { 0 };
 };
 
-#endif /* !__CINEMATICBINK_H__ */
+#endif /* !__CINEMATIC_AUDIO_XA2_H__ */

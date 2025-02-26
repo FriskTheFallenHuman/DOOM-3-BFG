@@ -78,6 +78,7 @@ typedef enum {
 } soundDemoCommand_t;
 
 #include "SoundVoice.h"
+#include "CinematicAudio.h"
 
 
 #define OPERATION_SET 1
@@ -111,6 +112,7 @@ struct AudioDevice {
 #include "XAudio2/XA2_SoundSample.h"
 #include "XAudio2/XA2_SoundVoice.h"
 #include "XAudio2/XA2_SoundHardware.h"
+#include "XAudio2/XA2_CinematicAudio.h"
 
 
 

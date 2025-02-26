@@ -39,16 +39,38 @@ local minizip_files = {
 	"minizip/zip.h"
 }
 
+-- BinkDeC
+local binkdec_files = {
+	"libbinkdec/src/BinkAudio.cpp",
+	"libbinkdec/src/BinkDecoder.cpp",
+	"libbinkdec/src/BinkVideo.cpp",
+	"libbinkdec/src/BitReader.cpp",
+	"libbinkdec/src/FileStream.cpp",
+	"libbinkdec/src/HuffmanVLC.cpp",
+	"libbinkdec/src/LogError.cpp",
+	"libbinkdec/src/Util.cpp",
+	"libbinkdec/src/avfft.c",
+	"libbinkdec/src/dct.c",
+	"libbinkdec/src/dct32.c",
+	"libbinkdec/src/fft.c",
+	"libbinkdec/src/mdct.c",
+	"libbinkdec/src/rdft.c",
+}
+
 project("external")
 	kind("StaticLib")
 	language("C")
 	warnings("Off")
 
-	includedirs({"miniz", "minizip"})
+	includedirs({"miniz", "minizip", "libbinkdec/include"})
 
-	files({"external.lua", miniz_files, minizip_files})
+	files({"external.lua", miniz_files, minizip_files, binkdec_files})
 
 	filter("files:minizip/**.cpp")
+		language("C++")
+	filter({})
+	
+	filter("files:libbinkdec/src/**.cpp")
 		language("C++")
 	filter({})
 group("")

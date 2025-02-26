@@ -26,63 +26,16 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#ifndef __CINEMATICBINK_H__
-#define __CINEMATICBINK_H__
+#ifndef __CINEMATIC_AUDIO_H__
+#define __CINEMATIC_AUDIO_H__
 
-#undef nullptr
-
-#include "libbinkdec/include/BinkDecoder.h"
-#include "../sound/CinematicAudio.h"
-
-/*
-===============================================================================
-
-	Bink cinematic
-
-===============================================================================
-*/
-
-class idCinematicBink : public idCinematic {
+class idCinematicAudio {
 public:
-public:
-					idCinematicBink();
-	virtual			~idCinematicBink();
-	virtual bool	InitFromFile( const char *qpath, bool amilooping );
-	virtual int		AnimationLength();
-	virtual cinData_t	ImageForTime( int milliseconds );
-	virtual void	Close();
-	virtual void	ResetTime( int time );
-	virtual int		GetStartTime();
-	virtual bool    IsPlaying() const;
-	virtual void	ExportToTGA( bool skipExisting = true );
-	virtual float	GetFrameRate() const;
-
-private:
-	int				animationLength;
-	int				startTime;
-	float			frameRate;
-	int				CIN_WIDTH, CIN_HEIGHT;
-	cinStatus_t		status;
-	bool			looping;
-
-	BinkHandle		binkHandle;
-
-	void			BinkDecReset();
-	bool			InitBinkFile( const char* qpath, bool amilooping );
-
-	YUVbuffer		yuvBuffer;
-	bool			hasFrame;
-	int				framePos;
-	int				numFrames;
-	idImage *		imgY;
-	idImage *		imgCr;
-	idImage *		imgCb;
-
-	uint32			audioTracks;
-	uint32			trackIndex;
-	idCinematicAudio *	cinematicAudio = NULL;
-
-	AudioInfo		binkInfo;
+	virtual ~idCinematicAudio() {}
+	virtual void InitAudio( void *audioContext ) = 0;
+	virtual void PlayAudio( uint8 *data, int size ) = 0;
+	virtual void ResetAudio() = 0;
+	virtual void ShutdownAudio() = 0;
 };
 
-#endif /* !__CINEMATICBINK_H__ */
+#endif /* !__CINEMATIC_AUDIO_H__ */

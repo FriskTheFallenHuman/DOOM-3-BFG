@@ -355,6 +355,7 @@ static void RB_BindVariableStageImage( const textureStage_t *texture, const floa
 			cin.imageCr->Bind();
 			GL_SelectTexture( 2 );
 			cin.imageCb->Bind();
+			renderProgManager.BindShader_Bink();	// DG: imageY is only used for bink videos (with libbinkdec), so the bink shader must be used
 		} else if( cin.image != NULL ) {
 			// Roq expects a single RBG image.
 			GL_SelectTexture( 0 );
