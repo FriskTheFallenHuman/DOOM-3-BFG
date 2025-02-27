@@ -270,7 +270,7 @@ This is an out-of-sequence screen update, not the normal game rendering
 ===============
 */
 void idCommonLocal::UpdateScreen( bool captureToImage ) {
-	if ( insideUpdateScreen ) {
+	if ( insideUpdateScreen || com_shuttingDown ) {
 		return;
 	}
 	insideUpdateScreen = true;
