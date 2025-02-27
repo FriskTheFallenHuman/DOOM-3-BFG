@@ -372,7 +372,9 @@ void idCommonLocal::Frame() {
 		// if the console or another gui is down, we don't need to hold the mouse cursor
 		bool chatting = false;
 		if ( common->IsPaused() || console->Active() || Dialog().IsDialogActive() || session->IsSystemUIShowing() || (game && game->InhibitControls())) {
-			Sys_GrabMouseCursor( false );
+			if ( console->Active() || !mapSpawned ) {
+				Sys_GrabMouseCursor( false );
+			}
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, true );
 			chatting = true;
 		} else {
