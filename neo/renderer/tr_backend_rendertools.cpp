@@ -2333,7 +2333,7 @@ void RB_TestImage() {
 	if ( tr.testVideo ) {
 		cinData_t	cin;
 
-		cin = tr.testVideo->ImageForTime( backEnd.viewDef->renderView.time[1] - tr.testVideoStartTime );
+		cin = tr.testVideo->ImageForTime( 0 /*viewDef->renderView.time[1] - tr.testVideoStartTime*/ );
 		if ( cin.imageY != NULL ) {
 			image = cin.imageY;
 			imageCr = cin.imageCr;

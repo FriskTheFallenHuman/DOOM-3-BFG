@@ -1058,7 +1058,7 @@ void R_TestVideo_f( const idCmdArgs &args ) {
 	int	len = tr.testVideo->AnimationLength();
 	common->Printf( "%5.1f seconds of video\n", len * 0.001 );
 
-	tr.testVideoStartTime = tr.primaryRenderView.time[1];
+	//tr.testVideoStartTime = tr.primaryRenderView.time[1];
 
 	// try to play the matching wav file
 	idSoundWorld *soundWorld = soundSystem->GetPlayingSoundWorld();
