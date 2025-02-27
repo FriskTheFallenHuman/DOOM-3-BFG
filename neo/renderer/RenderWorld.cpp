@@ -142,18 +142,6 @@ idRenderWorldLocal::idRenderWorldLocal() {
 	interactionTable = 0;
 	interactionTableWidth = 0;
 	interactionTableHeight = 0;
-
-	for ( int i = 0; i < decals.Num(); i++ ) {
-		decals[i].entityHandle = -1;
-		decals[i].lastStartTime = 0;
-		decals[i].decals = new (TAG_MODEL) idRenderModelDecal();
-	}
-
-	for ( int i = 0; i < overlays.Num(); i++ ) {
-		overlays[i].entityHandle = -1;
-		overlays[i].lastStartTime = 0;
-		overlays[i].overlays = new (TAG_MODEL) idRenderModelOverlay();
-	}
 }
 
 /*
@@ -164,14 +152,6 @@ idRenderWorldLocal::~idRenderWorldLocal
 idRenderWorldLocal::~idRenderWorldLocal() {
 	// free all the entityDefs, lightDefs, portals, etc
 	FreeWorld();
-
-	for ( int i = 0; i < decals.Num(); i++ ) {
-		delete decals[i].decals;
-	}
-
-	for ( int i = 0; i < overlays.Num(); i++ ) {
-		delete overlays[i].overlays;
-	}
 
 	// free up the debug lines, polys, and text
 	RB_ClearDebugPolygons( 0 );
@@ -683,28 +663,7 @@ idRenderWorldLocal::AllocDecal
 ====================
 */
 idRenderModelDecal * idRenderWorldLocal::AllocDecal( qhandle_t newEntityHandle, int startTime ) {
-	int oldest = 0;
-	int oldestTime = MAX_TYPE( oldestTime );
-	for ( int i = 0; i < decals.Num(); i++ ) {
-		if ( decals[i].lastStartTime < oldestTime ) {
-			oldestTime = decals[i].lastStartTime;
-			oldest = i;
-		}
-	}
-
-	// remove any reference another model may still have to this decal
-	if ( decals[oldest].entityHandle >= 0 && decals[oldest].entityHandle < entityDefs.Num() ) {
-		idRenderEntityLocal	*def = entityDefs[decals[oldest].entityHandle];
-		if ( def != NULL && def->decals == decals[oldest].decals ) {
-			def->decals = NULL;
-		}
-	}
-
-	decals[oldest].entityHandle = newEntityHandle;
-	decals[oldest].lastStartTime = startTime;
-	decals[oldest].decals->ReUse();
-
-	return decals[oldest].decals;
+	return (new (TAG_MODEL) idRenderModelDecal);
 }
 
 /*
@@ -713,28 +672,7 @@ idRenderWorldLocal::AllocOverlay
 ====================
 */
 idRenderModelOverlay * idRenderWorldLocal::AllocOverlay( qhandle_t newEntityHandle, int startTime ) {
-	int oldest = 0;
-	int oldestTime = MAX_TYPE( oldestTime );
-	for ( int i = 0; i < overlays.Num(); i++ ) {
-		if ( overlays[i].lastStartTime < oldestTime ) {
-			oldestTime = overlays[i].lastStartTime;
-			oldest = i;
-		}
-	}
-
-	// remove any reference another model may still have to this overlay
-	if ( overlays[oldest].entityHandle >= 0 && overlays[oldest].entityHandle < entityDefs.Num() ) {
-		idRenderEntityLocal	*def = entityDefs[overlays[oldest].entityHandle];
-		if ( def != NULL && def->overlays == overlays[oldest].overlays ) {
-			def->overlays = NULL;
-		}
-	}
-
-	overlays[oldest].entityHandle = newEntityHandle;
-	overlays[oldest].lastStartTime = startTime;
-	overlays[oldest].overlays->ReUse();
-
-	return overlays[oldest].overlays;
+	return (new (TAG_MODEL) idRenderModelOverlay);
 }
 
 /*

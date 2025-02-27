@@ -44,20 +44,14 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-static const int NUM_DECAL_BOUNDING_PLANES	= 6;
-#ifdef ID_PC
-static const int MAX_DEFERRED_DECALS		= 8;
-static const int DEFFERED_DECAL_TIMEOUT		= 1000;	// don't create a decal if it wasn't visible within the first second
-static const int MAX_DECALS					= 64;
-#else
-static const int MAX_DEFERRED_DECALS		= 4;
-static const int DEFFERED_DECAL_TIMEOUT		= 200;	// don't create a decal if it wasn't visible within the first 200 milliseconds
-static const int MAX_DECALS					= 32;
-#endif
-static const int MAX_DECAL_VERTS			= 3 + NUM_DECAL_BOUNDING_PLANES + 3 + 6;	// 3 triangle verts clipped NUM_DECAL_BOUNDING_PLANES + 3 times (plus 6 for safety)
-static const int MAX_DECAL_INDEXES			= ( MAX_DECAL_VERTS - 2 ) * 3;
+static const int NUM_DECAL_BOUNDING_PLANES		= 6;
 
-compile_time_assert( CONST_ISPOWEROFTWO( MAX_DECALS ) );
+static const int DECALS_GRANULARITY				= 64;
+static const int DEFERRED_DECALS_GRANULARITY	= 8;
+
+static const int MAX_DECAL_VERTS				= 3 + NUM_DECAL_BOUNDING_PLANES + 3 + 6;	// 3 triangle verts clipped NUM_DECAL_BOUNDING_PLANES + 3 times (plus 6 for safety)
+static const int MAX_DECAL_INDEXES				= ( MAX_DECAL_VERTS - 2 ) * 3;
+
 // the max indices must be a multiple of 2 for copying indices to write-combined memory
 compile_time_assert( ( ( MAX_DECAL_INDEXES * sizeof( triIndex_t ) ) & 15 ) == 0 );
 
@@ -95,9 +89,6 @@ public:
 								// Transform the projection parameters from global space to local.
 	static void					GlobalProjectionParmsToLocal( decalProjectionParms_t &localParms, const decalProjectionParms_t &globalParms, const idVec3 &origin, const idMat3 &axis );
 
-								// clear the model for reuse
-	void						ReUse();
-
 								// Save the parameters for the renderer front-end to actually create the decal.
 	void						AddDeferredDecal( const decalProjectionParms_t & localParms );
 
@@ -114,16 +105,9 @@ public:
 	void						WriteToDemoFile( class idDemoFile *f ) const;
 
 private:
-	decal_t						decals[MAX_DECALS];
-	unsigned int				firstDecal;
-	unsigned int				nextDecal;
-
-	decalProjectionParms_t		deferredDecals[MAX_DEFERRED_DECALS];
-	unsigned int				firstDeferredDecal;
-	unsigned int				nextDeferredDecal;
-
-	const idMaterial *			decalMaterials[MAX_DECALS];
-	unsigned int				numDecalMaterials;
+	idList<decal_t, TAG_MODEL>					decals;
+	idList<decalProjectionParms_t, TAG_MODEL>	deferredDecals;
+	idList<const idMaterial *, TAG_MODEL>		decalMaterials;
 
 	void						CreateDecalFromWinding( const idWinding &w, const idMaterial *decalMaterial, const idPlane fadePlanes[2], float fadeDepth, int startTime );
 	void						CreateDecal( const idRenderModel *model, const decalProjectionParms_t &localParms );

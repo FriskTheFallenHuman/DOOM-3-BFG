@@ -76,18 +76,6 @@ typedef struct {
 										// this is the area number, else CHILDREN_HAVE_MULTIPLE_AREAS
 } areaNode_t;
 
-struct reusableDecal_t {
-	qhandle_t				entityHandle;
-	int						lastStartTime;
-	idRenderModelDecal *	decals;
-};
-
-struct reusableOverlay_t {
-	qhandle_t				entityHandle;
-	int						lastStartTime;
-	idRenderModelOverlay *	overlays;
-};
-
 struct portalStack_t;
 
 class idRenderWorldLocal : public idRenderWorld {
@@ -173,14 +161,6 @@ public:
 
 	idBlockAlloc<areaReference_t, 1024> areaReferenceAllocator;
 	idBlockAlloc<idInteraction, 256>	interactionAllocator;
-
-#ifdef ID_PC
-	static const int MAX_DECAL_SURFACES = 32;
-#else
-	static const int MAX_DECAL_SURFACES = 16;
-#endif
-	idArray<reusableDecal_t, MAX_DECAL_SURFACES>	decals;
-	idArray<reusableOverlay_t, MAX_DECAL_SURFACES>	overlays;
 
 	// all light / entity interactions are referenced here for fast lookup without
 	// having to crawl the doubly linked lists.  EnntityDefs are sequential for better

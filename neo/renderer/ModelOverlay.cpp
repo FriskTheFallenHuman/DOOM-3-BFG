@@ -40,12 +40,8 @@ idRenderModelOverlay::idRenderModelOverlay
 ====================
 */
 idRenderModelOverlay::idRenderModelOverlay() :
-		firstOverlay( 0 ),
-		nextOverlay( 0 ),
-		firstDeferredOverlay( 0 ),
-		nextDeferredOverlay( 0 ),
-		numOverlayMaterials( 0 ) {
-	memset( overlays, 0, sizeof( overlays ) );
+	overlays( OVERLAYS_GRANULARITY ),
+	deferredOverlays( DEFERRED_OVERLAYS_GRANULARITY ) {
 }
 
 /*
@@ -54,25 +50,10 @@ idRenderModelOverlay::~idRenderModelOverlay
 ====================
 */
 idRenderModelOverlay::~idRenderModelOverlay() {
-	for ( unsigned int i = 0; i < MAX_OVERLAYS; i++ ) {
-		FreeOverlay( overlays[i] );
-	}
-}
-
-/*
-=================
-idRenderModelOverlay::ReUse
-=================
-*/
-void idRenderModelOverlay::ReUse() {
-	firstOverlay = 0;
-	nextOverlay = 0;
-	firstDeferredOverlay = 0;
-	nextDeferredOverlay = 0;
-	numOverlayMaterials = 0;
-
-	for ( unsigned int i = 0; i < MAX_OVERLAYS; i++ ) {
-		FreeOverlay( overlays[i] );
+	for ( int i = 0; i < overlays.Num(); ++i ) {
+		for ( int j = 0; j < overlays[i].surfaces.Num(); ++j ) {
+			FreeOverlay( overlays[i].surfaces[j] );
+		}
 	}
 }
 
@@ -454,9 +435,27 @@ void idRenderModelOverlay::CreateOverlay( const idRenderModel *model, const idPl
 		}
 
 		// allocate a new overlay
-		overlay_t & overlay = overlays[nextOverlay++ & ( MAX_OVERLAYS - 1 )];
-		FreeOverlay( overlay );
-		overlay.material = material;
+		int overlayIndex = -1;
+		for ( int i = 0; i < overlays.Num(); ++i ) {
+			if ( overlays[i].material == material ) {
+				overlayIndex = i;
+				break;
+			}
+		}
+		overlaySurfaces_t *_overlay = NULL;
+		if ( overlayIndex >= 0 ) {
+			_overlay = &overlays[overlayIndex];
+			if ( _overlay->surfaces.Num() == MAX_OVERLAYS_PER_MATERIAL ) {
+				// remove the oldest surface to make room for the new one
+				FreeOverlay( _overlay->surfaces[0] );
+				_overlay->surfaces.RemoveIndex(0);
+			}
+		} else {
+			_overlay = &overlays.Alloc();
+			_overlay->material = material;
+		}
+
+		overlay_t & overlay = _overlay->surfaces.Alloc();
 		overlay.surfaceNum = surfNum;
 		overlay.surfaceId = surf->id;
 		overlay.numIndexes = numIndexes;
@@ -466,10 +465,6 @@ void idRenderModelOverlay::CreateOverlay( const idRenderModel *model, const idPl
 		overlay.verts = (overlayVertex_t *)Mem_Alloc( numVerts * sizeof( overlay.verts[0] ), TAG_MODEL );
 		memcpy( overlay.verts, overlayVerts.Ptr(), numVerts * sizeof( overlay.verts[0] ) );
 		overlay.maxReferencedVertex = maxReferencedVertex;
-
-		if ( nextOverlay - firstOverlay > MAX_OVERLAYS ) {
-			firstOverlay = nextOverlay - MAX_OVERLAYS;
-		}
 	}
 }
 
@@ -479,14 +474,13 @@ idRenderModelOverlay::CreateDeferredOverlays
 ====================
 */
 void idRenderModelOverlay::CreateDeferredOverlays( const idRenderModel * model ) {
-	for ( unsigned int i = firstDeferredOverlay; i < nextDeferredOverlay; i++ ) {
-		const overlayProjectionParms_t & parms = deferredOverlays[i & ( MAX_DEFERRED_OVERLAYS - 1 )];
-		if ( parms.startTime > tr.viewDef->renderView.time[0] -  DEFFERED_OVERLAY_TIMEOUT ) {
-			CreateOverlay( model, parms.localTextureAxis, parms.material );
+	if ( deferredOverlays.Num() ) {
+		for ( int i = 0; i < deferredOverlays.Num(); ++i ) {
+			const overlayProjectionParms_t & parms = deferredOverlays[i];
+			CreateOverlay(model, parms.localTextureAxis, parms.material);
 		}
+		deferredOverlays.Clear();
 	}
-	firstDeferredOverlay = 0;
-	nextDeferredOverlay = 0;
 }
 
 /*
@@ -495,10 +489,7 @@ idRenderModelOverlay::AddDeferredOverlay
 ====================
 */
 void idRenderModelOverlay::AddDeferredOverlay( const overlayProjectionParms_t & localParms ) {
-	deferredOverlays[nextDeferredOverlay++ & ( MAX_DEFERRED_OVERLAYS - 1 )] = localParms;
-	if ( nextDeferredOverlay - firstDeferredOverlay > MAX_DEFERRED_OVERLAYS ) {
-		firstDeferredOverlay = nextDeferredOverlay - MAX_DEFERRED_OVERLAYS;
-	}
+	deferredOverlays.Append( localParms );
 }
 
 /*
@@ -578,23 +569,7 @@ idRenderModelOverlay::GetNumOverlayDrawSurfs
 =====================
 */
 unsigned int idRenderModelOverlay::GetNumOverlayDrawSurfs() {
-	numOverlayMaterials = 0;
-
-	for ( unsigned int i = firstOverlay; i < nextOverlay; i++ ) {
-		const overlay_t & overlay = overlays[i & ( MAX_OVERLAYS - 1 )];
-
-		unsigned int j = 0;
-		for ( ; j < numOverlayMaterials; j++ ) {
-			if ( overlayMaterials[j] == overlay.material ) {
-				break;
-			}
-		}
-		if ( j >= numOverlayMaterials ) {
-			overlayMaterials[numOverlayMaterials++] = overlay.material;
-		}
-	}
-
-	return numOverlayMaterials;
+	return overlays.Num();
 }
 
 /*
@@ -603,7 +578,7 @@ idRenderModelOverlay::CreateOverlayDrawSurf
 ====================
 */
 drawSurf_t * idRenderModelOverlay::CreateOverlayDrawSurf( const viewEntity_t *space, const idRenderModel *baseModel, unsigned int index ) {
-	if ( index < 0 || index >= numOverlayMaterials ) {
+	if ( (int)index >= overlays.Num() || overlays[index].surfaces.Num() == 0 ) {
 		return NULL;
 	}
 
@@ -616,16 +591,13 @@ drawSurf_t * idRenderModelOverlay::CreateOverlayDrawSurf( const viewEntity_t *sp
 
 	const idRenderModelStatic * staticModel = static_cast< const idRenderModelStatic * >( baseModel );
 
-	const idMaterial * material = overlayMaterials[index];
-
 	int maxVerts = 0;
 	int maxIndexes = 0;
-	for ( unsigned int i = firstOverlay; i < nextOverlay; i++ ) {
-		const overlay_t & overlay = overlays[i & ( MAX_OVERLAYS - 1 )];
-		if ( overlay.material == material ) {
-			maxVerts += overlay.numVerts;
-			maxIndexes += overlay.numIndexes;
-		}
+
+	overlaySurfaces_t & _overlay = overlays[index];
+	for ( int i = 0; i < _overlay.surfaces.Num(); ++i ) {
+		maxVerts += _overlay.surfaces[i].numVerts;
+		maxIndexes += _overlay.surfaces[i].numIndexes;
 	}
 
 	if ( maxVerts == 0 || maxIndexes == 0 ) {
@@ -645,17 +617,9 @@ drawSurf_t * idRenderModelOverlay::CreateOverlayDrawSurf( const viewEntity_t *sp
 	int numVerts = 0;
 	int numIndexes = 0;
 
-	for ( unsigned int i = firstOverlay; i < nextOverlay; i++ ) {
-		overlay_t & overlay = overlays[i & ( MAX_OVERLAYS - 1 )];
-
+	for ( int i = 0; i < _overlay.surfaces.Num(); ++i ) {
+		overlay_t & overlay = _overlay.surfaces[i];
 		if ( overlay.numVerts == 0 ) {
-			if ( i == firstOverlay ) {
-				firstOverlay++;
-			}
-			continue;
-		}
-
-		if ( overlay.material != material ) {
 			continue;
 		}
 
@@ -670,9 +634,8 @@ drawSurf_t * idRenderModelOverlay::CreateOverlayDrawSurf( const viewEntity_t *sp
 			} else {
 				// the surface with this id no longer exists
 				FreeOverlay( overlay );
-				if ( i == firstOverlay ) {
-					firstOverlay++;
-				}
+				_overlay.surfaces.RemoveIndex(i);
+				--i;
 				continue;
 			}
 		}
@@ -683,9 +646,8 @@ drawSurf_t * idRenderModelOverlay::CreateOverlayDrawSurf( const viewEntity_t *sp
 			// This can happen when playing a demofile and a model has been changed since it was recorded, so just issue a warning and go on.
 			common->Warning( "idRenderModelOverlay::CreateOverlayDrawSurf: overlay vertex out of range.  Model has probably changed since generating the overlay." );
 			FreeOverlay( overlay );
-			if ( i == firstOverlay ) {
-				firstOverlay++;
-			}
+			_overlay.surfaces.RemoveIndex(i);
+			--i;
 			continue;
 		}
 
@@ -711,7 +673,7 @@ drawSurf_t * idRenderModelOverlay::CreateOverlayDrawSurf( const viewEntity_t *sp
 	drawSurf->extraGLState = 0;
 	drawSurf->renderZFail = 0;
 
-	R_SetupDrawSurfShader( drawSurf, material, &space->entityDef->parms );
+	R_SetupDrawSurfShader(drawSurf, _overlay.material, &space->entityDef->parms);
 	R_SetupDrawSurfJoints( drawSurf, newTri, NULL );
 
 	return drawSurf;
