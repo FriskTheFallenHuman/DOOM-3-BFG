@@ -284,7 +284,11 @@ public:
 	idSmokeParticles *		smokeParticles;			// global smoke trails
 	idEditEntities *		editEntities;			// in game editing
 
+	int						cinematicSkipTime;		// don't allow skipping cinemetics until this time has passed so player doesn't skip out accidently from a firefight
+	int						cinematicStopTime;		// cinematics have several camera changes, so keep track of when we stop them so that we don't reset cinematicSkipTime unnecessarily
+	int						cinematicMaxSkipTime;	// time to end cinematic when skipping.  there's a possibility of an infinite loop if the map isn't set up right.
 	bool					inCinematic;			// game is playing cinematic (player controls frozen)
+	bool					skipCinematic;
 
 	int						framenum;
 	int						time;					// in msec
@@ -356,6 +360,7 @@ public:
 	void					RunSingleUserCmd( usercmd_t & cmd, idPlayer & player );
 	void					RunEntityThink( idEntity & ent, idUserCmdMgr & userCmdMgr );
 	virtual bool			Draw( int clientNum );
+	virtual escReply_t		HandleESC( /*idUserInterface** gui*/ );
 	virtual bool			HandlePlayerGuiEvent( const sysEvent_t * ev );
 	virtual void			ServerWriteSnapshot( idSnapShot & ss );
 	virtual void			ProcessReliableMessage( int clientNum, int type, const idBitMsg &msg );
@@ -425,6 +430,7 @@ public:
 
 	void					SetCamera( idCamera *cam );
 	idCamera *				GetCamera() const;
+	bool					SkipCinematic();
 	void					CalcFov( float base_fov, float &fov_x, float &fov_y ) const;
 
 	void					AddEntityToHash( const char *name, idEntity *ent );

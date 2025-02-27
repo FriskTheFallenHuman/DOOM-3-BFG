@@ -6609,6 +6609,34 @@ void idPlayer::PerformImpulse( int impulse ) {
 
 /*
 ==============
+idPlayer::HandleESC
+==============
+*/
+bool idPlayer::HandleESC() {
+	if ( gameLocal.inCinematic ) {
+		return SkipCinematic();
+	}
+
+	//if ( objectiveSystemOpen ) {
+	//	TogglePDA();
+	//	return true;
+	//}
+
+	return false;
+}
+
+/*
+==============
+idPlayer::SkipCinematic
+==============
+*/
+bool idPlayer::SkipCinematic() {
+	StopSound( SND_CHANNEL_ANY, false );
+	return gameLocal.SkipCinematic();
+}
+
+/*
+==============
 idPlayer::EvaluateControls
 ==============
 */
@@ -7527,6 +7555,10 @@ void idPlayer::Think() {
 
 	buttonMask &= usercmd.buttons;
 	usercmd.buttons &= ~buttonMask;
+
+	if ( gameLocal.inCinematic && gameLocal.skipCinematic ) {
+		return;
+	}
 
 	// clear the ik before we do anything else so the skeleton doesn't get updated twice
 	walkIK.ClearJointMods();

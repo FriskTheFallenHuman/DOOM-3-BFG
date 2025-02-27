@@ -58,6 +58,12 @@ struct gameReturn_t {
 	int			vibrationHigh;
 };
 
+typedef enum {
+	ESC_IGNORE = 0,	// do nothing
+	ESC_MAIN,		// start main menu GUI
+	ESC_GUI			// set an explicit GUI
+} escReply_t;
+
 #define TIME_GROUP1		0
 #define TIME_GROUP2		1
 
@@ -117,6 +123,10 @@ public:
 
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool				Draw( int clientNum ) = 0;
+
+	// Originally used in Doom 3 to let know the game to draw is own gui
+	// Now its use to let know the engine about the cinematics being skipped
+	virtual escReply_t			HandleESC( /*idUserInterface** gui*/ ) = 0;
 
 	virtual bool				HandlePlayerGuiEvent( const sysEvent_t * ev ) = 0;
 
