@@ -731,7 +731,7 @@ void R_SetNewMode( const bool fullInit ) {
 				parms.height = r_customHeight.GetInteger();
 				parms.displayHz = r_displayRefresh.GetInteger();
 			} else {
-				if ( r_vidMode.GetInteger() > modeList.Num() ) {
+				if ( r_vidMode.GetInteger() >= modeList.Num() ) {
 					idLib::Printf( "r_vidMode reset from %i to 0.\n", r_vidMode.GetInteger() );
 					r_vidMode.SetInteger( 0 );
 				}
