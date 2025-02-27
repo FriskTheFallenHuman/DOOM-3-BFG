@@ -171,13 +171,6 @@ void Sys_CreateConsole() {
 ** Sys_DestroyConsole
 */
 void Sys_DestroyConsole() {
-#ifndef _DEBUG
-	// Dont waste resources if we didn't have the log opened
-	if ( !win32.win_viewlog.GetBool() ) {
-		return;
-	}
-#endif
-
 	FreeConsole();
 }
 
