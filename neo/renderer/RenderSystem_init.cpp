@@ -1042,23 +1042,13 @@ void R_TestVideo_f( const idCmdArgs &args ) {
 	tr.testImage = globalImages->ImageFromFile( "_scratch", TF_DEFAULT, TR_REPEAT, TD_DEFAULT );
 	idStr fileName = args.Argv( 1 );
 	tr.testVideo = idCinematic::Alloc( fileName );
-	tr.testVideo->InitFromFile( fileName.c_str(), true );
 
-	cinData_t	cin;
-	cin = tr.testVideo->ImageForTime( 0 );
-	if ( cin.imageY == NULL && cin.image == NULL ) {
+	if ( !tr.testVideo->InitFromFile( args.Argv( 1 ), true ) ) {
 		delete tr.testVideo;
 		tr.testVideo = NULL;
 		tr.testImage = NULL;
 		return;
 	}
-
-	common->Printf( "%i x %i images\n", cin.imageWidth, cin.imageHeight );
-
-	int	len = tr.testVideo->AnimationLength();
-	common->Printf( "%5.1f seconds of video\n", len * 0.001 );
-
-	//tr.testVideoStartTime = tr.primaryRenderView.time[1];
 
 	// try to play the matching wav file
 	idSoundWorld *soundWorld = soundSystem->GetPlayingSoundWorld();
@@ -2291,6 +2281,12 @@ void idRenderSystemLocal::Shutdown() {
 	}
 
 	renderModelManager->Shutdown();
+
+	// If testVideo is currently playing, make sure cinematic is deleted before ShutdownCinematic()
+	if ( tr.testVideo ) {
+		delete tr.testVideo;
+		tr.testVideo = NULL;
+	}
 
 	idCinematic::ShutdownCinematic( );
 

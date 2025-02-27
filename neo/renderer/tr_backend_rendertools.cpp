@@ -2333,7 +2333,7 @@ void RB_TestImage() {
 	if ( tr.testVideo ) {
 		cinData_t	cin;
 
-		cin = tr.testVideo->ImageForTime( 0 /*viewDef->renderView.time[1] - tr.testVideoStartTime*/ );
+		cin = tr.testVideo->ImageForTime( Sys_Milliseconds() /*viewDef->renderView.time[1] - tr.testVideoStartTime*/ );
 		if ( cin.imageY != NULL ) {
 			image = cin.imageY;
 			imageCr = cin.imageCr;
@@ -2377,7 +2377,7 @@ void RB_TestImage() {
 	scale[0] = w; // scale
 	scale[5] = h; // scale
 	scale[12] = halfScreenWidth - ( halfScreenWidth * w ); // translate
-	scale[13] = halfScreenHeight - ( halfScreenHeight * h ) - h; // translate
+	scale[13] = halfScreenHeight / 2 - ( halfScreenHeight * h ); // translate
 	scale[10] = 1.0f;
 	scale[15] = 1.0f;
 
