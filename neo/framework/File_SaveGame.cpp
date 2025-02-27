@@ -345,12 +345,18 @@ bool idFile_SaveGamePipelined::OpenForWriting( const char * const filename, bool
 	if ( sgf_threads.GetInteger() >= 1 ) {
 		compressThread = new (TAG_IDFILE) idSGFcompressThread();
 		compressThread->sgf = this;
-		compressThread->StartWorkerThread( "SGF_CompressThread", CORE_2B, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_CompressThread" to "SGF_Compress", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		compressThread->StartWorkerThread( "SGF_Compress", CORE_2B, THREAD_NORMAL );
 	}
 	if ( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
 		writeThread = new (TAG_IDFILE) idSGFwriteThread();
 		writeThread->sgf = this;
-		writeThread->StartWorkerThread( "SGF_WriteThread", CORE_2A, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_WriteThread" to "SGF_Write", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		writeThread->StartWorkerThread( "SGF_Write", CORE_2A, THREAD_NORMAL );
 	}
 
 	return true;
@@ -396,12 +402,18 @@ bool idFile_SaveGamePipelined::OpenForWriting( idFile * file )  {
 	if ( sgf_threads.GetInteger() >= 1 ) {
 		compressThread = new (TAG_IDFILE) idSGFcompressThread();
 		compressThread->sgf = this;
-		compressThread->StartWorkerThread( "SGF_CompressThread", CORE_2B, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_CompressThread" to "SGF_Compress", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		compressThread->StartWorkerThread( "SGF_Compress", CORE_2B, THREAD_NORMAL );
 	}
 	if ( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
 		writeThread = new (TAG_IDFILE) idSGFwriteThread();
 		writeThread->sgf = this;
-		writeThread->StartWorkerThread( "SGF_WriteThread", CORE_2A, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_WriteThread" to "SGF_Write", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		writeThread->StartWorkerThread( "SGF_Write", CORE_2A, THREAD_NORMAL );
 	}
 
 	return true;
@@ -700,12 +712,18 @@ bool idFile_SaveGamePipelined::OpenForReading( const char * const filename, bool
 	if ( sgf_threads.GetInteger() >= 1 ) {
 		decompressThread = new (TAG_IDFILE) idSGFdecompressThread();
 		decompressThread->sgf = this;
-		decompressThread->StartWorkerThread( "SGF_DecompressThread", CORE_2B, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_DecompressThread" to "SGF_Decompress", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		decompressThread->StartWorkerThread( "SGF_Decompress", CORE_2B, THREAD_NORMAL );
 	}
 	if ( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
 		readThread = new (TAG_IDFILE) idSGFreadThread();
 		readThread->sgf = this;
-		readThread->StartWorkerThread( "SGF_ReadThread", CORE_2A, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_ReadThread" to "SGF_Read", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		readThread->StartWorkerThread( "SGF_Read", CORE_2A, THREAD_NORMAL );
 	}
 
 	return true;
@@ -742,12 +760,18 @@ bool idFile_SaveGamePipelined::OpenForReading( idFile * file ) {
 	if ( sgf_threads.GetInteger() >= 1 ) {
 		decompressThread = new (TAG_IDFILE) idSGFdecompressThread();
 		decompressThread->sgf = this;
-		decompressThread->StartWorkerThread( "SGF_DecompressThread", CORE_1B, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_DecompressThread" to "SGF_Decompress", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		decompressThread->StartWorkerThread( "SGF_Decompress", CORE_1B, THREAD_NORMAL );
 	}
 	if ( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
 		readThread = new (TAG_IDFILE) idSGFreadThread();
 		readThread->sgf = this;
-		readThread->StartWorkerThread( "SGF_ReadThread", CORE_1A, THREAD_NORMAL );
+
+		// DG: change threadname from "SGF_ReadThread" to "SGF_Read", because Linux
+		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
+		readThread->StartWorkerThread( "SGF_Read", CORE_1A, THREAD_NORMAL );
 	}
 
 	return true;
