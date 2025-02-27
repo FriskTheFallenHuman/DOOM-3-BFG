@@ -311,6 +311,10 @@ public:
 	static int			IHash( const char *string );					// case insensitive
 	static int			IHash( const char *string, int length );		// case insensitive
 
+	// std::string replacements
+	idList<idStr>		Split( const char *delimeter );
+	idStr				SubStr( int start, int end = -1 );
+
 	// character methods
 	static char			ToLower( char c );
 	static char			ToUpper( char c );
