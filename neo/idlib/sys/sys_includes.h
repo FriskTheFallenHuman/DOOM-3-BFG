@@ -69,7 +69,14 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <malloc.h>							// no malloc.h on mac or unix
 #include <windows.h>						// for qgl.h
-#undef FindText								// fix namespace pollution
+
+// stupid namespace polluting Microsoft monkeys
+#undef FindText
+#undef IsMinimized
+#undef DrawText
+#undef CopyFile
+#undef LoadImage
+#undef AddJob
 
 /*
 ================================================================================================
