@@ -77,6 +77,7 @@ If you have questions concerning this license or the applicable additional terms
 #undef CopyFile
 #undef LoadImage
 #undef AddJob
+#undef PlaySound
 
 /*
 ================================================================================================
