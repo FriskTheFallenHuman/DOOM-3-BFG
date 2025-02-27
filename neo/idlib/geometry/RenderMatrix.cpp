@@ -47,7 +47,7 @@ If you have questions concerning this license or the applicable additional terms
 //lint -e550
 
 #define RENDER_MATRIX_INVERSE_EPSILON		1e-16f	// JDC: changed from 1e-14f to allow full wasteland parallel light projections to invert
-#define RENDER_MATRIX_INFINITY				1e30f	// NOTE: cannot initiaize a vec_float4 with idMath::INFINITY on the SPU
+#define RENDER_MATRIX_INFINITUM				1e30f	// NOTE: cannot initiaize a vec_float4 with idMath::INFINITUM on the SPU
 #define RENDER_MATRIX_PROJECTION_EPSILON	0.1f
 
 #define CLIP_SPACE_OGL		// the OpenGL clip space Z is in the range [-1, 1]
@@ -108,8 +108,8 @@ static const __m128 vector_float_abs_mask					= __m128c( _mm_set1_epi32( ~IEEE_F
 static const __m128 vector_float_keep_last					= __m128c( _mm_set_epi32( -1, 0, 0, 0 ) );
 static const __m128 vector_float_inverse_epsilon			= { RENDER_MATRIX_INVERSE_EPSILON, RENDER_MATRIX_INVERSE_EPSILON, RENDER_MATRIX_INVERSE_EPSILON, RENDER_MATRIX_INVERSE_EPSILON };
 static const __m128 vector_float_smallest_non_denorm		= { 1.1754944e-038f, 1.1754944e-038f, 1.1754944e-038f, 1.1754944e-038f };
-static const __m128 vector_float_pos_infinity				= { RENDER_MATRIX_INFINITY, RENDER_MATRIX_INFINITY, RENDER_MATRIX_INFINITY, RENDER_MATRIX_INFINITY };
-static const __m128 vector_float_neg_infinity				= { -RENDER_MATRIX_INFINITY, -RENDER_MATRIX_INFINITY, -RENDER_MATRIX_INFINITY, -RENDER_MATRIX_INFINITY };
+static const __m128 vector_float_pos_infinity				= { RENDER_MATRIX_INFINITUM, RENDER_MATRIX_INFINITUM, RENDER_MATRIX_INFINITUM, RENDER_MATRIX_INFINITUM };
+static const __m128 vector_float_neg_infinity				= { -RENDER_MATRIX_INFINITUM, -RENDER_MATRIX_INFINITUM, -RENDER_MATRIX_INFINITUM, -RENDER_MATRIX_INFINITUM };
 static const __m128 vector_float_zero						= { 0.0f, 0.0f, 0.0f, 0.0f };
 static const __m128 vector_float_half						= { 0.5f, 0.5f, 0.5f, 0.5f };
 static const __m128 vector_float_neg_half					= { -0.5f, -0.5f, -0.5f, -0.5f };
@@ -2290,8 +2290,8 @@ void idRenderMatrix::ProjectedBounds( idBounds & projected, const idRenderMatrix
 #else
 
 	for ( int i = 0; i < 3; i++ ) {
-		projected[0][i] = RENDER_MATRIX_INFINITY;
-		projected[1][i] = - RENDER_MATRIX_INFINITY;
+		projected[0][i] = RENDER_MATRIX_INFINITUM;
+		projected[1][i] = - RENDER_MATRIX_INFINITUM;
 	}
 
 	idVec3 v;
@@ -2308,11 +2308,11 @@ void idRenderMatrix::ProjectedBounds( idBounds & projected, const idRenderMatrix
 				float tw = v[0] * mvp[3][0] + v[1] * mvp[3][1] + v[2] * mvp[3][2] + mvp[3][3];
 
 				if ( tw <= idMath::FLT_SMALLEST_NON_DENORMAL ) {
-					projected[0][0] = -RENDER_MATRIX_INFINITY;
-					projected[0][1] = -RENDER_MATRIX_INFINITY;
-					projected[0][2] = -RENDER_MATRIX_INFINITY;
-					projected[1][0] = RENDER_MATRIX_INFINITY;
-					projected[1][1] = RENDER_MATRIX_INFINITY;
+					projected[0][0] = -RENDER_MATRIX_INFINITUM;
+					projected[0][1] = -RENDER_MATRIX_INFINITUM;
+					projected[0][2] = -RENDER_MATRIX_INFINITUM;
+					projected[1][0] = RENDER_MATRIX_INFINITUM;
+					projected[1][1] = RENDER_MATRIX_INFINITUM;
 					// NOTE: projected[1][1] is still valid
 					continue;
 				}
@@ -2802,8 +2802,8 @@ void idRenderMatrix::ProjectedNearClippedBounds( idBounds & projected, const idR
 
 	idBounds projBnds;
 	for ( int i = 0; i < 3; i++ ) {
-		projBnds[0][i] = RENDER_MATRIX_INFINITY;
-		projBnds[1][i] = - RENDER_MATRIX_INFINITY;
+		projBnds[0][i] = RENDER_MATRIX_INFINITUM;
+		projBnds[1][i] = - RENDER_MATRIX_INFINITUM;
 	}
 
 	for ( int i = 0; i < 24; i++ ) {
@@ -2905,8 +2905,8 @@ void idRenderMatrix::ProjectedNearClippedBounds( idBounds & projected, const idR
 	}
 
 	for ( int i = 0; i < 3; i++ ) {
-		projected[0][i] = RENDER_MATRIX_INFINITY;
-		projected[1][i] = - RENDER_MATRIX_INFINITY;
+		projected[0][i] = RENDER_MATRIX_INFINITUM;
+		projected[1][i] = - RENDER_MATRIX_INFINITUM;
 	}
 
 	for ( int i = 0; i < 24; i++ ) {
@@ -3449,8 +3449,8 @@ void idRenderMatrix::ProjectedFullyClippedBounds( idBounds & projected, const id
 	const bool inside = bounds.Expand( RENDER_MATRIX_PROJECTION_EPSILON ).ContainsPoint( localNearClipCenter );
 
 	for ( int i = 0; i < 3; i++ ) {
-		projected[0][i] = RENDER_MATRIX_INFINITY;
-		projected[1][i] = - RENDER_MATRIX_INFINITY;
+		projected[0][i] = RENDER_MATRIX_INFINITUM;
+		projected[1][i] = - RENDER_MATRIX_INFINITUM;
 	}
 	if ( inside ) {
 		projected[0][2] = -1.0f;
@@ -3583,8 +3583,8 @@ void idRenderMatrix::DepthBoundsForBounds( float & min, float & max, const idRen
 
 #else
 
-	float localMin = RENDER_MATRIX_INFINITY;
-	float localMax = - RENDER_MATRIX_INFINITY;
+	float localMin = RENDER_MATRIX_INFINITUM;
+	float localMax = - RENDER_MATRIX_INFINITUM;
 
 	idVec3 v;
 	for ( int x = 0; x < 2; x++ ) {
@@ -3600,7 +3600,7 @@ void idRenderMatrix::DepthBoundsForBounds( float & min, float & max, const idRen
 				if ( tw > idMath::FLT_SMALLEST_NON_DENORMAL ) {
 					tz = tz / tw;
 				} else {
-					tz = -RENDER_MATRIX_INFINITY;
+					tz = -RENDER_MATRIX_INFINITUM;
 				}
 
 				localMin = Min( localMin, tz );
@@ -3797,8 +3797,8 @@ void idRenderMatrix::DepthBoundsForExtrudedBounds( float & min, float & max, con
 	const float closing = extrudeDirection * clipPlane.Normal();
 	const float invClosing = -1.0f / closing;
 
-	float localMin = RENDER_MATRIX_INFINITY;
-	float localMax = - RENDER_MATRIX_INFINITY;
+	float localMin = RENDER_MATRIX_INFINITUM;
+	float localMax = - RENDER_MATRIX_INFINITUM;
 
 	idVec3 v;
 	for ( int x = 0; x < 2; x++ ) {
@@ -3824,7 +3824,7 @@ void idRenderMatrix::DepthBoundsForExtrudedBounds( float & min, float & max, con
 					if ( tw > idMath::FLT_SMALLEST_NON_DENORMAL ) {
 						tz = tz / tw;
 					} else {
-						tz = -RENDER_MATRIX_INFINITY;
+						tz = -RENDER_MATRIX_INFINITUM;
 					}
 
 					localMin = Min( localMin, tz );
@@ -4151,8 +4151,8 @@ void idRenderMatrix::DepthBoundsForShadowBounds( float & min, float & max, const
 	const idVec3 localNearClipCenter = LocalNearClipCenterFromMVP( mvp );
 	const bool inside = PointInsideInfiniteShadow( bounds, localLightOrigin, localNearClipCenter, RENDER_MATRIX_PROJECTION_EPSILON );
 
-	min = inside ? -1.0f : RENDER_MATRIX_INFINITY;
-	max = - RENDER_MATRIX_INFINITY;
+	min = inside ? -1.0f : RENDER_MATRIX_INFINITUM;
+	max = - RENDER_MATRIX_INFINITUM;
 
 	for ( int i = 0; i < numClippedPoints; i++ ) {
 		const idVec4 & c = clippedPoints[i];
