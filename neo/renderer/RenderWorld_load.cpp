@@ -700,16 +700,6 @@ void idRenderWorldLocal::FreeDefs() {
 			entityDefs[i] = NULL;
 		}
 	}
-
-	// Reset decals and overlays
-	for ( int i = 0; i < decals.Num(); i++ ) {
-		decals[i].entityHandle = -1;
-		decals[i].lastStartTime = 0;
-	}
-	for ( int i = 0; i < overlays.Num(); i++ ) {
-		overlays[i].entityHandle = -1;
-		overlays[i].lastStartTime = 0;
-	}
 }
 
 /*

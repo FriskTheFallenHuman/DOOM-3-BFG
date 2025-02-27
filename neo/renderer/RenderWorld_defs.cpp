@@ -126,7 +126,10 @@ R_FreeEntityDefDecals
 ===================
 */
 void R_FreeEntityDefDecals( idRenderEntityLocal *def ) {
-	def->decals = NULL;
+	if ( def->decals ) {
+		delete def->decals;
+		def->decals = NULL;
+	}
 }
 
 /*
@@ -146,7 +149,10 @@ R_FreeEntityDefOverlay
 ===================
 */
 void R_FreeEntityDefOverlay( idRenderEntityLocal *def ) {
-	def->overlays = NULL;
+	if ( def->overlays ) {
+		delete def->overlays;
+		def->overlays = NULL;
+	}
 }
 
 /*

@@ -49,11 +49,9 @@ idRenderModelDecal::idRenderModelDecal
 ==================
 */
 idRenderModelDecal::idRenderModelDecal() :
-		firstDecal( 0 ),
-		nextDecal( 0 ),
-		firstDeferredDecal( 0 ),
-		nextDeferredDecal( 0 ),
-		numDecalMaterials( 0 ) {
+	decals( DECALS_GRANULARITY ),
+	deferredDecals( DEFERRED_DECALS_GRANULARITY ),
+	decalMaterials( DECALS_GRANULARITY ) {
 }
 
 /*
@@ -187,43 +185,28 @@ void idRenderModelDecal::GlobalProjectionParmsToLocal( decalProjectionParms_t &l
 
 /*
 =================
-idRenderModelDecal::ReUse
-=================
-*/
-void idRenderModelDecal::ReUse() {
-	firstDecal = 0;
-	nextDecal = 0;
-	firstDeferredDecal = 0;
-	nextDeferredDecal = 0;
-	numDecalMaterials = 0;
-}
-
-/*
-=================
 idRenderModelDecal::CreateDecalFromWinding
 =================
 */
 void idRenderModelDecal::CreateDecalFromWinding( const idWinding &w, const idMaterial *decalMaterial, const idPlane fadePlanes[2], float fadeDepth, int startTime ) {
 	// Often we are appending a new triangle to an existing decal, so merge with the previous decal if possible
-	int decalIndex = ( nextDecal - 1 ) & ( MAX_DECALS - 1 );
+	int decalIndex = decals.Num() - 1;
 	if ( decalIndex >= 0
 		&& decals[decalIndex].material == decalMaterial
 		&& decals[decalIndex].startTime == startTime
 		&& decals[decalIndex].numVerts + w.GetNumPoints() <= MAX_DECAL_VERTS
-		&& decals[decalIndex].numIndexes + 3 * ( w.GetNumPoints() - 2 ) <= MAX_DECAL_INDEXES ) {
+		&& decals[decalIndex].numIndexes + 3 * (w.GetNumPoints() - 2) <= MAX_DECAL_INDEXES ) {
+		/* Do nothing */
 	} else {
-		decalIndex = nextDecal++ & ( MAX_DECALS - 1 );
-		decals[decalIndex].material = decalMaterial;
-		decals[decalIndex].startTime = startTime;
-		decals[decalIndex].numVerts = 0;
-		decals[decalIndex].numIndexes = 0;
-		assert( w.GetNumPoints() <= MAX_DECAL_VERTS );
-		if ( nextDecal - firstDecal > MAX_DECALS ) {
-			firstDecal = nextDecal - MAX_DECALS;
-		}
+		decal_t &newDecal = decals.Alloc();
+		newDecal.material = decalMaterial;
+		newDecal.startTime = startTime;
+		newDecal.numVerts = 0;
+		newDecal.numIndexes = 0;
+		assert (w.GetNumPoints() <= MAX_DECAL_VERTS );
 	}
 
-	decal_t & decal = decals[decalIndex];
+	decal_t & decal = decals[decals.Num() - 1];
 
 	const float invFadeDepth = -1.0f / fadeDepth;
 
@@ -542,14 +525,13 @@ idRenderModelDecal::CreateDeferredDecals
 =====================
 */
 void idRenderModelDecal::CreateDeferredDecals( const idRenderModel *model ) {
-	for ( unsigned int i = firstDeferredDecal; i < nextDeferredDecal; i++ ) {
-		decalProjectionParms_t & parms = deferredDecals[i & ( MAX_DEFERRED_DECALS - 1 )];
-		if ( parms.startTime > tr.viewDef->renderView.time[0] -  DEFFERED_DECAL_TIMEOUT ) {
+	if ( deferredDecals.Num() ) {
+		for ( int i = 0; i < deferredDecals.Num(); ++i ) {
+			decalProjectionParms_t & parms = deferredDecals[i];
 			CreateDecal( model, parms );
 		}
+		deferredDecals.Clear();
 	}
-	firstDeferredDecal = 0;
-	nextDeferredDecal = 0;
 }
 
 /*
@@ -558,10 +540,7 @@ idRenderModelDecal::AddDeferredDecal
 =====================
 */
 void idRenderModelDecal::AddDeferredDecal( const decalProjectionParms_t &localParms ) {
-	deferredDecals[nextDeferredDecal++ & ( MAX_DEFERRED_DECALS - 1 )] = localParms;
-	if ( nextDeferredDecal - firstDeferredDecal > MAX_DEFERRED_DECALS ) {
-		firstDeferredDecal = nextDeferredDecal - MAX_DEFERRED_DECALS;
-	}
+	deferredDecals.Append( localParms );
 }
 
 /*
@@ -570,23 +549,35 @@ idRenderModelDecal::RemoveFadedDecals
 =====================
 */
 void idRenderModelDecal::RemoveFadedDecals( int time ) {
-	for ( unsigned int i = firstDecal; i < nextDecal; i++ ) {
-		decal_t & decal = decals[i & ( MAX_DECALS - 1 )];
-
-		const decalInfo_t decalInfo = decal.material->GetDecalInfo();
+	int oldNum = decals.Num();
+	int i = 0;
+	while ( i < decals.Num() ) {
+		const decalInfo_t decalInfo = decals[i].material->GetDecalInfo();
 		const int minTime = time - ( decalInfo.stayTime + decalInfo.fadeTime );
-
-		if ( decal.startTime <= minTime ) {
-			decal.numVerts = 0;
-			decal.numIndexes = 0;
-			if ( i == firstDecal ) {
-				firstDecal++;
-			}
+		if ( decals[i].startTime <= minTime ) {
+			decals.RemoveIndexFast( i );
+		} else {
+			++i;
 		}
 	}
-	if ( firstDecal == nextDecal ) {
-		firstDecal = 0;
-		nextDecal = 0;
+
+	if ( oldNum != decals.Num() ) {
+		decals.SetGranularity( decals.GetGranularity() ); // downsize using the same granularity
+	}
+
+	oldNum = deferredDecals.Num();
+	i = 0;
+	while ( i < deferredDecals.Num() ) {
+		const decalInfo_t decalInfo = deferredDecals[i].material->GetDecalInfo();
+		const int minTime = time - ( decalInfo.stayTime + decalInfo.fadeTime );
+		if ( deferredDecals[i].startTime <= minTime ) {
+			deferredDecals.RemoveIndexFast( i );
+		} else {
+			++i;
+		}
+	}
+	if ( oldNum != deferredDecals.Num() ) {
+		deferredDecals.SetGranularity( deferredDecals.GetGranularity() ); // downsize using the same granularity
 	}
 }
 
@@ -672,23 +663,11 @@ idRenderModelDecal::GetNumDecalDrawSurfs
 =====================
 */
 unsigned int idRenderModelDecal::GetNumDecalDrawSurfs() {
-	numDecalMaterials = 0;
-
-	for ( unsigned int i = firstDecal; i < nextDecal; i++ ) {
-		const decal_t & decal = decals[i & ( MAX_DECALS - 1 )];
-
-		unsigned int j = 0;
-		for ( ; j < numDecalMaterials; j++ ) {
-			if ( decalMaterials[j] == decal.material ) {
-				break;
-			}
-		}
-		if ( j >= numDecalMaterials ) {
-			decalMaterials[numDecalMaterials++] = decal.material;
-		}
+	decalMaterials.Clear();
+	for ( int i = 0; i < decals.Num(); ++i ) {
+		decalMaterials.AddUnique( decals[i].material );
 	}
-
-	return numDecalMaterials;
+	return decalMaterials.Num();
 }
 
 /*
@@ -697,7 +676,7 @@ idRenderModelDecal::CreateDecalDrawSurf
 =====================
 */
 drawSurf_t * idRenderModelDecal::CreateDecalDrawSurf( const viewEntity_t *space, unsigned int index ) {
-	if ( index < 0 || index >= numDecalMaterials ) {
+	if ( (int)index >= decalMaterials.Num() ) {
 		return NULL;
 	}
 
@@ -705,8 +684,8 @@ drawSurf_t * idRenderModelDecal::CreateDecalDrawSurf( const viewEntity_t *space,
 
 	int maxVerts = 0;
 	int maxIndexes = 0;
-	for ( unsigned int i = firstDecal; i < nextDecal; i++ ) {
-		const decal_t & decal = decals[i & ( MAX_DECALS - 1 )];
+	for ( int i = 0; i < decals.Num(); ++i ) {
+		const decal_t &decal = decals[i];
 		if ( decal.material == material ) {
 			maxVerts += decal.numVerts;
 			maxIndexes += decal.numIndexes;
@@ -734,13 +713,10 @@ drawSurf_t * idRenderModelDecal::CreateDecalDrawSurf( const viewEntity_t *space,
 
 	int numVerts = 0;
 	int numIndexes = 0;
-	for ( unsigned int i = firstDecal; i < nextDecal; i++ ) {
-		const decal_t & decal = decals[i & ( MAX_DECALS - 1 )];
 
+	for ( int i = 0; i < decals.Num(); ++i ) {
+		const decal_t &decal = decals[i];
 		if ( decal.numVerts == 0 ) {
-			if ( i == firstDecal ) {
-				firstDecal++;
-			}
 			continue;
 		}
 
