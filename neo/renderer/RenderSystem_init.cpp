@@ -1174,7 +1174,7 @@ void R_ReadTiledPixels( int width, int height, byte *buffer, renderView_t *ref =
 				tr.RenderCommandBuffers( cmd );
 			} else {
 				const bool captureToImage = false;
-				common->UpdateScreen( captureToImage );
+				common->UpdateScreen( captureToImage, false );
 			}
 
 			int w = sysWidth;

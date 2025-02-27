@@ -198,7 +198,7 @@ public:
 
 	// Redraws the screen, handling games, guis, console, etc
 	// in a modal manner outside the normal frame loop
-	virtual void				UpdateScreen( bool captureToImage ) = 0;
+	virtual void				UpdateScreen( bool captureToImage, bool releaseMouse = true ) = 0;
 
 	virtual void				UpdateLevelLoadPacifier() = 0;
 

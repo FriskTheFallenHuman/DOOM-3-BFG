@@ -118,7 +118,7 @@ public:
 	virtual void				Quit();
 	virtual bool				IsInitialized() const;
 	virtual void				Frame();
-	virtual void				UpdateScreen( bool captureToImage );
+	virtual void				UpdateScreen( bool captureToImage, bool releaseMouse = true );
 	virtual void				UpdateLevelLoadPacifier();
 	virtual void				StartupVariable( const char * match );
 	virtual void				InitTool( const toolFlag_t tool, const idDict *dict );
