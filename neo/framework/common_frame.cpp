@@ -639,9 +639,16 @@ void idCommonLocal::Frame() {
 		if ( pauseGame ) {
 			soundWorld->Pause();
 			soundSystem->SetPlayingSoundWorld( menuSoundWorld );
+			soundSystem->SetMute( false );
 		} else {
 			soundWorld->UnPause();
 			soundSystem->SetPlayingSoundWorld( soundWorld );
+			soundSystem->SetMute( false );
+		}
+
+		// Play silence when dialog waiting or window not in focus
+		if ( Dialog().IsDialogPausing() || session->IsSystemUIShowing() || IsPaused() ) {
+			soundSystem->SetPlayingSoundWorld( NULL );
 		}
 		soundSystem->Render();
 
