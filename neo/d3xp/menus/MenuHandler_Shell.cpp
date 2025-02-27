@@ -35,6 +35,9 @@ extern idCVar g_demoMode;
 static const int PEER_UPDATE_INTERVAL = 500;
 static const int MAX_MENU_OPTIONS = 6;
 
+void checkInput( void *data );
+bool skipIntro;
+
 void idMenuHandler_Shell::Update() {
 
 //#if defined ( ID_360 )
@@ -253,25 +256,6 @@ bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t * sev ) {
 	}
 
 	if ( showingIntro ) {
-		if( sev->evType == SE_KEY && sev->evValue2 == 1 && ( sev->evValue == K_ESCAPE || sev->evValue == K_JOY9 ) ) {
-			if ( introGui != NULL && introGui->IsActive() ) {
-				gui->StopSound();
-				showingIntro = false;
-				introGui->Activate( false );
-				PlaySound( GUI_SOUND_MUSIC );
-
-				const char* introName = introGui->GetName();
-
-				if( idStr::Cmp( introName, "swf/roeintro.swf" ) == 0 ) {
-					StartGame( 1 );
-				} else if( idStr::Cmp( introName, "swf/leintro.swf" ) == 0 ) {
-					StartGame( 2 );
-				} else {
-					StartGame( 0 );
-				}
-			}
-		}
-
 		return true;
 	}
 
@@ -1182,13 +1166,77 @@ void idMenuHandler_Shell::StartGame( int index ) {
 	}
 }
 
+void checkInput( void *data ) {
+	while ( true ) {
+		if ( skipIntro ) {
+			break;
+		}
+		Sys_GenerateEvents();
+
+		// queue system events ready for polling
+		Sys_GetEvent();
+
+		bool escapeEvent = false;
+		// allow to skip video by pressing anything
+		int numKeyEvents = Sys_PollKeyboardInputEvents();
+		if ( numKeyEvents > 0 ) {
+			for ( int i = 0; i < numKeyEvents; i++ ) {
+				int key;
+				bool state;
+
+				if ( Sys_ReturnKeyboardInputEvent( i, key, state ) ) {
+					if ( key == K_ESCAPE && state == true ) {
+						escapeEvent = true;
+					}
+					break;
+				}
+			}
+
+			Sys_EndKeyboardInputEvents();
+		}
+
+		int	mouseEvents[MAX_MOUSE_EVENTS][2];
+		int numMouseEvents = Sys_PollMouseInputEvents( mouseEvents );
+		if ( numMouseEvents > 0 ) {
+			for ( int i = 0; i < numMouseEvents; i++ ) {
+				int action = mouseEvents[i][0];
+				switch ( action ) {
+					case M_ACTION1:
+					case M_ACTION2:
+					case M_ACTION3:
+					case M_ACTION4:
+					case M_ACTION5:
+					case M_ACTION6:
+					case M_ACTION7:
+					case M_ACTION8:
+						escapeEvent = true;
+						break;
+
+					default:	// some other undefined button
+						break;
+				}
+			}
+		}
+
+		skipIntro = escapeEvent;
+		if ( skipIntro ) {
+			break;
+		}
+
+		Sys_Sleep( 10 );
+	}
+}
+
 static const int NUM_DOOM_INTRO_LINES = 7;
 /*
 ========================
 idMenuHandler_Shell::ShowIntroVideo
 ========================
 */
- void idMenuHandler_Shell::ShowDoomIntro() {
+void idMenuHandler_Shell::ShowDoomIntro() {
+	skipIntro = false;
+	Sys_ClearEvents();
+	Sys_CreateThread( (xthread_t)checkInput, NULL, THREAD_HIGHEST, "SkipIntro", CORE_ANY );
 
 	StopSound();
 
@@ -1213,12 +1261,12 @@ idMenuHandler_Shell::ShowIntroVideo
 
 		int numTextFields = NUM_DOOM_INTRO_LINES;
 		idStr textEntries[NUM_DOOM_INTRO_LINES] = { va( "%s %s", idLocalization::GetString("#str_04052"), idLocalization::GetString( "#str_04053" ) ),
-								va( "%s %s", idLocalization::GetString("#str_04054"), idLocalization::GetString( "#str_04055" ) ),
-								idLocalization::GetString( "#str_03012" ),
-								idLocalization::GetString( "#str_04056" ),
-								idLocalization::GetString( "#str_04057" ),
-								va( "%s %s", idLocalization::GetString("#str_04058"), idLocalization::GetString( "#str_04059" ) ),
-								va( "%s %s", idLocalization::GetString("#str_04060"), idLocalization::GetString( "#str_04061" ) ) };
+													va( "%s %s", idLocalization::GetString("#str_04054"), idLocalization::GetString( "#str_04055" ) ),
+													idLocalization::GetString( "#str_03012" ),
+													idLocalization::GetString( "#str_04056" ),
+													idLocalization::GetString( "#str_04057" ),
+													va( "%s %s", idLocalization::GetString("#str_04058"), idLocalization::GetString( "#str_04059" ) ),
+													va( "%s %s", idLocalization::GetString("#str_04060"), idLocalization::GetString( "#str_04061" ) ) };
 
 		for ( int i = 0; i < numTextFields; ++i ) {
 
@@ -1246,8 +1294,17 @@ idMenuHandler_Shell::ShowIntroVideo
 						nextIndex = _nextIndex;
 						shell = _shell;
 						gui = _gui;
+						hasEscaped = false;
 					}
 					idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+						if ( skipIntro ) {
+							skipIntro = false;
+							if ( !hasEscaped ) {
+								shell->StartGame( 0 );
+								hasEscaped = true;
+							}
+							return idSWFScriptVar();
+						}
 						if ( thisObject->GetSprite() == NULL ) {
 							return idSWFScriptVar();
 						}
@@ -1270,6 +1327,7 @@ idMenuHandler_Shell::ShowIntroVideo
 									if ( thisObject->GetSprite()->IsVisible() ) {
 										thisObject->GetSprite()->SetVisible( false );
 										if ( nextIndex >= NUM_DOOM_INTRO_LINES ) {
+											skipIntro = true;
 											shell->StartGame( 0 );
 										}
 									}
@@ -1303,6 +1361,7 @@ idMenuHandler_Shell::ShowIntroVideo
 					int nextIndex;
 					bool generating;
 					idSWF * gui;
+					bool hasEscaped;
 				};
 
 				infoSprite->GetScriptObject()->Set( "onEnterFrame", new idIntroTextUpdate( txtVal, txtVal->CalcNumLines(), i + 1, this, introGui ) );
@@ -1344,6 +1403,9 @@ idMenuHandler_Shell::ShowROEIntro
 ========================
 */
 void idMenuHandler_Shell::ShowROEIntro() {
+	skipIntro = false;
+	Sys_ClearEvents();
+	Sys_CreateThread( (xthread_t)checkInput, NULL, THREAD_HIGHEST, "SkipIntro", CORE_ANY );
 
 	StopSound();
 
@@ -1403,8 +1465,17 @@ void idMenuHandler_Shell::ShowROEIntro() {
 						shell = _shell;
 						gui = _gui;
 						startFade = 0;
+						hasEscaped = false;
 					}
 					idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+						if ( skipIntro ) {
+							skipIntro = false;
+							if ( !hasEscaped ) {
+								shell->StartGame( 1 );
+								hasEscaped = true;
+							}
+							return idSWFScriptVar();
+						}
 						if ( thisObject->GetSprite() == NULL ) {
 							return idSWFScriptVar();
 						}
@@ -1445,6 +1516,7 @@ void idMenuHandler_Shell::ShowROEIntro() {
 																return idSWFScriptVar();
 															}
 														} else {
+															skipIntro = true;
 															shell->StartGame( 1 );
 															return idSWFScriptVar();
 														}
@@ -1471,6 +1543,7 @@ void idMenuHandler_Shell::ShowROEIntro() {
 					bool generating;
 					idSWF * gui;
 					int startFade;
+					bool hasEscaped;
 				};
 
 				infoSprite->GetScriptObject()->Set( "onEnterFrame", new idIntroTextUpdate( txtVal, txtVal->CalcNumLines(), i + 1, this, introGui ) );
@@ -1493,6 +1566,10 @@ idMenuHandler_Shell::ShowLEIntro
 ========================
 */
 void idMenuHandler_Shell::ShowLEIntro() {
+	skipIntro = false;
+
+	Sys_ClearEvents();
+	Sys_CreateThread( (xthread_t)checkInput, NULL, THREAD_HIGHEST, "SkipIntro", CORE_ANY );
 
 	StopSound();
 
@@ -1527,8 +1604,17 @@ void idMenuHandler_Shell::ShowLEIntro() {
 					generating = false;
 					shell = _shell;
 					startFade = 0;
+					hasEscaped = false;
 				}
 				idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+					if ( skipIntro ) {
+						skipIntro = false;
+						if ( !hasEscaped ) {
+							shell->StartGame( 2 );
+							hasEscaped = true;
+						}
+						return idSWFScriptVar();
+					}
 					if ( thisObject->GetSprite() == NULL ) {
 						return idSWFScriptVar();
 					}
@@ -1552,6 +1638,7 @@ void idMenuHandler_Shell::ShowLEIntro() {
 								float alpha = 1.0f - ( (float)( Sys_Milliseconds() - startFade ) / 3000.0f );
 								if ( alpha <= 0.0f ) {
 									thisObject->GetSprite()->SetVisible( false );
+									skipIntro = true;
 									shell->StartGame( 2 );
 									return idSWFScriptVar();
 								}
@@ -1567,6 +1654,7 @@ void idMenuHandler_Shell::ShowLEIntro() {
 				idMenuHandler_Shell * shell;
 				bool generating;
 				int startFade;
+				bool hasEscaped;
 			};
 
 			infoSprite->GetScriptObject()->Set( "onEnterFrame", new idIntroTextUpdate( txtVal, this ) );
