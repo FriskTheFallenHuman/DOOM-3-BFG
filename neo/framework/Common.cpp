@@ -76,7 +76,7 @@ extern idCVar g_demoMode;
 
 idCVar com_engineHz( "com_engineHz", "60", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f );
 float com_engineHz_latched = 60.0f; // Latched version of cvar, updated between map loads
-int64 com_engineHz_numerator = 100LL * 1000LL;
+const int64 com_engineHz_numerator = 100LL * 1000LL;
 int64 com_engineHz_denominator = 100LL * 60LL;
 
 #ifdef __DOOM_DLL__
@@ -124,6 +124,7 @@ idCommonLocal::idCommonLocal() :
 	com_errorEntered = ERP_NONE;
 	com_shuttingDown = false;
 	com_isJapaneseSKU = false;
+	com_paused = false;
 
 	logFile = NULL;
 

@@ -39,7 +39,7 @@ If you have questions concerning this license or the applicable additional terms
 
 extern idCVar com_engineHz;
 extern float com_engineHz_latched;
-extern int64 com_engineHz_numerator;
+extern const int64 com_engineHz_numerator;
 extern int64 com_engineHz_denominator;
 
 // Returns the msec the frame starts on
@@ -320,6 +320,14 @@ public:
 	virtual void				QueueShowShell() = 0;		// Will activate the shell on the next frame.
 
 	virtual idUserCmdMgr &		GetUCmdMgr() = 0;
+
+	// Return true if the main windows has lost focus, this is like pause but its mainly use to trotle down the fps
+	virtual void				SetFocus( bool bstate ) = 0;
+	virtual bool				IsFocused() = 0;
+
+	// Return true if the game is paused (either by focus lost or on deman)
+	virtual void				SetPaused( bool bstate ) = 0;
+	virtual bool				IsPaused() = 0;
 };
 
 extern idCommon *		common;

@@ -371,7 +371,7 @@ void idCommonLocal::Frame() {
 
 		// if the console or another gui is down, we don't need to hold the mouse cursor
 		bool chatting = false;
-		if ( console->Active() || Dialog().IsDialogActive() || session->IsSystemUIShowing() || ( game && game->InhibitControls() ) ) {
+		if ( common->IsPaused() || console->Active() || Dialog().IsDialogActive() || session->IsSystemUIShowing() || (game && game->InhibitControls())) {
 			Sys_GrabMouseCursor( false );
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, true );
 			chatting = true;
@@ -380,7 +380,7 @@ void idCommonLocal::Frame() {
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, false );
 		}
 
-		const bool pauseGame = ( !mapSpawned || ( !IsMultiplayer() && ( Dialog().IsDialogPausing() || session->IsSystemUIShowing() || ( game && game->Shell_IsActive() ) ) ) );
+		const bool pauseGame = ( !mapSpawned || ( !IsMultiplayer() && ( Dialog().IsDialogPausing() || session->IsSystemUIShowing() || ( game && game->Shell_IsActive() ) || common->IsPaused() ) ) );
 
 		// save the screenshot and audio from the last draw if needed
 		if ( aviCaptureMode ) {
@@ -414,6 +414,17 @@ void idCommonLocal::Frame() {
 			renderSystem->SwapCommandBuffers_FinishRendering( &time_frontend, &time_backend, &time_shadows, &time_gpu );
 		}
 		frameTiming.finishSyncTime = Sys_Microseconds();
+
+		// slow down engine in background so it does not eat up so many resources along other 3D tools
+		if( !IsFocused()  ) {
+			const float backgroundEngineHz = 15.0f;
+			com_engineHz_denominator = 100LL * backgroundEngineHz;
+			com_engineHz_latched = backgroundEngineHz;
+		} else {
+			// allow com_engineHz to be changed between map loads
+			com_engineHz_denominator = 100LL * com_engineHz.GetFloat();
+			com_engineHz_latched = com_engineHz.GetFloat();
+		}
 
 		//--------------------------------------------
 		// Determine how many game tics we are going to run,
@@ -455,13 +466,6 @@ void idCommonLocal::Frame() {
 			const int clampedDeltaMilliseconds = Min( deltaMilliseconds, com_deltaTimeClamp.GetInteger() );
 
 			gameTimeResidual += clampedDeltaMilliseconds * timescale.GetFloat();
-
-			// don't run any frames when paused
-			if ( pauseGame ) {
-				gameFrame++;
-				gameTimeResidual = 0;
-				break;
-			}
 
 			// debug cvar to force multiple game tics
 			if ( com_fixedTic.GetInteger() > 0 ) {
@@ -512,6 +516,13 @@ void idCommonLocal::Frame() {
 			// we don't have vsync on, or the monitor is running at 120hz while
 			// com_engineHz is 60, so sleep a bit and check again
 			Sys_Sleep( 0 );
+		}
+
+		// don't run any frames when paused
+		// reset numGameFrames here so we use the sleep above
+		// and don't run as many frames as possible on the GPU
+		if ( pauseGame ) {
+			numGameFrames = 0;
 		}
 
 		//--------------------------------------------
