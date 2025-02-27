@@ -678,6 +678,17 @@ void idCommonLocal::Frame() {
 
 		session->GetSaveGameManager().Pump();
 	} catch( idException & ) {
-		return;			// an ERP_DROP was thrown
+		// an ERP_DROP was thrown
+
+		// kill loading gui
+		delete loadGUI;
+		loadGUI = NULL;
+
+		// drop back to main menu
+		LeaveGame();
+
+		// force the console open to show error messages
+		console->Open();
+		return;
 	}
 }
