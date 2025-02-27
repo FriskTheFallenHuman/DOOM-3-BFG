@@ -269,7 +269,7 @@ idCommonLocal::UpdateScreen
 This is an out-of-sequence screen update, not the normal game rendering
 ===============
 */
-void idCommonLocal::UpdateScreen( bool captureToImage ) {
+void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse ) {
 	if ( insideUpdateScreen || com_shuttingDown ) {
 		return;
 	}
@@ -279,7 +279,9 @@ void idCommonLocal::UpdateScreen( bool captureToImage ) {
 	gameThread.WaitForThread();
 
 	// release the mouse capture back to the desktop
-	Sys_GrabMouseCursor( false );
+	if ( releaseMouse ) {
+		Sys_GrabMouseCursor( false );
+	}
 
 	// build all the draw commands without running a new game tic
 	Draw();
