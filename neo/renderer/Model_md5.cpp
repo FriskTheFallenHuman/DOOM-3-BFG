@@ -34,8 +34,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef ID_WIN_X86_SSE2_INTRIN
 
-static const __m128 vector_float_posInfinity		= { idMath::INFINITY, idMath::INFINITY, idMath::INFINITY, idMath::INFINITY };
-static const __m128 vector_float_negInfinity		= { -idMath::INFINITY, -idMath::INFINITY, -idMath::INFINITY, -idMath::INFINITY };
+static const __m128 vector_float_posInfinity		= { idMath::INFINITUM, idMath::INFINITUM, idMath::INFINITUM, idMath::INFINITUM };
+static const __m128 vector_float_negInfinity		= { -idMath::INFINITUM, -idMath::INFINITUM, -idMath::INFINITUM, -idMath::INFINITUM };
 
 #endif
 
