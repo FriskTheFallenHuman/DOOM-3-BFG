@@ -206,6 +206,12 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 				// start playing the game sound world
 				soundSystem->SetMute( !win32.activeApp );
 
+				// resume the game if we were paused
+				common->SetPaused( !win32.activeApp );
+
+				// fordward to the engine that we are requesting focus
+				common->SetFocus( win32.activeApp );
+
 				// we do not actually grab or release the mouse here,
 				// that will be done next time through the main loop
 			}
