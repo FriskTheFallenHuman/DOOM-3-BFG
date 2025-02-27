@@ -332,9 +332,12 @@ idRenderModel *idRenderModelManagerLocal::GetModel( const char *_modelName, bool
 			if ( !model->LoadBinaryModel( file, sourceTimeStamp ) ) {
 				model->InitFromFile( canonical );
 
-				idFileLocal outputFile( fileSystem->OpenFileWrite( generatedFileName, "fs_basepath" ) );
-				idLib::Printf( "Writing %s\n", generatedFileName.c_str() );
-				model->WriteBinaryModel( outputFile );
+				// Default models shouldn't be cached as binary models
+				if ( !model->IsDefaultModel() ) {
+					idFileLocal outputFile( fileSystem->OpenFileWrite( generatedFileName, "fs_basepath" ) );
+					idLib::Printf( "Writing %s\n", generatedFileName.c_str() );
+					model->WriteBinaryModel( outputFile );
+				}
 			} /* else {
 				idLib::Printf( "loaded binary model %s from file %s\n", model->Name(), generatedFileName.c_str() );
 			} */
