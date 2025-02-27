@@ -454,6 +454,8 @@ public:
 
 	void					EnterCinematic();
 	void					ExitCinematic();
+	bool					HandleESC();
+	bool					SkipCinematic();
 
 	void					UpdateConditions();
 	void					SetViewAngles( const idAngles &angles );

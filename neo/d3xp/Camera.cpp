@@ -454,6 +454,36 @@ idCameraAnim::Think
 =====================
 */
 void idCameraAnim::Think() {
+	int frame;
+	int frameTime;
+
+	if ( thinkFlags & TH_THINK ) {
+		// check if we're done in the Think function when the cinematic is being skipped (idCameraAnim::GetViewParms isn't called when skipping cinematics).
+		if ( !gameLocal.skipCinematic ) {
+			return;
+		}
+
+		if ( camera.Num() < 2 ) {
+			// 1 frame anims never end
+			return;
+		}
+
+		frameTime	= ( gameLocal.time - starttime ) * frameRate;
+		frame		= frameTime / 1000;
+
+		if ( frame > camera.Num() + cameraCuts.Num() - 2 ) {
+			if ( cycle > 0 ) {
+				cycle--;
+			}
+
+			if ( cycle != 0 ) {
+				// advance start time so that we loop
+				starttime += ( ( camera.Num() - cameraCuts.Num() ) * 1000 ) / frameRate;
+			} else {
+				Stop();
+			}
+		}
+	}
 }
 
 /*

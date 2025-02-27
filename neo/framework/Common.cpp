@@ -1530,31 +1530,40 @@ idCommonLocal::ProcessEvent
 ===============
 */
 bool idCommonLocal::ProcessEvent( const sysEvent_t *event ) {
-	// hitting escape anywhere brings up the menu
-	if ( game && game->IsInGame() ) {
-		if ( event->evType == SE_KEY && event->evValue2 == 1 && ( event->evValue == K_ESCAPE || event->evValue == K_JOY9 ) ) {
-			if ( !game->Shell_IsActive() ) {
-
-				// menus / etc
-				if ( MenuEvent( event ) ) {
-					return true;
-				}
-
-				console->Close();
-
-				StartMenu();
+	if ( event->evType == SE_KEY && event->evValue2 == 1 && ( event->evValue == K_ESCAPE || event->evValue == K_JOY9 ) ) {
+		console->Close();
+		if ( game ) {
+			escReply_t		op;
+			op = game->HandleESC();
+			if ( op == ESC_IGNORE ) {
 				return true;
-			} else {
-				console->Close();
+			} else if ( op == ESC_GUI ) {
+				return true;
+			}
 
-				// menus / etc
-				if ( MenuEvent( event ) ) {
+			if ( game->IsInGame() ) {
+				if ( !game->Shell_IsActive() ) {
+					// menus / etc
+					if ( MenuEvent( event ) ) {
+						return true;
+					}
+
+					StartMenu();
 					return true;
-				}
+				} else {
 
-				game->Shell_ClosePause();
+					// menus / etc
+					if ( MenuEvent( event ) ) {
+						return true;
+					}
+
+					game->Shell_ClosePause();
+				}
 			}
 		}
+
+
+		return true;
 	}
 
 	// let the pull-down console take it if desired

@@ -226,6 +226,9 @@ void idGameLocal::Clear() {
 	editEntities = NULL;
 	entityHash.Clear( 1024, MAX_GENTITIES );
 	inCinematic = false;
+	cinematicSkipTime = 0;
+	cinematicStopTime = 0;
+	cinematicMaxSkipTime = 0;
 	framenum = 0;
 	previousTime = 0;
 	time = 0;
@@ -244,6 +247,7 @@ void idGameLocal::Clear() {
 	playerPVS.h = (unsigned int)-1;
 	playerConnectedAreas.h = (unsigned int)-1;
 	gamestate = GAMESTATE_UNINITIALIZED;
+	skipCinematic = false;
 	influenceActive = false;
 
 	realClientTime = 0;
@@ -558,7 +562,11 @@ void idGameLocal::SaveGame( idFile *f, idFile *strings ) {
 
 	// FIXME: save smoke particles
 
+	savegame.WriteInt( cinematicSkipTime );
+	savegame.WriteInt( cinematicStopTime );
+	savegame.WriteInt( cinematicMaxSkipTime );
 	savegame.WriteBool( inCinematic );
+	savegame.WriteBool( skipCinematic );
 
 	savegame.WriteInt( gameType );
 
@@ -967,7 +975,11 @@ void idGameLocal::LoadMap( const char * mapName, int randseed ) {
 
 	spawnArgs.Clear();
 
+	skipCinematic = false;
 	inCinematic = false;
+	cinematicSkipTime = 0;
+	cinematicStopTime = 0;
+	cinematicMaxSkipTime = 0;
 
 	clip.Init();
 
@@ -1341,7 +1353,11 @@ bool idGameLocal::InitFromSaveGame( const char *mapName, idRenderWorld *renderWo
 
 	// FIXME: save smoke particles
 
+	savegame.ReadInt( cinematicSkipTime );
+	savegame.ReadInt( cinematicStopTime );
+	savegame.ReadInt( cinematicMaxSkipTime );
 	savegame.ReadBool( inCinematic );
+	savegame.ReadBool( skipCinematic );
 
 	savegame.ReadInt( (int &)gameType );
 
@@ -2294,7 +2310,7 @@ void idGameLocal::RunFrame( idUserCmdMgr & cmdMgr, gameReturn_t & ret ) {
 			cmdMgr.MakeReadPtrCurrentForPlayer( GetLocalClientNum() );
 			player->Think();
 		}
-	} else {
+	} else do {
 		// update the game time
 		framenum++;
 		fast.previousTime = FRAME_TO_MSEC( framenum - 1 );
@@ -2451,6 +2467,12 @@ void idGameLocal::RunFrame( idUserCmdMgr & cmdMgr, gameReturn_t & ret ) {
 		}
 
 		BuildReturnValue( ret );
+	} while( ( inCinematic || ( time < cinematicStopTime ) ) && skipCinematic );
+
+	ret.syncNextGameFrame = skipCinematic;
+	if ( skipCinematic ) {
+		soundSystem->SetMute( false );
+		skipCinematic = false;
 	}
 
 	// show any debug info for this frame
@@ -2730,6 +2752,23 @@ bool idGameLocal::Draw( int clientNum ) {
 	player->playerView.RenderPlayerView( player->hudManager );
 
 	return true;
+}
+
+/*
+================
+idGameLocal::HandleESC
+================
+*/
+escReply_t idGameLocal::HandleESC( /*idUserInterface** gui*/ ) {
+	idPlayer *player = GetLocalPlayer();
+	if ( player ) {
+		if ( player->HandleESC() ) {
+			return ESC_IGNORE;
+		} else {
+			return ESC_MAIN;
+		}
+	}
+	return ESC_MAIN;
 }
 
 /*
@@ -4168,6 +4207,18 @@ void idGameLocal::SetCamera( idCamera *cam ) {
 	if ( camera ) {
 		inCinematic = true;
 
+		if ( skipCinematic && camera->spawnArgs.GetBool( "disconnect" ) ) {
+			camera->spawnArgs.SetBool( "disconnect", false );
+			cvarSystem->SetCVarFloat( "r_znear", 3.0f );
+			cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "disconnect\n" );
+			skipCinematic = false;
+			return;
+		}
+
+		if ( time > cinematicStopTime ) {
+			cinematicSkipTime = time + CINEMATIC_SKIP_DELAY;
+		}
+
 		// set r_znear so that transitioning into/out of the player's head doesn't clip through the view
 		cvarSystem->SetCVarFloat( "r_znear", 1.0f );
 
@@ -4210,6 +4261,7 @@ void idGameLocal::SetCamera( idCamera *cam ) {
 
 	} else {
 		inCinematic = false;
+		cinematicStopTime = time + 1;
 
 		// restore r_znear
 		cvarSystem->SetCVarFloat( "r_znear", 3.0f );
@@ -4231,6 +4283,37 @@ idGameLocal::GetCamera
 */
 idCamera *idGameLocal::GetCamera() const {
 	return camera;
+}
+
+/*
+=============
+idGameLocal::SkipCinematic
+=============
+*/
+bool idGameLocal::SkipCinematic() {
+	if ( camera ) {
+		if ( camera->spawnArgs.GetBool( "disconnect" ) ) {
+			camera->spawnArgs.SetBool( "disconnect", false );
+			cvarSystem->SetCVarFloat( "r_znear", 3.0f );
+			cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "disconnect\n" );
+			skipCinematic = false;
+			return false;
+		}
+
+		if ( camera->spawnArgs.GetBool( "instantSkip" ) ) {
+			camera->Stop();
+			return false;
+		}
+	}
+
+	soundSystem->SetMute( true );
+	if ( !skipCinematic ) {
+		skipCinematic = true;
+		cinematicMaxSkipTime = gameLocal.time + SEC2MS( g_cinematicMaxSkipTime.GetFloat() );
+		soundSystem->GetPlayingSoundWorld()->Skip( cinematicMaxSkipTime );
+	}
+
+	return true;
 }
 
 /*

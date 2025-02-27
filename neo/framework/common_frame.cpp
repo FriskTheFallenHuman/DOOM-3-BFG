@@ -479,6 +479,9 @@ void idCommonLocal::Frame() {
 				break;
 			}
 
+			// force only one game frame update this frame.  the game code requests this after skipping cinematics
+			// so we come back immediately after the cinematic is done instead of a few frames later which can
+			// cause sounds played right after the cinematic to not play.
 			if ( syncNextGameFrame ) {
 				// don't sleep at all
 				syncNextGameFrame = false;
