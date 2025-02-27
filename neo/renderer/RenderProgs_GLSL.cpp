@@ -914,13 +914,13 @@ GLuint idRenderProgManager::LoadGLSLShader( GLenum target, const char * name, id
 	idStr outFileHLSL;
 	idStr outFileGLSL;
 	idStr outFileUniforms;
-	inFile.Format( "renderprogs\\%s", name );
+	inFile.Format( "renderprogs/%s", name );
 	inFile.StripFileExtension();
-	outFileHLSL.Format( "renderprogs\\glsl\\%s", name );
+	outFileHLSL.Format( "renderprogs/glsl/%s", name );
 	outFileHLSL.StripFileExtension();
-	outFileGLSL.Format( "renderprogs\\glsl\\%s", name );
+	outFileGLSL.Format( "renderprogs/glsl/%s", name );
 	outFileGLSL.StripFileExtension();
-	outFileUniforms.Format( "renderprogs\\glsl\\%s", name );
+	outFileUniforms.Format( "renderprogs/glsl/%s", name );
 	outFileUniforms.StripFileExtension();
 	if ( target == GL_FRAGMENT_SHADER ) {
 		inFile += ".pixel";
