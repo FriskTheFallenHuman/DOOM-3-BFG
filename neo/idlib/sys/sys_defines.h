@@ -199,10 +199,16 @@ bulk of the codebase, so it is the best place for analyze pragmas.
 #pragma warning( disable: 4467 )	// warning C4467 : usage of ATL attributes is deprecated
 
 
-// checking format strings catches a LOT of errors
-#include <CodeAnalysis\SourceAnnotations.h>
-#define	VERIFY_FORMAT_STRING	[SA_FormatString(Style="printf")]
+#if !defined(VERIFY_FORMAT_STRING)
+	// checking format strings catches a LOT of errors
+	#include <CodeAnalysis\SourceAnnotations.h>
+	#define	VERIFY_FORMAT_STRING	[SA_FormatString(Style="printf")]
+	// DG: alternative for GCC with attribute (NOOP for MSVC)
+	#define ID_STATIC_ATTRIBUTE_PRINTF(STRIDX, FIRSTARGIDX)
+#endif
 
+// This needs to be handled so shift by 1
+#define ID_INSTANCE_ATTRIBUTE_PRINTF(STRIDX, FIRSTARGIDX) ID_STATIC_ATTRIBUTE_PRINTF((STRIDX+1),(FIRSTARGIDX+1))
 
 // We need to inform the compiler that Error() and FatalError() will
 // never return, so any conditions that leeds to them being called are
