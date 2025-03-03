@@ -255,9 +255,9 @@ void GLS_Triangle( const mapTri_t *tri, int code ) {
 	idWinding w;
 
 	w.SetNumPoints( 3 );
-	VectorCopy( tri->v[0].xyz, w[0] );
-	VectorCopy( tri->v[1].xyz, w[1] );
-	VectorCopy( tri->v[2].xyz, w[2] );
+	w[0] = tri->v[0].xyz;
+	w[1] = tri->v[1].xyz;
+	w[2] = tri->v[2].xyz;
 	GLS_Winding( &w, code );
 }
 

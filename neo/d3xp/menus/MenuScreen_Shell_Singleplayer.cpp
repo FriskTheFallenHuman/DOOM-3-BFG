@@ -213,7 +213,7 @@ idMenuScreen_Shell_Singleplayer::ContinueGame
 void idMenuScreen_Shell_Singleplayer::ContinueGame() {
 	const saveGameDetailsList_t & saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
 	saveGameDetailsList_t sortedSaves = saveGameInfo;
-	sortedSaves.Sort( idSort_SavesByDate() );
+	sortedSaves.SortWithTemplate( idSort_SavesByDate() );
 	if ( sortedSaves.Num() > 0 ) {
 		if ( sortedSaves[0].damaged ) {
 			class idSWFScriptFunction_ContinueDamaged : public idSWFScriptFunction_RefCounted {

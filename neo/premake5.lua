@@ -39,6 +39,7 @@ workspace("Doom3")
 	preferredtoolarchitecture("x86")
 	--warnings( "Extra" )
 	--floatingpoint( "Fast" )
+	cppdialect("C++14")
 	characterset( "ASCII" )
 
 	includedirs({".", "external", "external/SDL3-3.2.4/include", "idlib"})
@@ -74,6 +75,7 @@ workspace("Doom3")
 			runtime("Debug")
 			rtti("On")
 			editandcontinue("On")
+			--sanitize({"Address"})
 		filter({}) -- Debug Scope
 
 		-- _Release.props
@@ -138,7 +140,7 @@ workspace("Doom3")
 		pchheader("")
 
 		if _OPTIONS["dll"] then
-			files({"premake5.lua", "cm/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "tools/**", "ui/**" } )
+			files({"premake5.lua", "cm/**", "framework/**", "renderer/**", "sound/**", "sys/**", "tools/**", "ui/**" } )
 			removefiles({"framework/Session.cpp", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
 		else
 			files({"premake5.lua", "cm/**", "d3xp/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "tools/**", "ui/**" } )
@@ -146,6 +148,10 @@ workspace("Doom3")
 		end
 
 		filter("files:renderer/jobs/**.cpp")
+			flags({"NoPCH"})
+		filter({})
+
+		filter("files:**.c")
 			flags({"NoPCH"})
 		filter({})
 

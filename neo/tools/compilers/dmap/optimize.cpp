@@ -229,8 +229,6 @@ DrawAllEdges
 ================
 */
 static	void DrawAllEdges() {
-	int		i;
-
 	if ( !dmapGlobals.drawflag ) {
 		return;
 	}
@@ -238,7 +236,7 @@ static	void DrawAllEdges() {
 	Draw_ClearWindow();
 
 	qglBegin( GL_LINES );
-	for ( i = 0 ; i < numOptEdges ; i++ ) {
+	for ( int i = 0 ; i < numOptEdges ; i++ ) {
 		if ( optEdges[i].v1 == NULL ) {
 			continue;
 		}
@@ -934,10 +932,10 @@ CreateOptTri
 ===============
 */
 static void CreateOptTri( optVertex_t *first, optEdge_t *e1, optEdge_t *e2, optIsland_t *island ) {
-	optEdge_t		*opposite;
-	optVertex_t		*second, *third;
-	optTri_t		*optTri;
-	mapTri_t		*tri;
+	optEdge_t		*opposite = NULL;
+	optVertex_t		*second = NULL, *third = NULL;
+	optTri_t		*optTri = NULL;
+	mapTri_t		*tri = NULL;
 
 	if ( e1->v1 == first ) {
 		second = e1->v2;
@@ -1095,8 +1093,8 @@ Generate a new list of triangles from the optEdeges
 ====================
 */
 static void BuildOptTriangles( optIsland_t *island ) {
-	optVertex_t		*ov, *second = NULL, *third = NULL, *middle = NULL;
-	optEdge_t		*e1, *e1Next = NULL, *e2, *e2Next = NULL, *check, *checkNext = NULL;
+	optVertex_t		*ov = NULL, *second = NULL, *third = NULL, *middle = NULL;
+	optEdge_t		*e1 = NULL, *e1Next = NULL, *e2 = NULL, *e2Next = NULL, *check = NULL, *checkNext = NULL;
 
 	// free them
 	FreeOptTriangles( island );
@@ -1363,15 +1361,13 @@ DrawOriginalEdges
 =================
 */
 static void DrawOriginalEdges( int numOriginalEdges, originalEdges_t *originalEdges ) {
-	int		i;
-
 	if ( !dmapGlobals.drawflag ) {
 		return;
 	}
 	Draw_ClearWindow();
 
 	qglBegin( GL_LINES );
-	for ( i = 0 ; i < numOriginalEdges ; i++ ) {
+	for ( int i = 0 ; i < numOriginalEdges ; i++ ) {
 		qglColor3f( 1, 0, 0 );
 		qglVertex3fv( originalEdges[i].v1->pv.ToFloatPtr() );
 		qglColor3f( 0, 0, 0 );

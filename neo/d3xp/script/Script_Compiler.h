@@ -272,7 +272,7 @@ public :
 	static opcode_t	opcodes[];
 
 					idCompiler();
-	void			CompileFile( const char *text, const char *filename, bool console );
+	void			CompileFile( const char *text, const char *filename, const char *shortfilename, bool console );
 };
 
 #endif /* !__SCRIPT_COMPILER_H__ */

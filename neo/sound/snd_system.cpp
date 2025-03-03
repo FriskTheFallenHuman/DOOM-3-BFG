@@ -141,8 +141,9 @@ void idSoundSystemLocal::Init() {
 
 	if ( !s_noSound.GetBool() ) {
 		hardware.Init();
-		InitStreamBuffers();
 	}
+
+	InitStreamBuffers();
 
 	cmdSystem->AddCommand( "testSound", TestSound_f, 0, "tests a sound", idCmdSystem::ArgCompletion_SoundName );
 	cmdSystem->AddCommand( "s_restart", RestartSound_f, 0, "restart sound system" );
@@ -295,10 +296,6 @@ idSoundSystemLocal::Render
 */
 void idSoundSystemLocal::Render() {
 
-	if ( s_noSound.GetBool() ) {
-		return;
-	}
-
 	if ( needsRestart ) {
 		needsRestart = false;
 		Restart();
@@ -310,7 +307,9 @@ void idSoundSystemLocal::Render() {
 		currentSoundWorld->Update();
 	}
 
-	hardware.Update();
+	if ( !s_noSound.GetBool() ) {
+		hardware.Update();
+	}
 
 	// The sound system doesn't use game time or anything like that because the sounds are decoded in real time.
 	soundTime = Sys_Milliseconds();
@@ -339,7 +338,10 @@ void idSoundSystemLocal::StopAllSounds() {
 			sw->StopAllSounds();
 		}
 	}
-	hardware.Update();
+
+	if ( !s_noSound.GetBool() ) {
+		hardware.Update();
+	}
 }
 
 /*

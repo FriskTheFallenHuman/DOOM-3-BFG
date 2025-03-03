@@ -94,7 +94,7 @@ private:
 
 private:
 	void				MakeGeneratedFileName( idStr & gfn );
-	bool				LoadFromGeneratedFile( idFile * f, ID_TIME_T sourceFileTime );
+	bool				LoadFromGeneratedFile( idFile * f, ID_TIME_T sourceTimeStamp );
 };
 
 #endif // __BINARYIMAGE_H__

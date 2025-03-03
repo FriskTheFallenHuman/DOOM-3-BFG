@@ -2984,7 +2984,7 @@ cm_model_t * idCollisionModelManagerLocal::LoadBinaryModelFromFile( idFile *file
 	}
 	ID_TIME_T storedTimeStamp = FILE_NOT_FOUND_TIMESTAMP;
 	file->ReadBig( storedTimeStamp );
-	if ( !fileSystem->InProductionMode() && storedTimeStamp != sourceTimeStamp ) {
+	if( !fileSystem->InProductionMode() && ( sourceTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp != storedTimeStamp ) ) {
 		return NULL;
 	}
 	cm_model_t * model = AllocModel();
@@ -3605,14 +3605,14 @@ void idCollisionModelManagerLocal::ListModels() {
 idCollisionModelManagerLocal::BuildModels
 ================
 */
-void idCollisionModelManagerLocal::BuildModels( const idMapFile *mapFile ) {
+void idCollisionModelManagerLocal::BuildModels( const idMapFile *mapFile, bool ignoreOldCollisionFile ) {
 	int i;
 	const idMapEntity *mapEnt;
 
 	idTimer timer;
 	timer.Start();
 
-	if ( !LoadCollisionModelFile( mapFile->GetName(), mapFile->GetGeometryCRC() ) ) {
+	if ( ignoreOldCollisionFile || !LoadCollisionModelFile( mapFile->GetName(), mapFile->GetGeometryCRC() ) ) {
 
 		if ( !mapFile->GetNumEntities() ) {
 			return;
@@ -3678,7 +3678,7 @@ void idCollisionModelManagerLocal::Preload( const char *mapName ) {
 		for ( int i = 0; i < manifest.NumResources(); i++ ) {
 			const preloadEntry_s & p = manifest.GetPreloadByIndex( i );
 			if ( p.resType == PRELOAD_COLLISION ) {
-				LoadModel( p.resourceName );
+				LoadModel( p.resourceName, false );
 				numLoaded++;
 			}
 		}
@@ -3693,7 +3693,7 @@ void idCollisionModelManagerLocal::Preload( const char *mapName ) {
 idCollisionModelManagerLocal::LoadMap
 ================
 */
-void idCollisionModelManagerLocal::LoadMap( const idMapFile *mapFile ) {
+void idCollisionModelManagerLocal::LoadMap( const idMapFile *mapFile, bool ignoreOldCollisionFile ) {
 
 	if ( mapFile == NULL ) {
 		common->Error( "idCollisionModelManagerLocal::LoadMap: NULL mapFile" );
@@ -3731,7 +3731,7 @@ void idCollisionModelManagerLocal::LoadMap( const idMapFile *mapFile ) {
 	common->UpdateLevelLoadPacifier();
 
 	// build collision models
-	BuildModels( mapFile );
+	BuildModels( mapFile, ignoreOldCollisionFile );
 
 	common->UpdateLevelLoadPacifier();
 
@@ -3862,7 +3862,7 @@ bool idCollisionModelManagerLocal::GetModelPolygon( cmHandle_t model, int polygo
 idCollisionModelManagerLocal::LoadModel
 ==================
 */
-cmHandle_t idCollisionModelManagerLocal::LoadModel( const char *modelName ) {
+cmHandle_t idCollisionModelManagerLocal::LoadModel( const char *modelName, const bool precache ) {
 	int handle;
 
 	handle = FindModel( modelName );
@@ -3896,6 +3896,11 @@ cmHandle_t idCollisionModelManagerLocal::LoadModel( const char *modelName ) {
 			fileSystem->AddCollisionPreload( modelName );
 		}
 		return ( numModels - 1 );
+	}
+
+	// if only precaching .cm files do not waste memory converting render models
+	if ( precache ) {
+		return 0;
 	}
 
 	// try to load a .cm file
@@ -4065,7 +4070,7 @@ idCollisionModelManagerLocal::TrmFromModel
 bool idCollisionModelManagerLocal::TrmFromModel( const char *modelName, idTraceModel &trm ) {
 	cmHandle_t handle;
 
-	handle = LoadModel( modelName );
+	handle = LoadModel( modelName, false );
 	if ( !handle ) {
 		common->Printf( "idCollisionModelManagerLocal::TrmFromModel: model %s not found.\n", modelName );
 		return false;

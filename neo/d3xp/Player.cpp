@@ -6300,7 +6300,14 @@ void idPlayer::UpdateAir() {
 	airless = newAirless;
 
 	if ( hud ) {
-		hud->UpdateOxygen( airless, 100 * airMsec / pm_airMsec.GetInteger() );
+		// KR: Check if the player has the enviroment suit
+		if ( PowerUpActive( ENVIROSUIT ) ) {
+			float envirotime = ( float )( inventory.powerupEndTime[ENVIROTIME] - gameLocal.time );
+			envirotime = envirotime >= 0 ? envirotime : 0.0;
+			hud->UpdateOxygen( true, 100.0 * ( envirotime / hudPowerupDuration ), true );
+		} else {
+			hud->UpdateOxygen( airless, 100 * airMsec / pm_airMsec.GetInteger() );
+		}
 	}
 }
 
@@ -6605,34 +6612,6 @@ void idPlayer::PerformImpulse( int impulse ) {
 			break;
 		}
 	}
-}
-
-/*
-==============
-idPlayer::HandleESC
-==============
-*/
-bool idPlayer::HandleESC() {
-	if ( gameLocal.inCinematic ) {
-		return SkipCinematic();
-	}
-
-	//if ( objectiveSystemOpen ) {
-	//	TogglePDA();
-	//	return true;
-	//}
-
-	return false;
-}
-
-/*
-==============
-idPlayer::SkipCinematic
-==============
-*/
-bool idPlayer::SkipCinematic() {
-	StopSound( SND_CHANNEL_ANY, false );
-	return gameLocal.SkipCinematic();
 }
 
 /*

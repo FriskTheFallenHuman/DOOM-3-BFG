@@ -44,6 +44,7 @@ idUserInterfaceManager *	uiManager = &uiManagerLocal;
 idDeviceContext *dc;
 
 idCVar g_useNewGuiCode(	"g_useNewGuiCode",	"1", CVAR_GAME | CVAR_INTEGER, "use optimized device context code, 2 = toggle on/off every frame" );
+idCVar binaryLoadGuis( "binaryLoadGuis", "1", 0, "enable binary load/write of .gui files" );
 
 extern idCVar sys_lang;
 
@@ -62,6 +63,9 @@ void idUserInterfaceManagerLocal::Init() {
 	screenRect = idRectangle(0, 0, 640, 480);
 	dcOld.Init();
 	dcOptimized.Init();
+	if ( common->IsLegacyFont() ) {
+		dcLegacy.Init();
+	}
 
 	SetDrawingDC();
 
@@ -72,21 +76,28 @@ void idUserInterfaceManagerLocal::Shutdown() {
 	demoGuis.DeleteContents( true );
 	dcOld.Shutdown();
 	dcOptimized.Shutdown();
+	if ( common->IsLegacyFont() ) {
+		dcLegacy.Shutdown();
+	}
 	mapParser.Clear();
 }
 
 void idUserInterfaceManagerLocal::SetDrawingDC() {
-	static int toggle;
-
-	// to make it more obvious that there is a difference between the old and
-	// new paths, toggle between them every frame if g_useNewGuiCode is set to 2
-	toggle++;
-
-	if ( g_useNewGuiCode.GetInteger() == 1 ||
-		( g_useNewGuiCode.GetInteger() == 2 && ( toggle & 1 ) ) ) {
-		dc = &dcOptimized;
+	if ( common->IsLegacyFont() ) {
+		dc = &dcLegacy;
 	} else {
-		dc = &dcOld;
+		static int toggle;
+
+		// to make it more obvious that there is a difference between the old and
+		// new paths, toggle between them every frame if g_useNewGuiCode is set to 2
+		toggle++;
+
+		if ( g_useNewGuiCode.GetInteger() == 1 ||
+			( g_useNewGuiCode.GetInteger() == 2 && ( toggle & 1 ) ) ) {
+			dc = &dcOptimized;
+		} else {
+			dc = &dcOld;
+		}
 	}
 }
 
@@ -112,6 +123,10 @@ void idUserInterfaceManagerLocal::SetSize( float width, float height ) {
 }
 
 void idUserInterfaceManagerLocal::Preload( const char *mapName ) {
+	if ( !binaryLoadGuis.GetBool() ) {
+		return;
+	}
+
 	if ( mapName != NULL && mapName[ 0 ] != '\0' ) {
 		mapParser.LoadFromFile( va( "generated/guis/%s.bgui", mapName ) );
 	}
@@ -154,6 +169,9 @@ void idUserInterfaceManagerLocal::EndLevelLoad( const char *mapName ) {
 
 	dcOld.Init();
 	dcOptimized.Init();
+	if ( common->IsLegacyFont() ) {
+		dcLegacy.Init();
+	}
 }
 
 void idUserInterfaceManagerLocal::Reload( bool all ) {
@@ -350,7 +368,7 @@ bool idUserInterfaceLocal::InitFromFile( const char *qpath, bool rebuild, bool c
 	state.Set( "text", "Test Text!" );
 
 	idTokenParser &bsrc = uiManagerLocal.GetBinaryParser();
-	if ( !bsrc.IsLoaded() || !bsrc.StartParsing( source ) ) {
+	if ( !bsrc.IsLoaded() || !bsrc.StartParsing( source ) || !binaryLoadGuis.GetBool() ) {
 		idParser src( LEXFL_NOFATALERRORS | LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWMULTICHARLITERALS | LEXFL_ALLOWBACKSLASHSTRINGCONCAT );
 		src.LoadFile( source );
 		if ( src.IsLoaded() ) {

@@ -26,6 +26,9 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#ifndef __USERINTERFACE_LOCAL_H__
+#define __USERINTERFACE_LOCAL_H__
+
 class idWindow;
 
 class idUserInterfaceLocal : public idUserInterface {
@@ -144,6 +147,7 @@ private:
 	idRectangle					screenRect;
 	idDeviceContext				dcOld;
 	idDeviceContextOptimized	dcOptimized;
+	idDeviceContextLegacy		dcLegacy;
 
 	idList<idUserInterfaceLocal*> guis;
 	idList<idUserInterfaceLocal*> demoGuis;
@@ -154,3 +158,5 @@ private:
 // These used to be in every window, but they all pointed at the same one in idUserInterfaceManagerLocal.
 // Made a global so it can be switched out dynamically to test optimized versions.
 extern idDeviceContext *dc;
+
+#endif /* !__USERINTERFACE_LOCAL_H__ */

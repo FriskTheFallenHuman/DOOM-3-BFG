@@ -204,6 +204,9 @@ public:
 	virtual void				SetPaused( bool bstate ) { com_paused = bstate; }
 	virtual bool				IsPaused() { return com_paused; }
 
+	// Returns true if the game is requesting legacy font rendering
+	virtual bool				IsLegacyFont() { return false; };
+
 public:
 	void	Draw();			// called by gameThread
 
@@ -386,6 +389,7 @@ private:
 	idStaticList<int, LOAD_TIP_COUNT>	loadTipList;
 
 	const idMaterial *	splashScreen;
+	const idMaterial *	photsensitivityScreen;
 
 	const idMaterial *	whiteMaterial;
 
@@ -427,8 +431,8 @@ private:
 	void	UnloadGameDLL();
 	void	CleanupShell();
 	void	RenderVideo( const char * path );
-	void	RenderSplash();
-	void	FilterLangList( idStrList* list, idStr lang );
+	void	RenderSplash( bool photsensitivity = false );
+	void	FilterLangList( idStrList* list, idStr lang, bool strict = false );
 	void	CheckStartupStorageRequirements();
 
 	void	ExitMenu();

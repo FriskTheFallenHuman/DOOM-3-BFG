@@ -127,7 +127,7 @@ bool idSWF::LoadSWF( const char * fullpath ) {
 idSWF::LoadBinary
 ===================
 */
-bool idSWF::LoadBinary( const char * bfilename, ID_TIME_T sourceTime ) {
+bool idSWF::LoadBinary( const char * bfilename, ID_TIME_T sourceTimeStamp ) {
 	idFile * f = fileSystem->OpenFileReadMemory( bfilename );
 	if ( f == NULL || f->Length() <= 0 ) {
 		return false;
@@ -138,7 +138,8 @@ bool idSWF::LoadBinary( const char * bfilename, ID_TIME_T sourceTime ) {
 	f->ReadBig( magic );
 	f->ReadBig( btimestamp );
 
-	if (  magic != BSWF_MAGIC || ( !fileSystem->InProductionMode() && sourceTime != btimestamp ) )  {
+	// RB: source might be from .resources, so we ignore the time stamp and assume a release build
+	if ( magic != BSWF_MAGIC || ( !fileSystem->InProductionMode() && ( sourceTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp != btimestamp ) ) ) {
 		delete f;
 		return false;
 	}

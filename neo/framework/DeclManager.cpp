@@ -623,7 +623,7 @@ int idDeclFile::LoadAndParse() {
 	bool		reparse;
 
 	// load the text
-	common->DPrintf( "...loading '%s'\n", fileName.c_str() );
+	common->DPrintf( S_COLOR_GRAY "...loading: " S_COLOR_WHITE "'%s'\n", fileName.c_str() );
 	length = fileSystem->ReadFile( fileName, (void **)&buffer, &timestamp );
 	if ( length == -1 ) {
 		common->FatalError( "couldn't load %s", fileName.c_str() );
@@ -1961,6 +1961,7 @@ idDeclLocal::idDeclLocal
 =================
 */
 idDeclLocal::idDeclLocal() {
+	self = NULL;
 	name = "unnamed";
 	textSource = NULL;
 	textLength = 0;

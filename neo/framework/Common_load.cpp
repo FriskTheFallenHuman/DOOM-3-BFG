@@ -32,14 +32,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "Common_local.h"
 #include "../sys/sys_lobby_backend.h"
 
-
-#define LAUNCH_TITLE_DOOM_EXECUTABLE		"doom1.exe"
-#define LAUNCH_TITLE_DOOM2_EXECUTABLE		"doom2.exe"
-
 idCVar com_wipeSeconds( "com_wipeSeconds", "1", CVAR_SYSTEM, "" );
 idCVar com_disableAutoSaves( "com_disableAutoSaves", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
 idCVar com_disableAllSaves( "com_disableAllSaves", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
-
 
 extern idCVar sys_lang;
 
@@ -749,18 +744,24 @@ bool idCommonLocal::SaveGame( const char * saveName ) {
 		return false;
 	}
 
-	soundWorld->Pause();
-	soundSystem->SetPlayingSoundWorld( menuSoundWorld );
-	soundSystem->Render();
+	bool autosave = idStr::Icmp( saveName, "autosave" ) != 0;
 
-	Dialog().ShowSaveIndicator( true );
+	if ( autosave ) {
+		soundWorld->Pause();
+		soundSystem->SetPlayingSoundWorld( menuSoundWorld );
+		soundSystem->Render();
+	}
+
+	Dialog().ShowSaveIndicator( autosave );
 	if ( insideExecuteMapChange ) {
 		UpdateLevelLoadPacifier();
 	} else {
-		// Heremake sure we pump the gui enough times to show the 'saving' dialog
-		const bool captureToImage = false;
-		for ( int i = 0; i < NumScreenUpdatesToShowDialog; ++i ) {
-			UpdateScreen( captureToImage );
+		if ( autosave ) {
+			// Here make sure we pump the gui enough times to show the 'saving' dialog
+			const bool captureToImage = false;
+			for ( int i = 0; i < NumScreenUpdatesToShowDialog; ++i ) {
+				UpdateScreen( captureToImage );
+			}
 		}
 		renderSystem->BeginAutomaticBackgroundSwaps( AUTORENDER_DIALOGICON );
 	}

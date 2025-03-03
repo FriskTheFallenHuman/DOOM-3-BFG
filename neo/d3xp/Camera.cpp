@@ -31,6 +31,12 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Game_local.h"
 
+idCVar binaryLoadCamAnim( "binaryLoadCamAnim", "1", 0, "enable binary load/write of idCameraAnim" );
+
+static const byte BCANIM_VERSION = 101;
+static const unsigned int B_CANIM_MAGIC = ( 'B' << 24 ) | ( 'C' << 16 ) | ( 'M' << 8 ) | BCANIM_VERSION;
+#define CAMERA_ANIM_BINARYFILE_EXT	".bMD5cam"
+
 /*
 ===============================================================================
 
@@ -71,8 +77,8 @@ renderView_t *idCamera::GetRenderView() {
 const idEventDef EV_Camera_SetAttachments( "<getattachments>", NULL );
 
 CLASS_DECLARATION( idCamera, idCameraView )
-	EVENT( EV_Activate,				idCameraView::Event_Activate )
-	EVENT( EV_Camera_SetAttachments, idCameraView::Event_SetAttachments )
+EVENT( EV_Activate,				idCameraView::Event_Activate )
+EVENT( EV_Camera_SetAttachments, idCameraView::Event_SetAttachments )
 END_CLASS
 
 
@@ -114,7 +120,7 @@ void idCameraView::Restore( idRestoreGame *savefile ) {
 idCameraView::Event_SetAttachments
 ================
 */
-void idCameraView::Event_SetAttachments(  ) {
+void idCameraView::Event_SetAttachments() {
 	SetAttachment( &attachedTo, "attachedTo" );
 	SetAttachment( &attachedView, "attachedView" );
 }
@@ -231,10 +237,10 @@ const idEventDef EV_Camera_Start( "start", NULL );
 const idEventDef EV_Camera_Stop( "stop", NULL );
 
 CLASS_DECLARATION( idCamera, idCameraAnim )
-	EVENT( EV_Thread_SetCallback,	idCameraAnim::Event_SetCallback )
-	EVENT( EV_Camera_Stop,			idCameraAnim::Event_Stop )
-	EVENT( EV_Camera_Start,			idCameraAnim::Event_Start )
-	EVENT( EV_Activate,				idCameraAnim::Event_Activate )
+EVENT( EV_Thread_SetCallback,	idCameraAnim::Event_SetCallback )
+EVENT( EV_Camera_Stop,			idCameraAnim::Event_Stop )
+EVENT( EV_Camera_Start,			idCameraAnim::Event_Start )
+EVENT( EV_Activate,				idCameraAnim::Event_Activate )
 END_CLASS
 
 
@@ -337,6 +343,22 @@ void idCameraAnim::LoadAnim() {
 		gameLocal.Error( "Missing 'anim %s' key on '%s'", key, name.c_str() );
 	}
 
+	idStr generatedFileName = "generated/camera/";
+	generatedFileName.AppendPath( filename );
+	generatedFileName.SetFileExtension( CAMERA_ANIM_BINARYFILE_EXT );
+
+	// Get the timestamp on the original file, if it's newer than what is stored in binary model, regenerate it
+	ID_TIME_T sourceTimeStamp = fileSystem->GetTimestamp( filename );
+
+	idFileLocal file( fileSystem->OpenFileReadMemory( generatedFileName ) );
+	if ( binaryLoadCamAnim.GetBool() && LoadBinary( file, sourceTimeStamp ) ) {
+		if ( cvarSystem->GetCVarBool( "fs_buildresources" ) ) {
+			// for resource gathering write this anim to the preload file for this map
+			fileSystem->AddAnimPreload( filename );
+		}
+		return;
+	}
+
 	filename.SetFileExtension( MD5_CAMERA_EXT );
 	if ( !parser.LoadFile( filename ) ) {
 		gameLocal.Error( "Unable to load '%s' on '%s'", filename.c_str(), name.c_str() );
@@ -400,6 +422,12 @@ void idCameraAnim::LoadAnim() {
 		camera[ i ].fov = parser.ParseFloat();
 	}
 	parser.ExpectTokenString( "}" );
+
+	if ( binaryLoadCamAnim.GetBool() ) {
+		idLib::Printf( "Writing %s\n", generatedFileName.c_str() );
+		idFileLocal outputFile( fileSystem->OpenFileWrite( generatedFileName, "fs_basepath" ) );
+		WriteBinary( outputFile, sourceTimeStamp );
+	}
 }
 
 /*
@@ -631,6 +659,84 @@ void idCameraAnim::Event_Activate( idEntity *_activator ) {
 	} else {
 		Start();
 	}
+}
+
+/*
+===============
+idCameraAnim::WriteBinary
+================
+*/
+void idCameraAnim::WriteBinary( idFile *file, ID_TIME_T sourceTimeStamp ) {
+	if ( file == NULL ) {
+		return;
+	}
+
+	file->WriteBig( B_CANIM_MAGIC );
+	file->WriteBig( sourceTimeStamp );
+
+	file->WriteInt( frameRate );
+
+	file->WriteInt( cameraCuts.Num() );
+	for ( int i = 0; i < cameraCuts.Num(); ++i ) {
+		file->WriteInt( cameraCuts[i] );
+	}
+
+	file->WriteInt( camera.Num() );
+	for ( int i = 0; i < camera.Num(); ++i ) {
+		file->WriteBig( camera[i].fov );
+		file->WriteBigArray( camera[i].q.ToFloatPtr(), 3 );
+		file->WriteVec3( camera[i].t );
+	}
+}
+
+/*
+===============
+idCameraAnim::LoadBinary
+================
+*/
+bool idCameraAnim::LoadBinary( idFile *file, const ID_TIME_T sourceTimeStamp ) {
+	if ( file == NULL ) {
+		return false;
+	}
+
+	unsigned int magic = 0;
+	file->ReadBig( magic );
+	if ( magic != B_CANIM_MAGIC ) {
+		return false;
+	}
+
+	ID_TIME_T timeStamp;
+	file->ReadBig( timeStamp );
+	// RB: source might be from .resources, so we ignore the time stamp and assume a release build
+	if ( !fileSystem->InProductionMode() && ( sourceTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp != timeStamp ) ) {
+		return false;
+	}
+
+	common->UpdateLevelLoadPacifier();
+
+	file->ReadInt( frameRate );
+
+	int count = 0;
+	file->ReadInt( count );
+
+	for ( int i = 0; i < count; i++ ) {
+		file->ReadInt( cameraCuts.Alloc() );
+	}
+
+	count = 0;
+	file->ReadInt( count );
+
+	int i = 0;
+	for ( i = 0; i < count; i++ ) {
+		cameraFrame_t& cam = camera.Alloc();
+		file->ReadBig( cam.fov );
+		file->ReadBigArray( cam.q.ToFloatPtr(), 3 );
+		file->ReadVec3( cam.t );
+	}
+
+	assert( i == count );
+
+	return true;
 }
 
 /*

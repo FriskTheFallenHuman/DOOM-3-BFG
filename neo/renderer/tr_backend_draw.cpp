@@ -1100,7 +1100,11 @@ static void RB_RenderInteractions( const drawSurf_t *surfList, const viewLight_t
 			lightRegs[ lightStage->color.registers[3] ] );
 		// apply the world-global overbright and the 2x factor for specular
 		const idVec4 diffuseColor = lightColor;
-		const idVec4 specularColor = lightColor * 2.0f;
+		idVec4 specularColor = lightColor * 2.0f;
+
+		if ( vLight->lightDef->parms.noSpecular ) {
+			specularColor.Zero();
+		}
 
 		float lightTextureMatrix[16];
 		if ( lightStage->texture.hasMatrix ) {

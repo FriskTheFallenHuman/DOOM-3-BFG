@@ -360,7 +360,6 @@ public:
 	void					RunSingleUserCmd( usercmd_t & cmd, idPlayer & player );
 	void					RunEntityThink( idEntity & ent, idUserCmdMgr & userCmdMgr );
 	virtual bool			Draw( int clientNum );
-	virtual escReply_t		HandleESC( /*idUserInterface** gui*/ );
 	virtual bool			HandlePlayerGuiEvent( const sysEvent_t * ev );
 	virtual void			ServerWriteSnapshot( idSnapShot & ss );
 	virtual void			ProcessReliableMessage( int clientNum, int type, const idBitMsg &msg );
@@ -379,6 +378,9 @@ public:
 
 	virtual void			GetAimAssistAngles( idAngles & angles );
 	virtual float			GetAimAssistSensitivity();
+
+	virtual bool			SkipCinematics();
+	virtual bool			InCinematic();
 
 	// ---------------------- Public idGameLocal Interface -------------------
 

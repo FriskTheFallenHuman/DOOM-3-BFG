@@ -136,7 +136,7 @@ void idMenuScreen_Shell_Load::UpdateSaveEnumerations() {
 
 	const saveGameDetailsList_t & saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
 	sortedSaves = saveGameInfo;
-	sortedSaves.Sort( idSort_SavesByDate() );
+	sortedSaves.SortWithTemplate( idSort_SavesByDate() );
 
 	if ( options != NULL ) {
 		idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > saveList;

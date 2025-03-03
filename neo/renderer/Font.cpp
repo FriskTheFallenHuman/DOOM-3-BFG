@@ -27,6 +27,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
+
 #include "Font.h"
 
 const char * DEFAULT_FONT = "Arial_Narrow";
@@ -126,20 +127,20 @@ struct oldGlyphInfo_t {
 	int					junk;
 	char				materialName[32];
 };
-static const int GLYPHS_PER_FONT = 256;
+static const int OLD_GLYPHS_PER_FONT = 256;
 
 /*
 ==============================
 LoadOldGlyphData
 ==============================
 */
-bool LoadOldGlyphData( const char * filename, oldGlyphInfo_t glyphInfo[GLYPHS_PER_FONT] ) {
+bool LoadOldGlyphData( const char * filename, oldGlyphInfo_t glyphInfo[OLD_GLYPHS_PER_FONT] ) {
 	idFile * fd = fileSystem->OpenFileRead( filename );
 	if ( fd == NULL ) {
 		return false;
 	}
-	fd->Read( glyphInfo, GLYPHS_PER_FONT * sizeof( oldGlyphInfo_t ) );
-	for ( int i = 0; i < GLYPHS_PER_FONT; i++ ) {
+	fd->Read( glyphInfo, OLD_GLYPHS_PER_FONT * sizeof( oldGlyphInfo_t ) );
+	for ( int i = 0; i < OLD_GLYPHS_PER_FONT; i++ ) {
 		idSwap::Little( glyphInfo[i].height );
 		idSwap::Little( glyphInfo[i].top );
 		idSwap::Little( glyphInfo[i].bottom );
@@ -234,12 +235,12 @@ bool idFont::LoadFont() {
 	int pointSizes[3] = { 12, 24, 48 };
 	float scales[3] = { 4.0f, 2.0f, 1.0f };
 	for ( int i = 0; i < 3; i++ ) {
-		oldGlyphInfo_t oldGlyphInfo[GLYPHS_PER_FONT];
+		oldGlyphInfo_t oldGlyphInfo[OLD_GLYPHS_PER_FONT];
 		const char * oldFileName = va( "newfonts/%s/old_%d.dat", GetName(), pointSizes[i] );
 		if ( LoadOldGlyphData( oldFileName, oldGlyphInfo ) ) {
 			int mh = 0;
 			int mw = 0;
-			for ( int g = 0; g < GLYPHS_PER_FONT; g++ ) {
+			for ( int g = 0; g < OLD_GLYPHS_PER_FONT; g++ ) {
 				if ( mh < oldGlyphInfo[g].height ) {
 					mh = oldGlyphInfo[g].height;
 				}

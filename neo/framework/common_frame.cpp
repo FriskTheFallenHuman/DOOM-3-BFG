@@ -396,6 +396,7 @@ void idCommonLocal::Frame() {
 			console->ClearNotifyLines();
 
 			// this will call Draw, possibly multiple times if com_aviDemoSamples is > 1
+			g_screenshotFormat = 0;
 			renderSystem->TakeScreenshot( com_aviDemoWidth.GetInteger(), com_aviDemoHeight.GetInteger(), name, com_aviDemoSamples.GetInteger(), NULL );
 		}
 
