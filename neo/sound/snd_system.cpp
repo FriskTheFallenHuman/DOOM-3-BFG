@@ -42,6 +42,14 @@ idCVar s_playDefaultSound( "s_playDefaultSound", "1", CVAR_BOOL, "play a beep fo
 idCVar s_maxSamples( "s_maxSamples", "5", CVAR_INTEGER, "max samples to load per shader" );
 #endif
 
+idCVar s_showLevelMeter( "s_showLevelMeter", "0", CVAR_BOOL|CVAR_ARCHIVE, "Show VU meter" );
+idCVar s_meterTopTime( "s_meterTopTime", "1000", CVAR_INTEGER|CVAR_ARCHIVE, "How long (in milliseconds) peaks are displayed on the VU meter" );
+idCVar s_meterPosition( "s_meterPosition", "100 100 20 200", CVAR_ARCHIVE, "VU meter location (x y w h)" );
+idCVar s_device( "s_device", "-1", CVAR_INTEGER|CVAR_ARCHIVE, "Which audio device to use (listDevices to list, -1 for default)" );
+idCVar s_showPerfData( "s_showPerfData", "0", CVAR_BOOL, "Show Performance data" );
+idCVar s_skipHardwareSets( "s_skipHardwareSets", "0", CVAR_BOOL, "Do all calculation, but skip audio api specifict calls" );
+idCVar s_debugHardware( "s_debugHardware", "0", CVAR_BOOL, "Print a message any time a hardware voice changes" );
+
 idCVar preLoad_Samples( "preLoad_Samples", "1", CVAR_SYSTEM | CVAR_BOOL, "preload samples during beginlevelload" );
 
 idSoundSystemLocal soundSystemLocal;
@@ -116,10 +124,10 @@ void idSoundSystemLocal::Restart() {
 		}
 	}
 	// Shutdown sound hardware
-	hardware.Shutdown();
+	hardware->Shutdown();
 	// Reinitialize sound hardware
 	if ( !s_noSound.GetBool() ) {
-		hardware.Init();
+		hardware->Init();
 	}
 
 	InitStreamBuffers();
@@ -139,8 +147,10 @@ void idSoundSystemLocal::Init() {
 	soundTime = Sys_Milliseconds();
 	random.SetSeed( soundTime );
 
+	hardware = new( TAG_AUDIO ) idSoundHardware_XAudio2;
+
 	if ( !s_noSound.GetBool() ) {
-		hardware.Init();
+		hardware->Init();
 	}
 
 	InitStreamBuffers();
@@ -197,7 +207,7 @@ idSoundSystemLocal::Shutdown
 ========================
 */
 void idSoundSystemLocal::Shutdown() {
-	hardware.Shutdown();
+	hardware->Shutdown();
 	FreeStreamBuffers();
 	samples.DeleteContents( true );
 	sampleHash.Free();
@@ -308,7 +318,7 @@ void idSoundSystemLocal::Render() {
 	}
 
 	if ( !s_noSound.GetBool() ) {
-		hardware.Update();
+		hardware->Update();
 	}
 
 	// The sound system doesn't use game time or anything like that because the sounds are decoded in real time.
@@ -340,17 +350,19 @@ void idSoundSystemLocal::StopAllSounds() {
 	}
 
 	if ( !s_noSound.GetBool() ) {
-		hardware.Update();
+		if ( hardware != NULL ) {
+			hardware->Update();
+		}
 	}
 }
 
 /*
 ========================
-idSoundSystemLocal::GetIXAudio2
+idSoundSystemLocal::GetAudioAPI
 ========================
 */
-void * idSoundSystemLocal::GetIXAudio2() const {
-	return (void *)hardware.GetIXAudio2();
+void * idSoundSystemLocal::GetAudioAPI() const {
+	return (void *)((idSoundHardware_XAudio2 *)hardware)->GetIXAudio2();
 }
 
 /*
@@ -368,7 +380,7 @@ idSoundSystemLocal::AllocateVoice
 ========================
 */
 idSoundVoice * idSoundSystemLocal::AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample ) {
-	return hardware.AllocateVoice( leadinSample, loopingSample );
+	return hardware->AllocateVoice( leadinSample, loopingSample );
 }
 
 /*
@@ -377,7 +389,7 @@ idSoundSystemLocal::FreeVoice
 ========================
 */
 void idSoundSystemLocal::FreeVoice( idSoundVoice * voice ) {
-	hardware.FreeVoice( voice );
+	hardware->FreeVoice( voice );
 }
 
 /*
@@ -397,7 +409,7 @@ idSoundSample * idSoundSystemLocal::LoadSample( const char * name ) {
 			return samples[i];
 		}
 	}
-	idSoundSample * sample = new (TAG_AUDIO) idSoundSample;
+	idSoundSample * sample = new ( TAG_AUDIO ) idSoundSample_XAudio2;
 	sample->SetName( canonical );
 	sampleHash.Add( hashKey, samples.Append( sample ) );
 	if ( !insideLevelLoad ) {

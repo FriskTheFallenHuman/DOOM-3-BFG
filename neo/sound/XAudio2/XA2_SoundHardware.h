@@ -58,23 +58,24 @@ idSoundHardware_XAudio2
 ================================================
 */
 
-class idSoundHardware_XAudio2 {
+class idSoundHardware_XAudio2 : public idSoundHardware {
 public:
 					idSoundHardware_XAudio2();
 
-	void			Init();
-	void			Shutdown();
+	virtual void	Init();
+	virtual void	Shutdown();
 
-	void 			Update();
+	virtual void	Update();
 
-	idSoundVoice *	AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample );
-	void			FreeVoice( idSoundVoice * voice );
+	virtual idSoundVoice *	AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample );
+	virtual void	FreeVoice( idSoundVoice * voice );
 
-	// video playback needs this
-	IXAudio2 *		GetIXAudio2() const { return pXAudio2; };
+	virtual int		GetNumZombieVoices() const { return zombieVoices.Num(); }
+	virtual int		GetNumFreeVoices() const { return freeVoices.Num(); }
 
-	int				GetNumZombieVoices() const { return zombieVoices.Num(); }
-	int				GetNumFreeVoices() const { return freeVoices.Num(); }
+	IXAudio2 *					GetIXAudio2() const { return pXAudio2; };
+	IXAudio2MasteringVoice *	GetMasterVoice() const { return pMasterVoice; };
+	IXAudio2SubmixVoice *		GetSubMixVoice() const { return pSubmixVoice; };
 
 protected:
 	friend class idSoundSample_XAudio2;
@@ -86,27 +87,11 @@ private:
 	IXAudio2SubmixVoice * pSubmixVoice;
 
 	idSoundEngineCallback	soundEngineCallback;
-	int					lastResetTime;
-
-	int					outputChannels;
-	int					channelMask;
-
-	idDebugGraph *		vuMeterRMS;
-	idDebugGraph *		vuMeterPeak;
-	int					vuMeterPeakTimes[ 8 ];
 
 	// Can't stop and start a voice on the same frame, so we have to double this to handle the worst case scenario of stopping all voices and starting a full new set
 	idStaticList<idSoundVoice_XAudio2, MAX_HARDWARE_VOICES * 2 > voices;
 	idStaticList<idSoundVoice_XAudio2 *, MAX_HARDWARE_VOICES * 2 > zombieVoices;
 	idStaticList<idSoundVoice_XAudio2 *, MAX_HARDWARE_VOICES * 2 > freeVoices;
-};
-
-/*
-================================================
-idSoundHardware
-================================================
-*/
-class idSoundHardware : public idSoundHardware_XAudio2 {
 };
 
 #endif

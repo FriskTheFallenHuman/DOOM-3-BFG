@@ -62,15 +62,6 @@ idVoiceCallback voiceCallback;
 
 /*
 ==============
-idCinematicAudio_XAudio2::idCinematicAudio_XAudio2
-==============
-*/
-idCinematicAudio_XAudio2::idCinematicAudio_XAudio2():
-	pMusicSourceVoice1( NULL ) {
-}
-
-/*
-==============
 idCinematicAudio_XAudio2::InitAudio
 ==============
 */
@@ -115,8 +106,8 @@ void idCinematicAudio_XAudio2::InitAudio( void *audioContext ) {
 
 	// Use the XAudio2 that the game has initialized instead of making our own
 	// SRS - Hook up the voice callback interface to get notice when audio buffers can be freed
-	if ( soundSystemLocal.GetIXAudio2() ) {
-		((IXAudio2 *)soundSystemLocal.GetIXAudio2())->CreateSourceVoice( &pMusicSourceVoice1, (WAVEFORMATEX *)&exvoice, XAUDIO2_VOICE_USEFILTER, XAUDIO2_DEFAULT_FREQ_RATIO, &voiceCallback );
+	if ( soundSystemLocal.GetAudioAPI() ) {
+		((IXAudio2 *)soundSystemLocal.GetAudioAPI())->CreateSourceVoice( &pMusicSourceVoice1, (WAVEFORMATEX *)&exvoice, XAUDIO2_VOICE_USEFILTER, XAUDIO2_DEFAULT_FREQ_RATIO, &voiceCallback );
 	}
 }
 

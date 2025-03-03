@@ -31,7 +31,9 @@ If you have questions concerning this license or the applicable additional terms
 
 class idCinematicAudio_XAudio2: public idCinematicAudio {
 public:
-			idCinematicAudio_XAudio2();
+			idCinematicAudio_XAudio2() :
+				pMusicSourceVoice1( NULL ) {
+			}
 	virtual void	InitAudio( void *audioContext );
 	virtual void	PlayAudio( uint8 *data, int size );
 	virtual void	ResetAudio();

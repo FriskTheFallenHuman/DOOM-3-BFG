@@ -25,73 +25,55 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#ifndef __SOUNDVOICE_H__
-#define __SOUNDVOICE_H__
 
-static const int MAX_QUEUED_BUFFERS = 3;
+#ifndef __SOUNDHARDWARE_H__
+#define __SOUNDHARDWARE_H__
 
 /*
 ===============================================================================
 
-	SOUND VOICE
+	SOUND HARDWARE
 
 ===============================================================================
 */
 
-class idSoundVoice : public idSoundVoice_Base {
+class idSoundHardware {
 public:
-				idSoundVoice():
-					leadinSample( NULL ),
-					loopingSample( NULL ),
-					formatTag( 0 ),
-					numChannels( 0 ),
-					sampleRate( 0 ),
-					paused( true ),
-					hasVUMeter( false ) {
-				}
+						idSoundHardware() {
+							vuMeterRMS = NULL;
+							vuMeterPeak = NULL;
 
-	virtual void	Create( const idSoundSample * leadinSample, const idSoundSample * loopingSample ) {}
+							outputChannels = 0;
+							channelMask = 0;
 
-	// Start playing at a particular point in the buffer.  Does an Update() too
-	virtual void	Start( int offsetMS, int ssFlags ) {}
+							lastResetTime = 0;
+						}
 
-	// Stop playing.
-	virtual void	Stop() {}
+	virtual				~idSoundHardware() {}
 
-	// Stop consuming buffers
-	virtual void	Pause() {}
+	virtual void		Init() = 0;
+	virtual void		Shutdown() = 0;
 
-	// Start consuming buffers again
-	virtual void	UnPause() {}
+	virtual void		Update() = 0;
 
-	// Sends new position/volume/pitch information to the hardware
-	virtual bool	Update() { return false; }
+	virtual idSoundVoice *	AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample ) = 0;
+	virtual void		FreeVoice( idSoundVoice * voice ) = 0;
 
-	// returns the RMS levels of the most recently processed block of audio, SSF_FLICKER must have been passed to Start
-	virtual float	GetAmplitude() { return -1.0f; }
-
-	// returns true if we can re-use this voice
-	virtual bool	CompatibleFormat( idSoundSample * s ) { return false; }
-
-	uint32			GetSampleRate() const { return sampleRate; }
+	virtual int			GetNumZombieVoices() const  = 0;
+	virtual int			GetNumFreeVoices() const = 0;
 
 protected:
-	friend class idSoundhardware;
-	friend class idSoundSample;
+	friend class		idSoundSample;
+	friend class		idSoundVoice;
 
-protected:
-	idSoundSample * leadinSample;
-	idSoundSample * loopingSample;
+	int					lastResetTime;
 
-	// These are the fields from the sample format that matter to us for voice reuse
-	uint16		formatTag;
-	uint16		numChannels;
+	int					outputChannels;
+	int					channelMask;
 
-	uint32		sourceVoiceRate;
-	uint32		sampleRate;
-
-	bool		hasVUMeter;
-	bool		paused;
+	idDebugGraph *		vuMeterRMS;
+	idDebugGraph *		vuMeterPeak;
+	int					vuMeterPeakTimes[ 8 ];
 };
 
-#endif /* !__SOUNDVOICE_H__ */
+#endif /* !__SOUNDHARDWARE_H__ */

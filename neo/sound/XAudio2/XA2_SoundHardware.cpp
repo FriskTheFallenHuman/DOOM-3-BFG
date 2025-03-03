@@ -27,36 +27,22 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "../snd_local.h"
 
-idCVar s_showLevelMeter( "s_showLevelMeter", "0", CVAR_BOOL|CVAR_ARCHIVE, "Show VU meter" );
-idCVar s_meterTopTime( "s_meterTopTime", "1000", CVAR_INTEGER|CVAR_ARCHIVE, "How long (in milliseconds) peaks are displayed on the VU meter" );
-idCVar s_meterPosition( "s_meterPosition", "100 100 20 200", CVAR_ARCHIVE, "VU meter location (x y w h)" );
-idCVar s_device( "s_device", "-1", CVAR_INTEGER|CVAR_ARCHIVE, "Which audio device to use (listDevices to list, -1 for default)" );
-idCVar s_showPerfData( "s_showPerfData", "0", CVAR_BOOL, "Show XAudio2 Performance data" );
-extern idCVar s_volume_dB;
+#include "../snd_local.h"
 
 /*
 ========================
 idSoundHardware_XAudio2::idSoundHardware_XAudio2
 ========================
 */
-idSoundHardware_XAudio2::idSoundHardware_XAudio2() {
+idSoundHardware_XAudio2::idSoundHardware_XAudio2() :idSoundHardware() {
 	pXAudio2 = NULL;
 	pMasterVoice = NULL;
 	pSubmixVoice = NULL;
 
-	vuMeterRMS = NULL;
-	vuMeterPeak = NULL;
-
-	outputChannels = 0;
-	channelMask = 0;
-
 	voices.SetNum( 0 );
 	zombieVoices.SetNum( 0 );
 	freeVoices.SetNum( 0 );
-
-	lastResetTime = 0;
 }
 
 #if ID_PC_WIN_8
@@ -178,7 +164,7 @@ listDevices_f
 */
 void listDevices_f( const idCmdArgs & args ) {
 
-	IXAudio2 * pXAudio2 = soundSystemLocal.hardware.GetIXAudio2();
+	IXAudio2 * pXAudio2 = ((idSoundHardware_XAudio2 *)soundSystemLocal.hardware)->GetIXAudio2();
 
 	if ( pXAudio2 == NULL ) {
 		idLib::Warning( "No xaudio object" );
@@ -559,7 +545,7 @@ idSoundVoice * idSoundHardware_XAudio2::AllocateVoice( const idSoundSample * lea
 		return NULL;
 	}
 	if ( loopingSample != NULL ) {
-		if ( ( leadinSample->format.basic.formatTag != loopingSample->format.basic.formatTag ) || ( leadinSample->format.basic.numChannels != loopingSample->format.basic.numChannels ) ) {
+		if ( ( leadinSample->GetFormat().basic.formatTag != loopingSample->GetFormat().basic.formatTag ) || ( leadinSample->GetFormat().basic.numChannels != loopingSample->GetFormat().basic.numChannels ) ) {
 			idLib::Warning( "Leadin/looping format mismatch: %s & %s", leadinSample->GetName(), loopingSample->GetName() );
 			loopingSample = NULL;
 		}
@@ -567,12 +553,13 @@ idSoundVoice * idSoundHardware_XAudio2::AllocateVoice( const idSoundSample * lea
 
 	// Try to find a free voice that matches the format
 	// But fallback to the last free voice if none match the format
-	idSoundVoice * voice = NULL;
+	idSoundVoice_XAudio2 * voice = NULL;
 	for ( int i = 0; i < freeVoices.Num(); i++ ) {
-		if ( freeVoices[i]->IsPlaying() ) {
+		voice = (idSoundVoice_XAudio2 *)freeVoices[i];
+		if ( voice->IsPlaying() ) {
 			continue;
 		}
-		voice = (idSoundVoice *)freeVoices[i];
+
 		if ( voice->CompatibleFormat( (idSoundSample_XAudio2*)leadinSample ) ) {
 			break;
 		}
@@ -596,7 +583,7 @@ void idSoundHardware_XAudio2::FreeVoice( idSoundVoice * voice ) {
 
 	// Stop() is asyncronous, so we won't flush bufferes until the
 	// voice on the zombie channel actually returns !IsPlaying()
-	zombieVoices.Append( voice );
+	zombieVoices.Append( (idSoundVoice_XAudio2 *)voice );
 }
 
 /*
@@ -625,8 +612,9 @@ void idSoundHardware_XAudio2::Update() {
 	// zombie list, but it is documented as asyncronous, so we have to wait
 	// until it actually reports that it is no longer playing.
 	for ( int i = 0; i < zombieVoices.Num(); i++ ) {
-		zombieVoices[i]->FlushSourceBuffers();
-		if ( !zombieVoices[i]->IsPlaying() ) {
+		idSoundVoice_XAudio2 *xa2zombie = (idSoundVoice_XAudio2 *)zombieVoices[i];
+		xa2zombie->FlushSourceBuffers();
+		if ( !xa2zombie->IsPlaying() ) {
 			freeVoices.Append( zombieVoices[i] );
 			zombieVoices.RemoveIndexFast( i );
 			i--;
