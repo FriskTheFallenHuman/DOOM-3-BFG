@@ -28,44 +28,43 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __XA2_SOUNDVOICE_H__
 #define __XA2_SOUNDVOICE_H__
 
-static const int MAX_QUEUED_BUFFERS = 3;
-
 /*
 ================================================
 idSoundVoice_XAudio2
 ================================================
 */
-class idSoundVoice_XAudio2 : public idSoundVoice_Base {
+class idSoundVoice_XAudio2 : public idSoundVoice {
 public:
 							idSoundVoice_XAudio2();
 							~idSoundVoice_XAudio2();
 
-	void					Create( const idSoundSample * leadinSample, const idSoundSample * loopingSample );
+	virtual void			Create( const idSoundSample * leadinSample, const idSoundSample * loopingSample );
 
 	// Start playing at a particular point in the buffer.  Does an Update() too
-	void					Start( int offsetMS, int ssFlags );
+	virtual void			Start( int offsetMS, int ssFlags );
 
 	// Stop playing.
-	void					Stop();
+	virtual void			Stop();
 
 	// Stop consuming buffers
-	void					Pause();
+	virtual void			Pause();
+
 	// Start consuming buffers again
-	void					UnPause();
+	virtual void			UnPause();
 
 	// Sends new position/volume/pitch information to the hardware
-	bool					Update();
+	virtual bool			Update();
 
 	// returns the RMS levels of the most recently processed block of audio, SSF_FLICKER must have been passed to Start
-	float					GetAmplitude();
+	virtual float			GetAmplitude();
 
 	// returns true if we can re-use this voice
-	bool					CompatibleFormat( idSoundSample_XAudio2 * s );
+	virtual bool			CompatibleFormat( idSoundSample * s );
 
 	uint32					GetSampleRate() const { return sampleRate; }
 
 	// callback function
-	void					OnBufferStart( idSoundSample_XAudio2 * sample, int bufferNumber );
+	void					OnBufferStart( idSoundSample * sample, int bufferNumber );
 
 private:
 	friend class idSoundHardware_XAudio2;
@@ -83,32 +82,12 @@ private:
 	int						RestartAt( int offsetSamples );
 
 	// Helper function to submit a buffer
-	int						SubmitBuffer( idSoundSample_XAudio2 * sample, int bufferNumber, int offset );
+	int						SubmitBuffer( idSoundSample * sample, int bufferNumber, int offset );
 
 	// Adjust the voice frequency based on the new sample rate for the buffer
 	void					SetSampleRate( uint32 newSampleRate, uint32 operationSet );
 
 	IXAudio2SourceVoice *	pSourceVoice;
-	idSoundSample_XAudio2 * leadinSample;
-	idSoundSample_XAudio2 * loopingSample;
-
-	// These are the fields from the sample format that matter to us for voice reuse
-	uint16					formatTag;
-	uint16					numChannels;
-
-	uint32					sourceVoiceRate;
-	uint32					sampleRate;
-
-	bool					hasVUMeter;
-	bool					paused;
-};
-
-/*
-================================================
-idSoundVoice
-================================================
-*/
-class idSoundVoice : public idSoundVoice_XAudio2 {
 };
 
 #endif

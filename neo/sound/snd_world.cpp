@@ -398,7 +398,7 @@ void idSoundWorldLocal::Update() {
 	bool showVoices = s_showVoices.GetBool();
 	if ( showVoices ) {
 		showVoiceTable.Format( "currentCushionDB: %5.1f  freeVoices: %i zombieVoices: %i buffers:%i/%i\n", currentCushionDB,
-			soundSystemLocal.hardware.GetNumFreeVoices(), soundSystemLocal.hardware.GetNumZombieVoices(),
+			soundSystemLocal.hardware->GetNumFreeVoices(), soundSystemLocal.hardware->GetNumZombieVoices(),
 			soundSystemLocal.activeStreamBufferContexts.Num(), soundSystemLocal.freeStreamBufferContexts.Num() );
 	}
 	for ( int i = 0; i < activeEmitterChannels.Num(); i++ ) {

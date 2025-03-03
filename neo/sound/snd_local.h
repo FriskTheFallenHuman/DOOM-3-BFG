@@ -29,6 +29,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SND_LOCAL_H__
 #define __SND_LOCAL_H__
 
+extern idCVar s_showLevelMeter;
+extern idCVar s_meterTopTime;
+extern idCVar s_meterPosition;
+extern idCVar s_device;
+extern idCVar s_showPerfData;
+extern idCVar s_volume_dB;
+extern idCVar s_skipHardwareSets;
+extern idCVar s_debugHardware;
+
 #include "WaveFile.h"
 #include "OggFile.h"
 
@@ -78,7 +87,10 @@ typedef enum {
 	SCMD_FADE
 } soundDemoCommand_t;
 
+#include "SoundVoiceBase.h"
 #include "SoundVoice.h"
+#include "SoundSample.h"
+#include "SoundHardware.h"
 #include "CinematicAudio.h"
 
 
@@ -419,7 +431,7 @@ public:
 	virtual void			InitStreamBuffers();
 	virtual void			FreeStreamBuffers();
 
-	virtual void *			GetIXAudio2() const;
+	virtual void *			GetAudioAPI() const;
 
 	// for the sound level meter window
 	virtual cinData_t		ImageForTime( const int milliseconds, const bool waveform );
@@ -459,8 +471,8 @@ public:
 			sample( NULL ),
 			bufferNumber( 0 )
 		{ }
-		idSoundVoice_XAudio2 *	voice;
-		idSoundSample_XAudio2 * sample;
+		idSoundVoice * voice;
+		idSoundSample * sample;
 		int bufferNumber;
 	};
 
@@ -479,7 +491,7 @@ public:
 	idList<idSoundSample *, TAG_AUDIO>		samples;
 	idHashIndex					sampleHash;
 
-	idSoundHardware				hardware;
+	idSoundHardware *			hardware;
 
 	idRandom2					random;
 
