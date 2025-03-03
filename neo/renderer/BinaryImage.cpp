@@ -366,7 +366,7 @@ idBinaryImage::LoadFromGeneratedFile
 Load the preprocessed image from the generated folder.
 ==========================
 */
-bool idBinaryImage::LoadFromGeneratedFile( idFile * bFile, ID_TIME_T sourceFileTime ) {
+bool idBinaryImage::LoadFromGeneratedFile( idFile * bFile, ID_TIME_T sourceTimeStamp ) {
 	if ( bFile->Read( &fileData, sizeof( fileData ) ) <= 0 ) {
 		return false;
 	}
@@ -383,7 +383,7 @@ bool idBinaryImage::LoadFromGeneratedFile( idFile * bFile, ID_TIME_T sourceFileT
 	if ( BIMAGE_MAGIC != fileData.headerMagic ) {
 		return false;
 	}
-	if ( fileData.sourceFileTime != sourceFileTime && !fileSystem->InProductionMode() ) {
+	if ( !fileSystem->InProductionMode() && ( sourceTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp != fileData.sourceFileTime ) ) {
 		return false;
 	}
 

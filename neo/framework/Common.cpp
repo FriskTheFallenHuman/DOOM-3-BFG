@@ -87,8 +87,11 @@ idGameEdit *	gameEdit = NULL;
 idCommonLocal	commonLocal;
 idCommon *		common = &commonLocal;
 
-
+#ifdef ID_RETAIL
 idCVar com_skipIntroVideos( "com_skipIntroVideos", "0", CVAR_BOOL , "skips intro videos" );
+#else
+idCVar com_skipIntroVideos( "com_skipIntroVideos", "1", CVAR_BOOL , "skips intro videos" );
+#endif
 
 // For doom classic
 struct Globals;
@@ -638,13 +641,17 @@ bool idCommonLocal::JapaneseCensorship() const {
 idCommonLocal::FilterLangList
 ===============
 */
-void idCommonLocal::FilterLangList( idStrList* list, idStr lang ) {
+void idCommonLocal::FilterLangList( idStrList* list, idStr lang, bool strict ) {
 
 	idStr temp;
 	for( int i = 0; i < list->Num(); i++ ) {
 		temp = (*list)[i];
 		temp = temp.Right(temp.Length()-strlen("strings/"));
-		temp = temp.Left(lang.Length());
+		if (strict) {
+			temp = temp.Left(temp.Length()-strlen(".lang"));
+		} else {
+			temp = temp.Left(lang.Length());
+		}
 		if(idStr::Icmp(temp, lang) != 0) {
 			list->RemoveIndex(i);
 			i--;
@@ -672,14 +679,20 @@ void idCommonLocal::InitLanguageDict() {
 
 	// Loop through the list and filter
 	idStrList currentLangList = langList;
-	FilterLangList( &currentLangList, sys_lang.GetString() );
+	FilterLangList( &currentLangList, sys_lang.GetString(), true );
 
-	if ( currentLangList.Num() == 0 ) {
-		// reset to english and try to load again
-		sys_lang.SetString( ID_LANG_ENGLISH );
+	int index = 0;
+	while ( currentLangList.Num() == 0 && index < Sys_NumLangs() ) {
+		sys_lang.SetString( Sys_Lang( index ) );
 		currentLangList = langList;
-		FilterLangList( &currentLangList, sys_lang.GetString() );
+		FilterLangList( &currentLangList, sys_lang.GetString(), true );
+		index++;
 	}
+	if ( currentLangList.Num() == 0 ) {
+		common->FatalError( "Failed to Load Language data" );
+	}
+	currentLangList = langList;
+	FilterLangList( &currentLangList, sys_lang.GetString() );
 
 	idLocalization::ClearDictionary();
 	for( int i = 0; i < currentLangList.Num(); i++ ) {
@@ -734,7 +747,7 @@ CONSOLE_COMMAND( finishBuild, "finishes the build process", NULL ) {
 idCommonLocal::RenderSplash
 =================
 */
-void idCommonLocal::RenderSplash() {
+void idCommonLocal::RenderSplash( bool photsensitivity ) {
 	const float sysWidth = renderSystem->GetWidth() * renderSystem->GetPixelAspect();
 	const float sysHeight = renderSystem->GetHeight();
 	const float sysAspect = sysWidth / sysHeight;
@@ -753,7 +766,7 @@ void idCommonLocal::RenderSplash() {
 		renderSystem->DrawStretchPic( SCREEN_WIDTH - barWidth, 0, barWidth, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial );
 	}
 	renderSystem->SetColor4( 1, 1, 1, 1 );
-	renderSystem->DrawStretchPic( barWidth, barHeight, SCREEN_WIDTH - barWidth * 2.0f, SCREEN_HEIGHT - barHeight * 2.0f, 0, 0, 1, 1, splashScreen );
+	renderSystem->DrawStretchPic( barWidth, barHeight, SCREEN_WIDTH - barWidth * 2.0f, SCREEN_HEIGHT - barHeight * 2.0f, 0, 0, 1, 1, photsensitivity ? photsensitivityScreen : splashScreen );
 
 	const emptyCommand_t * cmd = renderSystem->SwapCommandBuffers( &time_frontend, &time_backend, &time_shadows, &time_gpu );
 	renderSystem->RenderCommandBuffers( cmd );
@@ -1122,24 +1135,30 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		whiteMaterial = declManager->FindMaterial( "_white" );
 
-		if ( idStr::Icmp( sys_lang.GetString(), ID_LANG_FRENCH ) == 0 ) {
-			// If the user specified french, we show french no matter what SKU
-			splashScreen = declManager->FindMaterial( "guis/assets/splash/legal_french" );
-		} else if ( idStr::Icmp( defaultLang, ID_LANG_FRENCH ) == 0 ) {
-			// If the lead sku is french (ie: europe), display figs
-			splashScreen = declManager->FindMaterial( "guis/assets/splash/legal_figs" );
-		} else {
-			// Otherwise show it in english
+		// Depending on the user's selected language, we setup the splash
+		// Screen base on the value of sys_lang
+		idStrStatic< MAX_OSPATH > lang = sys_lang.GetString();
+
+		// use english splash in cases where we have not found a propper splash screen
+		idStrStatic< MAX_OSPATH > matName = "guis/assets/splash/";
+		matName.Append( "legal_" );
+		matName.Append( lang );
+		const idMaterial *mat = declManager->FindMaterial( matName );
+		if ( !mat ) {
 			splashScreen = declManager->FindMaterial( "guis/assets/splash/legal_english" );
 		}
+		splashScreen = mat;
 
-		const int legalMinTime = 4000;
+		photsensitivityScreen = declManager->FindMaterial( "guis/assets/splash/legal_photosensitivity" );
+
+		const int legalMinTime = 8000;
 		const bool showVideo = ( !com_skipIntroVideos.GetBool () && fileSystem->UsingResourceFiles() );
+		const bool showSplash = true;
 		if ( showVideo ) {
 			RenderVideo( "video\\loadvideo.bik" );
 			RenderSplash();
 			RenderSplash();
-		} else {
+		} else if ( showSplash ){
 			idLib::Printf( "Skipping Intro Videos!\n" );
 			// display the legal splash screen
 			// No clue why we have to render this twice to show up...
@@ -1221,11 +1240,18 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		StartMenu( true );
 
+#ifndef ID_RETAIL
+		bool escapeEvent = false;
 		while ( Sys_Milliseconds() - legalStartTime < legalMinTime ) {
-			RenderSplash();
+			if ( ( Sys_Milliseconds() - legalStartTime ) >= legalMinTime / 2.0 ) {
+				RenderSplash( true );
+			} else {
+				RenderSplash();
+			}
 			Sys_GenerateEvents();
 			Sys_Sleep( 10 );
-		};
+		}
+#endif
 
 		// print all warnings queued during initialization
 		PrintWarnings();
@@ -1257,11 +1283,21 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 			}
 		}
 
+		// We also no longer need the photo sensitivity splash screen
+		if ( photsensitivityScreen != NULL ) {
+			for ( int i = 0; i < photsensitivityScreen->GetNumStages(); i++ ) {
+				idImage * image2 = photsensitivityScreen->GetStage( i )->texture.image;
+				if ( image2 != NULL ) {
+					image2->PurgeImage();
+				}
+			}
+		}
+
 		Printf( "--- Common Initialization Complete ---\n" );
 
 		idLib::Printf( "QA Timing IIS: %06dms\n", Sys_Milliseconds() );
-	} catch( idException & ) {
-		Sys_Error( "Error during initialization" );
+	} catch( idException &e ) {
+		Sys_Error( e.GetError() );
 	}
 }
 
@@ -1305,15 +1341,15 @@ void idCommonLocal::Shutdown() {
 	loadGUI = NULL;
 
 	printf( "delete renderWorld;\n" );
-	delete renderWorld;
+    renderSystem->FreeRenderWorld( renderWorld );
 	renderWorld = NULL;
 
 	printf( "delete soundWorld;\n" );
-	delete soundWorld;
+    soundSystem->FreeSoundWorld( soundWorld );
 	soundWorld = NULL;
 
 	printf( "delete menuSoundWorld;\n" );
-	delete menuSoundWorld;
+    soundSystem->FreeSoundWorld( menuSoundWorld );
 	menuSoundWorld = NULL;
 
 	// shut down the session
@@ -1332,10 +1368,6 @@ void idCommonLocal::Shutdown() {
 	printf( "uiManager->Shutdown();\n" );
 	uiManager->Shutdown();
 
-	// shut down the sound system
-	printf( "soundSystem->Shutdown();\n" );
-	soundSystem->Shutdown();
-
 	// shut down the user command input code
 	printf( "usercmdGen->Shutdown();\n" );
 	usercmdGen->Shutdown();
@@ -1345,12 +1377,20 @@ void idCommonLocal::Shutdown() {
 	eventLoop->Shutdown();
 
 	// shutdown the decl manager
+	// Note this also shuts down all cinematic resources, including cinematic audio voices
 	printf( "declManager->Shutdown();\n" );
 	declManager->Shutdown();
 
 	// shut down the renderSystem
+	// Note this also shuts down any testVideo resources, including cinematic audio voices
 	printf( "renderSystem->Shutdown();\n" );
 	renderSystem->Shutdown();
+
+	// shut down the sound system
+	// Shut down sound system after decl manager and render system so cinematic audio voices are destroyed first
+	// Important for XAudio2 where the mastering voice cannot be destroyed if any other voices exist
+	printf( "soundSystem->Shutdown();\n" );
+	soundSystem->Shutdown();
 
 	printf( "commonDialog.Shutdown();\n" );
 	commonDialog.Shutdown();
@@ -1533,16 +1573,10 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t *event ) {
 	if ( event->evType == SE_KEY && event->evValue2 == 1 && ( event->evValue == K_ESCAPE || event->evValue == K_JOY9 ) ) {
 		console->Close();
 		if ( game ) {
-			escReply_t		op;
-			op = game->HandleESC();
-			if ( op == ESC_IGNORE ) {
-				return true;
-			} else if ( op == ESC_GUI ) {
-				return true;
-			}
-
-			if ( game->IsInGame() ) {
-				if ( !game->Shell_IsActive() ) {
+			if( game->InCinematic() ) {
+				game->SkipCinematics();
+			} else {
+				if( !game->Shell_IsActive() ) {
 					// menus / etc
 					if ( MenuEvent( event ) ) {
 						return true;
@@ -1561,7 +1595,6 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t *event ) {
 				}
 			}
 		}
-
 
 		return true;
 	}

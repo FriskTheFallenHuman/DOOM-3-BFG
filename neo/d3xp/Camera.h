@@ -123,6 +123,9 @@ private:
 	void					Think();
 
 	void					LoadAnim();
+	bool					LoadBinary( idFile * file, ID_TIME_T sourceTimeStamp );
+	void					WriteBinary( idFile * file, ID_TIME_T sourceTimeStamp );
+
 	void					Event_Start();
 	void					Event_Stop();
 	void					Event_SetCallback();

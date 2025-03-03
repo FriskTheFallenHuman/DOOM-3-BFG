@@ -44,39 +44,39 @@ public:
 	idDeviceContext();
 	~idDeviceContext() { }
 
-	void				Init();
-	void				Shutdown();
-	bool				Initialized() { return initialized; }
-	void				EnableLocalization();
+	virtual void		Init();
+	virtual void		InitFonts();
+	virtual void		Shutdown();
+	virtual bool		Initialized() { return initialized; }
 
-	void				GetTransformInfo(idVec3& origin, idMat3& mat );
+	virtual void		GetTransformInfo(idVec3& origin, idMat3& mat );
 
-	void				SetTransformInfo(const idVec3 &origin, const idMat3 &mat);
-	void				DrawMaterial(float x, float y, float w, float h, const idMaterial *mat, const idVec4 &color, float scalex = 1.0, float scaley = 1.0);
-	void				DrawRect(float x, float y, float width, float height, float size, const idVec4 &color);
-	void				DrawFilledRect(float x, float y, float width, float height, const idVec4 &color);
-	int					DrawText(const char *text, float textScale, int textAlign, idVec4 color, idRectangle rectDraw, bool wrap, int cursor = -1, bool calcOnly = false, idList<int> *breaks = NULL, int limit = 0 );
-	void				DrawMaterialRect( float x, float y, float w, float h, float size, const idMaterial *mat, const idVec4 &color);
-	void				DrawStretchPic(float x, float y, float w, float h, float s0, float t0, float s1, float t1, const idMaterial *mat);
-	void				DrawMaterialRotated(float x, float y, float w, float h, const idMaterial *mat, const idVec4 &color, float scalex = 1.0, float scaley = 1.0, float angle = 0.0f);
-	void				DrawStretchPicRotated(float x, float y, float w, float h, float s0, float t0, float s1, float t1, const idMaterial *mat, float angle = 0.0f);
-	void				DrawWinding( idWinding & w, const idMaterial * mat );
+	virtual void		SetTransformInfo(const idVec3 &origin, const idMat3 &mat);
+	virtual void		DrawMaterial(float x, float y, float w, float h, const idMaterial *mat, const idVec4 &color, float scalex = 1.0, float scaley = 1.0);
+	virtual void		DrawRect(float x, float y, float width, float height, float size, const idVec4 &color);
+	virtual void		DrawFilledRect(float x, float y, float width, float height, const idVec4 &color);
+	virtual int			DrawText(const char *text, float textScale, int textAlign, idVec4 color, idRectangle rectDraw, bool wrap, int cursor = -1, bool calcOnly = false, idList<int> *breaks = NULL, int limit = 0 );
+	virtual void		DrawMaterialRect( float x, float y, float w, float h, float size, const idMaterial *mat, const idVec4 &color);
+	virtual void		DrawStretchPic(float x, float y, float w, float h, float s0, float t0, float s1, float t1, const idMaterial *mat);
+	virtual void		DrawMaterialRotated(float x, float y, float w, float h, const idMaterial *mat, const idVec4 &color, float scalex = 1.0, float scaley = 1.0, float angle = 0.0f);
+	virtual void		DrawStretchPicRotated(float x, float y, float w, float h, float s0, float t0, float s1, float t1, const idMaterial *mat, float angle = 0.0f);
+	virtual void		DrawWinding( idWinding & w, const idMaterial * mat );
 
-	int					CharWidth( const char c, float scale );
-	int					TextWidth(const char *text, float scale, int limit);
-	int					TextHeight(const char *text, float scale, int limit);
-	int					MaxCharHeight(float scale);
-	int					MaxCharWidth(float scale);
+	virtual int			CharWidth( const char c, float scale );
+	virtual int			TextWidth( const char *text, float scale, int limit );
+	virtual int			TextHeight( const char *text, float scale, int limit );
+	virtual int			MaxCharHeight( float scale );
+	virtual int			MaxCharWidth( float scale );
 
-	idRegion *			GetTextRegion(const char *text, float textScale, idRectangle rectDraw, float xStart, float yStart);
+	virtual idRegion *	GetTextRegion(const char *text, float textScale, idRectangle rectDraw, float xStart, float yStart);
 
-	void				SetSize( float width, float height );
-	void				SetOffset( float x, float y );
+	virtual void		SetSize( float width, float height );
+	virtual void		SetOffset( float x, float y );
 
-	const idMaterial *	GetScrollBarImage(int index);
+	virtual const idMaterial *	GetScrollBarImage(int index);
 
-	void				DrawCursor(float *x, float *y, float size);
-	void				SetCursor(int n);
+	virtual void		DrawCursor(float *x, float *y, float size);
+	virtual void		SetCursor(int n);
 
 	// clipping rects
 	virtual bool		ClippedCoords(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2);
@@ -84,13 +84,15 @@ public:
 	virtual void		PopClipRect();
 	virtual void		EnableClipping(bool b);
 
-	void				SetFont( idFont * font ) { activeFont = font; }
+	virtual void		SetFont( idFont * font ) { activeFont = font; }
+	virtual void		SetFont( int num ) {}
+	virtual int			FindFont( const char * name ) { return 0; }
 
-	void				SetOverStrike(bool b) { overStrikeMode = b; }
+	virtual void		SetOverStrike(bool b) { overStrikeMode = b; }
 
-	bool				GetOverStrike() { return overStrikeMode; }
+	virtual bool		GetOverStrike() { return overStrikeMode; }
 
-	void				DrawEditCursor(float x, float y, float scale);
+	virtual void		DrawEditCursor( float x, float y, float scale );
 
 	enum {
 		CURSOR_ARROW,
@@ -131,8 +133,8 @@ public:
 
 protected:
 	virtual int			DrawText( float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor = -1);
-	void				PaintChar( float x, float y, const scaledGlyphInfo_t & glyphInfo );
-	void				Clear();
+	virtual void		PaintChar( float x, float y, const scaledGlyphInfo_t & glyphInfo );
+	virtual void		Clear();
 
 	const idMaterial *	cursorImages[CURSOR_COUNT];
 	const idMaterial *	scrollBarImages[SCROLLBAR_COUNT];
@@ -156,6 +158,41 @@ protected:
 	bool				matIsIdentity;
 	idVec3				origin;
 	bool				initialized;
+};
+
+class idDeviceContextLegacy : public idDeviceContext {
+public:
+	virtual void		InitFonts();
+	virtual void		Shutdown();
+	virtual void		Clear();
+
+	virtual int			DrawText( float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor = -1);
+
+	virtual int			CharWidth( const char c, float scale );
+	virtual int			TextWidth( const char *text, float scale, int limit );
+	virtual int			TextHeight( const char *text, float scale, int limit );
+	virtual int			MaxCharHeight( float scale );
+	virtual int			MaxCharWidth( float scale );
+
+	virtual void		DrawEditCursor( float x, float y, float scale );
+
+	virtual void		SetFont( int num );
+	virtual int			FindFont( const char * name );
+
+protected:
+	virtual int			DrawText( const char *text, float textScale, int textAlign, idVec4 color, idRectangle rectDraw, bool wrap, int cursor = -1, bool calcOnly = false, idList<int> *breaks = NULL, int limit = 0 );
+	virtual void		PaintChar( float x, float y, float width, float height, float scale, float	s, float	t, float	s2, float t2, const idMaterial* hShader );
+	virtual void		SetFontByScale( float scale );
+
+private:
+	void				SetupFonts();
+
+	fontInfoEx_t*		activeFont;
+	fontInfo_t*			useFont;
+	idStr				fontName;
+
+	static idList<fontInfoEx_t> fonts;
+	idStr				fontLang;
 };
 
 class idDeviceContextOptimized : public idDeviceContext {

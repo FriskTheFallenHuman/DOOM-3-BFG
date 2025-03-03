@@ -909,7 +909,7 @@ void idGameLocal::LoadMap( const char * mapName, int randseed ) {
 	mapFileName = mapFile->GetName();
 
 	// load the collision map
-	collisionModelManager->LoadMap( mapFile );
+	collisionModelManager->LoadMap( mapFile, false );
 	collisionModelManager->Preload( mapName );
 
 	numClients = 0;
@@ -1678,7 +1678,7 @@ void idGameLocal::CacheDictionaryMedia( const idDict *dict ) {
 				// precache the render model
 				renderModelManager->FindModel( kv->GetValue() );
 				// precache .cm files only
-				collisionModelManager->LoadModel( kv->GetValue() );
+				collisionModelManager->LoadModel( kv->GetValue(), true );
 			}
 		}
 		kv = dict->MatchPrefix( "model", kv );
@@ -2752,23 +2752,6 @@ bool idGameLocal::Draw( int clientNum ) {
 	player->playerView.RenderPlayerView( player->hudManager );
 
 	return true;
-}
-
-/*
-================
-idGameLocal::HandleESC
-================
-*/
-escReply_t idGameLocal::HandleESC( /*idUserInterface** gui*/ ) {
-	idPlayer *player = GetLocalPlayer();
-	if ( player ) {
-		if ( player->HandleESC() ) {
-			return ESC_IGNORE;
-		} else {
-			return ESC_MAIN;
-		}
-	}
-	return ESC_MAIN;
 }
 
 /*
@@ -4314,6 +4297,24 @@ bool idGameLocal::SkipCinematic() {
 	}
 
 	return true;
+}
+
+/*
+=============
+idGameLocal::SkipCinematics
+=============
+*/
+bool idGameLocal::SkipCinematics() {
+	return SkipCinematic();
+}
+
+/*
+=============
+idGameLocal::CheckInCinematic
+=============
+*/
+bool idGameLocal::InCinematic() {
+	return inCinematic;
 }
 
 /*

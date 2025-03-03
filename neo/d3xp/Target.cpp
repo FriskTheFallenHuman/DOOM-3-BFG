@@ -743,7 +743,7 @@ void idTarget_SetModel::Spawn() {
 		// precache the render model
 		renderModelManager->FindModel( model );
 		// precache .cm files only
-		collisionModelManager->LoadModel( model );
+		collisionModelManager->LoadModel( model, true );
 	}
 }
 
@@ -1786,6 +1786,10 @@ void idTarget_Checkpoint::Event_Activate( idEntity *activator ) {
 	extern idCVar g_demoMode; // no saving in demo mode
 	if ( g_checkpoints.GetBool() && !g_demoMode.GetBool() ) {
 		cmdSystem->AppendCommandText( "savegame autosave\n" );
+		idPlayer* player = gameLocal.GetLocalPlayer();
+		if ( player != NULL ) {
+			player->ShowTip( idLocalization::GetString( "#str_02908" ), idLocalization::GetString( "#str_02916" ), true );
+		}
 	}
 }
 

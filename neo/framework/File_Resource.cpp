@@ -52,7 +52,7 @@ void idResourceContainer::ReOpen() {
 idResourceContainer::Init
 ========================
 */
-bool idResourceContainer::Init( const char *_fileName, uint8 containerIndex ) {
+bool idResourceContainer::Init( const char *_fileName ) {
 
 	if ( idStr::Icmp( _fileName, "_ordered.resources" ) == 0 ) {
 		resourceFile = fileSystem->OpenFileReadMemory( _fileName );
@@ -91,7 +91,7 @@ bool idResourceContainer::Init( const char *_fileName, uint8 containerIndex ) {
 		rt.Read( &memFile );
 		rt.filename.BackSlashesToSlashes();
 		rt.filename.ToLower();
-		rt.containerIndex = containerIndex;
+		rt.owner = this;
 
 		const int key = cacheHash.GenerateKey( rt.filename, false );
 		bool found = false;
@@ -287,17 +287,6 @@ void idResourceContainer::UpdateResourceFile( const char *_filename, const idStr
 idResourceContainer::ExtractResourceFile
 ========================
 */
-void idResourceContainer::SetContainerIndex( const int & _idx ) {
-	for ( int i = 0; i < cacheTable.Num(); i++ ) {
-		cacheTable[ i ].containerIndex = _idx;
-	}
-}
-
-/*
-========================
-idResourceContainer::ExtractResourceFile
-========================
-*/
 void idResourceContainer::ExtractResourceFile ( const char * _fileName, const char * _outPath, bool _copyWavs ) {
 	idFile *inFile = fileSystem->OpenFileRead( _fileName );
 
@@ -312,6 +301,8 @@ void idResourceContainer::ExtractResourceFile ( const char * _fileName, const ch
 		delete inFile;
 		return;
 	}
+
+	common->Printf( "Extracting resource file '%s'\n", _fileName );
 
 	int _tableOffset;
 	int _tableLength;

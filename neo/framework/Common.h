@@ -328,6 +328,9 @@ public:
 	// Return true if the game is paused (either by focus lost or on deman)
 	virtual void				SetPaused( bool bstate ) = 0;
 	virtual bool				IsPaused() = 0;
+
+	// Returns true if the game is requesting legacy font rendering
+	virtual bool				IsLegacyFont() = 0;
 };
 
 extern idCommon *		common;

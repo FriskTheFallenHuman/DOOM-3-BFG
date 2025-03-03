@@ -48,7 +48,7 @@ void idMenuWidget_Shell_SaveInfo::Update() {
 	const saveGameDetailsList_t & saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
 
 	saveGameDetailsList_t sortedSaves = saveGameInfo;
-	sortedSaves.Sort( idSort_SavesByDate() );
+	sortedSaves.SortWithTemplate( idSort_SavesByDate() );
 
 	for ( int slot = 0; slot < sortedSaves.Num(); ++slot ) {
 		const idSaveGameDetails & details = sortedSaves[slot];
@@ -139,7 +139,7 @@ void idMenuWidget_Shell_SaveInfo::ObserveEvent( const idMenuWidget & widget, con
 			}
 
 
-			if ( forSaveScreen && ( ( detailList.Num() < MAX_SAVEGAMES - 1 ) || ( ( detailList.Num() == MAX_SAVEGAMES - 1 ) && hasAutoSave ) ) ) {
+			if ( forSaveScreen ) {
 				loadIndex -= 1;
 			}
 

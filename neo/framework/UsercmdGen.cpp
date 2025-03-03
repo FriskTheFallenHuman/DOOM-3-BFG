@@ -122,6 +122,7 @@ userCmdString_t	userCmdStrings[] = {
 
 	{ "_attack",		UB_ATTACK },
 	{ "_speed",			UB_SPEED },
+	{ "_center_view",	UB_CENTER_VIEW },
 	{ "_zoom",			UB_ZOOM },
 	{ "_showScores",	UB_SHOWSCORES },
 	{ "_use",			UB_USE },
@@ -1022,6 +1023,11 @@ void idUsercmdGenLocal::MakeCurrent() {
 
 		// keyboard angle adjustment
 		AdjustAngles();
+
+		// Recenter the player view
+		if ( ButtonState( UB_CENTER_VIEW ) ) {
+			viewangles[PITCH] = 0;
+		}
 
 		// set button bits
 		CmdButtons();

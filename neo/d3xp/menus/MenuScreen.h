@@ -1407,7 +1407,7 @@ public:
 	void					ToggleNewPDA( bool show );
 	void					UpdateAudioLog( bool show );
 	void					UpdateCommunication( bool show, idPlayer * player );
-	void					UpdateOxygen( bool show, int val = 0 );
+	void					UpdateOxygen( bool show, int val = 0, bool envSuit = false  );
 	void					SetupObjective( const idStr & title, const idStr & desc, const idMaterial * screenshot );
 	void					SetupObjectiveComplete( const idStr & title );
 	void					ShowObjective( bool complete );

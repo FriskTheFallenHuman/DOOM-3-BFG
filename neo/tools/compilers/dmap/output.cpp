@@ -160,10 +160,10 @@ static bool MatchVert( const idDrawVert *a, const idDrawVert *b ) {
 	if ( idMath::Fabs( a->xyz[2] - b->xyz[2] ) > XYZ_EPSILON ) {
 		return false;
 	}
-	if ( idMath::Fabs( a->st[0] - b->st[0] ) > ST_EPSILON ) {
+	if( idMath::Fabs( a->GetTexCoordS() - b->GetTexCoordS() ) > ST_EPSILON ) {
 		return false;
 	}
-	if ( idMath::Fabs( a->st[1] - b->st[1] ) > ST_EPSILON ) {
+	if( idMath::Fabs( a->GetTexCoordT() - b->GetTexCoordT() ) > ST_EPSILON ) {
 		return false;
 	}
 
@@ -279,11 +279,16 @@ static void WriteUTriangles( const srfTriangles_t *uTris ) {
 		vec[0] = dv->xyz[0];
 		vec[1] = dv->xyz[1];
 		vec[2] = dv->xyz[2];
-		vec[3] = dv->st[0];
-		vec[4] = dv->st[1];
-		vec[5] = dv->normal[0];
-		vec[6] = dv->normal[1];
-		vec[7] = dv->normal[2];
+
+		idVec2 st = dv->GetTexCoord();
+		vec[3] = st.x;
+		vec[4] = st.y;
+
+		idVec3 normal = dv->GetNormal();
+		vec[5] = normal.x;
+		vec[6] = normal.y;
+		vec[7] = normal.z;
+
 		Write1DMatrix( procFile, 8, vec );
 
 		if ( ++col == 3 ) {

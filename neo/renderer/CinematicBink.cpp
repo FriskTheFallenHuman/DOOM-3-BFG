@@ -36,6 +36,7 @@ If you have questions concerning this license or the applicable additional terms
 	#include "../sound/XAudio2/XA2_CinematicAudio.h"
 #endif
 
+extern idCVar s_noSound;
 extern idCVar s_playCinematicAudio;
 
 const int DEFAULT_CIN_WIDTH = 512;
@@ -161,8 +162,6 @@ bool idCinematicBink::InitBinkFile( const char* qpath, bool amilooping ) {
 		trackIndex = 0;
 		binkInfo = Bink_GetAudioTrackDetails( binkHandle, trackIndex );
 
-		common->Printf( "Cinematic audio stream found: Sample Rate=%d Hz, Channels=%d, Format=16-bit\n", binkInfo.sampleRate, binkInfo.nChannels );
-
 		cinematicAudio = new( TAG_AUDIO ) idCinematicAudio_XAudio2;
 		cinematicAudio->InitAudio( &binkInfo );
 	}
@@ -171,7 +170,7 @@ bool idCinematicBink::InitBinkFile( const char* qpath, bool amilooping ) {
 	numFrames = Bink_GetNumFrames( binkHandle );
 	float durationSec = numFrames/frameRate;
 	animationLength = durationSec * 1000;
-	common->Printf( "Loaded Bink file: '%s', looping=%d, %dx%d, %3.2f FPS, %4.1f sec\n", qpath, looping, CIN_WIDTH, CIN_HEIGHT, frameRate, durationSec );
+	common->Printf( S_COLOR_GRAY "  ...bink file: " S_COLOR_WHITE "'%s'\n", qpath );
 
 	memset( yuvBuffer, 0, sizeof( yuvBuffer ) );
 
@@ -374,7 +373,7 @@ cinData_t idCinematicBink::ImageForTime( int milliseconds ) {
 		audioBuffer = ( int16* )Mem_Alloc( binkInfo.idealBufferSize, TAG_AUDIO );
 		num_bytes = Bink_GetAudioData( binkHandle, trackIndex, audioBuffer );
 
-		if ( num_bytes > 0 ) {
+		if ( num_bytes > 0 && !s_noSound.GetBool() ) {
 			cinematicAudio->PlayAudio( ( uint8* )audioBuffer, num_bytes );
 		} else {
 			Mem_Free( audioBuffer );

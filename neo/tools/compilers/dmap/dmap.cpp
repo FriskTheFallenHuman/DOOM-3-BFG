@@ -322,6 +322,18 @@ void Dmap( const idCmdArgs &args ) {
 	sprintf( path, "%s.lin", dmapGlobals.mapFileBase );
 	fileSystem->RemoveFile( path );
 
+	// delete any old generated binary proc files
+	idStr generated = va( "generated/%s.bproc", dmapGlobals.mapFileBase );
+	fileSystem->RemoveFile( generated.c_str() );
+
+	// delete any old generated binary cm files
+	generated = va( "generated/%s.bcm", dmapGlobals.mapFileBase );
+	fileSystem->RemoveFile( generated.c_str() );
+
+	// delete any old ASCII collision files
+	idStr::snPrintf( path, sizeof( path ), "%s.cm", dmapGlobals.mapFileBase );
+	fileSystem->RemoveFile( path );
+
 
 	//
 	// start from scratch
@@ -357,7 +369,8 @@ void Dmap( const idCmdArgs &args ) {
 			// create the collision map
 			start = Sys_Milliseconds();
 
-			collisionModelManager->LoadMap( dmapGlobals.dmapFile );
+			// write always a fresh .cm file
+			collisionModelManager->LoadMap( dmapGlobals.dmapFile, true );
 			collisionModelManager->FreeMap();
 
 			end = Sys_Milliseconds();

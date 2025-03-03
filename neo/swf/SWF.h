@@ -296,7 +296,7 @@ private:
 	friend class idSWFSpriteInstance;
 
 	bool			LoadSWF( const char * fullpath );
-	bool			LoadBinary( const char * bfilename, ID_TIME_T sourceTime );
+	bool			LoadBinary( const char * bfilename, ID_TIME_T sourceTimeStamp );
 	void			WriteBinary( const char * bfilename );
 
 	//----------------------------------

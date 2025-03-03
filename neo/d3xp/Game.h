@@ -45,6 +45,7 @@ If you have questions concerning this license or the applicable additional terms
 struct gameReturn_t {
 
 	gameReturn_t() :
+		sessionCommand( "" ),
 		syncNextGameFrame( false ),
 		vibrationLow( 0 ),
 		vibrationHigh( 0 ) {
@@ -57,12 +58,6 @@ struct gameReturn_t {
 	int			vibrationLow;
 	int			vibrationHigh;
 };
-
-typedef enum {
-	ESC_IGNORE = 0,	// do nothing
-	ESC_MAIN,		// start main menu GUI
-	ESC_GUI			// set an explicit GUI
-} escReply_t;
 
 #define TIME_GROUP1		0
 #define TIME_GROUP2		1
@@ -124,10 +119,6 @@ public:
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool				Draw( int clientNum ) = 0;
 
-	// Originally used in Doom 3 to let know the game to draw is own gui
-	// Now its use to let know the engine about the cinematics being skipped
-	virtual escReply_t			HandleESC( /*idUserInterface** gui*/ ) = 0;
-
 	virtual bool				HandlePlayerGuiEvent( const sysEvent_t * ev ) = 0;
 
 	// Writes a snapshot of the server game state.
@@ -164,6 +155,10 @@ public:
 	// compute an angle offset to be applied to the given client's aim
 	virtual void				GetAimAssistAngles( idAngles & angles ) = 0;
 	virtual float				GetAimAssistSensitivity() = 0;
+
+	// Cinematics handling
+	virtual bool				SkipCinematics() = 0;
+	virtual bool				InCinematic() = 0;
 
 	// Release the mouse when the PDA is open
 	virtual bool				IsPDAOpen() const = 0;

@@ -1718,7 +1718,7 @@ void idProgram::CompileStats() {
 
 	stringspace = 0;
 	for( i = 0; i < fileList.Num(); i++ ) {
-		gameLocal.DPrintf( "   %s\n", fileList[ i ].c_str() );
+		gameLocal.DPrintf( S_COLOR_GRAY "   ...script: " S_COLOR_WHITE "'%s'\n", fileList[ i ].c_str() );
 		stringspace += fileList[ i ].Allocated();
 	}
 	stringspace += fileList.Size();
@@ -1743,15 +1743,15 @@ void idProgram::CompileStats() {
 	memused += functions.MemoryUsed();	// name and filename of functions are shared, so no need to include them
 	memused += sizeof( variables );
 
-	gameLocal.Printf( "\nMemory usage:\n" );
-	gameLocal.Printf( "     Strings: %d, %d bytes\n", fileList.Num(), stringspace );
-	gameLocal.Printf( "  Statements: %d, %d bytes\n", statements.Num(), statements.MemoryUsed() );
-	gameLocal.Printf( "   Functions: %d, %d bytes\n", functions.Num(), funcMem );
-	gameLocal.Printf( "   Variables: %d bytes\n", numVariables );
-	gameLocal.Printf( "    Mem used: %d bytes\n", memused );
-	gameLocal.Printf( " Static data: %d bytes\n", sizeof( idProgram ) );
-	gameLocal.Printf( "   Allocated: %d bytes\n", memallocated );
-	gameLocal.Printf( " Thread size: %d bytes\n\n", sizeof( idThread ) );
+	gameLocal.Printf( "Memory usage:\n" );
+	gameLocal.Printf( S_COLOR_WHITE "     Strings: " S_COLOR_GREEN "%d, %d bytes\n", fileList.Num(), stringspace );
+	gameLocal.Printf( S_COLOR_WHITE "  Statements: " S_COLOR_GREEN "%d, %d bytes\n", statements.Num(), statements.MemoryUsed() );
+	gameLocal.Printf( S_COLOR_WHITE "   Functions: " S_COLOR_GREEN "%d, %d bytes\n", functions.Num(), funcMem );
+	gameLocal.Printf( S_COLOR_WHITE "   Variables: " S_COLOR_GREEN "%d bytes\n", numVariables );
+	gameLocal.Printf( S_COLOR_WHITE "    Mem used: " S_COLOR_GREEN "%d bytes\n", memused );
+	gameLocal.Printf( S_COLOR_WHITE " Static data: " S_COLOR_GREEN "%d bytes\n", sizeof( idProgram ) );
+	gameLocal.Printf( S_COLOR_WHITE "   Allocated: " S_COLOR_GREEN "%d bytes\n", memallocated );
+	gameLocal.Printf( S_COLOR_WHITE " Thread size: " S_COLOR_GREEN "%d bytes\n\n", sizeof( idThread ) );
 }
 
 /*
@@ -1769,8 +1769,10 @@ bool idProgram::CompileText( const char *source, const char *text, bool console 
 	ospath = fileSystem->RelativePathToOSPath( source );
 	filenum = GetFilenum( ospath );
 
+	idStr strippedName = fileSystem->OSPathToRelativePath( source );
+
 	try {
-		compiler.CompileFile( text, filename, console );
+		compiler.CompileFile( text, filename, strippedName.c_str(), console );
 
 		// check to make sure all functions prototyped have code
 		for( i = 0; i < varDefs.Num(); i++ ) {

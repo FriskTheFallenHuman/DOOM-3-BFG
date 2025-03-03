@@ -2570,7 +2570,7 @@ idCompiler::CompileFile
 compiles the 0 terminated text, adding definitions to the program structure
 ============
 */
-void idCompiler::CompileFile( const char *text, const char *filename, bool toConsole ) {
+void idCompiler::CompileFile( const char *text, const char *filename, const char *shortfilename, bool toConsole ) {
 	idTimer compile_time;
 	bool error;
 
@@ -2643,6 +2643,6 @@ void idCompiler::CompileFile( const char *text, const char *filename, bool toCon
 
 	compile_time.Stop();
 	if ( !toConsole ) {
-		gameLocal.Printf( "Compiled '%s': %.1f ms\n", filename, compile_time.Milliseconds() );
+		gameLocal.Printf( S_COLOR_WHITE "Compiled: " S_COLOR_GREEN "'%s' (%.1f ms)\n", shortfilename, compile_time.Milliseconds() );
 	}
 }

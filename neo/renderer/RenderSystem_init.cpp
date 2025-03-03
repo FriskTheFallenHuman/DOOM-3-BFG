@@ -34,27 +34,6 @@ If you have questions concerning this license or the applicable additional terms
 // Vista OpenGL wrapper check
 #include "../sys/win32/win_local.h"
 
-#include "miniz/miniz.h"
-
-static unsigned char *compress_for_stbiw( unsigned char  *data, int data_len, int *out_len, int quality ) {
-	uLongf bufSize = mz_compressBound( data_len );
-	// note that buf will be free'd by stb_image_write.h
-	// with STBIW_FREE() (plain free() by default)
-	unsigned char* buf = ( unsigned char* )malloc( bufSize );
-	if ( buf == NULL ) {
-		return NULL;
-	}
-	if ( mz_compress2( buf, &bufSize, data, data_len, quality ) != MZ_OK ) {
-		free( buf );
-		return NULL;
-	}
-	*out_len = bufSize;
-
-	return buf;
-}
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#define STBIW_ZLIB_COMPRESS compress_for_stbiw
 #include "stb/stb_image_write.h"
 
 // DeviceContext bypasses RenderSystem to work directly with this
@@ -2274,7 +2253,9 @@ idRenderSystemLocal::Shutdown
 void idRenderSystemLocal::Shutdown() {
 	common->Printf( "idRenderSystem::Shutdown()\n" );
 
-	fonts.DeleteContents();
+	if ( !common->IsLegacyFont() )  {
+		fonts.DeleteContents();
+	}
 
 	if ( R_IsInitialized() ) {
 		globalImages->PurgeAllImages();
@@ -2398,6 +2379,9 @@ idRenderSystemLocal::RegisterFont
 ============
 */
 idFont * idRenderSystemLocal::RegisterFont( const char * fontName ) {
+	if ( common->IsLegacyFont() ) {
+		return NULL;
+	}
 
 	idStrStatic< MAX_OSPATH > baseFontName = fontName;
 	baseFontName.Replace( "fonts/", "" );
@@ -2418,6 +2402,10 @@ idRenderSystemLocal::ResetFonts
 ========================
 */
 void idRenderSystemLocal::ResetFonts() {
+	if ( common->IsLegacyFont() ) {
+		return;
+	}
+
 	fonts.DeleteContents( true );
 }
 /*

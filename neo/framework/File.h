@@ -283,7 +283,7 @@ private:
 
 
 class idFile_InZip : public idFile {
-	friend class			idFileSystemLocal;
+	friend class			idZipContainer;
 
 public:
 							idFile_InZip();

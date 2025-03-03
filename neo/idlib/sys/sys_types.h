@@ -137,7 +137,7 @@ typedef unsigned int triIndex_t;
 
 #endif
 
-// if writing to write-combined memroy, always write indexes as pairs for 32 bit writes
+// if writing to write-combined memory, always write indexes as pairs for 32 bit writes
 ID_INLINE void WriteIndexPair( triIndex_t * dest, const triIndex_t a, const triIndex_t b ) {
 	*(unsigned *)dest = (unsigned)a | ( (unsigned)b<<16 );
 }

@@ -706,6 +706,7 @@ public:
 	virtual void			EndAutomaticBackgroundSwaps();
 	virtual bool			AreAutomaticBackgroundSwapsRunning( autoRenderIconType_t * usingAlternateIcon = NULL ) const;
 
+	virtual bool			RegisterFont( const char * fontName, fontInfoEx_t & font );
 	virtual idFont *		RegisterFont( const char * fontName );
 	virtual void			ResetFonts();
 	virtual void			PrintMemInfo( MemInfo_t *mi );
@@ -1074,6 +1075,12 @@ void R_FreeEntityDefFadedDecals( idRenderEntityLocal *def, int time );
 
 void R_CreateLightRefs( idRenderLightLocal *light );
 void R_DeriveLightData( idRenderLightLocal *light );
+
+// Called by the editor and dmap to operate on light volumes
+void R_RenderLightFrustum( const renderLight_t& renderLight, idPlane lightFrustum[6] );
+
+srfTriangles_t* R_PolytopeSurface( int numPlanes, const idPlane* planes, idWinding** windings );
+
 void R_FreeLightDefDerivedData( idRenderLightLocal *light );
 
 void R_FreeDerivedData();
