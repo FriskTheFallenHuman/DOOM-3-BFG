@@ -208,6 +208,9 @@ idSoundSystemLocal::Shutdown
 */
 void idSoundSystemLocal::Shutdown() {
 	hardware->Shutdown();
+	// EAX or not, the list needs to be cleared
+	EFXDatabase.Clear();
+	efxloaded = false;
 	FreeStreamBuffers();
 	samples.DeleteContents( true );
 	sampleHash.Free();
@@ -379,8 +382,8 @@ int idSoundSystemLocal::SoundTime() const {
 idSoundSystemLocal::AllocateVoice
 ========================
 */
-idSoundVoice * idSoundSystemLocal::AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample ) {
-	return hardware->AllocateVoice( leadinSample, loopingSample );
+idSoundVoice * idSoundSystemLocal::AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample, const int channel ) {
+	return hardware->AllocateVoice( leadinSample, loopingSample, channel );
 }
 
 /*
@@ -485,6 +488,13 @@ void idSoundSystemLocal::BeginLevelLoad() {
 		samples[i]->FreeData();
 		samples[i]->ResetLevelLoadReferenced();
 	}
+
+	// Make sure there are no efx data remained
+	if ( efxloaded ) {
+		EFXDatabase.UnloadFile();
+		efxloaded = false;
+		hardware->ShutdownReverbSystem();
+	}
 }
 
 
@@ -548,7 +558,7 @@ void idSoundSystemLocal::Preload( idPreloadManifest & manifest ) {
 idSoundSystemLocal::EndLevelLoad
 ========================
 */
-void idSoundSystemLocal::EndLevelLoad() {
+void idSoundSystemLocal::EndLevelLoad( const char * mapstring ) {
 
 	insideLevelLoad = false;
 
@@ -594,6 +604,22 @@ void idSoundSystemLocal::EndLevelLoad() {
 
 		samples[ preloadSort[ i ].idx ]->LoadResource();
 	}
+
+	idStr efxname( "efxs/" );
+	idStr mapname( mapstring );
+
+	mapname.SetFileExtension( ".efx" );
+	mapname.StripPath();
+	efxname += mapname;
+
+	efxloaded = EFXDatabase.LoadFile( efxname );
+	if ( efxloaded ) {
+		common->Printf( "sound: found %s\n", efxname.c_str() );
+	} else {
+		common->Printf( "sound: missing %s\n", efxname.c_str() );
+		hardware->ShutdownReverbSystem();
+	}
+
 	int	end = Sys_Milliseconds();
 
 	common->Printf( "%5i sounds loaded in %5.1f seconds\n", loadCount, (end-start) * 0.001 );

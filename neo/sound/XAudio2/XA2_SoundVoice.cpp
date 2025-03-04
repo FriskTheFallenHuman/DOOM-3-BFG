@@ -27,6 +27,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
+
 #include "../snd_local.h"
 
 // The whole system runs at this sample rate
@@ -62,7 +63,10 @@ idSoundVoice_XAudio2::idSoundVoice_XAudio2
 */
 idSoundVoice_XAudio2::idSoundVoice_XAudio2()
 :	pSourceVoice( NULL ), idSoundVoice() {
-
+	XAUDIO2FX_REVERB_I3DL2_PARAMETERS i3dl2parms = XAUDIO2FX_I3DL2_PRESET_AUDITORIUM;
+	ReverbConvertI3DL2ToNative( &i3dl2parms, &suitReverb, 1 );
+	suitReverb.WetDryMix = 75.0f;
+	suitReverb.DisableLateField = XAUDIO2FX_REVERB_DEFAULT_DISABLE_LATE_FIELD;
 }
 
 /*
@@ -92,12 +96,13 @@ bool idSoundVoice_XAudio2::CompatibleFormat( idSoundSample * s ) {
 idSoundVoice_XAudio2::Create
 ========================
 */
-void idSoundVoice_XAudio2::Create( const idSoundSample * leadinSample_, const idSoundSample * loopingSample_ ) {
+void idSoundVoice_XAudio2::Create( const idSoundSample * leadinSample_, const idSoundSample * loopingSample_, int channel_ ) {
 	if ( IsPlaying() ) {
 		// This should never hit
 		Stop();
 		return;
 	}
+	channel = channel_;
 	leadinSample = (idSoundSample_XAudio2 *)leadinSample_;
 	loopingSample = (idSoundSample_XAudio2 *)loopingSample_;
 
@@ -109,7 +114,8 @@ void idSoundVoice_XAudio2::Create( const idSoundSample * leadinSample_, const id
 		numChannels = leadinSample->GetFormat().basic.numChannels;
 		sampleRate = leadinSample->GetFormat().basic.samplesPerSec;
 
-		((idSoundHardware_XAudio2 *)soundSystemLocal.hardware)->pXAudio2->CreateSourceVoice( &pSourceVoice, (const WAVEFORMATEX *)&leadinSample->GetFormat(), XAUDIO2_VOICE_USEFILTER, 4.0f, &streamContext );
+		idWaveFile::waveFmt_t format = leadinSample->GetFormat();
+		((idSoundHardware_XAudio2 *)soundSystemLocal.hardware)->pXAudio2->CreateSourceVoice( &pSourceVoice, (const WAVEFORMATEX *)&format, XAUDIO2_VOICE_USEFILTER, 4.0f, &streamContext );
 		if ( pSourceVoice == NULL ) {
 			// If this hits, then we are most likely passing an invalid sample format, which should have been caught by the loader (and the sample defaulted)
 			return;
@@ -137,6 +143,7 @@ void idSoundVoice_XAudio2::DestroyInternal() {
 		if ( s_debugHardware.GetBool() ) {
 			idLib::Printf( "%dms: %p destroyed\n", Sys_Milliseconds(), pSourceVoice );
 		}
+		pSourceVoice->SetEffectChain( NULL );
 		pSourceVoice->DestroyVoice();
 		pSourceVoice = NULL;
 		hasVUMeter = false;
@@ -167,28 +174,42 @@ void idSoundVoice_XAudio2::Start( int offsetMS, int ssFlags ) {
 
 	bool flicker = ( ssFlags & SSF_NO_FLICKER ) == 0;
 
+	IUnknown * voiceReverb = NULL;
+	IUnknown * vuMeter = NULL;
+	if ( FAILED( XAudio2CreateReverb( &voiceReverb ) ) ) {
+		common->FatalError( "Failed to create Reverb" );
+	}
+
+	XAUDIO2_EFFECT_DESCRIPTOR descriptors[] = { {voiceReverb, true, (UINT32)leadinSample->NumChannels()}, {} };
+	XAUDIO2_EFFECT_CHAIN chain;
 	if ( flicker != hasVUMeter ) {
 		hasVUMeter = flicker;
 
 		if ( flicker ) {
-			IUnknown * vuMeter = NULL;
 			if ( XAudio2CreateVolumeMeter( &vuMeter, 0 ) == S_OK ) {
-
-				XAUDIO2_EFFECT_DESCRIPTOR descriptor;
-				descriptor.InitialState = true;
-				descriptor.OutputChannels = leadinSample->NumChannels();
-				descriptor.pEffect = vuMeter;
-
-				XAUDIO2_EFFECT_CHAIN chain;
-				chain.EffectCount = 1;
-				chain.pEffectDescriptors = &descriptor;
-
-				pSourceVoice->SetEffectChain( &chain );
-
-				vuMeter->Release();
+				descriptors[1].InitialState = true;
+				descriptors[1].OutputChannels = leadinSample->NumChannels();
+				descriptors[1].pEffect = vuMeter;
+				chains = 2;
 			}
-		} else {
-			pSourceVoice->SetEffectChain( NULL );
+		}
+	}
+
+	if ( voiceReverb != NULL || vuMeter != NULL ) {
+		if ( vuMeter == NULL ) {
+			descriptors[1] = {};
+			chains = 1;
+		}
+		chain.EffectCount = chains;
+		chain.pEffectDescriptors = &descriptors[0];
+		pSourceVoice->SetEffectChain( &chain );
+
+		if ( voiceReverb != NULL ) {
+			voiceReverb->Release();
+		}
+
+		if ( vuMeter != NULL ) {
+			vuMeter->Release();
 		}
 	}
 
@@ -299,6 +320,16 @@ bool idSoundVoice_XAudio2::Update() {
 	assert( idMath::Fabs( gain ) <= XAUDIO2_MAX_VOLUME_LEVEL );
 	pSourceVoice->SetVolume( gain, OPERATION_SET );
 
+	if ( channel == 9 || channel == 10 || channel == 12 ) {
+		if ( FAILED( pSourceVoice->SetEffectParameters( 0, &suitReverb, sizeof( suitReverb ) ) ) ) {
+			common->Warning( "Failed to set reverb parameters" );
+		}
+	} else {
+		if ( FAILED( pSourceVoice->SetEffectParameters( 0, &((idSoundHardware_XAudio2 *)soundSystemLocal.hardware)->EAX, sizeof( ( (idSoundHardware_XAudio2 *)soundSystemLocal.hardware)->EAX ) ) ) ) {
+			common->Warning( "Failed to set reverb parameters" );
+		}
+	}
+
 	SetSampleRate( sampleRate, OPERATION_SET );
 
 	// we don't do this any longer because we pause and unpause explicitly when the soundworld is paused or unpaused
@@ -403,7 +434,7 @@ float idSoundVoice_XAudio2::GetAmplitude() {
 		levels.ChannelCount = MAX_CHANNELS_PER_VOICE;
 	}
 
-	if ( pSourceVoice->GetEffectParameters( 0, &levels, sizeof( levels ) ) != S_OK ) {
+	if ( pSourceVoice->GetEffectParameters( 1, &levels, sizeof( levels ) ) != S_OK ) {
 		return 0.0f;
 	}
 

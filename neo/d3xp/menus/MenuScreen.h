@@ -1395,6 +1395,7 @@ public:
 	void					UpdateHealthArmor( idPlayer * player );
 	void					UpdateStamina( idPlayer * player );
 	void					UpdateLocation( idPlayer * player );
+	const char *			GetlocationName();
 	void					UpdateWeaponInfo( idPlayer * player );
 	void					UpdateWeaponStates( idPlayer * player, bool weaponChanged );
 	void					ShowTip( const char * title, const char * tip );

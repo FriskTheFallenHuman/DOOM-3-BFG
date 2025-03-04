@@ -8064,6 +8064,9 @@ void idPlayer::Killed( idEntity *inflictor, idEntity *attacker, int damage, cons
 	StartSound( "snd_death", SND_CHANNEL_VOICE, 0, false, NULL );
 	StopSound( SND_CHANNEL_BODY2, false );
 
+	// Clear EAX Effects on death
+	gameSoundWorld->ClearEAX();
+
 	fl.takedamage = true;		// can still be gibbed
 
 	// get rid of weapon

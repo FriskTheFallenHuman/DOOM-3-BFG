@@ -35,7 +35,8 @@ If you have questions concerning this license or the applicable additional terms
 idSoundHardware_XAudio2::idSoundHardware_XAudio2
 ========================
 */
-idSoundHardware_XAudio2::idSoundHardware_XAudio2() :idSoundHardware() {
+idSoundHardware_XAudio2::idSoundHardware_XAudio2()
+: idSoundHardware() {
 	pXAudio2 = NULL;
 	pMasterVoice = NULL;
 	pSubmixVoice = NULL;
@@ -488,6 +489,12 @@ void idSoundHardware_XAudio2::Init() {
 	for ( int i = 0; i < voices.Num(); i++ ) {
 		freeVoices[i] = &voices[i];
 	}
+
+	hasReverb = false;
+	IUnknown * reverb = NULL;
+	if ( !FAILED( XAudio2CreateReverb( &reverb, 0 ) ) ) {
+		hasReverb = true;
+	}
 }
 
 /*
@@ -497,7 +504,8 @@ idSoundHardware_XAudio2::Shutdown
 */
 void idSoundHardware_XAudio2::Shutdown() {
 	for ( int i = 0; i < voices.Num(); i++ ) {
-		voices[ i ].DestroyInternal();
+		idSoundVoice_XAudio2 *voice = (idSoundVoice_XAudio2 *)&voices[i];
+		voice->DestroyInternal();
 	}
 	voices.Clear();
 	freeVoices.Clear();
@@ -537,10 +545,19 @@ void idSoundHardware_XAudio2::Shutdown() {
 
 /*
 ========================
+idSoundHardware_XAudio2::ShutdownReverbSystem
+========================
+*/
+void idSoundHardware_XAudio2::ShutdownReverbSystem() {
+	EAX = {};
+}
+
+/*
+========================
 idSoundHardware_XAudio2::AllocateVoice
 ========================
 */
-idSoundVoice * idSoundHardware_XAudio2::AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample ) {
+idSoundVoice * idSoundHardware_XAudio2::AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample, const int channel ) {
 	if ( leadinSample == NULL ) {
 		return NULL;
 	}
@@ -565,7 +582,7 @@ idSoundVoice * idSoundHardware_XAudio2::AllocateVoice( const idSoundSample * lea
 		}
 	}
 	if ( voice != NULL ) {
-		voice->Create( leadinSample, loopingSample );
+		voice->Create( leadinSample, loopingSample, channel );
 		freeVoices.Remove( voice );
 		return voice;
 	}
@@ -685,6 +702,145 @@ void idSoundHardware_XAudio2::Update() {
 	}
 }
 
+/*
+========================
+idSoundEngineCallback::UpdateEAXEffect
+========================
+*/
+void idSoundHardware_XAudio2::UpdateEAXEffect( idSoundEffect *effect ) {
+	if ( effect && ( effect->data ) ) {
+		memcpy( &EAX, effect->data, sizeof( XAUDIO2FX_REVERB_PARAMETERS ) );
+	}
+}
+
+/*
+========================
+idSoundEngineCallback::ParseEAXEffects
+========================
+*/
+bool idSoundHardware_XAudio2::ParseEAXEffects( idLexer & src, idToken name, idToken token, idSoundEffect * effect ){
+	XAUDIO2FX_REVERB_PARAMETERS *reverb = ( XAUDIO2FX_REVERB_PARAMETERS * )Mem_Alloc( sizeof( XAUDIO2FX_REVERB_PARAMETERS ), TAG_AUDIO );
+	memset( reverb, 0, sizeof( XAUDIO2FX_REVERB_PARAMETERS ) );
+	src.ReadTokenOnLine( &token );
+	name = token;
+	if ( !src.ReadToken( &token ) ) {
+		return false;
+	}
+
+	if ( token != "{" ) {
+		src.Error( "idEFXFile::ReadEffect: { not found, found %s", token.c_str() );
+		return false;
+	}
+
+	do {
+		if ( !src.ReadToken( &token ) ) {
+			src.Error( "idEFXFile::ReadEffect: EOF without closing brace" );
+			return false;
+		}
+
+		if ( token == "}" ) {
+			effect->name = name;
+			effect->data = ( void * )reverb;
+			effect->datasize = sizeof( reverb );
+			break;
+		}
+
+		reverb->DisableLateField = XAUDIO2FX_REVERB_DEFAULT_DISABLE_LATE_FIELD;
+		reverb->PositionLeft = XAUDIO2FX_REVERB_DEFAULT_POSITION;
+		reverb->PositionMatrixLeft = XAUDIO2FX_REVERB_DEFAULT_POSITION_MATRIX;
+		reverb->PositionMatrixRight = XAUDIO2FX_REVERB_DEFAULT_POSITION_MATRIX;
+		reverb->PositionRight = XAUDIO2FX_REVERB_DEFAULT_POSITION;
+		reverb->RearDelay = XAUDIO2FX_REVERB_DEFAULT_7POINT1_REAR_DELAY;
+		reverb->SideDelay = XAUDIO2FX_REVERB_DEFAULT_7POINT1_SIDE_DELAY;
+		reverb->WetDryMix = 75.0F;
+
+		if ( token == "environment" ) {
+			src.ReadTokenOnLine( &token );
+		} else if ( token == "environment size" ) {
+			float size = src.ParseFloat();
+			reverb->RoomSize = size;
+			reverb->Density = size;
+		} else if ( token == "environment diffusion" ) {
+			float diffusion = src.ParseFloat();
+			reverb->EarlyDiffusion = diffusion * 15;
+			reverb->LateDiffusion = diffusion * 15;
+		} else if ( token == "room" ) {
+			reverb->RoomFilterMain = idMath::ClampFloat( XAUDIO2FX_REVERB_MIN_ROOM_FILTER_MAIN, XAUDIO2FX_REVERB_MAX_ROOM_FILTER_MAIN, src.ParseInt() / 100.0f );
+		} else if ( token == "room hf" ) {
+			reverb->RoomFilterHF = idMath::ClampFloat( XAUDIO2FX_REVERB_MIN_ROOM_FILTER_HF, XAUDIO2FX_REVERB_MAX_ROOM_FILTER_HF, src.ParseInt() / 100.0f );
+		}
+		/*else if (token == "room lf") {
+			reverb.LowEQGain = idMath::ClampFloat(XAUDIO2FX_REVERB_MIN_LOW_EQ_GAIN, XAUDIO2FX_REVERB_MAX_LOW_EQ_GAIN, idMath::Pow(10.0f, src.ParseInt() / 2000.0f));
+		}*/
+		else if ( token == "decay time" ) {
+			reverb->DecayTime = src.ParseFloat();
+		} else if ( token == "decay hf ratio" ) {
+			float hfRatio = src.ParseFloat();
+			reverb->HighEQGain = hfRatio * 4;
+			reverb->HighEQCutoff = hfRatio * 7.5F;
+		} else if ( token == "decay lf ratio" ) {
+			float lfRatio = src.ParseFloat();
+			reverb->LowEQGain = lfRatio * 6;
+			reverb->LowEQCutoff = lfRatio * 4.5F;
+		} else if ( token == "reflections" ) {
+			reverb->ReflectionsGain = idMath::ClampFloat( XAUDIO2FX_REVERB_MIN_REFLECTIONS_GAIN, XAUDIO2FX_REVERB_MAX_REFLECTIONS_GAIN, src.ParseInt() / 100.0f );
+		} else if ( token == "reflections delay" ) {
+			reverb->ReflectionsDelay = src.ParseFloat();
+		}
+		//else if (token == "reflections pan") {
+		//	reverb->flLateReverbPan[0] = src.ParseFloat();
+		//	reverb->flLateReverbPan[1] = src.ParseFloat();
+		//	reverb->flLateReverbPan[2] = src.ParseFloat();
+		//}
+		else if ( token == "reverb" ) {
+			reverb->ReverbGain = idMath::ClampFloat( XAUDIO2FX_REVERB_MIN_REVERB_GAIN, XAUDIO2FX_REVERB_MAX_REVERB_GAIN, src.ParseInt() / 100.0f );
+		} else if ( token == "reverb delay" ) {
+			reverb->ReverbDelay = src.ParseFloat();
+		}
+		//else if (token == "reverb pan") {
+		//	reverb->flLateReverbPan[0] = src.ParseFloat();
+		//	reverb->flLateReverbPan[1] = src.ParseFloat();
+		//	reverb->flLateReverbPan[2] = src.ParseFloat();
+		//}
+		//else if (token == "echo time") {
+		//	reverb->flEchoTime = src.ParseFloat();
+		//}
+		//else if (token == "echo depth") {
+		//	reverb->flEchoDepth = src.ParseFloat();
+		//}
+		//else if (token == "modulation time") {
+		//	reverb->flModulationTime = src.ParseFloat();
+		//}
+		//else if (token == "modulation depth") {
+		//	reverb->flModulationDepth = src.ParseFloat();
+		//}
+		//else if (token == "air absorption hf") {
+		//	//GK: This is wrong in the files so clamp it
+		//	reverb->flAirAbsorptionGainHF = idMath::ClampFloat(AL_EAXREVERB_MIN_AIR_ABSORPTION_GAINHF, AL_EAXREVERB_MAX_AIR_ABSORPTION_GAINHF, idMath::Pow(10.0f, src.ParseFloat() / 2000.0f));
+		//}
+		else if ( token == "hf reference" ) {
+			reverb->RoomFilterFreq = src.ParseFloat();
+		}
+		//else if (token == "lf reference") {
+		//	reverb->flLFReference = src.ParseFloat();
+		//}
+		//else if (token == "room rolloff factor") {
+		//	reverb->flRoomRolloffFactor = src.ParseFloat();
+		//}
+		//else if (token == "flags") {
+		//	src.ReadTokenOnLine(&token);
+		//	unsigned int flags = token.GetUnsignedLongValue();
+		//	reverb->iDecayHFLimit = (flags & 0x20) ? AL_TRUE : AL_FALSE;
+		//}
+		else {
+			src.ReadTokenOnLine( &token );
+			//src.Error("idEFXFile::ReadEffect: Invalid parameter in reverb definition");
+			//reverb = {};
+		}
+	} while ( 1 );
+
+	return true;
+}
 
 /*
 ================================================

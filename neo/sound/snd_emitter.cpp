@@ -146,7 +146,7 @@ Never actually mute VO because we can't restart them precisely enough for lip sy
 ========================
 */
 bool idSoundChannel::CanMute() const {
-	return true;
+	return IsLooping() || hardwareVoice == NULL;
 }
 
 /*
@@ -313,7 +313,7 @@ void idSoundChannel::UpdateHardware( float volumeAdd, int currentTime ) {
 			return;
 		}
 
-		hardwareVoice = soundSystemLocal.AllocateVoice( leadinSample, loopingSample );
+		hardwareVoice = soundSystemLocal.AllocateVoice( leadinSample, loopingSample, logicalChannel );
 
 		if ( hardwareVoice == NULL ) {
 			return;
@@ -474,6 +474,7 @@ bool idSoundEmitterLocal::CheckForCompletion( int currentTime ) {
 			soundWorld->FreeSoundChannel( chan );
 		}
 	}
+
 	return ( canFree && channels.Num() == 0 );
 }
 
@@ -527,7 +528,8 @@ void idSoundEmitterLocal::Update( int currentTime ) {
 		// too far away to possibly hear it
 		return;
 	}
-	if ( useOcclusion && s_useOcclusion.GetBool() ) {
+
+	if( useOcclusion && s_useOcclusion.GetBool() ) {
 		// work out virtual origin and distance, which may be from a portal instead of the actual origin
 		if ( soundWorld->renderWorld != NULL ) {
 			// we have a valid renderWorld
@@ -759,11 +761,11 @@ int idSoundEmitterLocal::StartSound( const idSoundShader * shader, const s_chann
 	// a hardware voice will be allocated next update if the volume is high enough to be audible
 	if ( channels.Num() == channels.Max() ) {
 		CheckForCompletion( currentTime );	// as a last chance try to release finished sounds here
- 		if ( channels.Num() == channels.Max() ) {
+		if ( channels.Num() == channels.Max() ) {
 			if ( showStartSound ) {
 				idLib::Printf( S_COLOR_RED "No free emitter channels!\n" );
 			}
- 			return 0;
+			return 0;
 		}
 	}
 	idSoundChannel * chan = soundWorld->AllocSoundChannel();

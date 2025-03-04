@@ -38,7 +38,7 @@ public:
 							idSoundVoice_XAudio2();
 							~idSoundVoice_XAudio2();
 
-	virtual void			Create( const idSoundSample * leadinSample, const idSoundSample * loopingSample );
+	virtual void			Create( const idSoundSample * leadinSample, const idSoundSample * loopingSample, const int channel );
 
 	// Start playing at a particular point in the buffer.  Does an Update() too
 	virtual void			Start( int offsetMS, int ssFlags );
@@ -88,6 +88,7 @@ private:
 	void					SetSampleRate( uint32 newSampleRate, uint32 operationSet );
 
 	IXAudio2SourceVoice *	pSourceVoice;
+	XAUDIO2FX_REVERB_PARAMETERS suitReverb;
 };
 
 #endif
