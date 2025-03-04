@@ -53,6 +53,7 @@ public:
 
 	// Controls the low pass filter, where 0.0f = no filtering, 1.0f = full filter
 	void		SetOcclusion( float f ) { occlusion = f; }
+	float		GetOcclusion() { return occlusion; }
 
 	float		GetGain() { return gain; }
 	float		GetPitch() { return pitch; }

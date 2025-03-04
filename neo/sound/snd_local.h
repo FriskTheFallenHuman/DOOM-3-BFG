@@ -87,12 +87,13 @@ typedef enum {
 	SCMD_FADE
 } soundDemoCommand_t;
 
+#include "EFXFile.h"
+
 #include "SoundVoiceBase.h"
 #include "SoundVoice.h"
 #include "SoundSample.h"
 #include "SoundHardware.h"
-#include "CinematicAudio.h"
-
+#include "SoundCinematic.h"
 
 #define OPERATION_SET 1
 
@@ -137,6 +138,7 @@ struct listener_t {
 	idVec3	pos;		// position in meters
 	int		id;			// the entity number, used to detect when a sound is local
 	int		area;		// area number the listener is in
+	idStr	name;		// the name of the area the player is in
 };
 
 class idSoundFade {
@@ -237,7 +239,10 @@ public:
 	virtual float			CurrentShakeAmplitude();
 
 	// where is the camera
-	virtual void			PlaceListener( const idVec3 &origin, const idMat3 &axis, const int listenerId );
+	virtual void			PlaceListener( const idVec3 &origin, const idMat3 &axis, const int listenerId, const char *locationName );
+
+	// clear any EAX effect that is currently active
+	virtual void			ClearEAX();
 
 	// fade all sounds in the world with a given shader soundClass
 	// to is in Db, over is in seconds
@@ -297,6 +302,7 @@ public:
 	float				shakeAmp;			// last calculated shake amplitude
 
 	listener_t			listener;
+	int					EAXarea;
 	idList<idSoundEmitterLocal *, TAG_AUDIO>	emitters;
 
 	idSoundEmitter *	localSound;			// for PlayShaderDirectly()
@@ -440,7 +446,7 @@ public:
 	virtual	void			BeginLevelLoad();
 
 	// We might want to defer the loading of new sounds to this point
-	virtual	void			EndLevelLoad();
+	virtual	void			EndLevelLoad( const char * mapstring );
 
 	// prints memory info
 	virtual void			PrintMemInfo( MemInfo_t *mi );
@@ -458,7 +464,7 @@ public:
 	int						SoundTime() const;
 
 	// may return NULL if there are no more voices left
-	idSoundVoice *			AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample );
+	idSoundVoice *			AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample, const int channel );
 	void					FreeVoice( idSoundVoice * );
 
 	idSoundSample *			LoadSample( const char * name );
@@ -475,6 +481,9 @@ public:
 		idSoundSample * sample;
 		int bufferNumber;
 	};
+
+	idEFXFile				EFXDatabase;
+	bool					efxloaded;
 
 	// Get a stream buffer from the free pool, returns NULL if none are available
 	bufferContext_t *			ObtainStreamBufferContext();

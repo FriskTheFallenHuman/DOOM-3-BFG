@@ -297,8 +297,8 @@ const char * Sys_DefaultLanguage() {
 		temp = temp.Left( temp.Length() - strlen( ".lang" ) );
 		currentLangList[i] = temp;
 		// Update available lang list with potentianly new languages
-		if( temp.Find( "_" ) >= 0 ) {
-			sysLanguageNames.AddUnique( temp.SubStr( 0, temp.Find( "_" ) ) );
+		if ( temp.Find( "_" ) < 0 ) {
+			sysLanguageNames.AddUnique( temp );
 		}
 	}
 
@@ -317,9 +317,9 @@ const char * Sys_DefaultLanguage() {
 		} else if( currentLangList.Find( ID_LANG_GERMAN ) ) {
 			sys_lang.SetString( ID_LANG_GERMAN );
 		} else if( currentLangList.Find( ID_LANG_ITALIAN ) ) {
-			sys_lang.SetString( ID_LANG_GERMAN );
+			sys_lang.SetString( ID_LANG_ITALIAN );
 		} else if( currentLangList.Find( ID_LANG_SPANISH ) ) {
-			sys_lang.SetString( ID_LANG_GERMAN );
+			sys_lang.SetString( ID_LANG_SPANISH );
 		} else {
 			sys_lang.SetString( currentLangList[0] );
 		}

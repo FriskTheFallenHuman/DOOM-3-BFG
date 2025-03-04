@@ -41,15 +41,15 @@ public:
 	idSoundHardware_XAudio2 * hardware;
 
 private:
-	    // Called by XAudio2 just before an audio processing pass begins.
-    STDMETHOD_( void, OnProcessingPassStart ) ( THIS ) {}
+		// Called by XAudio2 just before an audio processing pass begins.
+	STDMETHOD_( void, OnProcessingPassStart ) ( THIS ) {}
 
-    // Called just after an audio processing pass ends.
-    STDMETHOD_( void, OnProcessingPassEnd ) ( THIS ) {}
+	// Called just after an audio processing pass ends.
+	STDMETHOD_( void, OnProcessingPassEnd ) ( THIS ) {}
 
-    // Called in the event of a critical system error which requires XAudio2
-    // to be closed down and restarted.  The error code is given in Error.
-    STDMETHOD_( void, OnCriticalError ) ( THIS_ HRESULT Error );
+	// Called in the event of a critical system error which requires XAudio2
+	// to be closed down and restarted.  The error code is given in Error.
+	STDMETHOD_( void, OnCriticalError ) ( THIS_ HRESULT Error );
 };
 
 /*
@@ -64,14 +64,19 @@ public:
 
 	virtual void	Init();
 	virtual void	Shutdown();
+	virtual void	ShutdownReverbSystem();
 
 	virtual void	Update();
+	virtual void	UpdateEAXEffect( idSoundEffect * effect );
 
-	virtual idSoundVoice *	AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample );
+	virtual idSoundVoice *	AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample, const int channel );
 	virtual void	FreeVoice( idSoundVoice * voice );
 
 	virtual int		GetNumZombieVoices() const { return zombieVoices.Num(); }
 	virtual int		GetNumFreeVoices() const { return freeVoices.Num(); }
+
+	virtual bool	IsReverbSupported() { return hasReverb; }
+	virtual bool	ParseEAXEffects( idLexer & src, idToken name, idToken token, idSoundEffect * effect );
 
 	IXAudio2 *					GetIXAudio2() const { return pXAudio2; };
 	IXAudio2MasteringVoice *	GetMasterVoice() const { return pMasterVoice; };
@@ -87,6 +92,9 @@ private:
 	IXAudio2SubmixVoice * pSubmixVoice;
 
 	idSoundEngineCallback	soundEngineCallback;
+
+	bool	hasReverb;
+	XAUDIO2FX_REVERB_PARAMETERS EAX;
 
 	// Can't stop and start a voice on the same frame, so we have to double this to handle the worst case scenario of stopping all voices and starting a full new set
 	idStaticList<idSoundVoice_XAudio2, MAX_HARDWARE_VOICES * 2 > voices;

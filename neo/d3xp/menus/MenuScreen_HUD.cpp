@@ -1077,6 +1077,18 @@ void idMenuScreen_HUD::UpdateLocation( idPlayer * player ) {
 
 /*
 ========================
+idMenuScreen_HUD::GetlocationName
+========================
+*/
+const char * idMenuScreen_HUD::GetlocationName() {
+	if ( locationName == NULL ) {
+		return NULL;
+	}
+	return locationName->text.c_str();
+}
+
+/*
+========================
 idMenuScreen_HUD::ShowTip
 ========================
 */

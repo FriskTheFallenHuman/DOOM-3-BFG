@@ -53,14 +53,19 @@ public:
 
 	virtual void		Init() = 0;
 	virtual void		Shutdown() = 0;
+	virtual void		ShutdownReverbSystem() = 0;
 
 	virtual void		Update() = 0;
+	virtual void		UpdateEAXEffect( idSoundEffect * effect ) = 0;
 
-	virtual idSoundVoice *	AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample ) = 0;
+	virtual idSoundVoice *	AllocateVoice( const idSoundSample * leadinSample, const idSoundSample * loopingSample, const int channel ) = 0;
 	virtual void		FreeVoice( idSoundVoice * voice ) = 0;
 
 	virtual int			GetNumZombieVoices() const  = 0;
 	virtual int			GetNumFreeVoices() const = 0;
+
+	virtual bool		IsReverbSupported() = 0;
+	virtual bool		ParseEAXEffects( idLexer & src, idToken name, idToken token, idSoundEffect * effect ) = 0;
 
 protected:
 	friend class		idSoundSample;
