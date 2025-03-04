@@ -39,6 +39,8 @@ If you have questions concerning this license or the applicable additional terms
 
 
 #define DEFINE_CLASS( x )					virtual const char * Name() const { return #x; }
+
+#define MAX_SAVEGAMES						16
 #define MAX_SAVEGAME_STRING_TABLE_SIZE		( 400 * 1024 * 2 )	// 800 kB max string table size
 #define MIN_SAVEGAME_SIZE_BYTES				( 20 * 1024 * 1024 )
 
