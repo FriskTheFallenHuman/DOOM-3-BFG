@@ -330,13 +330,14 @@ void idMenuScreen_Shell_Save::SaveGame( int index ) {
 				if ( slotMask < slotNum ) {
 					slotMask = slotNum;
 				}
+				//slotMask |= ( 1ULL << slotNumber );
 			}
 		}
 
-		int slotNumber = 0;
+		uint64 slotNumber = 0;
 		for ( slotNumber = 0; slotNumber < slotMask + 1; slotNumber++ ) {
 			// If the slot isn't used, grab it
-			if ( !( std::find( slots.begin(), slots.end(), slotNumber ) == slots.end() ) ) {
+			if ( std::find( slots.begin(), slots.end(), slotNumber ) == slots.end() ) {
 				break;
 			}
 		}
@@ -377,7 +378,9 @@ void idMenuScreen_Shell_Save::SaveGame( int index ) {
 			idMenuScreen_Shell_Save * screen;
 		};
 
-		index--;
+		if ( newSaveOffset == 1 ) {
+			index--;
+		}
 
 		common->Dialog().AddDialog( GDM_OVERWRITE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, true, index, this ), new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, false, index, this ), false );
 	}

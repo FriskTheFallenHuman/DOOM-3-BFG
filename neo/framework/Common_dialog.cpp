@@ -245,8 +245,7 @@ void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, idS
 
 	idKeyInput::ClearStates();
 
-	// TODO_D3_PORT:
-	//sys->ClearEvents();
+	Sys_ClearEvents();
 
 	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s] msg: %s, pause: %d from: %s:%d\n", __FUNCTION__, dialogStateToString[msg], pause, location == NULL ? "NULL" : location, lineNumber );
 
@@ -1327,8 +1326,7 @@ bool idCommonDialog::HandleDialogEvent( const sysEvent_t * sev ) {
 		} else {
 			if ( dialog->HandleEvent( sev ) ) {
 				idKeyInput::ClearStates();
-				// TODO_D3_PORT
-				//sys->ClearEvents();
+				Sys_ClearEvents();
 			}
 		}
 
