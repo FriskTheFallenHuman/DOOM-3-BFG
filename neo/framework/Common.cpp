@@ -211,10 +211,6 @@ doom set test blah + map test
 ============================================================================
 */
 
-#define		MAX_CONSOLE_LINES	32
-int			com_numConsoleLines;
-idCmdArgs	com_consoleLines[MAX_CONSOLE_LINES];
-
 /*
 ==================
 idCommonLocal::ParseCommandLine
@@ -1092,6 +1088,9 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		// initialize the declaration manager
 		declManager->Init();
+
+		// force r_fullscreen 0 if running a tool
+		CheckToolMode();
 
 		// init journalling, etc
 		eventLoop->Init();
