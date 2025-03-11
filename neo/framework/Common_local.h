@@ -26,6 +26,13 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#ifndef __COMMON_LOCAL_H__
+#define __COMMON_LOCAL_H__
+
+static const int MAX_CONSOLE_LINES = 32;
+static int com_numConsoleLines;
+static idCmdArgs com_consoleLines[MAX_CONSOLE_LINES];
+
 static const int MAX_USERCMD_BACKUP = 256;
 static const int NUM_USERCMD_RELAY = 10;
 static const int NUM_USERCMD_SEND = 8;
@@ -424,6 +431,7 @@ private:
 	void	AddStartupCommands();
 	void	ParseCommandLine( int argc, const char * const * argv );
 	bool	SafeMode();
+	void	CheckToolMode();
 	void	CloseLogFile();
 	void	WriteConfiguration();
 	void	DumpWarnings();
@@ -489,3 +497,5 @@ private:
 };
 
 extern idCommonLocal commonLocal;
+
+#endif /* !__COMMON_LOCAL_H__ */

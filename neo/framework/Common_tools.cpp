@@ -102,6 +102,45 @@ void idCommonLocal::ActivateTool( bool active ) {
 }
 
 /*
+==================
+idCommonLocal::CheckToolMode
+
+Check for "renderbump", "dmap", or "editor" on the command line,
+and force fullscreen off in those cases
+==================
+*/
+void idCommonLocal::CheckToolMode() {
+	int			i;
+
+	for ( i = 0 ; i < com_numConsoleLines ; i++ ) {
+		if ( !idStr::Icmp( com_consoleLines[ i ].Argv(0), "guieditor" ) ) {
+			com_editors |= EDITOR_GUI;
+		}
+		else if ( !idStr::Icmp( com_consoleLines[ i ].Argv(0), "debugger" ) ) {
+			com_editors |= EDITOR_DEBUGGER;
+		}
+		else if ( !idStr::Icmp( com_consoleLines[ i ].Argv(0), "editor" ) ) {
+			com_editors |= EDITOR_RADIANT;
+		}
+		// Nerve: Add support for the material editor
+		else if ( !idStr::Icmp( com_consoleLines[ i ].Argv(0), "materialEditor" ) ) {
+			com_editors |= EDITOR_MATERIAL;
+		}
+
+		if ( !idStr::Icmp( com_consoleLines[ i ].Argv(0), "renderbump" )
+			|| !idStr::Icmp( com_consoleLines[ i ].Argv(0), "editor" )
+			|| !idStr::Icmp( com_consoleLines[ i ].Argv(0), "guieditor" )
+			|| !idStr::Icmp( com_consoleLines[ i ].Argv(0), "debugger" )
+			|| !idStr::Icmp( com_consoleLines[ i ].Argv(0), "dmap" )
+			|| !idStr::Icmp( com_consoleLines[ i ].Argv(0), "materialEditor" )
+			) {
+			cvarSystem->SetCVarBool( "r_fullscreen", false );
+			return;
+		}
+	}
+}
+
+/*
 =================
 idCommonLocal::InitCommands
 =================
