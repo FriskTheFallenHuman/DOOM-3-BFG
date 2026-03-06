@@ -33,7 +33,7 @@ project("idLib")
 	files({"**"})
 
 	filter("files:geometry/RenderMatrix.cpp or files:SoftwareCache.cpp")
-		flags({"NoPCH"})
+		enablepch("Off")
 	filter({})
 
 group("")
