@@ -56,21 +56,21 @@ workspace("Doom3")
 
 	filter("kind:SharedLib")
 		-- We don't want manifests for DLLs
-		flags({"NoManifest"})
+		manifest("Off")
 	filter({})
 
 	-- _Common.props
 	filter("system:Windows")
 		defines({"_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE", "_USE_32BIT_TIME_T"})
 		warnings("Extra")
-		flags({"MultiProcessorCompile"})
+		multiprocessorcompile("On")
 
 		-- _Debug.props
 		filter("configurations:Debug")
 			optimize("Off")
 			defines("_DEBUG")
 			buildoptions({"/RTC1"})
-			flags({"Maps"})
+			mapfile("On")
 			staticruntime("On")
 			runtime("Debug")
 			rtti("On")
@@ -88,7 +88,7 @@ workspace("Doom3")
 			intrinsics("On")
 			staticruntime("On")
 			runtime("Release")
-			flags({"NoBufferSecurityCheck"})
+			buffersecuritycheck("Off")
 			rtti("On")
 			editandcontinue("On")
 			extraoptimization()
@@ -134,10 +134,10 @@ workspace("Doom3")
 		end
 
 		filter("files:renderer/jobs/**.cpp")
-			flags({"NoPCH"})
+			enablepch("Off")
 		filter({})
 
 		filter("files:**.c")
-			flags({"NoPCH"})
+			enablepch("Off")
 		filter({})
 	group("")
