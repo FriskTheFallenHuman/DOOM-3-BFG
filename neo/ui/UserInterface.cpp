@@ -61,12 +61,12 @@ extern idCVar sys_lang;
 
 void idUserInterfaceManagerLocal::Init() {
 	screenRect = idRectangle(0, 0, 640, 480);
-	dcOld.Init();
-	dcOptimized.Init();
 	if ( common->IsLegacyFont() ) {
 		dcLegacy.Init();
+	} else {
+		dcOld.Init();
+		dcOptimized.Init();
 	}
-
 	SetDrawingDC();
 
 }
@@ -74,10 +74,12 @@ void idUserInterfaceManagerLocal::Init() {
 void idUserInterfaceManagerLocal::Shutdown() {
 	guis.DeleteContents( true );
 	demoGuis.DeleteContents( true );
-	dcOld.Shutdown();
-	dcOptimized.Shutdown();
 	if ( common->IsLegacyFont() ) {
 		dcLegacy.Shutdown();
+	}
+	else {
+		dcOld.Shutdown();
+		dcOptimized.Shutdown();
 	}
 	mapParser.Clear();
 }
@@ -167,10 +169,11 @@ void idUserInterfaceManagerLocal::EndLevelLoad( const char *mapName ) {
 		delete f;
 	}
 
-	dcOld.Init();
-	dcOptimized.Init();
 	if ( common->IsLegacyFont() ) {
 		dcLegacy.Init();
+	} else {
+		dcOld.Init();
+		dcOptimized.Init();
 	}
 }
 

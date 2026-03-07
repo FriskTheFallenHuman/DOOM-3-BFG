@@ -178,7 +178,7 @@ static triIndex_t quadPicIndexes[6] = { 3, 0, 2, 2, 0, 1 };
 int idDeviceContextOptimized::DrawText(float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor) {
 	if ( !matIsIdentity || cursor != -1 ) {
 		// fallback to old code
-		return idDeviceContext::DrawText( x, y, scale, color, text, adjust, limit, style, cursor );
+		return idDeviceContextLocal::DrawText( x, y, scale, color, text, adjust, limit, style, cursor );
 	}
 
 	idStr drawText = text;

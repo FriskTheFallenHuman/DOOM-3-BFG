@@ -524,11 +524,11 @@ void idListWindow::Draw(int time, float x, float y) {
 						iconRect.w = tabInfo[tab].iconSize.x;
 						iconRect.h = tabInfo[tab].iconSize.y;
 
-						if(tabInfo[tab].align == idDeviceContext::ALIGN_LEFT) {
+						if(tabInfo[tab].align == ALIGN_LEFT) {
 							iconRect.x = rect.x;
-						} else if (tabInfo[tab].align == idDeviceContext::ALIGN_CENTER) {
+						} else if (tabInfo[tab].align == ALIGN_CENTER) {
 							iconRect.x = rect.x + rect.w/2.0f - iconRect.w/2.0f;
-						} else if (tabInfo[tab].align == idDeviceContext::ALIGN_RIGHT) {
+						} else if (tabInfo[tab].align == ALIGN_RIGHT) {
 							iconRect.x  = rect.x + rect.w - iconRect.w;
 						}
 

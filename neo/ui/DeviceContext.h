@@ -39,10 +39,98 @@ const int VIRTUAL_WIDTH = 640;
 const int VIRTUAL_HEIGHT = 480;
 const int BLINK_DIVISOR = 200;
 
+enum eCursorType {
+	CURSOR_ARROW,
+	CURSOR_HAND,
+	CURSOR_HAND_JOY1,
+	CURSOR_HAND_JOY2,
+	CURSOR_HAND_JOY3,
+	CURSOR_HAND_JOY4,
+	CURSOR_COUNT
+};
+
+enum eAlignType {
+	ALIGN_LEFT,
+	ALIGN_CENTER,
+	ALIGN_RIGHT
+};
+
+enum eScrollBarType {
+	SCROLLBAR_HBACK,
+	SCROLLBAR_VBACK,
+	SCROLLBAR_THUMB,
+	SCROLLBAR_RIGHT,
+	SCROLLBAR_LEFT,
+	SCROLLBAR_UP,
+	SCROLLBAR_DOWN,
+	SCROLLBAR_COUNT
+};
+
 class idDeviceContext {
 public:
-	idDeviceContext();
-	~idDeviceContext() { }
+	virtual				~idDeviceContext() {}
+
+	// initialization
+	virtual void		Init() = 0;
+	virtual void		Shutdown() = 0;
+	virtual bool		Initialized() = 0;
+	virtual void		Clear() = 0;
+
+	// transform info
+	virtual void		GetTransformInfo( idVec3 &origin, idMat3 &mat ) = 0;
+	virtual void		SetTransformInfo( const idVec3 &origin, const idMat3 &mat ) = 0;
+
+	// drawing
+	virtual void		DrawMaterial( float x, float y, float w, float h, const idMaterial *mat, const idVec4 &color, float scalex = 1.0, float scaley = 1.0 ) = 0;
+	virtual void		DrawRect( float x, float y, float width, float height, float size, const idVec4 &color ) = 0;
+	virtual void		DrawFilledRect( float x, float y, float width, float height, const idVec4 &color ) = 0;
+	virtual int			DrawText( const char *text, float textScale, int textAlign, idVec4 color, idRectangle rectDraw, bool wrap, int cursor = -1, bool calcOnly = false, idList<int> *breaks = NULL, int limit = 0 ) = 0;
+	virtual int			DrawText( float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor = -1 ) = 0;
+	virtual void		DrawMaterialRect( float x, float y, float w, float h, float size, const idMaterial *mat, const idVec4 &color ) = 0;
+	virtual void		DrawStretchPic( float x, float y, float w, float h, float s0, float t0, float s1, float t1, const idMaterial *mat ) = 0;
+	virtual void		DrawMaterialRotated( float x, float y, float w, float h, const idMaterial *mat, const idVec4 &color, float scalex = 1.0, float scaley = 1.0, float angle = 0.0f ) = 0;
+	virtual void		DrawStretchPicRotated( float x, float y, float w, float h, float s0, float t0, float s1, float t1, const idMaterial *mat, float angle = 0.0f ) = 0;
+	virtual void		DrawWinding( idWinding &w, const idMaterial *mat ) = 0;
+
+	// text drawing
+	virtual int			CharWidth( const char c, float scale ) = 0;
+	virtual int			TextWidth( const char *text, float scale, int limit ) = 0;
+	virtual int			TextHeight( const char *text, float scale, int limit ) = 0;
+	virtual int			MaxCharHeight( float scale ) = 0;
+	virtual int			MaxCharWidth( float scale ) = 0;
+	virtual idRegion *	GetTextRegion( const char *text, float textScale, idRectangle rectDraw, float xStart, float yStart ) = 0;
+	virtual void		SetOverStrike( bool b ) = 0;
+	virtual bool		GetOverStrike() = 0;
+	virtual void		PaintChar( float x, float y, const scaledGlyphInfo_t &glyphInfo ) = 0;
+
+	// size and offset
+	virtual void		SetSize( float width, float height ) = 0;
+	virtual void		SetOffset( float x, float y ) = 0;
+
+	// scroll bar images
+	virtual const idMaterial *GetScrollBarImage( int index ) = 0;
+
+	// cursor drawing
+	virtual void		DrawCursor( float *x, float *y, float size ) = 0;
+	virtual void		DrawEditCursor( float x, float y, float scale ) = 0;
+	virtual void		SetCursor( int n ) = 0;
+
+	// clipping rects
+	virtual bool		ClippedCoords( float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2 ) = 0;
+	virtual void		PushClipRect( idRectangle r ) = 0;
+	virtual void		PopClipRect() = 0;
+	virtual void		EnableClipping( bool b ) = 0;
+
+	// fonts
+	virtual void		InitFonts() = 0;
+	virtual void		SetFont( idFont * font ) = 0;
+	virtual void		SetFont( int num ) = 0;
+	virtual int			FindFont( const char *name ) = 0;
+};
+
+class idDeviceContextLocal : public idDeviceContext {
+public:
+						idDeviceContextLocal();
 
 	virtual void		Init();
 	virtual void		InitFonts();
@@ -88,38 +176,15 @@ public:
 	virtual void		SetFont( int num ) {}
 	virtual int			FindFont( const char * name ) { return 0; }
 
-	virtual void		SetOverStrike(bool b) { overStrikeMode = b; }
+	virtual void		SetOverStrike( bool b ) { overStrikeMode = b; }
 
 	virtual bool		GetOverStrike() { return overStrikeMode; }
 
 	virtual void		DrawEditCursor( float x, float y, float scale );
 
-	enum {
-		CURSOR_ARROW,
-		CURSOR_HAND,
-		CURSOR_HAND_JOY1,
-		CURSOR_HAND_JOY2,
-		CURSOR_HAND_JOY3,
-		CURSOR_HAND_JOY4,
-		CURSOR_COUNT
-	};
-
-	enum {
-		ALIGN_LEFT,
-		ALIGN_CENTER,
-		ALIGN_RIGHT
-	};
-
-	enum {
-		SCROLLBAR_HBACK,
-		SCROLLBAR_VBACK,
-		SCROLLBAR_THUMB,
-		SCROLLBAR_RIGHT,
-		SCROLLBAR_LEFT,
-		SCROLLBAR_UP,
-		SCROLLBAR_DOWN,
-		SCROLLBAR_COUNT
-	};
+	virtual int			DrawText( float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor = -1);
+	virtual void		PaintChar( float x, float y, const scaledGlyphInfo_t & glyphInfo );
+	virtual void		Clear();
 
 	static idVec4 colorPurple;
 	static idVec4 colorOrange;
@@ -132,9 +197,6 @@ public:
 	static idVec4 colorNone;
 
 protected:
-	virtual int			DrawText( float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor = -1);
-	virtual void		PaintChar( float x, float y, const scaledGlyphInfo_t & glyphInfo );
-	virtual void		Clear();
 
 	const idMaterial *	cursorImages[CURSOR_COUNT];
 	const idMaterial *	scrollBarImages[SCROLLBAR_COUNT];
@@ -160,7 +222,7 @@ protected:
 	bool				initialized;
 };
 
-class idDeviceContextLegacy : public idDeviceContext {
+class idDeviceContextLegacy : public idDeviceContextLocal {
 public:
 	virtual void		InitFonts();
 	virtual void		Shutdown();
@@ -195,7 +257,7 @@ private:
 	idStr				fontLang;
 };
 
-class idDeviceContextOptimized : public idDeviceContext {
+class idDeviceContextOptimized : public idDeviceContextLocal {
 
 	virtual bool		ClippedCoords(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2);
 	virtual void		PushClipRect(idRectangle r);
