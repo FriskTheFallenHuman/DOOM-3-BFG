@@ -66,8 +66,6 @@ idCVar com_updateLoadSize( "com_updateLoadSize", "0", CVAR_BOOL | CVAR_SYSTEM | 
 
 idCVar com_productionMode( "com_productionMode", "0", CVAR_SYSTEM | CVAR_BOOL, "0 - no special behavior, 1 - building a production build, 2 - running a production build" );
 
-idCVar com_japaneseCensorship( "com_japaneseCensorship", "0", CVAR_NOCHEAT, "Enable Japanese censorship" );
-
 idCVar preload_CommonAssets( "preload_CommonAssets", "1", CVAR_SYSTEM | CVAR_BOOL, "preload common assets" );
 
 idCVar net_inviteOnly( "net_inviteOnly", "1", CVAR_BOOL | CVAR_ARCHIVE, "whether or not the private server you create allows friends to join or invite only" );
@@ -126,7 +124,6 @@ idCommonLocal::idCommonLocal() :
 	com_refreshOnPrint = false;
 	com_errorEntered = ERP_NONE;
 	com_shuttingDown = false;
-	com_isJapaneseSKU = false;
 	com_paused = false;
 
 	logFile = NULL;
@@ -625,15 +622,6 @@ void idCommonLocal::CheckStartupStorageRequirements() {
 
 /*
 ===============
-idCommonLocal::JapaneseCensorship
-===============
-*/
-bool idCommonLocal::JapaneseCensorship() const {
-	return com_japaneseCensorship.GetBool() || com_isJapaneseSKU;
-}
-
-/*
-===============
 idCommonLocal::FilterLangList
 ===============
 */
@@ -1069,9 +1057,6 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		// initialize the file system
 		fileSystem->Init();
-
-		const char * defaultLang = Sys_DefaultLanguage();
-		com_isJapaneseSKU = ( idStr::Icmp( defaultLang, ID_LANG_JAPANESE ) == 0 );
 
 		// Allow the system to set a default lanugage
 		Sys_SetLanguageFromSystem();
