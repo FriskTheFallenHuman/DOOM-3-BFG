@@ -315,8 +315,6 @@ public:
 
 	virtual void				ResetPlayerInput( int playerIndex ) = 0;
 
-	virtual bool				JapaneseCensorship() const = 0;
-
 	virtual void				QueueShowShell() = 0;		// Will activate the shell on the next frame.
 
 	virtual idUserCmdMgr &		GetUCmdMgr() = 0;
