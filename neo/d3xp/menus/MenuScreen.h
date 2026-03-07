@@ -814,7 +814,7 @@ public:
 			GAME_FIELD_AUTO_RELOAD,
 			GAME_FIELD_AIM_ASSIST,
 			GAME_FIELD_ALWAYS_SPRINT,
-			GAME_FIELD_FLASHLIGHT_SHADOWS,
+			GAME_FIELD_VOLUME,
 			MAX_GAME_FIELDS
 		};
 
@@ -829,9 +829,10 @@ public:
 		// says whether something changed with the data
 		virtual bool				IsDataChanged() const;
 
-		// retrieves a particular field for reading or updating
-		virtual idSWFScriptVar		GetField( const int fieldIndex ) const { return fields[ fieldIndex ]; }
+		// retrieves a particular field for reading
+		virtual idSWFScriptVar		GetField( const int fieldIndex ) const;
 
+		// updates a particular field value
 		virtual void				AdjustField( const int fieldIndex, const int adjustAmount );
 
 	private:
@@ -1123,7 +1124,6 @@ public:
 			SYSTEM_FIELD_MOTIONBLUR,
 			SYSTEM_FIELD_LODBIAS,
 			SYSTEM_FIELD_BRIGHTNESS,
-			SYSTEM_FIELD_VOLUME,
 			MAX_SYSTEM_FIELDS
 		};
 
@@ -1152,7 +1152,6 @@ public:
 		int originalMotionBlur;
 		int originalVsync;
 		float originalBrightness;
-		float originalVolume;
 
 		idList<vidMode_t>			modeList;
 	};
@@ -1172,70 +1171,6 @@ private:
 	idMenuDataSource_SystemSettings	systemData;
 	idMenuWidget_Button	*		btnBack;
 
-};
-
-//*
-//================================================
-//idMenuScreen_Shell_Stereoscopics
-//================================================
-//*/
-class idMenuScreen_Shell_Stereoscopics : public idMenuScreen {
-public:
-
-	/*
-	================================================
-	idMenuDataSource_StereoSettings
-	================================================
-	*/
-	class idMenuDataSource_StereoSettings : public idMenuDataSource {
-	public:
-		enum stereoSettingFields_t {
-			STEREO_FIELD_ENABLE,
-			STEREO_FIELD_SEPERATION,
-			STEREO_FIELD_SWAP_EYES,
-			MAX_STEREO_FIELDS
-		};
-
-		idMenuDataSource_StereoSettings();
-
-		// loads data
-		virtual void				LoadData();
-
-		// submits data
-		virtual void				CommitData();
-
-		// says whether something changed with the data
-		virtual bool				IsDataChanged() const;
-
-		// retrieves a particular field for reading or updating
-		virtual idSWFScriptVar		GetField( const int fieldIndex ) const;
-
-		virtual void				AdjustField( const int fieldIndex, const int adjustAmount );
-
-		bool						IsRestartRequired() const;
-
-	private:
-		idStaticList< idSWFScriptVar, MAX_STEREO_FIELDS >	fields;
-		idStaticList< idSWFScriptVar, MAX_STEREO_FIELDS >	originalFields;
-	};
-
-	idMenuScreen_Shell_Stereoscopics() :
-		options( NULL ),
-		btnBack( NULL ),
-		leftEyeMat( NULL ),
-		rightEyeMat( NULL ) {
-	}
-	virtual void				Initialize( idMenuHandler * data );
-	virtual void				Update();
-	virtual void				ShowScreen( const mainMenuTransition_t transitionType );
-	virtual void				HideScreen( const mainMenuTransition_t transitionType );
-	virtual bool				HandleAction( idWidgetAction & action, const idWidgetEvent & event, idMenuWidget * widget, bool forceHandled = false );
-private:
-	idMenuWidget_DynamicList *	options;
-	idMenuDataSource_StereoSettings	stereoData;
-	idMenuWidget_Button	*		btnBack;
-	const idMaterial *			leftEyeMat;
-	const idMaterial *			rightEyeMat;
 };
 
 //*

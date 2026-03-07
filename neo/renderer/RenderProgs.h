@@ -174,9 +174,6 @@ public:
 	void	BindShader_FogSkinned() { BindShader_Builtin( BUILTIN_FOG_SKINNED ); }
 	void	BindShader_SkyBox() { BindShader_Builtin( BUILTIN_SKYBOX ); }
 	void	BindShader_WobbleSky() { BindShader_Builtin( BUILTIN_WOBBLESKY ); }
-	void	BindShader_StereoDeGhost() { BindShader_Builtin( BUILTIN_STEREO_DEGHOST ); }
-	void	BindShader_StereoWarp() { BindShader_Builtin( BUILTIN_STEREO_WARP ); }
-	void	BindShader_StereoInterlace() { BindShader_Builtin( BUILTIN_STEREO_INTERLACE ); }
 	void	BindShader_PostProcess() { BindShader_Builtin( BUILTIN_POSTPROCESS ); }
 	void	BindShader_ZCullReconstruct() { BindShader_Builtin( BUILTIN_ZCULL_RECONSTRUCT ); }
 	void	BindShader_Bink() { BindShader_Builtin( BUILTIN_BINK ); }
@@ -237,12 +234,9 @@ protected:
 		BUILTIN_SKYBOX,
 		BUILTIN_WOBBLESKY,
 		BUILTIN_POSTPROCESS,
-		BUILTIN_STEREO_DEGHOST,
-		BUILTIN_STEREO_WARP,
 		BUILTIN_ZCULL_RECONSTRUCT,
 		BUILTIN_BINK,
 		BUILTIN_BINK_GUI,
-		BUILTIN_STEREO_INTERLACE,
 		BUILTIN_MOTION_BLUR,
 
 		MAX_BUILTINS

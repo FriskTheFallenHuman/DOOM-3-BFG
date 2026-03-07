@@ -138,8 +138,6 @@ idCVar cg_projectile_clientAuthoritative_maxCatchup( "cg_projectile_clientAuthor
 
 idCVar g_useWeaponDepthHack( "g_useWeaponDepthHack", "1", CVAR_BOOL, "Crunch z depth on weapons" );
 
-idCVar g_weaponShadows( "g_weaponShadows", "0", CVAR_BOOL | CVAR_ARCHIVE, "Cast shadows from weapons" );
-
 extern idCVar cg_predictedSpawn_debug;
 
 /***********************************************************************
@@ -1435,8 +1433,6 @@ void idWeapon::UpdateFlashPosition() {
 	gameLocal.clip.TracePoint( tr, start, end, MASK_SHOT_RENDERMODEL, owner );
 	// be at least 8 units away from a solid
 	muzzleFlash.origin = tr.endpos - playerViewAxis[0] * 8;
-
-	muzzleFlash.noShadows = !g_weaponShadows.GetBool();
 
 	// put the world muzzle flash on the end of the joint, no matter what
 	GetGlobalJointTransform( false, flashJointWorld, worldMuzzleFlash.origin, worldMuzzleFlash.axis );

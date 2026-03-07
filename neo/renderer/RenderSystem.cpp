@@ -350,7 +350,7 @@ void idRenderSystemLocal::DrawStretchPic( const idVec4 & topLeft, const idVec4 &
 		return;
 	}
 
-	idDrawVert * verts = guiModel->AllocTris( 4, quadPicIndexes, 6, material, currentGLState, STEREO_DEPTH_TYPE_NONE );
+	idDrawVert * verts = guiModel->AllocTris( 4, quadPicIndexes, 6, material, currentGLState );
 	if ( verts == NULL ) {
 		return;
 	}
@@ -403,7 +403,7 @@ void idRenderSystemLocal::DrawStretchTri( const idVec2 & p1, const idVec2 & p2, 
 
 	triIndex_t tempIndexes[3] = { 1, 0, 2 };
 
-	idDrawVert * verts = guiModel->AllocTris( 3, tempIndexes, 3, material, currentGLState, STEREO_DEPTH_TYPE_NONE );
+	idDrawVert * verts = guiModel->AllocTris( 3, tempIndexes, 3, material, currentGLState );
 	if ( verts == NULL ) {
 		return;
 	}
@@ -439,8 +439,8 @@ void idRenderSystemLocal::DrawStretchTri( const idVec2 & p1, const idVec2 & p2, 
 idRenderSystemLocal::AllocTris
 =============
 */
-idDrawVert * idRenderSystemLocal::AllocTris( int numVerts, const triIndex_t * indexes, int numIndexes, const idMaterial * material, const stereoDepthType_t stereoType ) {
-	return guiModel->AllocTris( numVerts, indexes, numIndexes, material, currentGLState, stereoType );
+idDrawVert * idRenderSystemLocal::AllocTris( int numVerts, const triIndex_t * indexes, int numIndexes, const idMaterial * material ) {
+	return guiModel->AllocTris( numVerts, indexes, numIndexes, material, currentGLState );
 }
 
 /*
@@ -712,14 +712,6 @@ const emptyCommand_t * idRenderSystemLocal::SwapCommandBuffers_FinishCommandBuff
 	// use the other buffers next frame, because another CPU
 	// may still be rendering into the current buffers
 	R_ToggleSmpFrame();
-
-	// possibly change the stereo3D mode
-	// PC
-	if ( glConfig.nativeScreenWidth == 1280 && glConfig.nativeScreenHeight == 1470 ) {
-		glConfig.stereo3Dmode = STEREO3D_HDMI_720;
-	} else {
-		glConfig.stereo3Dmode = GetStereoScopicRenderingMode();
-	}
 
 	// prepare the new command buffer
 	guiModel->BeginFrame();

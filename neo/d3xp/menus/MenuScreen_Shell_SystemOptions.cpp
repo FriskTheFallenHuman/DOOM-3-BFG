@@ -34,7 +34,6 @@ const static int NUM_SYSTEM_OPTIONS_OPTIONS = 8;
 extern idCVar r_multiSamples;
 extern idCVar r_motionBlur;
 extern idCVar r_swapInterval;
-extern idCVar s_volume_dB;
 extern idCVar r_lightScale;
 
 /*
@@ -122,14 +121,6 @@ void idMenuScreen_Shell_SystemOptions::Initialize( idMenuHandler * data ) {
 	control->SetDataSource( &systemData, idMenuDataSource_SystemSettings::SYSTEM_FIELD_BRIGHTNESS );
 	control->SetupEvents( 2, options->GetChildren().Num() );
 	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_COMMAND, idMenuDataSource_SystemSettings::SYSTEM_FIELD_BRIGHTNESS );
-	options->AddChild( control );
-
-	control = new (TAG_SWF) idMenuWidget_ControlButton();
-	control->SetOptionType( OPTION_SLIDER_BAR );
-	control->SetLabel( "#str_02163" );	// Volume
-	control->SetDataSource( &systemData, idMenuDataSource_SystemSettings::SYSTEM_FIELD_VOLUME );
-	control->SetupEvents( 2, options->GetChildren().Num() );
-	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_COMMAND, idMenuDataSource_SystemSettings::SYSTEM_FIELD_VOLUME );
 	options->AddChild( control );
 
 	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN ).Set( new (TAG_SWF) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN ) );
@@ -346,7 +337,6 @@ void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::LoadData
 	originalMotionBlur = r_motionBlur.GetInteger();
 	originalVsync = r_swapInterval.GetInteger();
 	originalBrightness = r_lightScale.GetFloat();
-	originalVolume = s_volume_dB.GetFloat();
 
 	const int fullscreen = r_fullscreen.GetInteger();
 	if ( fullscreen > 0 ) {
@@ -457,13 +447,6 @@ void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::AdjustFi
 			r_lightScale.SetFloat( LinearAdjust( clamped, 0.0f, 100.0f, 2.0f, 4.0f ) );
 			break;
 		}
-		case SYSTEM_FIELD_VOLUME: {
-			const float percent = 100.0f * Square( 1.0f - ( s_volume_dB.GetFloat() / DB_SILENCE ) );
-			const float adjusted = percent + (float)adjustAmount;
-			const float clamped = idMath::ClampFloat( 0.0f, 100.0f, adjusted );
-			s_volume_dB.SetFloat( DB_SILENCE - ( idMath::Sqrt( clamped / 100.0f ) * DB_SILENCE ) );
-			break;
-		}
 	}
 	cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 }
@@ -514,9 +497,6 @@ idSWFScriptVar idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings
 			return LinearAdjust( r_lodBias.GetFloat(), -1.0f, 1.0f, 0.0f, 100.0f );
 		case SYSTEM_FIELD_BRIGHTNESS:
 			return LinearAdjust( r_lightScale.GetFloat(), 2.0f, 4.0f, 0.0f, 100.0f );
-		case SYSTEM_FIELD_VOLUME: {
-			return 100.0f * Square( 1.0f - ( s_volume_dB.GetFloat() / DB_SILENCE ) );
-		}
 	}
 	return false;
 }
@@ -540,9 +520,6 @@ bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataCh
 		return true;
 	}
 	if ( originalBrightness != r_lightScale.GetFloat() ) {
-		return true;
-	}
-	if ( originalVolume != s_volume_dB.GetFloat() ) {
 		return true;
 	}
 	return false;
