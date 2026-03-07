@@ -90,14 +90,14 @@ void idDeviceContextLegacy::Shutdown() {
 	fontName.Clear();
 	fonts.Clear();
 
-	idDeviceContext::Shutdown();
+	idDeviceContextLocal::Shutdown();
 }
 
 void idDeviceContextLegacy::Clear() {
 	useFont = NULL;
 	activeFont = NULL;
 
-	idDeviceContext::Clear();
+	idDeviceContextLocal::Clear();
 }
 
 void idDeviceContextLegacy::PaintChar( float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, const idMaterial *hShader ) {

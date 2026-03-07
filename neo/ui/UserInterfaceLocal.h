@@ -145,7 +145,7 @@ public:
 	idTokenParser &				GetBinaryParser() { return mapParser; }
 private:
 	idRectangle					screenRect;
-	idDeviceContext				dcOld;
+	idDeviceContextLocal		dcOld;
 	idDeviceContextOptimized	dcOptimized;
 	idDeviceContextLegacy		dcLegacy;
 

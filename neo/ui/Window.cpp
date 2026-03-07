@@ -331,8 +331,8 @@ void idWindow::Draw( int time, float x, float y ) {
 
 	if ( gui_edit.GetBool() ) {
 		dc->EnableClipping( false );
-		dc->DrawText( va( "x: %i  y: %i", ( int )rect.x(), ( int )rect.y() ), 0.25, 0, dc->colorWhite, idRectangle( rect.x(), rect.y() - 15, 100, 20 ), false );
-		dc->DrawText( va( "w: %i  h: %i", ( int )rect.w(), ( int )rect.h() ), 0.25, 0, dc->colorWhite, idRectangle( rect.x() + rect.w(), rect.w() + rect.h() + 5, 100, 20 ), false );
+		dc->DrawText( va( "x: %i  y: %i", ( int )rect.x(), ( int )rect.y() ), 0.25, 0, colorWhite, idRectangle( rect.x(), rect.y() - 15, 100, 20 ), false );
+		dc->DrawText( va( "w: %i  h: %i", ( int )rect.w(), ( int )rect.h() ), 0.25, 0, colorWhite, idRectangle( rect.x() + rect.w(), rect.w() + rect.h() + 5, 100, 20 ), false );
 		dc->EnableClipping( true );
 	}
 
@@ -715,7 +715,7 @@ const char *idWindow::HandleEvent(const sysEvent_t *event, bool *updateVisuals) 
 		if ( overChild != NULL ) {
 			dc->SetCursor( overChild->cursor );
 		} else {
-			dc->SetCursor( idDeviceContext::CURSOR_ARROW );
+			dc->SetCursor( CURSOR_ARROW );
 		}
 	}
 
@@ -957,7 +957,7 @@ void idWindow::DebugDraw(int time, float x, float y) {
 	if (dc) {
 		dc->EnableClipping(false);
 		if (gui_debug.GetInteger() == 1) {
-			dc->DrawRect(drawRect.x, drawRect.y, drawRect.w, drawRect.h, 1, idDeviceContext::colorRed);
+			dc->DrawRect(drawRect.x, drawRect.y, drawRect.w, drawRect.h, 1, colorRed);
 		} else if (gui_debug.GetInteger() == 2) {
 			char out[1024];
 			idStr str;
@@ -1209,13 +1209,13 @@ void idWindow::Redraw(float x, float y, bool hud) {
 	}
 
 	if ( flags & WIN_SHOWTIME ) {
-		dc->DrawText(va(" %0.1f seconds\n%s", (float)(time - timeLine) / 1000, gui->State().GetString("name")), 0.35f, 0, dc->colorWhite, idRectangle(100, 0, 80, 80), false);
+		dc->DrawText(va(" %0.1f seconds\n%s", (float)(time - timeLine) / 1000, gui->State().GetString("name")), 0.35f, 0, colorWhite, idRectangle(100, 0, 80, 80), false);
 	}
 
 	if ( flags & WIN_SHOWCOORDS ) {
 		dc->EnableClipping(false);
 		sprintf(str, "x: %i y: %i  cursorx: %i cursory: %i", (int)rect.x(), (int)rect.y(), (int)gui->CursorX(), (int)gui->CursorY());
-		dc->DrawText(str, 0.25f, 0, dc->colorWhite, idRectangle(0, 0, 100, 20), false);
+		dc->DrawText(str, 0.25f, 0, colorWhite, idRectangle(0, 0, 100, 20), false);
 		dc->EnableClipping(true);
 	}
 
@@ -1289,8 +1289,8 @@ void idWindow::Redraw(float x, float y, bool hud) {
 	if (gui_debug.GetInteger() && flags & WIN_DESKTOP) {
 		dc->EnableClipping(false);
 		sprintf(str, "x: %1.f y: %1.f",  gui->CursorX(), gui->CursorY());
-		dc->DrawText(str, 0.25, 0, dc->colorWhite, idRectangle(0, 0, 100, 20), false);
-		dc->DrawText(gui->GetSourceFile(), 0.25, 0, dc->colorWhite, idRectangle(0, 20, 300, 20), false);
+		dc->DrawText(str, 0.25, 0, colorWhite, idRectangle(0, 0, 100, 20), false);
+		dc->DrawText(gui->GetSourceFile(), 0.25, 0, colorWhite, idRectangle(0, 20, 300, 20), false);
 		dc->EnableClipping(true);
 	}
 
@@ -1411,7 +1411,7 @@ void idWindow::SetupFromState() {
 
 	CalcClientRect(0,0);
 	if ( scripts[ ON_ACTION ] ) {
-		cursor = idDeviceContext::CURSOR_HAND;
+		cursor = CURSOR_HAND;
 		flags |= WIN_CANFOCUS;
 	}
 }
