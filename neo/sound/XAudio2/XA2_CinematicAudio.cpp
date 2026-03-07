@@ -131,12 +131,12 @@ void idCinematicAudio_XAudio2::PlayAudio( uint8 *data, int size ) {
 	if ( FAILED( hr = pMusicSourceVoice1->SubmitSourceBuffer( &Packet ) ) ) {
 		Mem_Free( data );
 		data = NULL;
-		int fail = 1;
+		idLib::Warning( "Failed to submit audio buffer to XAudio2 source voice for cinematic audio: 0x%08X", hr );
 	}
 
 	// Play the source voice
 	if ( FAILED( hr = pMusicSourceVoice1->Start( 0 ) ) ) {
-		int fail = 1;
+		idLib::Warning( "Failed to start XAudio2 source voice for cinematic audio: 0x%08X", hr );
 	}
 }
 

@@ -1275,7 +1275,6 @@ idPlayer::idPlayer():
 	spawnAngles				= ang_zero;
 	viewAngles				= ang_zero;
 	cmdAngles				= ang_zero;
-	independentWeaponPitchAngle = 0.0f;
 
 	oldButtons				= 0;
 	buttonMask				= 0;
@@ -1284,9 +1283,6 @@ idPlayer::idPlayer():
 	lastHitTime				= 0;
 	lastSndHitTime			= 0;
 	lastSavingThrowTime		= 0;
-
-	laserSightHandle	= -1;
-	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
 
 	weapon					= NULL;
 	primaryObjective		= NULL;
@@ -1773,11 +1769,6 @@ void idPlayer::Init() {
 	flashlightBattery = flashlight_batteryDrainTimeMS.GetInteger();		// fully charged
 
 	aimAssist.Init( this );
-
-	// laser sight for 3DTV
-	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
-	laserSightRenderEntity.hModel = renderModelManager->FindModel( "_BEAM" );
-	laserSightRenderEntity.customShader = declManager->FindMaterial( "stereoRenderLaserSight" );
 }
 
 /*
@@ -2610,13 +2601,6 @@ void idPlayer::Restore( idRestoreGame *savefile ) {
 
 	aimAssist.Init( this );
 
-	laserSightHandle = -1;
-
-	// re-init the laser model
-	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
-	laserSightRenderEntity.hModel = renderModelManager->FindModel( "_BEAM" );
-	laserSightRenderEntity.customShader = declManager->FindMaterial( "stereoRenderLaserSight" );
-
 	for ( int i=0; i<MAX_PLAYER_PDA; i++ ) {
 		savefile->ReadBool( pdaHasBeenRead[i] );
 	}
@@ -3216,13 +3200,9 @@ void idPlayer::DrawHUD( idMenuHandler_HUD * _hudManager ) {
 
 	// weapon targeting crosshair
 	if ( !GuiActive() ) {
-		// don't show the 2D crosshair in stereo rendering, use the
-		// laser sight model instead
 		if ( _hudManager && _hudManager->GetHud() ) {
-
 			idMenuScreen_HUD * hud = _hudManager->GetHud();
-
-			if ( weapon.GetEntity()->ShowCrosshair() && !IsGameStereoRendered() ) {
+			if ( weapon.GetEntity()->ShowCrosshair() ) {
 				if ( weapon.GetEntity()->GetGrabberState() == 1 || weapon.GetEntity()->GetGrabberState() == 2 ) {
 					hud->SetCursorState( this, CURSOR_GRABBER, 1 );
 					hud->SetCursorState( this, CURSOR_IN_COMBAT, 0 );
@@ -6068,9 +6048,6 @@ void idPlayer::UpdateViewAngles() {
 		return;
 	}
 
-	//
-
-
 	// circularly clamp the angles with deltas
 	for ( i = 0; i < 3; i++ ) {
 		cmdAngles[i] = SHORT2ANGLE( usercmd.angles[i] );
@@ -6109,11 +6086,13 @@ void idPlayer::UpdateViewAngles() {
 		}
 		viewAngles.pitch = idMath::ClampFloat( -varc, varc, viewAngles.pitch );
 	} else {
-		// don't let the player look up or down more than 90 degrees normally
-		const float restrict = 1.0f;
-
-		viewAngles.pitch = std::min( viewAngles.pitch, pm_maxviewpitch.GetFloat() * restrict );
-		viewAngles.pitch = std::max( viewAngles.pitch, pm_minviewpitch.GetFloat() * restrict );
+		if ( viewAngles.pitch > pm_maxviewpitch.GetFloat() ) {
+			// don't let the player look down enough to see the shadow of his (non-existant) feet
+			viewAngles.pitch = pm_maxviewpitch.GetFloat();
+		} else if ( viewAngles.pitch < pm_minviewpitch.GetFloat() ) {
+			// don't let the player look up more than 89 degrees
+			viewAngles.pitch = pm_minviewpitch.GetFloat();
+		}
 	}
 
 	UpdateDeltaViewAngles( viewAngles );
@@ -7465,57 +7444,6 @@ bool idPlayer::HandleGuiEvents( const sysEvent_t * ev ) {
 
 /*
 ==============
-idPlayer::UpdateLaserSight
-==============
-*/
-idCVar	g_laserSightWidth( "g_laserSightWidth", "2.0", CVAR_FLOAT | CVAR_ARCHIVE, "laser sight beam width" );
-idCVar	g_laserSightLength( "g_laserSightLength", "250", CVAR_FLOAT | CVAR_ARCHIVE, "laser sight beam length" );
-
-void idPlayer::UpdateLaserSight() {
-	idVec3	muzzleOrigin;
-	idMat3	muzzleAxis;
-
-	// In Multiplayer, weapon might not have been spawned yet.
-	if( weapon.GetEntity() ==  NULL ) {
-		return;
-	}
-
-	if ( !IsGameStereoRendered() ||
-		!weapon.GetEntity()->ShowCrosshair() ||
-		AI_DEAD ||
-		weapon->IsHidden() ||
-		!weapon->GetMuzzlePositionWithHacks( muzzleOrigin, muzzleAxis ) ) {
-		// hide it
-		laserSightRenderEntity.allowSurfaceInViewID = -1;
-		if ( laserSightHandle == -1 ) {
-			laserSightHandle = gameRenderWorld->AddEntityDef( &laserSightRenderEntity );
-		} else {
-			gameRenderWorld->UpdateEntityDef( laserSightHandle, &laserSightRenderEntity );
-		}
-		return;
-	}
-
-	// program the beam model
-
-	// only show in the player's view
-	laserSightRenderEntity.allowSurfaceInViewID = entityNumber+1;
-	laserSightRenderEntity.axis.Identity();
-
-	laserSightRenderEntity.origin = muzzleOrigin - muzzleAxis[0] * 2.0f;
-	idVec3	&target = *reinterpret_cast<idVec3 *>( &laserSightRenderEntity.shaderParms[SHADERPARM_BEAM_END_X] );
-	target = muzzleOrigin + muzzleAxis[0] * g_laserSightLength.GetFloat();
-
-	laserSightRenderEntity.shaderParms[SHADERPARM_BEAM_WIDTH] = g_laserSightWidth.GetFloat();
-
-	if ( IsGameStereoRendered() && laserSightHandle == -1 ) {
-		laserSightHandle = gameRenderWorld->AddEntityDef( &laserSightRenderEntity );
-	} else {
-		gameRenderWorld->UpdateEntityDef( laserSightHandle, &laserSightRenderEntity );
-	}
-}
-
-/*
-==============
 idPlayer::Think
 
 Called every tic for each player
@@ -7782,9 +7710,6 @@ void idPlayer::Think() {
 
 	// determine if portal sky is in pvs
 	gameLocal.portalSkyActive = gameLocal.pvs.CheckAreasForPortalSky( gameLocal.GetPlayerPVS(), GetPhysics()->GetOrigin() );
-
-	// stereo rendering laser sight that replaces the crosshair
-	UpdateLaserSight();
 
 	// Show the respawn hud message if necessary.
 	if ( common->IsMultiplayer() && ( minRespawnTime != maxRespawnTime ) ) {
@@ -8660,10 +8585,10 @@ float idPlayer::DefaultFov() const {
 
 	fov = g_fov.GetFloat();
 	if ( common->IsMultiplayer() ) {
-		if ( fov < 80.0f ) {
-			return 80.0f;
-		} else if ( fov > 120.0f ) {
-			return 120.0f;
+		if ( fov < MIN_FOV ) {
+			return MIN_FOV;
+		} else if ( fov > MAX_FOV ) {
+			return MAX_FOV;
 		}
 	}
 
@@ -8859,13 +8784,7 @@ void idPlayer::CalculateViewWeaponPos( idVec3 &origin, idMat3 &axis ) {
 	angles.yaw		+= fracsin;
 	angles.pitch	+= fracsin;
 
-	// decoupled weapon aiming in head mounted displays
-	angles.pitch += independentWeaponPitchAngle;
-
-	const idMat3	anglesMat = angles.ToMat3();
-	const idMat3	scaledMat = anglesMat * g_gunScale.GetFloat();
-
-	axis = scaledMat * viewAxis;
+	axis = angles.ToMat3() * viewAxis;
 }
 
 /*
@@ -8977,11 +8896,8 @@ void idPlayer::GetViewPos( idVec3 &origin, idMat3 &axis ) const {
 
 		axis = angles.ToMat3() * physicsObj.GetGravityAxis();
 
-		// Move pivot point down so looking straight ahead is a no-op on the Z
-		const idVec3 & gravityVector = physicsObj.GetGravityNormal();
-		origin += gravityVector * g_viewNodalZ.GetFloat();
-
 		// adjust the origin based on the camera nodal distance (eye distance from neck)
+		origin += physicsObj.GetGravityNormal() * g_viewNodalZ.GetFloat();
 		origin += axis[0] * g_viewNodalX.GetFloat() + axis[2] * g_viewNodalZ.GetFloat();
 	}
 }
@@ -9086,7 +9002,7 @@ void idPlayer::CalculateRenderView() {
 			renderView->viewID = entityNumber + 1;
 		}
 
-		gameLocal.CalcFov( CalcFov( true ), renderView->fov_x, renderView->fov_y );
+		renderSystem->CalcFov( CalcFov( true ), renderView->fov_x, renderView->fov_y );
 	}
 
 	if ( renderView->fov_y == 0 ) {
@@ -9825,9 +9741,6 @@ void idPlayer::ClientThink( const int curTime, const float fraction, const bool 
 	UpdateDamageEffects();
 
 	LinkCombat();
-
-	// stereo rendering laser sight that replaces the crosshair
-	UpdateLaserSight();
 
 	if ( gameLocal.isNewFrame && IsLocallyControlled() ) {
 		playerView.CalculateShake();

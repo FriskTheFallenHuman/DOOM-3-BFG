@@ -31,12 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 const static int NUM_GAME_OPTIONS_OPTIONS = 8;
 
-const float MIN_FOV = 80.0f;
-const float MAX_FOV = 100.0f;
-
-const float MIN_FOV_GUN = 3.0f;
-const float MAX_FOV_GUN = 0.0f;
-
 /*
 ========================
 idMenuScreen_Shell_GameOptions::Initialize
@@ -77,6 +71,14 @@ void idMenuScreen_Shell_GameOptions::Initialize( idMenuHandler * data ) {
 	options->AddChild( control );
 
 	control = new (TAG_SWF) idMenuWidget_ControlButton();
+	control->SetOptionType( OPTION_SLIDER_BAR );
+	control->SetLabel( "#str_02163" );	// Volume
+	control->SetDataSource( &systemData, idMenuDataSource_GameSettings::GAME_FIELD_VOLUME);
+	control->SetupEvents( 2, options->GetChildren().Num() );
+	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_COMMAND, idMenuDataSource_GameSettings::GAME_FIELD_VOLUME );
+	options->AddChild( control );
+
+	control = new (TAG_SWF) idMenuWidget_ControlButton();
 	control->SetOptionType( OPTION_SLIDER_TOGGLE );
 	control->SetLabel( "#str_swf_checkpoints" );
 	control->SetDataSource( &systemData, idMenuDataSource_GameSettings::GAME_FIELD_CHECKPOINTS );
@@ -112,14 +114,6 @@ void idMenuScreen_Shell_GameOptions::Initialize( idMenuHandler * data ) {
 	control->SetOptionType( OPTION_SLIDER_TOGGLE );
 	control->SetLabel( "#str_04102" );	// Always Run
 	control->SetDataSource( &systemData, idMenuDataSource_GameSettings::GAME_FIELD_ALWAYS_SPRINT );
-	control->SetupEvents( DEFAULT_REPEAT_TIME, options->GetChildren().Num() );
-	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, options->GetChildren().Num() );
-	options->AddChild( control );
-
-	control = new (TAG_SWF) idMenuWidget_ControlButton();
-	control->SetOptionType( OPTION_SLIDER_TOGGLE );
-	control->SetLabel( "#str_swf_flashlight_shadows" );
-	control->SetDataSource( &systemData, idMenuDataSource_GameSettings::GAME_FIELD_FLASHLIGHT_SHADOWS );
 	control->SetupEvents( DEFAULT_REPEAT_TIME, options->GetChildren().Num() );
 	control->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, options->GetChildren().Num() );
 	options->AddChild( control );
@@ -268,7 +262,7 @@ extern idCVar ui_autoReload;
 extern idCVar aa_targetAimAssistEnable;
 extern idCVar in_alwaysRun;
 extern idCVar g_checkpoints;
-extern idCVar g_weaponShadows;
+extern idCVar s_volume_dB;
 
 /*
 ========================
@@ -287,12 +281,12 @@ idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::LoadData
 */
 void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::LoadData() {
 	fields[ GAME_FIELD_FOV ].SetInteger( g_fov.GetFloat() );
+	fields[ GAME_FIELD_VOLUME ].SetFloat( s_volume_dB.GetFloat() );
 	fields[ GAME_FIELD_CHECKPOINTS ].SetBool( g_checkpoints.GetBool() );
 	fields[ GAME_FIELD_AUTO_SWITCH ].SetBool( ui_autoSwitch.GetBool() );
 	fields[ GAME_FIELD_AUTO_RELOAD ].SetBool( ui_autoReload.GetBool() );
 	fields[ GAME_FIELD_AIM_ASSIST ].SetBool( aa_targetAimAssistEnable.GetBool() );
 	fields[ GAME_FIELD_ALWAYS_SPRINT ].SetBool( in_alwaysRun.GetBool() );
-	fields[ GAME_FIELD_FLASHLIGHT_SHADOWS ].SetBool( g_weaponShadows.GetBool() );
 	originalFields = fields;
 }
 
@@ -304,14 +298,12 @@ idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::CommitData
 void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::CommitData() {
 
 	g_fov.SetFloat( fields[ GAME_FIELD_FOV ].ToFloat() );
-	g_gun_x.SetFloat( Lerp( MIN_FOV_GUN, MAX_FOV_GUN, ( fields[ GAME_FIELD_FOV ].ToFloat() - MIN_FOV ) / ( MAX_FOV - MIN_FOV ) ) );
-
+	s_volume_dB.SetFloat( fields[ GAME_FIELD_VOLUME ].ToFloat() );
 	g_checkpoints.SetBool( fields[ GAME_FIELD_CHECKPOINTS ].ToBool() );
 	ui_autoSwitch.SetBool( fields[ GAME_FIELD_AUTO_SWITCH ].ToBool() );
 	ui_autoReload.SetBool( fields[ GAME_FIELD_AUTO_RELOAD ].ToBool() );
 	aa_targetAimAssistEnable.SetBool( fields[ GAME_FIELD_AIM_ASSIST ].ToBool() );
 	in_alwaysRun.SetBool( fields[ GAME_FIELD_ALWAYS_SPRINT ].ToBool() );
-	g_weaponShadows.SetBool( fields[ GAME_FIELD_FLASHLIGHT_SHADOWS ].ToBool() );
 
 	cvarSystem->SetModifiedFlags( CVAR_ARCHIVE );
 
@@ -327,9 +319,28 @@ idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::AdjustField
 void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::AdjustField( const int fieldIndex, const int adjustAmount ) {
 	if ( fieldIndex == GAME_FIELD_FOV ) {
 		fields[ fieldIndex ].SetInteger( idMath::ClampInt( MIN_FOV, MAX_FOV, fields[ fieldIndex ].ToInteger() + adjustAmount * 5 ) );
+	} else if ( fieldIndex == GAME_FIELD_VOLUME ) {
+		const float percent = 100.0f * Square( 1.0f - ( fields[ GAME_FIELD_VOLUME ].ToFloat() / DB_SILENCE ) );
+		const float adjusted = percent + (float)adjustAmount;
+		const float clamped = idMath::ClampFloat( 0.0f, 100.0f, adjusted );
+		fields[ fieldIndex ].SetFloat( DB_SILENCE - ( idMath::Sqrt( clamped / 100.0f ) * DB_SILENCE ));
 	} else {
 		fields[ fieldIndex ].SetBool( !fields[ fieldIndex ].ToBool() );
 	}
+}
+
+/*
+========================
+idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::GetField
+========================
+*/
+idSWFScriptVar idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::GetField( const int fieldIndex ) const {
+	if ( fieldIndex == GAME_FIELD_VOLUME ) {
+		return 100.0f * Square( 1.0f - ( fields[ GAME_FIELD_VOLUME ].ToFloat() / DB_SILENCE ) );
+	}
+
+
+	return fields[ fieldIndex ];
 }
 
 /*
@@ -340,6 +351,10 @@ idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::IsDataChanged
 bool idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::IsDataChanged() const {
 
 	if ( fields[ GAME_FIELD_FOV ].ToInteger() != originalFields[ GAME_FIELD_FOV ].ToInteger() ) {
+		return true;
+	}
+
+	if ( fields[ GAME_FIELD_VOLUME ].ToFloat() != originalFields[ GAME_FIELD_VOLUME ].ToFloat() ) {
 		return true;
 	}
 
@@ -360,10 +375,6 @@ bool idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::IsDataChange
 	}
 
 	if ( fields[ GAME_FIELD_ALWAYS_SPRINT ].ToBool() != originalFields[ GAME_FIELD_ALWAYS_SPRINT ].ToBool() ) {
-		return true;
-	}
-
-	if ( fields[ GAME_FIELD_FLASHLIGHT_SHADOWS ].ToBool() != originalFields[ GAME_FIELD_FLASHLIGHT_SHADOWS ].ToBool() ) {
 		return true;
 	}
 

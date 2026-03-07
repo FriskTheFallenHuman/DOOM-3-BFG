@@ -204,7 +204,6 @@ extern idCVar	g_showBrass;
 extern idCVar	g_gun_x;
 extern idCVar	g_gun_y;
 extern idCVar	g_gun_z;
-extern idCVar	g_gunScale;
 extern idCVar	g_viewNodalX;
 extern idCVar	g_viewNodalZ;
 extern idCVar	g_fov;
