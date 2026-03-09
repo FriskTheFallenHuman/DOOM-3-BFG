@@ -469,8 +469,7 @@ void idSoundWorldLocal::Update() {
 		shakeAmp += chan->parms.shakes * chan->hardwareVoice->GetGain() * chan->currentAmplitude;
 	}
 	if ( showVoices ) {
-		static idOverlayHandle handle;
-		console->PrintOverlay( handle, JUSTIFY_LEFT, showVoiceTable.c_str() );
+		CREATE_OVERLAY( voiceHandle, showVoiceTable.c_str(), JUSTIFY_LEFT, colorWhite, TEXTSIZE_LARGE, false );
 	}
 
 	if ( s_drawSounds.GetBool() && renderWorld != NULL ) {
