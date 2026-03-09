@@ -20,21 +20,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. ]]
 
-group( "dll" )
+if _OPTIONS["dll"] then
+	group( "dll" )
+else
+	group( "libs" )
+end
 
 project( "Game-D3XP" )
 	targetname("gamex86")
-	kind("SharedLib")
+	if _OPTIONS["dll"] then
+		kind("SharedLib")
+	else
+		kind("StaticLib")
+	end
 	language("C++")
-	links({"idLib"})
+	if _OPTIONS["dll"] then
+		links({"idLib"})
+	end
 
-	defines({"GAME_DLL", "_D3XP", "CTF"})
+	defines({"_D3XP", "CTF"})
+	if _OPTIONS["dll"] then
+		defines({"GAME_DLL"})
+	end
 
 	pchsource("precompiled.cpp")
 	pchheader( "" )
 
 	files({"**"})
 
-	removefiles({"EndLevel.*", "gamesys/Callbacks.cpp"})
+	removefiles({"EndLevel.*", "menus/MenuWidget_DevList.*", "gamesys/Callbacks.cpp"})
 
 group("")

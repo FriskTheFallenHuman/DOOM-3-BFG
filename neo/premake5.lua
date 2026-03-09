@@ -70,9 +70,11 @@ workspace("Doom3")
 			optimize("Off")
 			defines("_DEBUG")
 			buildoptions({"/RTC1"})
+			linktimeoptimizationex("Off")
 			mapfile("On")
 			staticruntime("On")
 			runtime("Debug")
+			symbols("On")
 			rtti("On")
 			editandcontinue("On")
 			--sanitize({"Address"})
@@ -94,6 +96,24 @@ workspace("Doom3")
 			extraoptimization()
 		filter({}) -- Release Scope
 
+		-- _Retail.props
+		filter("configurations:Retail")
+			optimize("Full")
+			defines({"NDEBUG", "ID_RETAIL"})
+			stringpooling("On")
+			buildoptions({"/Ob2", "/Gy"})
+			linktimeoptimizationex("On")
+			intrinsics("On")
+			mapfile("Off")
+			staticruntime("On")
+			runtime("Release")
+			buffersecuritycheck("On")
+			symbols("Off")
+			rtti("On")
+			editandcontinue("On")
+			extraoptimization()
+		filter({}) -- Release Scope
+
 		-- _DoomEXE.props
 		adressstacksize(16777216,16777216)
 		filter("kind:not StaticLib")
@@ -109,9 +129,7 @@ workspace("Doom3")
 
 	include("external/external.lua")
 	include("idlib/idlib.lua")
-	if _OPTIONS["dll"] then
-		include("d3xp/d3xp.lua")
-	end
+	include("d3xp/d3xp.lua")
 
 	-- DoomEXE
 	group("exes")
@@ -121,6 +139,9 @@ workspace("Doom3")
 		kind("WindowedApp")
 		language("C++")
 		links({"external", "idLib"})
+		if not _OPTIONS["dll"] then
+			links({"Game-D3XP"})
+		end
 
 		filter("system:windows")
 			libdirs({"external/SDL3/lib/" .. getArchitectureString()})
@@ -139,13 +160,8 @@ workspace("Doom3")
 		pchsource("framework/precompiled.cpp")
 		pchheader("")
 
-		if _OPTIONS["dll"] then
-			files({"premake5.lua", "cm/**", "framework/**", "renderer/**", "sound/**", "sys/**", "tools/**", "ui/**" } )
-			removefiles({"framework/Session.cpp", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
-		else
-			files({"premake5.lua", "cm/**", "d3xp/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "tools/**", "ui/**" } )
-			removefiles({"d3xp/precompiled.cpp", "d3xp/EndLevel.*", "d3xp/gamesys/Callbacks.cpp", "d3xp/menus/MenuWidget_DevList.cpp", "framework/Session.cpp", "tools/compilers/roqvq/roq.m", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
-		end
+		files({"premake5.lua", "cm/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "tools/**", "ui/**" } )
+		removefiles({"framework/Session.cpp", "tools/compilers/roqvq/roq.m", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
 
 		filter("files:renderer/jobs/**.cpp")
 			enablepch("Off")
