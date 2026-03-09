@@ -43,6 +43,11 @@ If you have questions concerning this license or the applicable additional terms
 #define STBI_NO_STDIO  // images are passed as buffers
 #include "stb/stb_image.h"
 
+//#define STBTT_STATIC
+#define STB_TRUETYPE_IMPLEMENTATION
+#define STBTT_assert( x ) assert( x )
+#include "stb/stb_truetype.h"
+
 #include "miniz/miniz.h"
 
 static unsigned char *compress_for_stbiw( unsigned char  *data, int data_len, int *out_len, int quality ) {

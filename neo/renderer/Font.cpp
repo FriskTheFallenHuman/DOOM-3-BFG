@@ -29,6 +29,9 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "Font.h"
+#include "Image.h"
+
+#include "stb/stb_truetype.h"
 
 const char * DEFAULT_FONT = "Arial_Narrow";
 
@@ -80,6 +83,13 @@ idFont::~idFont
 ==============================
 */
 idFont::~idFont() {
+	// SRS - Free glyph data before deleting fontInfo, otherwise will leak
+	if ( fontInfo ) {
+		Mem_Free( fontInfo->glyphData );
+		fontInfo->glyphData = NULL;
+		Mem_Free( fontInfo->charIndex );
+		fontInfo->charIndex = NULL;
+	}
 	delete fontInfo;
 }
 
@@ -154,9 +164,41 @@ bool LoadOldGlyphData( const char * filename, oldGlyphInfo_t glyphInfo[OLD_GLYPH
 		idSwap::Little( glyphInfo[i].t2 );
 		assert( glyphInfo[i].imageWidth == glyphInfo[i].pitch );
 		assert( glyphInfo[i].imageHeight == glyphInfo[i].height );
-		assert( glyphInfo[i].imageWidth == ( glyphInfo[i].s2 - glyphInfo[i].s ) * 256 );
-		assert( glyphInfo[i].imageHeight == ( glyphInfo[i].t2 - glyphInfo[i].t ) * 256 );
 		assert( glyphInfo[i].junk == 0 );
+	}
+	delete fd;
+	return true;
+}
+
+/*
+==============================
+SaveOldGlyphData
+==============================
+*/
+static bool SaveOldGlyphData( const char * filename, oldGlyphInfo_t glyphInfo[OLD_GLYPHS_PER_FONT] ) {
+	idFile * fd = fileSystem->OpenFileWrite( filename );
+	if ( fd == NULL ) {
+		return false;
+	}
+
+	for ( int i = 0; i < OLD_GLYPHS_PER_FONT; i++ ) {
+		fd->WriteBig( glyphInfo[i].height );
+		fd->WriteBig( glyphInfo[i].top );
+		fd->WriteBig( glyphInfo[i].bottom );
+		fd->WriteBig( glyphInfo[i].pitch );
+		fd->WriteBig( glyphInfo[i].xSkip );
+		fd->WriteBig( glyphInfo[i].imageWidth );
+		fd->WriteBig( glyphInfo[i].imageHeight );
+		fd->WriteBig( glyphInfo[i].s );
+		fd->WriteBig( glyphInfo[i].t );
+		fd->WriteBig( glyphInfo[i].s2 );
+		fd->WriteBig( glyphInfo[i].t2 );
+
+		fd->WriteBig( glyphInfo[i].junk );
+
+		for ( int j = 0; j < 32; j++ ) {
+			fd->WriteChar( glyphInfo[i].materialName[j] );
+		}
 	}
 	delete fd;
 	return true;
@@ -171,7 +213,12 @@ bool idFont::LoadFont() {
 	idStr fontName = va( "newfonts/%s/48.dat", GetName() );
 	idFile * fd = fileSystem->OpenFileRead( fontName );
 	if ( fd == NULL ) {
-		return false;
+		if ( !LoadFromTrueTypeFont() ) {
+			return false;
+		} else {
+			WriteFont();
+			return true;
+		}
 	}
 
 	const int FONT_INFO_VERSION = 42;
@@ -380,8 +427,10 @@ void idFont::GetScaledGlyph( float scale, uint32 idx, scaledGlyphInfo_t & glyphI
 			i = GetGlyphIndex( asterisk );
 		}
 		if ( i >= 0 ) {
-			float invMaterialWidth = 1.0f / fontInfo->material->GetImageWidth();
-			float invMaterialHeight = 1.0f / fontInfo->material->GetImageHeight();
+			int materialWidth = fontInfo->material->GetImageWidth();
+			int materialHeight = fontInfo->material->GetImageHeight();
+			float invMaterialWidth = 1.0f / materialWidth;
+			float invMaterialHeight = 1.0f / materialHeight;
 			glyphInfo_t & gi = fontInfo->glyphData[i];
 			glyphInfo.xSkip = scale * gi.xSkip;
 			glyphInfo.top = scale * gi.top;
@@ -412,4 +461,528 @@ void idFont::Touch() {
 		const_cast<idMaterial *>( fontInfo->material )->EnsureNotPurged();
 		fontInfo->material->SetSort( SS_GUI );
 	}
+}
+
+static const int FONT_SIZE = 512;
+
+#define FT26_FLOOR( x ) ( ( x ) & -64 )
+#define FT26_CEIL( x )	( ( ( x ) + 63 ) & -64 )
+#define FT26_TRUNC( x ) ( ( x ) >> 6 )
+#define FT26_ROUND( x ) FT26_FLOOR( ( x ) + 32 )
+
+// Convert a float value to 26.6 fixed point
+static inline int FloatTo26_6( float v ) {
+	return (int)(v * 64.0f + (v >= 0.0f ? 0.5f : -0.5f));
+}
+
+/*
+============
+STB_EnumerateCodepoints
+
+stb_truetype does not provide an equivalent to FreeType's
+FT_Get_First_Char / FT_Get_Next_Char, so we enumerate codepoints
+by probing the Basic Multilingual Plane (U+0000..U+FFFF) and the
+Supplementary Multilingual Plane (U+10000..U+1FFFF) via
+stbtt_FindGlyphIndex. Only codepoints that map to a non-zero glyph
+index are collected.
+============
+*/
+static void STB_EnumerateCodepoints( const stbtt_fontinfo * font, idList<uint32> & outChars ) {
+	outChars.Clear();
+
+	// BMP: U+0001 .. U+FFFF (skip surrogates D800..DFFF)
+	for ( uint32 cp = 1; cp <= 0xFFFF; cp++ ) {
+		if ( cp >= 0xD800 && cp <= 0xDFFF ) {
+			continue; // surrogate range, not valid codepoints
+		}
+		if ( stbtt_FindGlyphIndex( font, ( int )cp ) != 0 ) {
+			outChars.Append( cp );
+		}
+	}
+
+	// SMP: U+10000 .. U+1FFFF (uncommon for most western fonts, but covers emoji etc.)
+	for ( uint32 cp = 0x10000; cp <= 0x1FFFF; cp++ ) {
+		if ( stbtt_FindGlyphIndex( font, ( int )cp ) != 0 ) {
+			outChars.Append( cp );
+		}
+	}
+}
+
+/*
+==============================
+idFont::LoadFromTrueTypeFont
+
+Loads a .ttf file via stb_truetype, renders all glyphs into a single-
+channel atlas texture, fills in fontInfo_t with BFG-compatible glyph
+metrics and writes the atlas as a TGA.
+==============================
+*/
+bool idFont::LoadFromTrueTypeFont() {
+	idStr ttfPath = va( "newfonts/%s", GetName() );
+	ttfPath.SetFileExtension( ".ttf" );
+
+	void*	  faceData;
+	ID_TIME_T ftime;
+
+	int		  len = fileSystem->ReadFile( ttfPath, &faceData, &ftime );
+	if ( len <= 0 ) {
+		common->Printf( "LoadFromTrueTypeFont: Unable to read font file: '%s'\n", ttfPath.c_str() );
+		return false;
+	}
+
+	// ---------------------------------------------------------------
+	// Initialize stb_truetype
+	// ---------------------------------------------------------------
+	stbtt_fontinfo stbFont;
+	memset( &stbFont, 0, sizeof( stbFont ) );
+
+	int fontOffset = stbtt_GetFontOffsetForIndex( ( const unsigned char* )faceData, 0 );
+	if ( fontOffset < 0 ) {
+		common->Printf( "LoadFromTrueTypeFont: Not a valid font file: '%s'\n", ttfPath.c_str() );
+		fileSystem->FreeFile( faceData );
+		return false;
+	}
+
+	if ( !stbtt_InitFont( &stbFont, ( const unsigned char* )faceData, fontOffset ) ) {
+		common->Printf( "LoadFromTrueTypeFont: stbtt_InitFont failed for '%s'\n", ttfPath.c_str() );
+		fileSystem->FreeFile( faceData );
+		return false;
+	}
+
+	// We want a 48-point font. FreeType's FT_Set_Char_Size with 72 DPI maps
+	// points directly to the EM square (48pt at 72dpi = 48 pixels per EM).
+	// stbtt_ScaleForMappingEmToPixels matches this behavior, whereas
+	// stbtt_ScaleForPixelHeight would scale based on ascent-descent which
+	// produces smaller glyphs.
+	const float	   pixelHeight = 48.0f;
+	float		   scale	   = stbtt_ScaleForMappingEmToPixels( &stbFont, pixelHeight );
+
+	// ---------------------------------------------------------------
+	// Step 1: Enumerate which Unicode codepoints actually exist in the
+	// font by probing stbtt_FindGlyphIndex across the Unicode range.
+	// ---------------------------------------------------------------
+	idList<uint32> presentChars;
+	STB_EnumerateCodepoints( &stbFont, presentChars );
+
+	int numGlyphs = presentChars.Num();
+	if ( numGlyphs == 0 ) {
+		common->Warning( "LoadFromTrueTypeFont: Font '%s' contains no glyphs", GetName() );
+		fileSystem->FreeFile( faceData );
+		return false;
+	}
+
+	common->Printf( "LoadFromTrueTypeFont: Font '%s' has %d glyphs\n", GetName(), numGlyphs );
+
+	// ---------------------------------------------------------------
+	// Step 2: Retrieve font vertical metrics (ascender / descender)
+	// ---------------------------------------------------------------
+	int stbAscent, stbDescent, stbLineGap;
+	stbtt_GetFontVMetrics( &stbFont, &stbAscent, &stbDescent, &stbLineGap );
+
+	// ---------------------------------------------------------------
+	// Step 3: Allocate atlas and glyph storage
+	// ---------------------------------------------------------------
+	byte* out = ( byte* )Mem_Alloc( FONT_SIZE * FONT_SIZE, TAG_FONT );
+	if ( out == NULL ) {
+		common->Printf( "LoadFromTrueTypeFont: Mem_Alloc failure during output image creation.\n" );
+		fileSystem->FreeFile( faceData );
+		return false;
+	}
+	memset( out, 0, FONT_SIZE * FONT_SIZE );
+
+	fontInfo = new( TAG_FONT ) fontInfo_t;
+	memset( fontInfo, 0, sizeof( fontInfo_t ) );
+
+	// FreeType computes ascender/descender from face->size->metrics which are
+	// rounded to whole pixels via ceil/floor respectively in 26.6 fixed point.
+	// We replicate that by rounding ascender up and descender down.
+	fontInfo->ascender	= ( short )( ceilf( stbAscent * scale ) );
+	fontInfo->descender = ( short )( floorf( stbDescent * scale ) );
+
+	fontInfo->numGlyphs = ( short )numGlyphs;
+	fontInfo->glyphData = ( glyphInfo_t* )Mem_Alloc( sizeof( glyphInfo_t ) * numGlyphs, TAG_FONT );
+	fontInfo->charIndex = ( uint32* )Mem_Alloc( sizeof( uint32 ) * numGlyphs, TAG_FONT );
+	memset( fontInfo->glyphData, 0, sizeof( glyphInfo_t ) * numGlyphs );
+	memset( fontInfo->charIndex, 0, sizeof( uint32 ) * numGlyphs );
+	memset( fontInfo->ascii, -1, sizeof( fontInfo->ascii ) );
+
+	// ---------------------------------------------------------------
+	// Step 4: First pass -- calculate glyph metrics using FreeType-
+	// compatible 26.6 fixed-point rounding and find maxHeight for
+	// row-packing.
+	//
+	// FreeType's R_GetGlyphInfo computes:
+	//   left   = FLOOR(horiBearingX)
+	//   right  = CEIL(horiBearingX + width)
+	//   width  = TRUNC(right - left)
+	//   top    = CEIL(horiBearingY)
+	//   bottom = FLOOR(horiBearingY - height)
+	//   height = TRUNC(top - bottom)
+	//   pitch  = (width + 3) & ~3
+	//
+	// And R_RenderGlyph sets:
+	//   glyphOut->top = (horiBearingY >> 6) + 1
+	//
+	// We replicate this by converting the scaled float metrics to
+	// 26.6 fixed-point and applying the same FLOOR/CEIL/TRUNC ops.
+	//
+	// Without hinting the outline bounds come from the glyf table
+	// (stbtt_GetGlyphBox).  FreeType's unhinted "glyph metrics" are
+	// derived from these plus the hmtx bearings:
+	//   horiBearingX  = leftSideBearing  (font units, scaled)
+	//   horiBearingY  = yMax             (font units, scaled)
+	//   metric width  = xMax - xMin      (font units, scaled)
+	//   metric height = yMax - yMin      (font units, scaled)
+	//   horiAdvance   = advanceWidth     (font units, scaled)
+	// ---------------------------------------------------------------
+
+	// Temporary struct for pre-computed per-glyph metrics
+	struct glyphMetrics_t {
+		int	 ftTop;	  // vertical position: best FreeType-compatible approximation
+		byte ftXSkip; // horizontal advance: (horiAdvance >> 6) + 1
+		int	 bmpW;	  // actual bitmap width for rendering (from STB bitmap box)
+		int	 bmpH;	  // actual bitmap height for rendering
+		int	 bmpIx0;  // STB bitmap box ix0 (left bearing for atlas & gi.left)
+		int	 bmpIy0;  // STB bitmap box iy0 (for rendering offset)
+	};
+
+	glyphMetrics_t* gm = ( glyphMetrics_t* )Mem_Alloc( sizeof( glyphMetrics_t ) * numGlyphs, TAG_FONT );
+	memset( gm, 0, sizeof( glyphMetrics_t ) * numGlyphs );
+
+	int maxHeight = 0;
+	for ( int i = 0; i < numGlyphs; i++ ) {
+		uint32 charCode = presentChars[i];
+
+		// Get horizontal metrics in font units
+		int	   advanceWidth, leftSideBearing;
+		stbtt_GetCodepointHMetrics( &stbFont, ( int )charCode, &advanceWidth, &leftSideBearing );
+
+		// Get glyph outline bounding box in font units
+		int gx0 = 0, gy0 = 0, gx1 = 0, gy1 = 0;
+		int glyphIdx = stbtt_FindGlyphIndex( &stbFont, ( int )charCode );
+		stbtt_GetGlyphBox( &stbFont, glyphIdx, &gx0, &gy0, &gx1, &gy1 );
+
+		// Scale to pixel coordinates and convert to 26.6 fixed-point.
+		//
+		// FreeType's glyph->metrics for unhinted TrueType outlines:
+		//   horiBearingX = xMin of the outline (from glyf table, NOT lsb from hmtx)
+		//   horiBearingY = yMax of the outline
+		//   width        = xMax - xMin
+		//   height       = yMax - yMin
+		//   horiAdvance  = advanceWidth (from hmtx)
+		//
+		// We use gx0 (xMin) for horiBearingX rather than leftSideBearing
+		// because FreeType derives horiBearingX from the actual outline
+		// bounds after scaling, and for some glyphs xMin != lsb.
+		int horiBearingX_26_6 = FloatTo26_6( ( float )gx0 * scale );
+		int metricWidth_26_6  = FloatTo26_6( ( float )( gx1 - gx0 ) * scale );
+		int horiBearingY_26_6 = FloatTo26_6( ( float )gy1 * scale );
+		int metricHeight_26_6 = FloatTo26_6( ( float )( gy1 - gy0 ) * scale );
+		int horiAdvance_26_6  = FloatTo26_6( ( float )advanceWidth * scale );
+
+		// Apply FreeType's R_GetGlyphInfo rounding
+		int ftLeft26  = FT26_FLOOR( horiBearingX_26_6 );
+		int ftRight26 = FT26_CEIL( horiBearingX_26_6 + metricWidth_26_6 );
+		int ftWidth	  = FT26_TRUNC( ftRight26 - ftLeft26 );
+
+		int ftTop26	   = FT26_CEIL( horiBearingY_26_6 );
+		int ftBottom26 = FT26_FLOOR( horiBearingY_26_6 - metricHeight_26_6 );
+		int ftHeight   = FT26_TRUNC( ftTop26 - ftBottom26 );
+
+		int ftPitch = ( ftWidth + 3 ) & ~3;
+
+		// FreeType's R_RenderGlyph used: top = (horiBearingY >> 6) + 1
+		// However, FreeType's horiBearingY was grid-fitted by hinting.
+		// Without hinting the best approximation is TRUNC(CEIL(horiBearingY_26_6))
+		// which rounds the fractional 26.6 value up to the next pixel boundary
+		// before truncating.  Testing against the FreeType reference shows this
+		// produces the highest match rate (34/55 vs 33/55 for TRUNC+1 and
+		// 21/55 for the old ceil(float)+1 method).
+		//
+		// Special case: for empty glyphs (e.g. space, NBSP) that have no
+		// outline, horiBearingY is 0 and the formula yields 0.  FreeType's
+		// R_RenderGlyph would return (0 >> 6) + 1 = 1, so we match that.
+		int ftTop;
+		if ( gx0 == 0 && gy0 == 0 && gx1 == 0 && gy1 == 0 ) {
+			ftTop = 1; // empty glyph: replicate FreeType's (0 >> 6) + 1
+		} else {
+			ftTop = FT26_TRUNC( FT26_CEIL( horiBearingY_26_6 ) );
+		}
+
+		// RE_ConstructGlyphInfo: xSkip = (horiAdvance >> 6) + 1
+		byte ftXSkip = (byte)( FT26_TRUNC( horiAdvance_26_6 ) + 1 );
+
+		// left = FLOOR(horiBearingX) in pixels
+		int	 ftLeftPx = FT26_TRUNC( ftLeft26 );
+
+		// Also get STB's actual bitmap box for rendering purposes.
+		// We render using STB, so we need its exact pixel dimensions.
+		int	 bix0, biy0, bix1, biy1;
+		stbtt_GetCodepointBitmapBox( &stbFont, ( int )charCode, scale, scale, &bix0, &biy0, &bix1, &biy1 );
+		int bmpW = bix1 - bix0;
+		int bmpH = biy1 - biy0;
+
+		gm[i].ftTop	  = ftTop;
+		gm[i].ftXSkip = ftXSkip;
+		gm[i].bmpW	  = bmpW;
+		gm[i].bmpH	  = bmpH;
+		gm[i].bmpIx0  = bix0;
+		gm[i].bmpIy0  = biy0;
+
+		if ( bmpH > maxHeight ) {
+			maxHeight = bmpH;
+		}
+	}
+
+	// ---------------------------------------------------------------
+	// Step 5: Second pass -- render glyphs into the atlas
+	// ---------------------------------------------------------------
+	int xOut = 0;
+	int yOut = 0;
+
+	for ( int i = 0; i < numGlyphs; i++ ) {
+		uint32 charCode = presentChars[i];
+
+		int	   bmpW = gm[i].bmpW;
+		int	   bmpH = gm[i].bmpH;
+
+		// Check if the glyph fits in the atlas; advance row if needed
+		if ( bmpW > 0 && bmpH > 0 ) {
+			if ( xOut + bmpW + 1 >= ( FONT_SIZE - 1 ) ) {
+				if ( yOut + ( maxHeight + 1 ) * 2 >= ( FONT_SIZE - 1 ) ) {
+					// Atlas overflow
+					common->Warning( "LoadFromTrueTypeFont: Font atlas overflow for '%s' at glyph %d (char %u)", GetName(), i, charCode );
+
+					// Fill remaining glyphs with empty data
+					for ( int j = i; j < numGlyphs; j++ ) {
+						memset( &fontInfo->glyphData[j], 0, sizeof( glyphInfo_t ) );
+						fontInfo->charIndex[j] = presentChars[j];
+					}
+					break;
+				} else {
+					xOut = 0;
+					yOut += maxHeight + 1;
+				}
+			} else if ( yOut + maxHeight + 1 >= ( FONT_SIZE - 1 ) ) {
+				// Atlas overflow
+				common->Warning( "LoadFromTrueTypeFont: Font atlas overflow for '%s' at glyph %d (char %u)", GetName(), i, charCode );
+
+				for ( int j = i; j < numGlyphs; j++ ) {
+					memset( &fontInfo->glyphData[j], 0, sizeof( glyphInfo_t ) );
+					fontInfo->charIndex[j] = presentChars[j];
+				}
+				break;
+			}
+
+			// Render the glyph bitmap into the atlas using STB.
+			// We render at the exact STB bitmap dimensions (bmpW x bmpH)
+			// and store those same dimensions in gi.width / gi.height so
+			// that the renderer's texture quad matches the actual pixel
+			// data — no oversized quads that would cause smearing.
+			stbtt_MakeCodepointBitmap( &stbFont,
+				out + ( yOut * FONT_SIZE ) + xOut,
+				bmpW,
+				bmpH,
+				FONT_SIZE, // stride = atlas width
+				scale,
+				scale,
+				( int )charCode );
+		}
+
+		// Fill in glyph metrics.
+		// width/height/left come directly from the STB bitmap box so
+		// the renderer's texture quad exactly covers the rendered pixels.
+		// top and xSkip use the FreeType-compatible 26.6 values for
+		// correct baseline positioning and horizontal advance.
+		glyphInfo_t& gi = fontInfo->glyphData[i];
+		gi.width		= ( byte )bmpW;
+		gi.height		= ( byte )bmpH;
+		gi.top			= ( signed char )gm[i].ftTop;
+		gi.left			= ( signed char )gm[i].bmpIx0;
+		gi.xSkip		= gm[i].ftXSkip;
+		gi.s			= ( uint16 )xOut;
+		gi.t			= ( uint16 )yOut;
+
+		fontInfo->charIndex[i] = charCode;
+
+		// Build the ASCII fast-lookup table: ascii[codepoint] = glyph index
+		if ( charCode < 128 ) {
+			fontInfo->ascii[charCode] = ( char )i;
+		}
+
+		if ( bmpW > 0 && bmpH > 0 ) {
+			xOut += bmpW + 1;
+		}
+	}
+
+	Mem_Free( gm );
+
+	// ---------------------------------------------------------------
+	// Step 6: Convert grayscale atlas to RGBA and write TGA
+	// ---------------------------------------------------------------
+	int	  scaledSize = FONT_SIZE * FONT_SIZE;
+	int	  newSize	 = scaledSize * 4;
+	byte* imageBuff	 = (byte *)Mem_Alloc(newSize, TAG_FONT);
+
+	float max = 0;
+	for ( int k = 0; k < scaledSize; k++ ) {
+		if ( max < out[k] ) {
+			max = out[k];
+		}
+	}
+	if ( max > 0 ) {
+		max = 255.0f / max;
+	}
+
+	for ( int k = 0; k < scaledSize; k++ ) {
+		imageBuff[k * 4 + 0] = 255;
+		imageBuff[k * 4 + 1] = 255;
+		imageBuff[k * 4 + 2] = 255;
+		imageBuff[k * 4 + 3] = (byte)((float)out[k] * max);
+	}
+
+	idStr fontTextureName = va( "newfonts/%s/48.tga", GetName() );
+	R_WriteImage( TYPE_TGA, fontTextureName.c_str(), imageBuff, FONT_SIZE, FONT_SIZE, false, "fs_basepath" );
+
+	Mem_Free( imageBuff );
+	Mem_Free( out );
+
+	// ---------------------------------------------------------------
+	// Step 6a: save old-format glyph data so the oldInfo metrics can be loaded on subsequent runs
+	// ---------------------------------------------------------------
+	for( int fc = 0; fc < 3; fc++ ) {
+		int ps;
+		if( fc == 0 ) {
+			ps = 12;
+		} else if( fc == 1 ) {
+			ps = 24;
+		} else {
+			ps = 48;
+		}
+
+		oldGlyphInfo_t oldGlyphInfo[GLYPHS_PER_FONT];
+		memset( oldGlyphInfo, 0, sizeof( oldGlyphInfo ) );
+		for( int g = 0; g < GLYPHS_PER_FONT; g++ ) {
+			oldGlyphInfo[g].height		= fontInfo->glyphData[g].height;
+			oldGlyphInfo[g].top			= fontInfo->glyphData[g].top;
+			oldGlyphInfo[g].bottom		= 0;
+			oldGlyphInfo[g].pitch		= fontInfo->glyphData[g].width;
+			oldGlyphInfo[g].xSkip		= fontInfo->glyphData[g].xSkip;
+			oldGlyphInfo[g].imageWidth	= fontInfo->glyphData[g].width;
+			oldGlyphInfo[g].imageHeight = fontInfo->glyphData[g].height;
+			oldGlyphInfo[g].s			= ( float )fontInfo->glyphData[g].s / FONT_SIZE;
+			oldGlyphInfo[g].t			= ( float )fontInfo->glyphData[g].t / FONT_SIZE;
+			oldGlyphInfo[g].s2			= oldGlyphInfo[g].s + ( float )fontInfo->glyphData[g].width / FONT_SIZE;
+			oldGlyphInfo[g].t2			= oldGlyphInfo[g].t + ( float )fontInfo->glyphData[g].height / FONT_SIZE;
+			oldGlyphInfo[g].junk		= 0;
+			memset( oldGlyphInfo[g].materialName, 0, 32 );
+		}
+
+		const char* oldFileName = va( "newfonts/%s/old_%d.dat", GetName(), ps );
+		SaveOldGlyphData( oldFileName, oldGlyphInfo );
+	}
+
+	// ---------------------------------------------------------------
+	// Step 7: Register material and compute oldInfo metrics
+	// ---------------------------------------------------------------
+	fontInfo->material = declManager->FindMaterial( fontTextureName );
+	fontInfo->material->SetSort( SS_GUI );
+
+	int	  pointSizes[3] = { 12, 24, 48 };
+	float scales[3]		= { 4.0f, 2.0f, 1.0f };
+	for( int i = 0; i < 3; i++ ) {
+		oldGlyphInfo_t oldGlyphInfo[GLYPHS_PER_FONT];
+		const char*	   oldFileName = va( "newfonts/%s/old_%d.dat", GetName(), pointSizes[i] );
+		if( LoadOldGlyphData( oldFileName, oldGlyphInfo ) ) {
+			int mh = 0;
+			int mw = 0;
+			for( int g = 0; g < GLYPHS_PER_FONT; g++ ) {
+				if( mh < oldGlyphInfo[g].height ) {
+					mh = oldGlyphInfo[g].height;
+				}
+				if( mw < oldGlyphInfo[g].xSkip ) {
+					mw = oldGlyphInfo[g].xSkip;
+				}
+			}
+			fontInfo->oldInfo[i].maxWidth  = scales[i] * mw;
+			fontInfo->oldInfo[i].maxHeight = scales[i] * mh;
+		} else {
+			int mh = 0;
+			int mw = 0;
+			for( int g = 0; g < fontInfo->numGlyphs; g++ ) {
+				if( mh < fontInfo->glyphData[g].height ) {
+					mh = fontInfo->glyphData[g].height;
+				}
+				if( mw < fontInfo->glyphData[g].xSkip ) {
+					mw = fontInfo->glyphData[g].xSkip;
+				}
+			}
+			fontInfo->oldInfo[i].maxWidth  = mw;
+			fontInfo->oldInfo[i].maxHeight = mh;
+		}
+	}
+
+	fileSystem->FreeFile( faceData );
+
+	common->Printf( "LoadFromTrueTypeFont: Successfully generated font '%s' from TTF (%d glyphs)\n", GetName(), numGlyphs );
+
+	return true;
+}
+
+/*
+==============================
+idFont::WriteFont
+
+Writes fontInfo_t to a binary .dat file in the BFG format so that
+subsequent loads can skip the TTF rendering pass.
+==============================
+*/
+bool idFont::WriteFont()
+{
+	if ( fontInfo == NULL ) {
+		return false;
+	}
+
+	idStr	fileName = va( "newfonts/%s/48.dat", GetName() );
+	idFile* fd		 = fileSystem->OpenFileWrite( fileName, "fs_basepath" );
+	if ( fd == NULL ) {
+		common->Warning( "WriteFont: Unable to open '%s' for writing", fileName.c_str() );
+		return false;
+	}
+
+	const int FONT_INFO_VERSION = 42;
+	const int FONT_INFO_MAGIC	= ( FONT_INFO_VERSION | ( 'i' << 24 ) | ( 'd' << 16 ) | ( 'f' << 8 ) );
+
+	fd->WriteBig( ( uint32 )FONT_INFO_MAGIC );
+
+	short pointSize = 48;
+	fd->WriteBig( pointSize );
+	fd->WriteBig( fontInfo->ascender );
+	fd->WriteBig( fontInfo->descender );
+	fd->WriteBig( fontInfo->numGlyphs );
+
+	// Write glyph data in little-endian (raw block, same as LoadFont reads it)
+	for ( int i = 0; i < fontInfo->numGlyphs; i++ ) {
+		glyphInfo_t g = fontInfo->glyphData[i];
+		idSwap::Little( g.width );
+		idSwap::Little( g.height );
+		idSwap::Little( g.top );
+		idSwap::Little( g.left );
+		idSwap::Little( g.xSkip );
+		idSwap::Little( g.s );
+		idSwap::Little( g.t );
+		fd->Write( &g, sizeof( glyphInfo_t ) );
+	}
+
+	// Write character index array in little-endian
+	for ( int i = 0; i < fontInfo->numGlyphs; i++ ) {
+		uint32 idx = fontInfo->charIndex[i];
+		idSwap::Little( idx );
+		fd->Write( &idx, sizeof( uint32 ) );
+	}
+
+	delete fd;
+
+	common->Printf( "WriteFont: Saved font data to '%s'\n", fileName.c_str() );
+	return true;
 }

@@ -40,7 +40,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <xmmintrin.h>
 
-#define M_PI	3.14159265358979323846f
+// SRS - Add guards to prevent override of standard math defines
+#ifdef M_PI
+#undef M_PI
+#define M_PI	3.14159265358979323846f  /* pi */
+#endif
 
 /*
 ============
