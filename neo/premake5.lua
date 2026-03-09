@@ -143,18 +143,11 @@ workspace("Doom3")
 			links({"Game-D3XP"})
 		end
 
-		filter("system:windows")
-			libdirs({"external/SDL3/lib/" .. getArchitectureString()})
+		filter("platforms:Win32")
+			libdirs({
+				"external/SDL3/lib/x86"
+			})
 		filter({})
-
-		filter("system:linux")
-			libdirs({"external/SDL3/lib/" .. getArchitectureString()})
-		filter({})
-
-		filter("system:macosx")
-			libdirs({"external/SDL3/lib/" .. getArchitectureString()})
-		filter({})
-
 		links({"SDL3"})
 
 		pchsource("framework/precompiled.cpp")
