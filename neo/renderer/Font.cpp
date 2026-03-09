@@ -687,9 +687,9 @@ bool idFont::LoadFromTrueTypeFont() {
 
 		int ftTop26	   = FT26_CEIL( horiBearingY_26_6 );
 		int ftBottom26 = FT26_FLOOR( horiBearingY_26_6 - metricHeight_26_6 );
-		int ftHeight   = FT26_TRUNC( ftTop26 - ftBottom26 );
+		//int ftHeight   = FT26_TRUNC( ftTop26 - ftBottom26 );
 
-		int ftPitch = ( ftWidth + 3 ) & ~3;
+		//int ftPitch = ( ftWidth + 3 ) & ~3;
 
 		// FreeType's R_RenderGlyph used: top = (horiBearingY >> 6) + 1
 		// However, FreeType's horiBearingY was grid-fitted by hinting.
@@ -713,7 +713,7 @@ bool idFont::LoadFromTrueTypeFont() {
 		byte ftXSkip = (byte)( FT26_TRUNC( horiAdvance_26_6 ) + 1 );
 
 		// left = FLOOR(horiBearingX) in pixels
-		int	 ftLeftPx = FT26_TRUNC( ftLeft26 );
+		//int	 ftLeftPx = FT26_TRUNC( ftLeft26 );
 
 		// Also get STB's actual bitmap box for rendering purposes.
 		// We render using STB, so we need its exact pixel dimensions.

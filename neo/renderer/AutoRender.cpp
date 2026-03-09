@@ -130,7 +130,7 @@ void idAutoRender::RenderFrame() {
 
 	const int width = renderSystem->GetWidth();
 	const int height = renderSystem->GetHeight();
-	const int guardBand = height / 24;
+	//const int guardBand = height / 24;
 
 	GL_ViewportAndScissor( 0, 0, width, height );
 	RenderBackground();
