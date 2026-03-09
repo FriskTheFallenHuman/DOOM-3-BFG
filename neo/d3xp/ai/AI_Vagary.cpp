@@ -48,8 +48,8 @@ private:
 	void	Event_ThrowObjectAtEnemy( idEntity *ent, float speed );
 };
 
-const idEventDef AI_Vagary_ChooseObjectToThrow( "vagary_ChooseObjectToThrow", "vvfff", 'e' );
-const idEventDef AI_Vagary_ThrowObjectAtEnemy( "vagary_ThrowObjectAtEnemy", "ef" );
+extern const idEventDef AI_Vagary_ChooseObjectToThrow;
+extern const idEventDef AI_Vagary_ThrowObjectAtEnemy;
 
 CLASS_DECLARATION( idAI, idAI_Vagary )
 	EVENT( AI_Vagary_ChooseObjectToThrow,	idAI_Vagary::Event_ChooseObjectToThrow )
