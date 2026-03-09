@@ -41,7 +41,9 @@ Contains the OggFile declaration.
 #define STB_VORBIS_NO_STDIO
 #define STB_VORBIS_NO_PUSHDATA_API // we're using the pulldata API
 #define STB_VORBIS_HEADER_ONLY
+#pragma warning(push, 0)
 #include "stb/stb_vorbis.h"
+#pragma warning(pop)
 
 /*
 ================================================

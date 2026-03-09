@@ -41,4 +41,6 @@ If you have questions concerning this license or the applicable additional terms
 //#endif
 #define STB_VORBIS_NO_STDIO
 #define STB_VORBIS_NO_PUSHDATA_API // we're using the pulldata API
+#pragma warning(push, 0)
 #include "stb/stb_vorbis.h"
+#pragma warning(pop)
