@@ -5122,6 +5122,15 @@ bool idAI::UpdateAnimationControllers() {
 
 /***********************************************************************
 
+idAI_Vagary
+
+***********************************************************************/
+
+const idEventDef AI_Vagary_ChooseObjectToThrow( "vagary_ChooseObjectToThrow", "vvfff", 'e' );
+const idEventDef AI_Vagary_ThrowObjectAtEnemy( "vagary_ThrowObjectAtEnemy", "ef" );
+
+/***********************************************************************
+
 idCombatNode
 
 ***********************************************************************/
