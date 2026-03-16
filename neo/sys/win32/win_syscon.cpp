@@ -151,20 +151,26 @@ void Sys_BindCrtHandlesToStdHandles( bool bindStdIn, bool bindStdOut, bool bindS
 */
 void Sys_CreateConsole() {
 	// We allocate our console first
-	if( AllocConsole() ) {
+    if( AllocConsole() ) {
 		// Update the C/C++ runtime standard input, output, and error targets to use the console window
-		Sys_BindCrtHandlesToStdHandles( true, true, true );
-		SetConsoleTitle( "Console Output" );
-		SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+        Sys_BindCrtHandlesToStdHandles( true, true, true );
+        SetConsoleTitle( "Console Output" );
+        SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+
+        // Remove the close buttons.
+        HMENU hSysMenu = GetSystemMenu( GetConsoleWindow(), FALSE );
+        if ( hSysMenu != NULL ) {
+            DeleteMenu( hSysMenu, SC_CLOSE, MF_BYCOMMAND );
+            DeleteMenu( hSysMenu, SC_MAXIMIZE, MF_BYCOMMAND );
+        }
 
 		// Hide it by default
-		HWND window = FindWindowA( "ConsoleWindowClass", NULL );
-		ShowWindow( window, SW_HIDE );
+        ShowWindow( GetConsoleWindow(), SW_HIDE );
 
 		// Start the console input thread
-		std::thread consoleInputThread( Sys_ConsoleInputThread );
-		consoleInputThread.detach();
-	}
+        std::thread consoleInputThread( Sys_ConsoleInputThread );
+        consoleInputThread.detach();
+    }
 }
 
 /*
@@ -179,7 +185,7 @@ void Sys_DestroyConsole() {
 */
 void Sys_ShowConsole() {
 
-	HWND window = FindWindowA( "ConsoleWindowClass", NULL );
+	HWND window = GetConsoleWindow();
 	if ( !window ) {
 		return;
 	}
@@ -192,7 +198,7 @@ void Sys_ShowConsole() {
 */
 void Sys_HideConsole() {
 
-	HWND window = FindWindowA( "ConsoleWindowClass", NULL );
+	HWND window = GetConsoleWindow();
 	if ( !window ) {
 		return;
 	}
@@ -228,13 +234,6 @@ void Sys_ConsoleInputThread() {
 ** Sys_ConsoleInput
 */
 char *Sys_ConsoleInput() {
-#ifndef _DEBUG
-	// Dont waste resources if we didn't have the log opened
-	if ( !win32.win_viewlog.GetBool() ) {
-		return NULL;
-	}
-#endif
-
 	Sys_MutexLock( win32.criticalSections[CRITICAL_SECTION_ONE], false );
 
 	if ( returnedText[0] == 0 ) {
@@ -252,64 +251,78 @@ char *Sys_ConsoleInput() {
 
 
 /*
+** Q3ColorToConsoleAttr
+** Credits to ioQuake3
+*/
+static WORD Q3ColorToConsoleAttr( char code ) {
+	switch ( code ) {
+		case '0': return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;                          // DEFAULT
+		case '1': return FOREGROUND_RED | FOREGROUND_INTENSITY;                                        // RED
+		case '2': return FOREGROUND_GREEN | FOREGROUND_INTENSITY;                                      // GREEN
+		case '3': return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;                     // YELLOW
+		case '4': return FOREGROUND_BLUE | FOREGROUND_INTENSITY;                                       // BLUE
+		case '5': return FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;                    // CYAN
+		case '6': return FOREGROUND_RED | FOREGROUND_GREEN;                                            // ORANGE
+		case '7': return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;   // WHITE
+		case '8': return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;                          // GRAY
+		case '9': return 0;                                                                            // BLACK
+		default:  return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+	}
+}
+
+#define CON_DEFAULT_ATTR ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE )
+
+/*
 ** Conbuf_AppendText
 */
-void Conbuf_AppendText( const char *pMsg )
-{
-#define CONSOLE_BUFFER_SIZE		16384
+void Conbuf_AppendText( const char *pMsg ) {
+#define CONSOLE_BUFFER_SIZE 16384
 
-	char buffer[CONSOLE_BUFFER_SIZE*2];
-	char *b = buffer;
-	const char *msg;
-	int bufLen;
-	int i = 0;
-	static unsigned long s_totalChars;
+	HANDLE hConsole = GetStdHandle( STD_OUTPUT_HANDLE );
 
-	//
-	// if the message is REALLY long, use just the last portion of it
-	//
-	if ( strlen( pMsg ) > CONSOLE_BUFFER_SIZE - 1 )	{
+	const char *msg = pMsg;
+	if ( strlen( pMsg ) > CONSOLE_BUFFER_SIZE - 1 ) {
 		msg = pMsg + strlen( pMsg ) - CONSOLE_BUFFER_SIZE + 1;
-	} else {
-		msg = pMsg;
 	}
 
-	//
-	// copy into an intermediate buffer
-	//
-	while ( msg[i] && ( ( b - buffer ) < sizeof( buffer ) - 1 ) ) {
-		if ( msg[i] == '\n' && msg[i+1] == '\r' ) {
-			b[0] = '\r';
-			b[1] = '\n';
-			b += 2;
-			i++;
-		} else if ( msg[i] == '\r' ) {
-			b[0] = '\r';
-			b[1] = '\n';
-			b += 2;
-		} else if ( msg[i] == '\n' ) {
-			b[0] = '\r';
-			b[1] = '\n';
-			b += 2;
-		} else if ( idStr::IsColor( &msg[i] ) ) {
-			i++;
-		} else {
-			*b= msg[i];
-			b++;
+	char   buf[ CONSOLE_BUFFER_SIZE * 2 ];
+	char  *b       = buf;
+	size_t bufRoom = sizeof( buf ) - 1;
+
+	auto FlushBuf = [&]() {
+		if ( b > buf ) {
+			*b = '\0';
+			printf( "%s", buf );
+			b       = buf;
+			bufRoom = sizeof( buf ) - 1;
 		}
-		i++;
+	};
+
+	while ( *msg ) {
+		if ( idStr::IsColor( msg ) ) {
+			FlushBuf();
+			SetConsoleTextAttribute( hConsole, Q3ColorToConsoleAttr( msg[1] ) );
+			msg += 2;
+			continue;
+		}
+
+		if ( msg[0] == '\n' && msg[1] == '\r' ) {
+			if ( bufRoom < 2 ) { FlushBuf(); }
+			*b++ = '\r'; *b++ = '\n';
+			bufRoom -= 2;
+			msg += 2;
+		} else if ( msg[0] == '\r' || msg[0] == '\n' ) {
+			if ( bufRoom < 2 ) { FlushBuf(); }
+			*b++ = '\r'; *b++ = '\n';
+			bufRoom -= 2;
+			msg++;
+		} else {
+			if ( bufRoom < 1 ) { FlushBuf(); }
+			*b++ = *msg++;
+			bufRoom--;
+		}
 	}
-	*b = 0;
-	bufLen = b - buffer;
 
-	s_totalChars += bufLen;
-
-	//
-	// replace selection instead of appending if we're overflowing
-	//
-	if ( s_totalChars > 0x7000 ) {
-		s_totalChars = bufLen;
-	}
-
-	printf( buffer );
+	FlushBuf();
+	SetConsoleTextAttribute( hConsole, CON_DEFAULT_ATTR );
 }

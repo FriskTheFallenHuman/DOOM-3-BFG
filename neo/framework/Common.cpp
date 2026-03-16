@@ -516,9 +516,6 @@ Com_Quit_f
 CONSOLE_COMMAND_SHIP( quit, "quits the game", NULL ) {
 	commonLocal.Quit();
 }
-CONSOLE_COMMAND_SHIP( exit, "exits the game", NULL ) {
-	commonLocal.Quit();
-}
 
 /*
 ===============

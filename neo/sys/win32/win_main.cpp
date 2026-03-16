@@ -126,7 +126,7 @@ int Sys_AllocHook( int nAllocType, void *pvData, size_t nSize, int nBlockUse, lo
 
 	if ( nBlockUse == _CRT_BLOCK )
 	{
-      return( TRUE );
+	  return( TRUE );
 	}
 
 	// get a pointer to memory block header
@@ -174,8 +174,8 @@ Sys_DebugMemory_f
 ==================
 */
 void Sys_DebugMemory_f() {
-  	common->Printf( "Total allocation %8dk in %d blocks\n", debug_total_alloc / 1024, debug_total_alloc_count );
-  	common->Printf( "Current allocation %8dk in %d blocks\n", debug_current_alloc / 1024, debug_current_alloc_count );
+	common->Printf( "Total allocation %8dk in %d blocks\n", debug_total_alloc / 1024, debug_total_alloc_count );
+	common->Printf( "Current allocation %8dk in %d blocks\n", debug_current_alloc / 1024, debug_current_alloc_count );
 }
 
 /*
@@ -865,7 +865,7 @@ void Sys_DLL_Unload( int dllHandle ) {
 		LPVOID lpMsgBuf;
 		FormatMessage(
 			FORMAT_MESSAGE_ALLOCATE_BUFFER,
-		    NULL,
+			NULL,
 			lastError,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 			(LPTSTR) &lpMsgBuf,
@@ -929,7 +929,7 @@ This allows windows to be moved during renderbump
 =============
 */
 void Sys_PumpEvents() {
-    MSG msg;
+	MSG msg;
 
 	// pump the message loop
 	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) {
@@ -946,7 +946,7 @@ void Sys_PumpEvents() {
 		}
 
 		TranslateMessage (&msg);
-      	DispatchMessage (&msg);
+		DispatchMessage (&msg);
 	}
 }
 
@@ -1096,9 +1096,9 @@ void Sys_Init() {
 			}
 		} else if( win32.osversion.dwMajorVersion == 4 && win32.osversion.dwMinorVersion == 90 ) {
 			// WinMe
-		  	win32.sys_arch.SetString( "WinMe (95)" );
+			win32.sys_arch.SetString( "WinMe (95)" );
 		} else {
-		  	win32.sys_arch.SetString( "Unknown 95 variant" );
+			win32.sys_arch.SetString( "Unknown 95 variant" );
 		}
 	} else {
 		win32.sys_arch.SetString( "unknown Windows variant" );
@@ -1137,7 +1137,7 @@ void Sys_Init() {
 			string += "SSE & ";
 		}
 		if ( win32.cpuid & CPUID_SSE2 ) {
-            string += "SSE2 & ";
+			string += "SSE2 & ";
 		}
 		if ( win32.cpuid & CPUID_SSE3 ) {
 			string += "SSE3 & ";
@@ -1211,7 +1211,7 @@ Sys_GetProcessorId
 ================
 */
 cpuid_t Sys_GetProcessorId() {
-    return win32.cpuid;
+	return win32.cpuid;
 }
 
 /*
@@ -1237,187 +1237,12 @@ void Win_Frame() {
 	// if "viewlog" has been modified, show or hide the log console
 	if ( win32.win_viewlog.IsModified() ) {
 		win32.win_viewlog.ClearModified();
-	}
-}
-
-extern "C" { void _chkstk( int size ); };
-void clrstk();
-
-/*
-====================
-TestChkStk
-====================
-*/
-void TestChkStk() {
-	int		buffer[0x1000];
-
-	buffer[0] = 1;
-}
-
-/*
-====================
-HackChkStk
-====================
-*/
-void HackChkStk() {
-	DWORD	old;
-	VirtualProtect( _chkstk, 6, PAGE_EXECUTE_READWRITE, &old );
-	*(byte *)_chkstk = 0xe9;
-	*(int *)((int)_chkstk+1) = (int)clrstk - (int)_chkstk - 5;
-
-	TestChkStk();
-}
-
-/*
-====================
-GetExceptionCodeInfo
-====================
-*/
-const char *GetExceptionCodeInfo( UINT code ) {
-	switch( code ) {
-		case EXCEPTION_ACCESS_VIOLATION: return "The thread tried to read from or write to a virtual address for which it does not have the appropriate access.";
-		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED: return "The thread tried to access an array element that is out of bounds and the underlying hardware supports bounds checking.";
-		case EXCEPTION_BREAKPOINT: return "A breakpoint was encountered.";
-		case EXCEPTION_DATATYPE_MISALIGNMENT: return "The thread tried to read or write data that is misaligned on hardware that does not provide alignment. For example, 16-bit values must be aligned on 2-byte boundaries; 32-bit values on 4-byte boundaries, and so on.";
-		case EXCEPTION_FLT_DENORMAL_OPERAND: return "One of the operands in a floating-point operation is denormal. A denormal value is one that is too small to represent as a standard floating-point value.";
-		case EXCEPTION_FLT_DIVIDE_BY_ZERO: return "The thread tried to divide a floating-point value by a floating-point divisor of zero.";
-		case EXCEPTION_FLT_INEXACT_RESULT: return "The result of a floating-point operation cannot be represented exactly as a decimal fraction.";
-		case EXCEPTION_FLT_INVALID_OPERATION: return "This exception represents any floating-point exception not included in this list.";
-		case EXCEPTION_FLT_OVERFLOW: return "The exponent of a floating-point operation is greater than the magnitude allowed by the corresponding type.";
-		case EXCEPTION_FLT_STACK_CHECK: return "The stack overflowed or underflowed as the result of a floating-point operation.";
-		case EXCEPTION_FLT_UNDERFLOW: return "The exponent of a floating-point operation is less than the magnitude allowed by the corresponding type.";
-		case EXCEPTION_ILLEGAL_INSTRUCTION: return "The thread tried to execute an invalid instruction.";
-		case EXCEPTION_IN_PAGE_ERROR: return "The thread tried to access a page that was not present, and the system was unable to load the page. For example, this exception might occur if a network connection is lost while running a program over the network.";
-		case EXCEPTION_INT_DIVIDE_BY_ZERO: return "The thread tried to divide an integer value by an integer divisor of zero.";
-		case EXCEPTION_INT_OVERFLOW: return "The result of an integer operation caused a carry out of the most significant bit of the result.";
-		case EXCEPTION_INVALID_DISPOSITION: return "An exception handler returned an invalid disposition to the exception dispatcher. Programmers using a high-level language such as C should never encounter this exception.";
-		case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "The thread tried to continue execution after a noncontinuable exception occurred.";
-		case EXCEPTION_PRIV_INSTRUCTION: return "The thread tried to execute an instruction whose operation is not allowed in the current machine mode.";
-		case EXCEPTION_SINGLE_STEP: return "A trace trap or other single-instruction mechanism signaled that one instruction has been executed.";
-		case EXCEPTION_STACK_OVERFLOW: return "The thread used up its stack.";
-		default: return "Unknown exception";
-	}
-}
-
-/*
-====================
-EmailCrashReport
-
-  emailer originally from Raven/Quake 4
-====================
-*/
-void EmailCrashReport( LPSTR messageText ) {
-	static int lastEmailTime = 0;
-
-	if ( Sys_Milliseconds() < lastEmailTime + 10000 ) {
-		return;
-	}
-
-	lastEmailTime = Sys_Milliseconds();
-
-	HINSTANCE mapi = LoadLibrary( "MAPI32.DLL" );
-	if( mapi ) {
-		LPMAPISENDMAIL	MAPISendMail = ( LPMAPISENDMAIL )GetProcAddress( mapi, "MAPISendMail" );
-		if( MAPISendMail ) {
-			MapiRecipDesc toProgrammers =
-			{
-				0,										// ulReserved
-					MAPI_TO,							// ulRecipClass
-					"DOOM 3 Crash",						// lpszName
-					"SMTP:programmers@idsoftware.com",	// lpszAddress
-					0,									// ulEIDSize
-					0									// lpEntry
-			};
-
-			MapiMessage		message = {};
-			message.lpszSubject = "DOOM 3 Fatal Error";
-			message.lpszNoteText = messageText;
-			message.nRecipCount = 1;
-			message.lpRecips = &toProgrammers;
-
-			MAPISendMail(
-				0,									// LHANDLE lhSession
-				0,									// ULONG ulUIParam
-				&message,							// lpMapiMessage lpMessage
-				MAPI_DIALOG,						// FLAGS flFlags
-				0									// ULONG ulReserved
-				);
+		if ( win32.win_viewlog.GetBool() ) {
+			Sys_ShowConsole();
+		} else {
+			Sys_HideConsole();
 		}
-		FreeLibrary( mapi );
 	}
-}
-
-int Sys_FPU_PrintStateFlags( char *ptr, int ctrl, int stat, int tags, int inof, int inse, int opof, int opse );
-
-/*
-====================
-_except_handler
-====================
-*/
-EXCEPTION_DISPOSITION __cdecl _except_handler( struct _EXCEPTION_RECORD *ExceptionRecord, void * EstablisherFrame,
-												struct _CONTEXT *ContextRecord, void * DispatcherContext ) {
-
-	static char msg[ 8192 ];
-	char FPUFlags[2048];
-
-	Sys_FPU_PrintStateFlags( FPUFlags, ContextRecord->FloatSave.ControlWord,
-										ContextRecord->FloatSave.StatusWord,
-										ContextRecord->FloatSave.TagWord,
-										ContextRecord->FloatSave.ErrorOffset,
-										ContextRecord->FloatSave.ErrorSelector,
-										ContextRecord->FloatSave.DataOffset,
-										ContextRecord->FloatSave.DataSelector );
-
-
-	sprintf( msg,
-		"Please describe what you were doing when DOOM 3 crashed!\n"
-		"If this text did not pop into your email client please copy and email it to programmers@idsoftware.com\n"
-			"\n"
-			"-= FATAL EXCEPTION =-\n"
-			"\n"
-			"%s\n"
-			"\n"
-			"0x%x at address 0x%08p\n"
-			"\n"
-			"%s\n"
-			"\n"
-			"EAX = 0x%08x EBX = 0x%08x\n"
-			"ECX = 0x%08x EDX = 0x%08x\n"
-			"ESI = 0x%08x EDI = 0x%08x\n"
-			"EIP = 0x%08x ESP = 0x%08x\n"
-			"EBP = 0x%08x EFL = 0x%08x\n"
-			"\n"
-			"CS = 0x%04x\n"
-			"SS = 0x%04x\n"
-			"DS = 0x%04x\n"
-			"ES = 0x%04x\n"
-			"FS = 0x%04x\n"
-			"GS = 0x%04x\n"
-			"\n"
-			"%s\n",
-			com_version.GetString(),
-			ExceptionRecord->ExceptionCode,
-			ExceptionRecord->ExceptionAddress,
-			GetExceptionCodeInfo( ExceptionRecord->ExceptionCode ),
-			ContextRecord->Eax, ContextRecord->Ebx,
-			ContextRecord->Ecx, ContextRecord->Edx,
-			ContextRecord->Esi, ContextRecord->Edi,
-			ContextRecord->Eip, ContextRecord->Esp,
-			ContextRecord->Ebp, ContextRecord->EFlags,
-			ContextRecord->SegCs,
-			ContextRecord->SegSs,
-			ContextRecord->SegDs,
-			ContextRecord->SegEs,
-			ContextRecord->SegFs,
-			ContextRecord->SegGs,
-			FPUFlags
-		);
-
-	EmailCrashReport( msg );
-	common->FatalError( msg );
-
-    // Tell the OS to restart the faulting instruction
-    return ExceptionContinueExecution;
 }
 
 #define TEST_FPU_EXCEPTIONS	/*	FPU_EXCEPTION_INVALID_OPERATION |		*/	\
@@ -1441,16 +1266,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	Sys_GetCurrentMemoryStatus( exeLaunchMemoryStats );
 
-#if 0
-    DWORD handler = (DWORD)_except_handler;
-    __asm
-    {                           // Build EXCEPTION_REGISTRATION record:
-        push    handler         // Address of handler function
-        push    FS:[0]          // Address of previous handler
-        mov     FS:[0],ESP      // Install new EXECEPTION_REGISTRATION
-    }
-#endif
-
 	win32.hInstance = hInstance;
 	idStr::Copynz( sys_cmdline, lpCmdLine, sizeof( sys_cmdline ) );
 
@@ -1461,6 +1276,10 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	// done before Com/Sys_Init since we need this for error output
 	Sys_CreateConsole();
+
+	// Register the unhandled exception
+	LONG WINAPI Sys_UnhandledExceptionFilter( EXCEPTION_POINTERS * exceptionInfo );
+	SetUnhandledExceptionFilter( Sys_UnhandledExceptionFilter );
 
 	// no abort/retry/fail errors
 	SetErrorMode( SEM_FAILCRITICALERRORS );
@@ -1506,7 +1325,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	::SetFocus( win32.hWnd );
 
-    // main game loop
+	// main game loop
 	while( 1 ) {
 
 		Win_Frame();
@@ -1538,27 +1357,27 @@ __declspec( naked ) void clrstk() {
 	// eax = bytes to add to stack
 	__asm {
 		mov		[parmBytes],eax
-        neg     eax                     ; compute new stack pointer in eax
-        add     eax,esp
-        add     eax,4
-        xchg    eax,esp
-        mov     eax,dword ptr [eax]		; copy the return address
-        push    eax
+		neg     eax                     ; compute new stack pointer in eax
+		add     eax,esp
+		add     eax,4
+		xchg    eax,esp
+		mov     eax,dword ptr [eax]		; copy the return address
+		push    eax
 
-        ; clear to zero
-        push	edi
-        push	ecx
-        mov		edi,esp
-        add		edi,12
-        mov		ecx,[parmBytes]
+		; clear to zero
+		push	edi
+		push	ecx
+		mov		edi,esp
+		add		edi,12
+		mov		ecx,[parmBytes]
 		shr		ecx,2
-        xor		eax,eax
+		xor		eax,eax
 		cld
-        rep	stosd
-        pop		ecx
-        pop		edi
+		rep	stosd
+		pop		ecx
+		pop		edi
 
-        ret
+		ret
 	}
 }
 
@@ -1610,8 +1429,8 @@ void idSysLocal::StartProcess( const char *exePath, bool doexit ) {
 	strncpy( szPathOrig, exePath, _MAX_PATH );
 
 	if( !CreateProcess( NULL, szPathOrig, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi ) ) {
-        common->Error( "Could not start process: '%s' ", szPathOrig );
-	    return;
+		common->Error( "Could not start process: '%s' ", szPathOrig );
+		return;
 	}
 
 	if ( doexit ) {
