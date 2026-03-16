@@ -15,8 +15,9 @@
 #define IDC_SKIP_ALL                    4011
 #define ID_CRASH_TEXT                   4012
 #define IDC_ASSERT_MSG_CTRL             4013
+#define IDC_REPORT_GITHUB				4020
+#define IDC_REGISTER_EDIT				4021
 #define IDC_NOID                        -1
-
 
 // Next default values for new objects
 //

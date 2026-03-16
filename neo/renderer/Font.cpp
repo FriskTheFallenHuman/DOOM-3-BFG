@@ -674,19 +674,19 @@ bool idFont::LoadFromTrueTypeFont() {
 		// We use gx0 (xMin) for horiBearingX rather than leftSideBearing
 		// because FreeType derives horiBearingX from the actual outline
 		// bounds after scaling, and for some glyphs xMin != lsb.
-		int horiBearingX_26_6 = FloatTo26_6( ( float )gx0 * scale );
-		int metricWidth_26_6  = FloatTo26_6( ( float )( gx1 - gx0 ) * scale );
+		//int horiBearingX_26_6 = FloatTo26_6( ( float )gx0 * scale );
+		//int metricWidth_26_6  = FloatTo26_6( ( float )( gx1 - gx0 ) * scale );
 		int horiBearingY_26_6 = FloatTo26_6( ( float )gy1 * scale );
-		int metricHeight_26_6 = FloatTo26_6( ( float )( gy1 - gy0 ) * scale );
+		//int metricHeight_26_6 = FloatTo26_6( ( float )( gy1 - gy0 ) * scale );
 		int horiAdvance_26_6  = FloatTo26_6( ( float )advanceWidth * scale );
 
 		// Apply FreeType's R_GetGlyphInfo rounding
-		int ftLeft26  = FT26_FLOOR( horiBearingX_26_6 );
-		int ftRight26 = FT26_CEIL( horiBearingX_26_6 + metricWidth_26_6 );
-		int ftWidth	  = FT26_TRUNC( ftRight26 - ftLeft26 );
+		//int ftLeft26  = FT26_FLOOR( horiBearingX_26_6 );
+		//int ftRight26 = FT26_CEIL( horiBearingX_26_6 + metricWidth_26_6 );
+		//int ftWidth	  = FT26_TRUNC( ftRight26 - ftLeft26 );
 
-		int ftTop26	   = FT26_CEIL( horiBearingY_26_6 );
-		int ftBottom26 = FT26_FLOOR( horiBearingY_26_6 - metricHeight_26_6 );
+		//int ftTop26	   = FT26_CEIL( horiBearingY_26_6 );
+		//int ftBottom26 = FT26_FLOOR( horiBearingY_26_6 - metricHeight_26_6 );
 		//int ftHeight   = FT26_TRUNC( ftTop26 - ftBottom26 );
 
 		//int ftPitch = ( ftWidth + 3 ) & ~3;

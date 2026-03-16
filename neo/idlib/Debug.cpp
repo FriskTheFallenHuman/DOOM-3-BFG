@@ -125,35 +125,35 @@ CleanupSourceCodeFileName
 ==============
 */
 const char *CleanupSourceCodeFileName( const char *fileName ) {
-    static char newFileNames[4][MAX_STRING_CHARS];
-    static int index;
+	static char newFileNames[4][MAX_STRING_CHARS];
+	static int index;
 
-    index = ( index + 1 ) & 3;
-    char *path = newFileNames[index];
-    strcpy( path, fileName );
+	index = ( index + 1 ) & 3;
+	char *path = newFileNames[index];
+	strcpy( path, fileName );
 
-    for ( int i = 0; path[i]; i++ ) {
-        if ( path[i] == '\\' ) {
-            path[i] = '/';
-        }
-    }
+	for ( int i = 0; path[i]; i++ ) {
+		if ( path[i] == '\\' ) {
+			path[i] = '/';
+		}
+	}
 
-    char *neo = strstr( path, SOURCE_CODE_BASE_FOLDER );
-    if ( neo ) {
-        path = neo + strlen( SOURCE_CODE_BASE_FOLDER );
-    }
+	char *neo = strstr( path, SOURCE_CODE_BASE_FOLDER );
+	if ( neo ) {
+		path = neo + strlen( SOURCE_CODE_BASE_FOLDER );
+	}
 
-    while ( char *topar = strstr( path, "/../" ) ) {
-        char *ptr;
-        for ( ptr = topar; ptr > path && *( ptr - 1 ) != '/'; ptr-- );
-        topar += 4;
-        memmove( ptr, topar, strlen( topar ) + 1 );
-    }
+	while ( char *topar = strstr( path, "/../" ) ) {
+		char *ptr;
+		for ( ptr = topar; ptr > path && *( ptr - 1 ) != '/'; ptr-- );
+		topar += 4;
+		memmove( ptr, topar, strlen( topar ) + 1 );
+	}
 
-    if ( path[0] == '/' ) {
-        path++;
-    }
+	if ( path[0] == '/' ) {
+		path++;
+	}
 
-    return path;
+	return path;
 }
 

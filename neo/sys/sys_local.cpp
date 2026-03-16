@@ -28,6 +28,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "precompiled.h"
 #pragma hdrstop
+
 #include "sys_local.h"
 
 idStrList sysLanguageNames;
@@ -233,12 +234,25 @@ const char * Sys_SecToStr( int sec ) {
 	return timeString;
 }
 
-// return number of supported languages
+
+/*
+==============
+Sys_NumLangs
+
+return number of supported languages
+==============
+*/
 int Sys_NumLangs() {
 	return sysLanguageNames.Num();
 }
 
-// get language name by index
+/*
+==============
+Sys_Lang
+
+get language name by index
+==============
+*/
 const char * Sys_Lang( int idx ) {
 	if ( idx >= 0 && idx < sysLanguageNames.Num() ) {
 		return sysLanguageNames[ idx ];
@@ -246,6 +260,11 @@ const char * Sys_Lang( int idx ) {
 	return "";
 }
 
+/*
+==============
+Sys_LangIndex
+==============
+*/
 int Sys_LangIndex( const char *lang ) {
 	for ( int i = 0; i < sysLanguageNames.Num(); i++ ) {
 		if ( idStr::Icmp( lang, sysLanguageNames[i] ) == 0 ) {
@@ -255,6 +274,11 @@ int Sys_LangIndex( const char *lang ) {
 	return -1;
 }
 
+/*
+==============
+Sys_DefaultLanguage
+==============
+*/
 const char * Sys_DefaultLanguage() {
 	// sku breakdowns are as follows
 	//  EFIGS	Digital

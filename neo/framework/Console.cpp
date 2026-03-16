@@ -63,7 +63,7 @@ public:
 	virtual	void		Print( const char *text );
 	virtual	void		Draw( bool forceFullScreen );
 
-	virtual void		PrintOverlay( idOverlayHandle & handle, justify_t justify, VERIFY_FORMAT_STRING const char * text, idVec4 & textColor, const bool showbackground, textSize_t size, ... );
+	virtual void		PrintOverlay( idOverlayHandle & handle, justify_t justify, VERIFY_FORMAT_STRING const char * text, idVec4 & textColor, bool showbackground, textSize_t size, ... );
 
 	virtual idDebugGraph *	CreateGraph( int numItems );
 	virtual void			DestroyGraph( idDebugGraph * graph );

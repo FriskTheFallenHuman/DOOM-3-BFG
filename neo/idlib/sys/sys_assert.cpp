@@ -90,7 +90,11 @@ INT_PTR CALLBACK AssertDialogProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 			RECT rcDlg, rcDesktop;
 			GetWindowRect( hDlg, &rcDlg );
 			GetWindowRect( GetDesktopWindow(), &rcDesktop );
-			SetWindowPos( hDlg, HWND_TOP, ( ( rcDesktop.right-rcDesktop.left ) - ( rcDlg.right-rcDlg.left ) ) / 2, ( ( rcDesktop.bottom-rcDesktop.top ) - ( rcDlg.bottom-rcDlg.top ) ) / 2, 0, 0, SWP_NOSIZE );
+			SetWindowPos( hDlg, HWND_TOPMOST,
+			    ( rcDesktop.right  - ( rcDlg.right  - rcDlg.left ) ) / 2,
+			    ( rcDesktop.bottom - ( rcDlg.bottom - rcDlg.top  ) ) / 2,
+			    0, 0, SWP_NOSIZE );
+			SetForegroundWindow( hDlg );
 		}
 		return true;
 
@@ -104,7 +108,7 @@ INT_PTR CALLBACK AssertDialogProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 				}
 
 				case 4011 /*IDC_SKIP_ALL*/: {
-					skipAllAssertions = false;
+					skipAllAssertions = true;
 					EndDialog( hDlg, 0 );
 					return true;
 				}
@@ -117,9 +121,7 @@ INT_PTR CALLBACK AssertDialogProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
 			}
 
 			case WM_KEYDOWN: {
-				// Escape?
-				if ( wParam == 2 ) {
-					// Ignore this assert.
+				if ( wParam == VK_ESCAPE ) {
 					EndDialog( hDlg, 0 );
 					return true;
 				}

@@ -25,23 +25,41 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#ifndef __SYS_STACKTRACE_H__
-#define __SYS_STACKTRACE_H__
 
-static const int MAX_LEN = 88;
+#include "precompiled.h"
+#pragma hdrstop
 
-struct debugStackFrame_t {
-	void* pointer;
-	char functionName[MAX_LEN];
-	char fileName[MAX_LEN];
-	int lineNumber;
-};
-void Sys_CaptureStackTrace( int ignoreFrames, uint8 *data, int &len );
-int Sys_GetStackTraceFramesCount( uint8 *data, int len );
-void Sys_DecodeStackTrace( uint8 *data, int len, debugStackFrame_t *frames );
-#if defined( ID_PC_WIN )
-void Sys_CaptureExceptionStack( EXCEPTION_POINTERS *exceptionInfo );
-void Sys_WriteMiniDump( EXCEPTION_POINTERS *exceptionInfo );
-#endif
+#include "win_local.h"
 
-#endif /* !__SYS_STACKTRACE_H__ */
+extern HWND FindParentWindow();
+extern HINSTANCE GetApplicationInstance();
+INT_PTR CALLBACK CrashHandlerDialogProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+
+/*
+** Sys_UnhandledExceptionFilter
+*/
+LONG WINAPI Sys_UnhandledExceptionFilter( EXCEPTION_POINTERS *exceptionInfo ) {
+	static volatile LONG entered = 0;
+	if ( InterlockedExchange( &entered, 1 ) != 0 ) {
+		return EXCEPTION_EXECUTE_HANDLER;
+	}
+ 
+	// Capture the call stack NOW.
+	Sys_CaptureExceptionStack( exceptionInfo );
+ 
+	// Write the minidump.
+	Sys_WriteMiniDump( exceptionInfo );
+ 
+	// Minimise the game window.
+	if ( win32.hWnd ) {
+		ShowWindow( win32.hWnd, SW_MINIMIZE );
+	}
+ 
+	// Show the crash dialog.
+	HWND hParent = FindParentWindow();
+	HINSTANCE hInst = GetApplicationInstance();
+	DialogBox( hInst, MAKEINTRESOURCE( 4001 /*IDD_CRASH_DIALOG*/ ), hParent, CrashHandlerDialogProc );
+ 
+	// Let Windows terminate the process normally.
+	return EXCEPTION_EXECUTE_HANDLER;
+}

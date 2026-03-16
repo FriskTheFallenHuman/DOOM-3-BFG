@@ -68,6 +68,7 @@ static void RB_DrawFlickerBox() {
 	qglClear( GL_COLOR_BUFFER_BIT );
 }
 
+#if 0
 /*
 =============
 RB_SetBuffer
@@ -98,6 +99,7 @@ static void	RB_SetBuffer( const void *data ) {
 		}
 	}
 }
+#endif
 
 /*
 =============
