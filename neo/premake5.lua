@@ -42,7 +42,7 @@ workspace("Doom3")
 	cppdialect("C++14")
 	characterset( "ASCII" )
 
-	includedirs({".", "external", "external/SDL3-3.2.4/include", "idlib"})
+	includedirs({".", "external", "external/raylib/include", "idlib"})
 	defines({"__DOOM__", "ID_PC"})
 	if _OPTIONS["dll"] then
 		defines({"__DOOM_DLL__"})
@@ -145,10 +145,10 @@ workspace("Doom3")
 
 		filter("platforms:Win32")
 			libdirs({
-				"external/SDL3/lib/x86"
+				"external/raylib/lib/x86"
 			})
 		filter({})
-		links({"SDL3"})
+		links({"raylibdll"})
 
 		pchsource("framework/precompiled.cpp")
 		pchheader("")
@@ -163,8 +163,5 @@ workspace("Doom3")
 		filter("files:**.c")
 			enablepch("Off")
 		filter({})
-
-		-- Copy the SDL3 File
-		--postbuildcommands({"{COPYFILE} %[default.config] %[../build/project.config]"})
 
 	group("")
