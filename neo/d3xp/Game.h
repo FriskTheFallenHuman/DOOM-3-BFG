@@ -181,6 +181,11 @@ public:
 	virtual void				Shell_UpdateClientCountdown( int countdown ) = 0;
 	virtual void				Shell_UpdateLeaderboard( const idLeaderboardCallback * callback ) = 0;
 	virtual void				Shell_SetGameComplete() = 0;
+	virtual bool				Shell_IsLoadingActive() const = 0;
+	virtual void				Shell_LoadingShell( const char *mapName, bool & hellMap ) = 0;
+	virtual void				Shell_RenderLoadingShell() = 0;
+	virtual void				Shell_ClearLoadingShell() = 0;
+	virtual void				Shell_UpdateLoadingShell() = 0;
 };
 
 extern idGame *					game;

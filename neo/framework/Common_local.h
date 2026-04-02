@@ -41,9 +41,6 @@ static const int initialHz = 60;
 static const int initialBaseTicks = 1000 / initialHz;
 static const int initialBaseTicksPerSec = initialHz * initialBaseTicks;
 
-static const int LOAD_TIP_CHANGE_INTERVAL = 12000;
-static const int LOAD_TIP_COUNT = 26;
-
 class idGameThread : public idSysThread {
 public:
 	idGameThread() :
@@ -386,12 +383,6 @@ private:
 	idStrList			mpDisplayGameModes;
 	idList<mpMap_t>		mpGameMaps;
 
-	idSWF *				loadGUI;
-	int					nextLoadTip;
-	bool				isHellMap;
-	bool				defaultLoadscreen;
-	idStaticList<int, LOAD_TIP_COUNT>	loadTipList;
-
 	const idMaterial *	splashScreen;
 	const idMaterial *	photsensitivityScreen;
 
@@ -468,8 +459,6 @@ private:
 	void	SendSnapshots();
 	void	SendUsercmds( int localClientNum );
 
-	void	LoadLoadingGui(const char *mapName, bool & hellMap );
-
 	// Meant to be used like:
 	// while ( waiting ) { BusyWait(); }
 	void	BusyWait();
@@ -487,8 +476,6 @@ private:
 	void	ClearWipe();
 
 	void	MoveToNewMap( const char * mapName, bool devmap );
-
-	void	PlayIntroGui();
 
 	void	ScrubSaveGameFileName( idStr &saveFileName ) const;
 };
