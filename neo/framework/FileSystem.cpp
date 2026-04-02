@@ -209,6 +209,7 @@ public:
 	static void				BuildGame_f( const idCmdArgs &args );
 	//static void				FileStats_f( const idCmdArgs &args );
 	static void				WriteResourceFile_f ( const idCmdArgs &args );
+	static void				WriteResourceFileWithDir_f( const idCmdArgs &args );
 	static void				ExtractResourceFile_f( const idCmdArgs &args );
 	static void				UpdateResourceFile_f( const idCmdArgs &args );
 	static void				GenerateResourceCRCs_f( const idCmdArgs &args );
@@ -2244,6 +2245,30 @@ void idFileSystemLocal::WriteResourceFile_f( const idCmdArgs &args ) {
 	idResourceContainer::WriteResourceFile( args.Argv( 1 ), manifest, false );
 }
 
+/*
+================
+idFileSystemLocal::WriteResourceFile_f
+================
+*/
+void idFileSystemLocal::WriteResourceFileWithDir_f( const idCmdArgs &args ) {
+	if ( args.Argc() != 2 ) {
+		common->Printf( "Usage: writeResourceFile <dir>\n" );
+		return;
+	}
+
+	idStrList manifest;
+	idStr path;
+	sprintf( path, "%s/%s", fileSystemLocal.searchPaths[0].path.c_str(), args.Argv(1) );
+	idFileList *files = fileSystemLocal.ListFilesTree( path, "" );
+	for ( int i = 0; i < files->GetNumFiles(); i++ ) {
+		manifest.AddUnique( files->GetFile(i) );
+	}
+	//idResourceContainer::ReadManifestFile(args.Argv(1), manifest);
+	
+	idStr resourcePath;
+	sprintf( resourcePath, "_%s.resources", args.Argv(1) );
+	idResourceContainer::WriteResourceFile( args.Argv(1), manifest, true, path );
+}
 
 /*
 ================
@@ -2709,6 +2734,7 @@ void idFileSystemLocal::Startup() {
 
 	cmdSystem->AddCommand( "buildGame", BuildGame_f, CMD_FL_SYSTEM, "builds game pak files" );
 	cmdSystem->AddCommand( "writeResourceFile", WriteResourceFile_f, CMD_FL_SYSTEM, "writes a .resources file from a supplied manifest" );
+	cmdSystem->AddCommand( "writeResourceFileWithDir", WriteResourceFileWithDir_f, CMD_FL_SYSTEM, "writes a .resources file from a directory" );
 	cmdSystem->AddCommand( "extractResourceFile", ExtractResourceFile_f, CMD_FL_SYSTEM, "extracts to the supplied resource file to the supplied path" );
 	cmdSystem->AddCommand( "updateResourceFile", UpdateResourceFile_f, CMD_FL_SYSTEM, "updates or appends the supplied files in the supplied resource file" );
 
