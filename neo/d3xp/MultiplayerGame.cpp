@@ -1402,7 +1402,9 @@ void idMultiplayerGame::GameHasBeenWon() {
 
 			leaderboardStats_t stats = { playerState[ playerIdx ].fragCount, playerState[ playerIdx ].wins, playerState[ playerIdx ].teamFragCount, playerState[ playerIdx].deaths };
 
-			LeaderboardLocal_Upload( gameLocal.lobbyUserIDs[ playerIdx ], gameLocal.gameType, stats );
+			if ( gameLeadBoards != NULL ) {
+				gameLeadBoards->Upload( gameLocal.lobbyUserIDs[ playerIdx ], gameLocal.gameType, stats );
+			}
 		}
 
 		// Flush all the collectively queued leaderboards all at once. ( Otherwise you get a busy signal on the second "flush" )

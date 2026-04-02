@@ -158,7 +158,7 @@ void idMenuScreen_Shell_Leaderboards::Initialize( idMenuHandler * data ) {
 		for ( int modeIndex = 0; modeIndex < numModes; ++modeIndex ) {
 			// Check the supported modes on the map.
 			if( maps[ mapIndex ].supportedModes & BIT( modeIndex ) ) {
-				int boardID = LeaderboardLocal_GetID( mapIndex, modeIndex );
+				int boardID = gameLeadBoards->GetID( mapIndex, modeIndex );
 				const leaderboardDefinition_t * lbDef = Sys_FindLeaderboardDef( boardID );
 				if ( lbDef != NULL ) {
 					doomLeaderboard_t lb = doomLeaderboard_t( lbDef, lbDef->boardName );

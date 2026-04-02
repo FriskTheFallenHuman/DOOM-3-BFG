@@ -80,6 +80,7 @@ int64 com_engineHz_denominator = 100LL * 60LL;
 #ifdef __DOOM_DLL__
 idGame *		game = NULL;
 idGameEdit *	gameEdit = NULL;
+idGameLeaderboard *		gameLeadBoards = NULL;
 #endif
 
 idCommonLocal	commonLocal;
@@ -928,6 +929,7 @@ void idCommonLocal::LoadGameDLL() {
 
 	game								= gameExport.game;
 	gameEdit							= gameExport.gameEdit;
+	idGameLeaderboard					= gameExport.gameLeadBoards;
 
 #endif
 
@@ -968,6 +970,7 @@ void idCommonLocal::UnloadGameDLL() {
 	}
 	game = NULL;
 	gameEdit = NULL;
+	gameLeadBoards = NULL;
 
 #endif
 }
@@ -1206,8 +1209,8 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 		InitializeMPMapsModes();
 
 		// leaderboards need to be initialized after InitializeMPMapsModes, which populates the MP Map list.
-		if( game != NULL ) {
-			game->Leaderboards_Init();
+		if( gameLeadBoards != NULL ) {
+			gameLeadBoards->Init();
 		}
 
 		CreateMainMenu();
@@ -1339,9 +1342,9 @@ void idCommonLocal::Shutdown() {
 	session->Shutdown();
 
 	// shutdown, deallocate leaderboard definitions.
-	if( game != NULL ) {
-		printf( "game->Leaderboards_Shutdown();\n" );
-		game->Leaderboards_Shutdown();
+	if( gameLeadBoards != NULL ) {
+		printf( "gameLeadBoards->Shutdown();\n" );
+		gameLeadBoards->Shutdown();
 	}
 
 	// shut down the user interfaces

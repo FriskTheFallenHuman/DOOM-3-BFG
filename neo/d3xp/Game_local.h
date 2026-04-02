@@ -511,10 +511,6 @@ public:
 	virtual bool				IsPDAOpen() const;
 	virtual bool				IsPlayerChatting() const;
 
-	// Creates leaderboards for each map/mode defined.
-	virtual void				Leaderboards_Init();
-	virtual void				Leaderboards_Shutdown();
-
 	// MAIN MENU FUNCTIONS
 	virtual void					Shell_Init( const char * filename, idSoundWorld * sw );
 	virtual void					Shell_Cleanup();
