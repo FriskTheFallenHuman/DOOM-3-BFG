@@ -88,7 +88,7 @@ static const char * dialogStateToString[ GDM_MAX + 1 ] = {
 	ASSERT_ENUM_STRING( GDM_OVERLAY_DISABLED, 50 ),
 	ASSERT_ENUM_STRING( GDM_DIRECT_MAP_CHANGE, 51 ),
 	ASSERT_ENUM_STRING( GDM_DELETE_AUTOSAVE, 52 ),
-	ASSERT_ENUM_STRING( GDM_QUICK_SAVE, 53 ),
+	ASSERT_ENUM_STRING( GDM_GAME_ERROR, 53 ),
 	ASSERT_ENUM_STRING( GDM_MULTI_RETRY, 54 ),
 	ASSERT_ENUM_STRING( GDM_MULTI_SELF_DESTRUCT, 55 ),
 	ASSERT_ENUM_STRING( GDM_MULTI_VDM_QUIT, 56 ),
@@ -189,7 +189,6 @@ There are a few dialog types that should pause so the user has the ability to re
 bool DialogMsgShouldWait( gameDialogMessages_t msg ) {
 	switch ( msg ) {
 		case GDM_SAVING:
-		case GDM_QUICK_SAVE:
 		case GDM_LOADING_PROFILE:
 		case GDM_INSTALLING_TROPHIES:
 		case GDM_REFRESHING:
@@ -886,10 +885,8 @@ idStr idCommonDialog::GetDialogMsg( gameDialogMessages_t msg, idStr & message, i
 			message.Append( "saving" );
 			break;
 		}
-		case GDM_QUICK_SAVE: {
-			title = "#str_save_dialog_heading";
-			message.Append( "saving" );
-			//message = "#STR_SWF_SAVING";
+		case GDM_GAME_ERROR: {
+			title = "#str_01754";
 			break;
 		}
 		case GDM_OVERWRITE_SAVE: {

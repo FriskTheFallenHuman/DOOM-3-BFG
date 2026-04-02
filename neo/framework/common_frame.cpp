@@ -706,8 +706,13 @@ void idCommonLocal::Frame() {
 		// drop back to main menu
 		LeaveGame();
 
-		// force the console open to show error messages
-		console->Open();
+		// Show the message box
+		idStaticList< idSWFScriptFunction *, 4 > callbacks;
+		idStaticList< idStrId, 4 > optionText;
+		optionText.Append( idStrId( "#str_02013" ) );
+		idStrStatic<560> errorname = err.GetError();
+
+		Dialog().AddDynamicDialog( GDM_GAME_ERROR, callbacks, optionText, true, errorname, false, true );
 		return;
 	}
 }
