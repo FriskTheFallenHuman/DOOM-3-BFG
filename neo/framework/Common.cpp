@@ -137,11 +137,7 @@ idCommonLocal::idCommonLocal() :
 
 	gameDLL = 0;
 
-	loadGUI = NULL;
-	nextLoadTip = 0;
-	isHellMap = false;
 	wipeForced = false;
-	defaultLoadscreen = false;
 
 	menuSoundWorld = NULL;
 
@@ -1318,10 +1314,6 @@ void idCommonLocal::Shutdown() {
 
 	printf( "CleanupShell();\n" );
 	CleanupShell();
-
-	printf( "delete loadGUI;\n" );
-	delete loadGUI;
-	loadGUI = NULL;
 
 	printf( "delete renderWorld;\n" );
     renderSystem->FreeRenderWorld( renderWorld );
