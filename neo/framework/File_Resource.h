@@ -88,7 +88,7 @@ public:
 		cacheTable.Clear();
 	}
 	bool Init( const char * fileName );
-	static void WriteResourceFile( const char *fileName, const idStrList &manifest, const bool &_writeManifest );
+	static void WriteResourceFile( const char *fileName, idStrList &manifest, const bool &_writeManifest, const char *rootPath = NULL );
 	static void WriteManifestFile( const char *name, const idStrList &list );
 	static int ReadManifestFile( const char *filename, idStrList &list );
 	static void ExtractResourceFile ( const char * fileName, const char * outPath, bool copyWavs );
