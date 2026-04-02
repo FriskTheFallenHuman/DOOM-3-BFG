@@ -29,6 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LEADERBOARDS_LOCAL_H__
 #define __LEADERBOARDS_LOCAL_H__
 
+#include "Game.h"
 
 struct leaderboardStats_t {
 	int		frags;
@@ -47,6 +48,8 @@ struct columnGameMode_t {
 	const char *	abrevName;					// Leaderboard Game Mode Abrev.
 };
 
+extern const columnGameMode_t gameMode_columnDefs[];
+
 /*
 ================================================================================================
 
@@ -55,20 +58,23 @@ struct columnGameMode_t {
 ================================================================================================
 */
 
+class idGameLeaderboardLocal : public idGameLeaderboard {
+public:
+							idGameLeaderboardLocal();
 
+	// creates and stores all the leaderboards inside the internal map ( see Sys_FindLeaderboardDef on retrieving definition )
+	virtual void			Init();
 
-// creates and stores all the leaderboards inside the internal map ( see Sys_FindLeaderboardDef on retrieving definition )
-void			LeaderboardLocal_Init();
+	// Destroys any leaderboard definitions allocated by Init()
+	virtual void			Shutdown();
 
-// Destroys any leaderboard definitions allocated by LeaderboardLocal_Init()
-void			LeaderboardLocal_Shutdown();
+	// Gets a leaderboard ID with map index and game type.
+	virtual int				GetID( int mapIndex, int gametype );
 
-// Gets a leaderboard ID with map index and game type.
-int				LeaderboardLocal_GetID( int mapIndex, int gametype );
+	// Do it all function. Will create the column_t with the correct stats from the game type, and upload it to the leaderboard system.
+	virtual void			Upload( lobbyUserID_t lobbyUserID, int gameType, leaderboardStats_t & stats );
+};
 
-// Do it all function. Will create the column_t with the correct stats from the game type, and upload it to the leaderboard system.
-void			LeaderboardLocal_Upload(  lobbyUserID_t lobbyUserID, int gameType, leaderboardStats_t & stats );
-
-extern const columnGameMode_t gameMode_columnDefs[];
+extern idGameLeaderboardLocal gameLeadBoardsLocal;
 
 #endif // __LEADERBOARDS_LOCAL_H__
