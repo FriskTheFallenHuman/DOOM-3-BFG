@@ -53,11 +53,16 @@ workspace("Doom3")
 		system("Windows")
 		architecture("x86")
 		objdir("../build/out")
+		targetdir("../bin")
 	filter({})
 
 	filter("kind:SharedLib")
 		-- We don't want manifests for DLLs
 		manifest("Off")
+	filter({})
+
+	filter("kind:not StaticLib")
+		targetdir("../bin/base")	
 	filter({})
 
 	-- _Common.props
