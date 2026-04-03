@@ -149,6 +149,7 @@ extern "C" gameExport_t *GetGameAPI( gameImport_t *import ) {
 	gameExport.version = GAME_API_VERSION;
 	gameExport.game = game;
 	gameExport.gameEdit = gameEdit;
+	gameExport.gameLeadBoards = gameLeadBoards;
 
 	return &gameExport;
 }

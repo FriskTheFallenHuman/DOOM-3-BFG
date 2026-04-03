@@ -878,7 +878,7 @@ void idCommonLocal::LoadGameDLL() {
 	gameExport_t	gameExport;
 	GetGameAPI_t	GetGameAPI;
 
-	fileSystem->FindDLL( "game", dllPath, true );
+	fileSystem->FindDLL( "game", dllPath );
 
 	if ( !dllPath[ 0 ] ) {
 		common->FatalError( "couldn't find game dynamic library" );
@@ -925,7 +925,7 @@ void idCommonLocal::LoadGameDLL() {
 
 	game								= gameExport.game;
 	gameEdit							= gameExport.gameEdit;
-	idGameLeaderboard					= gameExport.gameLeadBoards;
+	gameLeadBoards						= gameExport.gameLeadBoards;
 
 #endif
 
