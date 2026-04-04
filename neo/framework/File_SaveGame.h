@@ -192,8 +192,8 @@ private:
 	// These variables are used to pass data between threads in a thread-safe manner.
 	//------------------------
 
-	byte *					dataZlib;
-	size_t					bytesZlib;
+	byte *					dataMiniz;
+	size_t					bytesMiniz;
 
 	byte *					dataIO;
 	size_t					bytesIO;
@@ -202,9 +202,9 @@ private:
 	// These variables are used by CompressBlock() and DecompressBlock().
 	//------------------------
 
-	mz_stream				zStream;
-	int						zLibFlushType;		// Z_NO_FLUSH or Z_FINISH
-	bool					zStreamEndHit;
+	mz_stream				mzStream;
+	int						mzFlushType;		// MZ_NO_FLUSH or MZ_FINISH
+	bool					mzStreamEndHit;
 	int						numChecksums;
 
 	//------------------------

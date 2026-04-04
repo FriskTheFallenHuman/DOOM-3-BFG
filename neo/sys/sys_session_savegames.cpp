@@ -289,7 +289,7 @@ void idSessionLocal::OnSaveCompleted( idSaveLoadParms * parms ) {
 	}
 
 	// Only turn off the indicator if we're not also going to save the profile settings
-	if ( master != NULL && master->GetProfile() != NULL && !master->GetProfile()->IsDirty() ) {
+	if ( parms->GetError() != SAVEGAME_E_NONE || !master || !master->GetProfile() || !master->GetProfile()->IsDirty() ) {
 		common->Dialog().ShowSaveIndicator( false );
 	}
 
