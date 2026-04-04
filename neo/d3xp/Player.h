@@ -805,6 +805,18 @@ private:
 
 	netBoolEvent_t			respawn_netEvent;
 
+	class idCrouchRate {
+	public:
+							idCrouchRate();
+		void				Reset();
+		float				GetValue();
+
+	private:
+		float baseRate;
+		float adjustedRate;
+	};
+	idCrouchRate			crouchHzRate;
+
 	void					LookAtKiller( idEntity *inflictor, idEntity *attacker );
 
 	void					StopFiring();
@@ -910,6 +922,23 @@ ID_INLINE bool idPlayer::SelfSmooth() {
 
 ID_INLINE void idPlayer::SetSelfSmooth( bool b ) {
 	selfSmooth = b;
+}
+
+ID_INLINE idPlayer::idCrouchRate::idCrouchRate() {
+	Reset();
+}
+
+ID_INLINE void idPlayer::idCrouchRate::Reset() {
+	baseRate = 0.0f;
+	adjustedRate = 0.0f;
+}
+
+ID_INLINE float idPlayer::idCrouchRate::GetValue() {
+	if ( baseRate != pm_crouchrate.GetFloat() ) {
+		baseRate = pm_crouchrate.GetFloat();
+		adjustedRate = idMath::Pow( baseRate, 60.0f / com_engineHz_latched );
+	}
+	return adjustedRate;
 }
 
 extern idCVar g_infiniteAmmo;

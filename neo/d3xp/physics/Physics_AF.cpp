@@ -6646,6 +6646,7 @@ idPhysics_AF::idPhysics_AF() {
 	noImpact = false;
 	worldConstraintsLocked = false;
 	forcePushable = false;
+	truncateImpulse = true;
 
 #ifdef AF_TIMINGS
 	lastTimerReset = 0;
@@ -6778,6 +6779,7 @@ void idPhysics_AF::Save( idSaveGame *saveFile ) const {
 	saveFile->WriteBool( noImpact );
 	saveFile->WriteBool( worldConstraintsLocked );
 	saveFile->WriteBool( forcePushable );
+	saveFile->WriteBool( truncateImpulse );
 }
 
 /*
@@ -6852,6 +6854,7 @@ void idPhysics_AF::Restore( idRestoreGame *saveFile ) {
 	saveFile->ReadBool( noImpact );
 	saveFile->ReadBool( worldConstraintsLocked );
 	saveFile->ReadBool( forcePushable );
+	saveFile->ReadBool( truncateImpulse );
 
 	changedAF = true;
 
@@ -7418,8 +7421,15 @@ void idPhysics_AF::ApplyImpulse( const int id, const idVec3 &point, const idVec3
 	const float maxImpulse =  100000.0f;
 	const float maxRotation = 100000.0f;
 	idMat3 invWorldInertiaTensor = bodies[id]->current->worldAxis.Transpose() * bodies[id]->inverseInertiaTensor * bodies[id]->current->worldAxis;
-	bodies[id]->current->spatialVelocity.SubVec3(0) += bodies[id]->invMass * impulse.Truncate( maxImpulse );
-	bodies[id]->current->spatialVelocity.SubVec3(1) += invWorldInertiaTensor * (point - bodies[id]->current->worldOrigin).Cross( impulse ).Truncate( maxRotation );
+
+	if ( truncateImpulse ) {
+		bodies[id]->current->spatialVelocity.SubVec3(0) += bodies[id]->invMass * impulse.Truncate( maxImpulse );
+		bodies[id]->current->spatialVelocity.SubVec3(1) += invWorldInertiaTensor * (point - bodies[id]->current->worldOrigin).Cross( impulse ).Truncate( maxRotation );
+	} else {
+		bodies[id]->current->spatialVelocity.SubVec3(0) += bodies[id]->invMass * impulse;
+		bodies[id]->current->spatialVelocity.SubVec3(1) += invWorldInertiaTensor * (point - bodies[id]->current->worldOrigin).Cross( impulse );
+	}
+
 	Activate();
 }
 

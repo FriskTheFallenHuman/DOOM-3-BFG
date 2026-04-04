@@ -1314,13 +1314,13 @@ void  idMenuScreen_HUD::UpdateAudioLog( bool show ) {
 	} else if ( show ) {
 
 		if ( audioLogPrevTime == 0 ) {
-			audioLogPrevTime = gameLocal.time;
+			audioLogPrevTime = gameLocal.fast.time;
 		}
 
 		for ( int index = 0; index < 13; ++index  ) {
 			idSWFSpriteInstance * node = audioLog->GetScriptObject()->GetNestedSprite( "bar", va( "node%d", index ) );
 			if ( node != NULL ) {
-				float diff = gameLocal.time - audioLogPrevTime;
+				float diff = gameLocal.fast.time - audioLogPrevTime;
 				float speed = ( diff / 350.0f ) * 100.0f;
 				if ( !node->UpdateMoveToScale( speed ) ) {
 					int frame = gameLocal.random.RandomInt( 100 );
@@ -1329,7 +1329,7 @@ void  idMenuScreen_HUD::UpdateAudioLog( bool show ) {
 				}
 			}
 		}
-		audioLogPrevTime = gameLocal.time;
+		audioLogPrevTime = gameLocal.fast.time;
 	}
 }
 
@@ -1379,13 +1379,13 @@ void  idMenuScreen_HUD::UpdateCommunication( bool show, idPlayer * player ) {
 		}
 
 		if ( commPrevTime == 0 ) {
-			commPrevTime = gameLocal.time;
+			commPrevTime = gameLocal.fast.time;
 		}
 
 		for ( int index = 0; index < 16; ++index  ) {
 			idSWFSpriteInstance * node = communication->GetScriptObject()->GetNestedSprite( "info", "bar", va( "node%d", index ) );
 			if ( node != NULL ) {
-				float diff = gameLocal.time - commPrevTime;
+				float diff = gameLocal.fast.time - commPrevTime;
 				float speed = ( diff / 350.0f ) * 100.0f;
 				if ( !node->UpdateMoveToScale( speed ) ) {
 					int frame = gameLocal.random.RandomInt( 100 );
@@ -1395,7 +1395,7 @@ void  idMenuScreen_HUD::UpdateCommunication( bool show, idPlayer * player ) {
 			}
 		}
 
-		commPrevTime = gameLocal.time;
+		commPrevTime = gameLocal.fast.time;
 	}
 
 	oxygenComm = inVaccuum;
