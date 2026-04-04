@@ -195,7 +195,8 @@ void idProjectile::Restore( idRestoreGame *savefile ) {
 		idVec3 dir;
 		dir = physicsObj.GetLinearVelocity();
 		dir.NormalizeFast();
-		gameLocal.smokeParticles->EmitSmoke( smokeFly, gameLocal.time, gameLocal.random.RandomFloat(), GetPhysics()->GetOrigin(), GetPhysics()->GetAxis(), timeGroup /*_D3XP*/ );
+		SetTimeState ts( originalTimeGroup );
+		gameLocal.smokeParticles->EmitSmoke( smokeFly, gameLocal.time, gameLocal.random.RandomFloat(), GetPhysics()->GetOrigin(), GetPhysics()->GetAxis(), originalTimeGroup /*_D3XP*/ );
 	}
 
 	if ( lightDefHandle >= 0 ) {
@@ -519,7 +520,7 @@ void idProjectile::AddParticlesAndLight() {
 		dir.Normalize();
 		SetTimeState ts(originalTimeGroup);
 
-		if ( !gameLocal.smokeParticles->EmitSmoke( smokeFly, smokeFlyTime, gameLocal.random.RandomFloat(), GetPhysics()->GetOrigin(), dir.ToMat3(), timeGroup /*_D3XP*/ ) ) {
+		if ( !gameLocal.smokeParticles->EmitSmoke( smokeFly, smokeFlyTime, gameLocal.random.RandomFloat(), GetPhysics()->GetOrigin(), dir.ToMat3(), originalTimeGroup /*_D3XP*/ ) ) {
 			smokeFlyTime = gameLocal.time;
 		}
 	}
@@ -529,6 +530,7 @@ void idProjectile::AddParticlesAndLight() {
 		renderLight.origin = GetPhysics()->GetOrigin() + GetPhysics()->GetAxis() * lightOffset;
 		renderLight.axis = GetPhysics()->GetAxis();
 		if ( ( lightDefHandle != -1 ) ) {
+			SetTimeState ts( originalTimeGroup );
 			if ( lightEndTime > 0 && gameLocal.time <= lightEndTime ) {
 				idVec3 color( 0, 0, 0 );
 				if ( gameLocal.time < lightEndTime ) {
@@ -902,6 +904,12 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 		return;
 	}
 
+	int exptTime;
+	{
+		SetTimeState ts( originalTimeGroup );
+		exptTime = gameLocal.time;
+	}
+
 	// activate rumble for player
 	idPlayer *player = gameLocal.GetLocalPlayer();
 	const bool isHitscan = spawnArgs.GetBool( "net_instanthit" );
@@ -1012,7 +1020,7 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 		renderEntity.shaderParms[SHADERPARM_GREEN] =
 		renderEntity.shaderParms[SHADERPARM_BLUE] =
 		renderEntity.shaderParms[SHADERPARM_ALPHA] = 1.0f;
-		renderEntity.shaderParms[SHADERPARM_TIMEOFFSET] = -MS2SEC( gameLocal.time );
+		renderEntity.shaderParms[SHADERPARM_TIMEOFFSET] = -MS2SEC( exptTime );
 		renderEntity.shaderParms[SHADERPARM_DIVERSITY] = gameLocal.random.CRandomFloat();
 		Show();
 		removeTime = ( removeTime > 3000 ) ? removeTime : 3000;
@@ -1049,7 +1057,7 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 		renderLight.shaderParms[SHADERPARM_GREEN] = lightColor.y;
 		renderLight.shaderParms[SHADERPARM_BLUE] = lightColor.z;
 		renderLight.shaderParms[SHADERPARM_ALPHA] = 1.0f;
-		renderLight.shaderParms[SHADERPARM_TIMEOFFSET] = -MS2SEC( gameLocal.time );
+		renderLight.shaderParms[SHADERPARM_TIMEOFFSET] = -MS2SEC( exptTime );
 
 		// Midnight ctf
 		if ( gameLocal.mpGame.IsGametypeFlagBased() && gameLocal.serverInfo.GetBool("si_midnight") ) {
@@ -1058,8 +1066,8 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 			light_fadetime = spawnArgs.GetFloat( "explode_light_fadetime", "0.5" );
 		}
 
-		lightStartTime = gameLocal.time;
-		lightEndTime = MSEC_ALIGN_TO_FRAME( gameLocal.time + SEC2MS( light_fadetime ) );
+		lightStartTime = exptTime;
+		lightEndTime = MSEC_ALIGN_TO_FRAME( exptTime + SEC2MS( light_fadetime ) );
 		BecomeActive( TH_THINK );
 	}
 
@@ -1144,7 +1152,13 @@ void idProjectile::Explode( const trace_t &collision, idEntity *ignore ) {
 	}
 
 	CancelEvents( &EV_Explode );
-	PostEventMS( &EV_Remove, removeTime );
+
+	if ( fl.grabbed ) {
+		timeGroup = originalTimeGroup;
+		PostEventMS( &EV_Remove, removeTime );
+	} else {
+		PostEventMS( &EV_Remove, removeTime );
+	}
 }
 
 /*

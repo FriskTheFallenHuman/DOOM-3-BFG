@@ -201,7 +201,7 @@ idPlayerView::ClearEffects
 ==============
 */
 void idPlayerView::ClearEffects() {
-	lastDamageTime = MS2SEC( gameLocal.slow.time - 99999 );
+	lastDamageTime = MS2SEC( gameLocal.fast.time - 99999 );
 
 	dvFinishTime = ( gameLocal.fast.time - 99999 );
 	kickFinishTime = ( gameLocal.slow.time - 99999 );
@@ -242,7 +242,7 @@ void idPlayerView::DamageImpulse( idVec3 localKickDir, const idDict *damageDef )
 	//
 	// double vision effect
 	//
-	if ( lastDamageTime > 0.0f && SEC2MS( lastDamageTime ) + IMPULSE_DELAY > gameLocal.slow.time ) {
+	if ( lastDamageTime > 0.0f && SEC2MS( lastDamageTime ) + IMPULSE_DELAY > gameLocal.fast.time ) {
 		// keep shotgun from obliterating the view
 		return;
 	}
@@ -484,7 +484,7 @@ void idPlayerView::SingleView( const renderView_t *view, idMenuHandler_HUD * hud
 		}
 
 		if ( alpha < 1.0f  ) {
-			renderSystem->SetColor4( ( player->health <= 0.0f ) ? MS2SEC( gameLocal.slow.time ) : lastDamageTime, 1.0f, 1.0f, ( player->health <= 0.0f ) ? 0.0f : alpha );
+			renderSystem->SetColor4( ( player->health <= 0.0f ) ? MS2SEC( gameLocal.fast.time ) : lastDamageTime, 1.0f, 1.0f, ( player->health <= 0.0f ) ? 0.0f : alpha );
 			renderSystem->DrawStretchPic( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f, tunnelMaterial );
 		}
 

@@ -26,6 +26,9 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#ifndef __GRABBER_H__
+#define __GRABBER_H__
+
 /*
 ===============================================================================
 
@@ -82,3 +85,4 @@ private:
 	void					ApplyShake();
 };
 
+#endif // __GRABBER_H__

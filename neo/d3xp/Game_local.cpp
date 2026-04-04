@@ -79,6 +79,7 @@ static char* fastEntityList[] = {
 		"weapon_chainsaw",
 		"weapon_fists",
 		"weapon_flashlight",
+		"weapon_flashlight_new",
 		"weapon_rocketlauncher",
 		"projectile_rocket",
 		"weapon_machinegun",
@@ -99,7 +100,7 @@ static char* fastEntityList[] = {
 		"weapon_soulcube",
 		"projectile_soulblast",
 		"weapon_shotgun_double",
-		"projectile_shotgunbullet_double",
+		"projectile_bullet_shotgun_double",
 		"weapon_grabber",
 		"weapon_bloodstone_active1",
 		"weapon_bloodstone_active2",
@@ -1247,8 +1248,6 @@ bool idGameLocal::InitFromSaveGame( const char *mapName, idRenderWorld *renderWo
 	gameRenderWorld = renderWorld;
 	gameSoundWorld = soundWorld;
 
-	SetScriptFPS( com_engineHz_latched );
-
 	// load the map needed for this savegame
 	LoadMap( mapName, 0 );
 
@@ -1266,8 +1265,11 @@ bool idGameLocal::InitFromSaveGame( const char *mapName, idRenderWorld *renderWo
 		// with the player persistent data.
 		savegame.DeleteObjects();
 		program.Restart();
+		SetScriptFPS( com_engineHz_latched );
 		return false;
 	}
+
+	SetScriptFPS( com_engineHz_latched );
 
 	savegame.ReadInt( i );
 	g_skill.SetInteger( i );
@@ -3782,7 +3784,7 @@ idGameLocal::AlertAI
 void idGameLocal::AlertAI( idEntity *ent ) {
 	if ( ent && ent->IsType( idActor::Type ) ) {
 		// alert them for the next frame
-		lastAIAlertTime = time + 1;
+		lastAIAlertTime = framenum + 1;
 		lastAIAlertEntity = static_cast<idActor *>( ent );
 	}
 }
@@ -3793,13 +3795,7 @@ idGameLocal::GetAlertEntity
 ============
 */
 idActor *idGameLocal::GetAlertEntity() {
-	int timeGroup = 0;
-	if ( lastAIAlertTime && lastAIAlertEntity.GetEntity() ) {
-		timeGroup = lastAIAlertEntity.GetEntity()->timeGroup;
-	}
-	SetTimeState ts( timeGroup );
-
-	if ( lastAIAlertTime >= time ) {
+	if ( lastAIAlertTime >= framenum ) {
 		return lastAIAlertEntity.GetEntity();
 	}
 
@@ -4224,7 +4220,7 @@ void idGameLocal::SetCamera( idCamera *cam ) {
 
 	} else {
 		inCinematic = false;
-		cinematicStopTime = time + 1;
+		cinematicStopTime = FRAME_TO_MSEC( framenum + 1 ); // this is the fast.time of the next frame
 
 		// restore r_znear
 		cvarSystem->SetCVarFloat( "r_znear", 3.0f );
@@ -4272,7 +4268,7 @@ bool idGameLocal::SkipCinematic() {
 	soundSystem->SetMute( true );
 	if ( !skipCinematic ) {
 		skipCinematic = true;
-		cinematicMaxSkipTime = gameLocal.time + SEC2MS( g_cinematicMaxSkipTime.GetFloat() );
+		cinematicMaxSkipTime = gameLocal.fast.time + SEC2MS( g_cinematicMaxSkipTime.GetFloat() );
 		soundSystem->GetPlayingSoundWorld()->Skip( cinematicMaxSkipTime );
 	}
 

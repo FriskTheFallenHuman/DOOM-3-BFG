@@ -761,6 +761,7 @@ void idEntityFx::ReadFromSnapshot( const idBitMsg &msg ) {
 	ReadBindFromSnapshot( msg );
 	fx_index = gameLocal.ClientRemapDecl( DECL_FX, msg.ReadInt() );
 	start_time = msg.ReadInt();
+	start_time = gameLocal.time - (gameLocal.serverTime - start_time);
 
 	if ( fx_index != -1 && start_time > 0 && !fxEffect && started < 0 ) {
 		spawnArgs.GetInt( "effect_lapse", "1000", max_lapse );
@@ -787,7 +788,7 @@ idEntityFx::ClientThink
 void idEntityFx::ClientThink( const int curTime, const float fraction, const bool predict ) {
 
 	if ( gameLocal.isNewFrame ) {
-		Run( gameLocal.serverTime );
+		Run( gameLocal.time );
 	}
 
 	InterpolatePhysics( fraction );

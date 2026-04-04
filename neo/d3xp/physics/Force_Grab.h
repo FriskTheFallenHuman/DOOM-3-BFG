@@ -67,6 +67,10 @@ private:
 
 	// properties
 	float				damping;
+
+	float				adjustedLinearDamping;
+	float				adjustedAngularDamping;
+
 	idVec3				goalPosition;
 
 	float				distanceToGoal;

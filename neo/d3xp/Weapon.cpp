@@ -3680,7 +3680,7 @@ void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spread
 	// set the shader parm to the time of last projectile firing,
 	// which the gun material shaders can reference for single shot barrel glows, etc
 	renderEntity.shaderParms[ SHADERPARM_DIVERSITY ]	= gameLocal.random.CRandomFloat();
-	renderEntity.shaderParms[ SHADERPARM_TIMEOFFSET ]	= -MS2SEC( gameLocal.time );
+	renderEntity.shaderParms[SHADERPARM_TIMEOFFSET] = -MS2SEC( gameLocal.realClientTime );
 
 	if ( worldModel.GetEntity() ) {
 		worldModel.GetEntity()->SetShaderParm( SHADERPARM_DIVERSITY, renderEntity.shaderParms[ SHADERPARM_DIVERSITY ] );
@@ -3698,12 +3698,12 @@ void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spread
 	}
 
 	// add some to the kick time, incrementally moving repeat firing weapons back
-	if ( kick_endtime < gameLocal.time ) {
-		kick_endtime = gameLocal.time;
+	if ( kick_endtime < gameLocal.realClientTime ) {
+		kick_endtime = gameLocal.realClientTime;
 	}
 	kick_endtime += muzzle_kick_time;
-	if ( kick_endtime > gameLocal.time + muzzle_kick_maxtime ) {
-		kick_endtime = gameLocal.time + muzzle_kick_maxtime;
+	if ( kick_endtime > gameLocal.realClientTime + muzzle_kick_maxtime ) {
+		kick_endtime = gameLocal.realClientTime + muzzle_kick_maxtime;
 	}
 
 	if ( !common->IsClient() ) {
@@ -3764,7 +3764,7 @@ void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spread
 	owner->WeaponFireFeedback( &weaponDef->dict );
 
 	// reset muzzle smoke
-	weaponSmokeStartTime = gameLocal.time;
+	weaponSmokeStartTime = gameLocal.realClientTime;
 
 }
 
