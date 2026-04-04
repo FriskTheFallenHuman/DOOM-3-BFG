@@ -58,7 +58,7 @@ static __forceinline __m128i TriangleFacing_SSE2(	const __m128 & vert0X, const _
 	const __m128 normalW = _mm_madd_ps( normalX, vert0X, _mm_madd_ps( normalY, vert0Y, _mm_mul_ps( normalZ, vert0Z ) ) );
 
 	const __m128 delta = _mm_nmsub_ps( lightOriginX, normalX, _mm_nmsub_ps( lightOriginY, normalY, _mm_nmsub_ps( lightOriginZ, normalZ, normalW ) ) );
-	return _mm_castps_si128( _mm_cmplt_ps( delta, _mm_setzero_ps() ) );
+	return _mm_castps_si128( _mm_cmple_ps( delta, _mm_setzero_ps() ) );
 }
 
 /*
@@ -151,7 +151,7 @@ static byte TriangleFacing_Generic( const idVec3 & v1, const idVec3 & v2, const 
 	const float normalW = normalX * v1.x + normalY * v1.y + normalZ * v1.z;
 
 	const float d = lightOrigin.x * normalX + lightOrigin.y * normalY + lightOrigin.z * normalZ - normalW;
-	return ( d > 0.0f ) ? 255 : 0;
+	return ( d >= 0.0f ) ? 255 : 0;
 }
 
 /*

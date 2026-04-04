@@ -145,6 +145,7 @@ public:
 	int		FindFragmentShader( const char * name );
 
 	void	BindShader( int vIndex, int fIndex );
+	void	BindShader( int programIndex );
 
 	void	BindShader_GUI( ) { BindShader_Builtin( BUILTIN_GUI ); }
 	void	BindShader_Color( ) { BindShader_Builtin( BUILTIN_COLOR ); }
@@ -244,7 +245,6 @@ protected:
 	int builtinShaders[MAX_BUILTINS];
 	void BindShader_Builtin( int i ) { BindShader( builtinShaders[i], builtinShaders[i] ); }
 
-	GLuint	LoadShader( GLenum target, const char * name, const char * startToken );
 	bool	CompileGLSL( GLenum target, const char * name );
 	GLuint	LoadGLSLShader( GLenum target, const char * name, idList<int> & uniforms );
 	void	LoadGLSLProgram( const int programIndex, const int vertexShaderIndex, const int fragmentShaderIndex );

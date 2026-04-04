@@ -35,6 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 idCVar r_drawFlickerBox( "r_drawFlickerBox", "0", CVAR_RENDERER | CVAR_BOOL, "visual test for dropping frames" );
 idCVar r_showSwapBuffers( "r_showSwapBuffers", "0", CVAR_BOOL, "Show timings from GL_BlockingSwapBuffers" );
 idCVar r_syncEveryFrame( "r_syncEveryFrame", "1", CVAR_BOOL, "Don't let the GPU buffer execution past swapbuffers" );
+idCVar r_intelWorkaroundsSyncType( "r_intelWorkaroundsSyncType", "0", CVAR_RENDERER | CVAR_INTEGER | CVAR_NOCHEAT, "sync strategy involving glFinish and SwapBuffers to use with Intel video cards when r_skipIntelWorkarounds is 0:\n  0 = finish, swap\n  1 = swap, finish\n  2 = swap, small draw, finish\n  3 = finish, swap, finish\n  4 = finish, swap, small draw, finish", 0, 4 );
 
 static int		swapIndex;		// 0 or 1 into renderSync
 static GLsync	renderSync[2];
@@ -68,7 +69,6 @@ static void RB_DrawFlickerBox() {
 	qglClear( GL_COLOR_BUFFER_BIT );
 }
 
-#if 0
 /*
 =============
 RB_SetBuffer
@@ -99,7 +99,6 @@ static void	RB_SetBuffer( const void *data ) {
 		}
 	}
 }
-#endif
 
 /*
 =============
@@ -114,7 +113,10 @@ const void GL_BlockingSwapBuffers() {
 	const int beforeFinish = Sys_Milliseconds();
 
 	if ( !glConfig.syncAvailable ) {
-		glFinish();
+		int syncType = r_intelWorkaroundsSyncType.GetInteger();
+		if ( syncType == 0 || syncType == 3 || syncType == 4 ) {
+			qglFinish();
+		}
 	}
 
 	const int beforeSwap = Sys_Milliseconds();
@@ -157,6 +159,17 @@ const void GL_BlockingSwapBuffers() {
 			for ( GLenum r = GL_TIMEOUT_EXPIRED; r == GL_TIMEOUT_EXPIRED; ) {
 				r = qglClientWaitSync( syncToWaitOn, GL_SYNC_FLUSH_COMMANDS_BIT, 1000 * 1000 );
 			}
+		}
+	} else {
+		int syncType = r_intelWorkaroundsSyncType.GetInteger();
+		if ( syncType > 0 ) {
+			if ( syncType == 2 || syncType == 4 ) {
+				// draw something tiny to ensure the sync is after the swap
+				qglScissor( 0, 0, 1, 1 );
+				qglEnable( GL_SCISSOR_TEST );
+				qglClear( GL_COLOR_BUFFER_BIT );
+			}
+			qglFinish();
 		}
 	}
 
@@ -217,6 +230,7 @@ void RB_ExecuteBackEndCommands( const emptyCommand_t *cmds ) {
 			}
 			break;
 		case RC_SET_BUFFER:
+			RB_SetBuffer( cmds );
 			c_setBuffers++;
 			break;
 		case RC_COPY_RENDER:

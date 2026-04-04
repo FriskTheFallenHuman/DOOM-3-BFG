@@ -609,30 +609,26 @@ int Sys_PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] ) {
 			mouseEvents[i][1] = mouseDown;
 			Sys_QueEvent( SE_KEY, K_MOUSE1 + mouseButton, mouseDown, 0, NULL, 0 );
 		} else {
-			switch (polled_didod[i].dwOfs) {
-			case DIMOFS_X:
+			if ( polled_didod[i].dwOfs == DIMOFS_X ) {
 				mouseEvents[i][0] = M_DELTAX;
 				mouseEvents[i][1] = polled_didod[i].dwData;
 				Sys_QueEvent( SE_MOUSE, polled_didod[i].dwData, 0, 0, NULL, 0 );
-				break;
-			case DIMOFS_Y:
+			} else if ( polled_didod[i].dwOfs == DIMOFS_Y ) {
 				mouseEvents[i][0] = M_DELTAY;
 				mouseEvents[i][1] = polled_didod[i].dwData;
 				Sys_QueEvent( SE_MOUSE, 0, polled_didod[i].dwData, 0, NULL, 0 );
-				break;
-			case DIMOFS_Z:
+			} else if ( polled_didod[i].dwOfs == DIMOFS_Z ) {
 				mouseEvents[i][0] = M_DELTAZ;
 				mouseEvents[i][1] = (int)polled_didod[i].dwData / WHEEL_DELTA;
 				{
 					const int value = (int)polled_didod[i].dwData / WHEEL_DELTA;
 					const int key = value < 0 ? K_MWHEELDOWN : K_MWHEELUP;
-					const int iterations = abs( value );
+					const int iterations = abs(value);
 					for ( int i = 0; i < iterations; i++ ) {
 						Sys_QueEvent( SE_KEY, key, true, 0, NULL, 0 );
 						Sys_QueEvent( SE_KEY, key, false, 0, NULL, 0 );
 					}
 				}
-				break;
 			}
 		}
 	}

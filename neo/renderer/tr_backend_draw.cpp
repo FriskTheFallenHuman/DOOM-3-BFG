@@ -33,7 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 idCVar r_motionBlur( "r_motionBlur", "0", CVAR_RENDERER | CVAR_INTEGER | CVAR_ARCHIVE, "1 - 5, log2 of the number of motion blur samples" );
 idCVar r_forceZPassStencilShadows( "r_forceZPassStencilShadows", "0", CVAR_RENDERER | CVAR_BOOL, "force Z-pass rendering for performance testing" );
-idCVar r_useStencilShadowPreload( "r_useStencilShadowPreload", "1", CVAR_RENDERER | CVAR_BOOL, "use stencil shadow preload algorithm instead of Z-fail" );
+idCVar r_useStencilShadowPreload( "r_useStencilShadowPreload", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "use stencil shadow preload algorithm instead of Z-fail" );
 idCVar r_skipShaderPasses( "r_skipShaderPasses", "0", CVAR_RENDERER | CVAR_BOOL, "" );
 idCVar r_skipInteractionFastPath( "r_skipInteractionFastPath", "1", CVAR_RENDERER | CVAR_BOOL, "" );
 idCVar r_useLightStencilSelect( "r_useLightStencilSelect", "0", CVAR_RENDERER | CVAR_BOOL, "use stencil select pass" );
@@ -332,7 +332,7 @@ static void RB_BindVariableStageImage( const textureStage_t *texture, const floa
 		// offset time by shaderParm[7] (FIXME: make the time offset a parameter of the shader?)
 		// We make no attempt to optimize for multiple identical cinematics being in view, or
 		// for cinematics going at a lower framerate than the renderer.
-		cin = texture->cinematic->ImageForTime( backEnd.viewDef->renderView.time[0] + idMath::Ftoi( 1000.0f * backEnd.viewDef->renderView.shaderParms[11] ) );
+		cin = texture->cinematic->ImageForTime( backEnd.viewDef->renderView.time[1] + idMath::Ftoi( 1000.0f * backEnd.viewDef->renderView.shaderParms[11] ) );
 		if ( cin.imageY != NULL ) {
 			GL_SelectTexture( 0 );
 			cin.imageY->Bind();
@@ -1449,14 +1449,16 @@ static void RB_StencilShadowPass( const drawSurf_t *drawSurfs, const viewLight_t
 
 		if ( renderZPass ) {
 			// Z-pass
-			qglStencilOpSeparate( GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR );
-			qglStencilOpSeparate( GL_BACK, GL_KEEP, GL_KEEP, GL_DECR );
+			qglStencilOpSeparate( GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP );
+			qglStencilOpSeparate( GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP );
 		} else if ( r_useStencilShadowPreload.GetBool() ) {
 			// preload + Z-pass
-			qglStencilOpSeparate( GL_FRONT, GL_KEEP, GL_DECR, GL_DECR );
-			qglStencilOpSeparate( GL_BACK, GL_KEEP, GL_INCR, GL_INCR );
+			qglStencilOpSeparate( GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_DECR_WRAP );
+			qglStencilOpSeparate( GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_INCR_WRAP );
 		} else {
 			// Z-fail
+			qglStencilOpSeparate( GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP );
+			qglStencilOpSeparate( GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP );
 		}
 
 
@@ -1558,8 +1560,8 @@ static void RB_StencilShadowPass( const drawSurf_t *drawSurfs, const viewLight_t
 
 		if ( !renderZPass && r_useStencilShadowPreload.GetBool() ) {
 			// render again with Z-pass
-			qglStencilOpSeparate( GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR );
-			qglStencilOpSeparate( GL_BACK, GL_KEEP, GL_KEEP, GL_DECR );
+			qglStencilOpSeparate( GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP );
+			qglStencilOpSeparate( GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP );
 
 			if ( drawSurf->jointCache ) {
 				qglDrawElementsBaseVertex( GL_TRIANGLES, r_singleTriangle.GetBool() ? 3 : drawSurf->numIndexes, GL_INDEX_TYPE, (triIndex_t *)indexOffset, vertOffset / sizeof ( idShadowVertSkinned ) );
@@ -1944,7 +1946,7 @@ static int RB_DrawShaderPasses( const drawSurf_t * const * const drawSurfs, cons
 
 				GL_State( stageGLState );
 
-				renderProgManager.BindShader( newStage->glslProgram, newStage->glslProgram );
+				renderProgManager.BindShader( newStage->glslProgram );
 
 				for ( int j = 0; j < newStage->numVertexParms; j++ ) {
 					float parm[4];
