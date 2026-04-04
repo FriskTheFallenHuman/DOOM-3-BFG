@@ -34,6 +34,6 @@ struct PS_OUT {
 };
 
 void main( out PS_OUT result ) {
-	result.depth = 1;
+	result.depth = 1.0;
 	result.color = float4( 0.0, 0.0, 0.0, 0.0 );
 }

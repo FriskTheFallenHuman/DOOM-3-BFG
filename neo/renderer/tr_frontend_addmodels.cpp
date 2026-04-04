@@ -520,7 +520,7 @@ void R_AddSingleModel( viewEntity_t * vEntity ) {
 		if ( shader == NULL ) {
 			continue;
 		}
-		if ( !shader->IsDrawn() ) {
+		if ( !shader->IsDrawn() && !shader->SurfaceCastsShadow() ) {
 			continue;		// collision hulls, etc
 		}
 
@@ -537,7 +537,7 @@ void R_AddSingleModel( viewEntity_t * vEntity ) {
 			if ( shader == NULL ) {
 				continue;
 			}
-			if ( !shader->IsDrawn() ) {
+			if ( !shader->IsDrawn() && !shader->SurfaceCastsShadow() ) {
 				continue;
 			}
 		}

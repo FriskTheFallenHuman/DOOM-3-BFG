@@ -61,9 +61,6 @@ PFNWGLCHOOSEPIXELFORMATARBPROC			wglChoosePixelFormatARB;
 // WGL_ARB_create_context
 PFNWGLCREATECONTEXTATTRIBSARBPROC		wglCreateContextAttribsARB;
 
-
-idCVar r_useOpenGL32( "r_useOpenGL32", "1", CVAR_INTEGER, "0 = OpenGL 2.0, 1 = OpenGL 3.2 compatibility profile, 2 = OpenGL 3.2 core profile", 0, 2 );
-
 //
 // function declaration
 //
@@ -337,7 +334,10 @@ CreateOpenGLContextOnDC
 ========================
 */
 static HGLRC CreateOpenGLContextOnDC( const HDC hdc, const bool debugContext ) {
-	int useOpenGL32 = r_useOpenGL32.GetInteger();
+	// An opengl 3.2 core profile context is now required, but allow a 2.0 context to be created if 3.2 core isn't available.
+	// A strict check is done in R_CheckPortableExtensions.
+	int useOpenGL32 = 2;
+
 	HGLRC m_hrc = NULL;
 
 	for ( int i = 0; i < 2; i++ ) {
@@ -357,7 +357,7 @@ static HGLRC CreateOpenGLContextOnDC( const HDC hdc, const bool debugContext ) {
 
 		m_hrc = wglCreateContextAttribsARB( hdc, 0, attribs );
 		if ( m_hrc != NULL ) {
-			idLib::Printf( "created OpenGL %d.%d context\n", glMajorVersion, glMinorVersion );
+			idLib::Printf( "created OpenGL %d.%d %s\n", glMajorVersion, glMinorVersion, glProfile == WGL_CONTEXT_CORE_PROFILE_BIT_ARB ? "core profile context" : "context" );
 			break;
 		}
 
@@ -537,7 +537,7 @@ static void GLW_CreateWindowClasses() {
 	wc.hInstance     = win32.hInstance;
 	wc.hIcon         = LoadIcon( win32.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wc.hCursor       = NULL;
-	wc.hbrBackground = (struct HBRUSH__ *)COLOR_GRAYTEXT;
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	wc.lpszMenuName  = 0;
 	wc.lpszClassName = WIN32_WINDOW_CLASS_NAME;
 
@@ -555,7 +555,7 @@ static void GLW_CreateWindowClasses() {
 	wc.hInstance     = win32.hInstance;
 	wc.hIcon         = LoadIcon( win32.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wc.hCursor       = LoadCursor (NULL,IDC_ARROW);
-	wc.hbrBackground = (struct HBRUSH__ *)COLOR_GRAYTEXT;
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	wc.lpszMenuName  = 0;
 	wc.lpszClassName = WIN32_FAKE_WINDOW_CLASS_NAME;
 
@@ -598,12 +598,12 @@ static idStr GetDeviceName( const int deviceNum ) {
 			deviceNum,
 			&device,
 			0 /* dwFlags */ ) ) {
-		return false;
+		return idStr();
 	}
 
 	// get the monitor for this display
 	if ( ! (device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP ) ) {
-		return false;
+		return idStr();
 	}
 
 	return idStr( device.DeviceName );
@@ -630,7 +630,7 @@ static bool GetDisplayCoordinates( const int deviceNum, int & x, int & y, int & 
 		return false;
 	}
 
-	DISPLAY_DEVICE	monitor;
+	DISPLAY_DEVICE monitor = {};
 	monitor.cb = sizeof( monitor );
 	if ( !EnumDisplayDevices(
 			deviceName.c_str(),
@@ -640,7 +640,7 @@ static bool GetDisplayCoordinates( const int deviceNum, int & x, int & y, int & 
 		return false;
 	}
 
-	DEVMODE	devmode;
+	DEVMODE devmode = {};
 	devmode.dmSize = sizeof( devmode );
 	if ( !EnumDisplaySettings( deviceName.c_str(),ENUM_CURRENT_SETTINGS, &devmode ) ) {
 		return false;
@@ -747,6 +747,8 @@ void DumpAllDisplayDevices() {
 			common->Printf( "      DeviceKey   : %s\n", monitor.DeviceKey );
 
 			DEVMODE	currentDevmode = {};
+			currentDevmode.dmSize = sizeof(currentDevmode);
+
 			if ( !EnumDisplaySettings( device.DeviceName,ENUM_CURRENT_SETTINGS, &currentDevmode ) ) {
 				common->Printf( "ERROR:  EnumDisplaySettings(ENUM_CURRENT_SETTINGS) failed!\n" );
 			}
@@ -755,15 +757,17 @@ void DumpAllDisplayDevices() {
 			PrintDevMode( currentDevmode );
 
 			DEVMODE	registryDevmode = {};
+			registryDevmode.dmSize = sizeof(registryDevmode);
 			if ( !EnumDisplaySettings( device.DeviceName,ENUM_REGISTRY_SETTINGS, &registryDevmode ) ) {
-				common->Printf( "ERROR:  EnumDisplaySettings(ENUM_CURRENT_SETTINGS) failed!\n" );
+				common->Printf( "ERROR:  EnumDisplaySettings(ENUM_REGISTRY_SETTINGS) failed!\n" );
 			}
 			common->Printf( "          -------------------\n" );
-			common->Printf( "          ENUM_CURRENT_SETTINGS\n" );
+			common->Printf("          ENUM_REGISTRY_SETTINGS\n");
 			PrintDevMode( registryDevmode );
 
 			for ( int modeNum = 0 ; ; modeNum++ ) {
 				DEVMODE	devmode = {};
+				devmode.dmSize = sizeof(devmode);
 
 				if ( !EnumDisplaySettings( device.DeviceName,modeNum, &devmode ) ) {
 					break;
@@ -772,12 +776,7 @@ void DumpAllDisplayDevices() {
 				if ( devmode.dmBitsPerPel != 32 ) {
 					continue;
 				}
-				if ( devmode.dmDisplayFrequency < 60 ) {
-					continue;
-				}
-				if ( devmode.dmPelsHeight < 720 ) {
-					continue;
-				}
+
 				common->Printf( "          -------------------\n" );
 				common->Printf( "          modeNum             : %i\n", modeNum );
 				PrintDevMode( devmode );

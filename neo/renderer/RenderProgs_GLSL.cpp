@@ -33,7 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 idCVar r_skipStripDeadCode( "r_skipStripDeadCode", "0", CVAR_BOOL, "Skip stripping dead code" );
 idCVar r_useUniformArrays( "r_useUniformArrays", "1", CVAR_BOOL, "" );
-
+idCVar r_shadersPrintCompileIssues( "r_shadersPrintCompileIssues", "2", CVAR_RENDERER | CVAR_INTEGER | CVAR_NOCHEAT, "print shader compilation errors/warnings:\n  0 = don't print\n  1 = print using original behavior\n  2 = print only when compilation fails", 0, 2 );
 
 #define VERTEX_UNIFORM_ARRAY_NAME				"_va_"
 #define FRAGMENT_UNIFORM_ARRAY_NAME				"_fa_"
@@ -113,27 +113,27 @@ attribInfo_t attribsPC[] = {
 	{ "float",		"facing",		"FACE",			"gl_FrontFacing",		0,	AT_PS_IN,		0 },
 
 	// fragment program output
-	{ "float4",		"color",		"COLOR",		"gl_FragColor",		0,	AT_PS_OUT,		0 }, // GLSL version 1.2 doesn't allow for custom color name mappings
-	{ "half4",		"hcolor",		"COLOR",		"gl_FragColor",		0,	AT_PS_OUT,		0 },
-	{ "float4",		"color0",		"COLOR0",		"gl_FragColor",		0,	AT_PS_OUT,		0 },
-	{ "float4",		"color1",		"COLOR1",		"gl_FragColor",		1,	AT_PS_OUT,		0 },
-	{ "float4",		"color2",		"COLOR2",		"gl_FragColor",		2,	AT_PS_OUT,		0 },
-	{ "float4",		"color3",		"COLOR3",		"gl_FragColor",		3,	AT_PS_OUT,		0 },
+	{ "float4",		"color",		"COLOR",		"d3_FragColor",		0,	AT_PS_OUT,		0 }, // gl_FragColor is still available in glsl 1.5, but it is deprecated; using a custom name for color output is preferred
+	{ "half4",		"hcolor",		"COLOR",		"d3_FragColor",		0,	AT_PS_OUT,		0 },
+	{ "float4",		"color0",		"COLOR0",		"d3_FragColor",		0,	AT_PS_OUT,		0 },
+	{ "float4",		"color1",		"COLOR1",		"d3_FragColor",		1,	AT_PS_OUT,		0 },
+	{ "float4",		"color2",		"COLOR2",		"d3_FragColor",		2,	AT_PS_OUT,		0 },
+	{ "float4",		"color3",		"COLOR3",		"d3_FragColor",		3,	AT_PS_OUT,		0 },
 	{ "float",		"depth",		"DEPTH",		"gl_FragDepth",		4,	AT_PS_OUT,		0 },
 
 	// vertex to fragment program pass through
-	{ "float4",		"color",		"COLOR",		"gl_FrontColor",			0,	AT_VS_OUT,	0 },
-	{ "float4",		"color0",		"COLOR0",		"gl_FrontColor",			0,	AT_VS_OUT,	0 },
-	{ "float4",		"color1",		"COLOR1",		"gl_FrontSecondaryColor",	0,	AT_VS_OUT,	0 },
+	{ "float4",		"color",		"COLOR",		"d3_Color",			0,	AT_VS_OUT,	0 }, // gl_FrontColor and gl_FrontSecondaryColor aren't available in the core profile of glsl 1.5, and a custom variable is preferred for pass through
+	{ "float4",		"color0",		"COLOR0",		"d3_Color",			0,	AT_VS_OUT,	0 },
+	{ "float4",		"color1",		"COLOR1",		"d3_SecondaryColor",	0,	AT_VS_OUT,	0 },
 
 
-	{ "float4",		"color",		"COLOR",		"gl_Color",				0,	AT_PS_IN,	0 },
-	{ "float4",		"color0",		"COLOR0",		"gl_Color",				0,	AT_PS_IN,	0 },
-	{ "float4",		"color1",		"COLOR1",		"gl_SecondaryColor",	0,	AT_PS_IN,	0 },
+	{ "float4",		"color",		"COLOR",		"d3_Color",				0,	AT_PS_IN,	0 }, // gl_Color and gl_SecondaryColor aren't available in the core profile of glsl 1.5, and a custom variable is preferred for pass through
+	{ "float4",		"color0",		"COLOR0",		"d3_Color",				0,	AT_PS_IN,	0 },
+	{ "float4",		"color1",		"COLOR1",		"d3_SecondaryColor",	0,	AT_PS_IN,	0 },
 
-	{ "half4",		"hcolor",		"COLOR",		"gl_Color",				0,	AT_PS_IN,		0 },
-	{ "half4",		"hcolor0",		"COLOR0",		"gl_Color",				0,	AT_PS_IN,		0 },
-	{ "half4",		"hcolor1",		"COLOR1",		"gl_SecondaryColor",	0,	AT_PS_IN,		0 },
+	{ "half4",		"hcolor",		"COLOR",		"d3_Color",				0,	AT_PS_IN,		0 },
+	{ "half4",		"hcolor0",		"COLOR0",		"d3_Color",				0,	AT_PS_IN,		0 },
+	{ "half4",		"hcolor1",		"COLOR1",		"d3_SecondaryColor",	0,	AT_PS_IN,		0 },
 
 	{ "float4",		"texcoord0",	"TEXCOORD0_centroid",	"vofi_TexCoord0",	0,	AT_PS_IN,	0 },
 	{ "float4",		"texcoord1",	"TEXCOORD1_centroid",	"vofi_TexCoord1",	0,	AT_PS_IN,	0 },
@@ -157,19 +157,19 @@ attribInfo_t attribsPC[] = {
 	{ "float4",		"texcoord8",	"TEXCOORD8",	"vofi_TexCoord8",		0,	AT_VS_OUT | AT_PS_IN,	0 },
 	{ "float4",		"texcoord9",	"TEXCOORD9",	"vofi_TexCoord9",		0,	AT_VS_OUT | AT_PS_IN,	0 },
 
-	{ "half4",		"htexcoord0",	"TEXCOORD0",	"vofi_TexCoord0",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord1",	"TEXCOORD1",	"vofi_TexCoord1",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord2",	"TEXCOORD2",	"vofi_TexCoord2",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord3",	"TEXCOORD3",	"vofi_TexCoord3",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord4",	"TEXCOORD4",	"vofi_TexCoord4",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord5",	"TEXCOORD5",	"vofi_TexCoord5",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord6",	"TEXCOORD6",	"vofi_TexCoord6",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord7",	"TEXCOORD7",	"vofi_TexCoord7",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord8",	"TEXCOORD8",	"vofi_TexCoord8",		0,	AT_PS_IN,		0 },
-	{ "half4",		"htexcoord9",	"TEXCOORD9",	"vofi_TexCoord9",		0,	AT_PS_IN,		0 },
-	{ "float",		"fog",			"FOG",			"gl_FogFragCoord",		0,	AT_VS_OUT,		0 },
-	{ "float4",		"fog",			"FOG",			"gl_FogFragCoord",		0,	AT_PS_IN,		0 },
-	{ NULL,			NULL,			NULL,			NULL,					0,	0,				0 }
+	{ "half4",		"htexcoord0",	"TEXCOORD0",	"vofi_TexCoord0",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord1",	"TEXCOORD1",	"vofi_TexCoord1",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord2",	"TEXCOORD2",	"vofi_TexCoord2",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord3",	"TEXCOORD3",	"vofi_TexCoord3",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord4",	"TEXCOORD4",	"vofi_TexCoord4",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord5",	"TEXCOORD5",	"vofi_TexCoord5",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord6",	"TEXCOORD6",	"vofi_TexCoord6",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord7",	"TEXCOORD7",	"vofi_TexCoord7",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord8",	"TEXCOORD8",	"vofi_TexCoord8",		0,	AT_PS_IN,	0 },
+	{ "half4",		"htexcoord9",	"TEXCOORD9",	"vofi_TexCoord9",		0,	AT_PS_IN,	0 },
+	{ "float",		"fog",			"FOG",			"d3_FogFragCoord",		0,	AT_VS_OUT,	0 }, // gl_FogFragCoord isn't available in the core profile of glsl 1.5
+	{ "float4",		"fog",			"FOG",			"d3_FogFragCoord",		0,	AT_PS_IN,	0 },
+	{ NULL,			NULL,			NULL,			NULL,					0,	0,			0 }
 };
 
 const char * types[] = {
@@ -676,6 +676,15 @@ idStr ConvertCG2GLSL( const idStr & in, const char * name, bool isVertexProgram,
 				}
 				continue;
 			} else if ( src.CheckTokenString( "VS_OUT" ) ) {
+				// add the built-in gl_* vertex shader outputs; these shouldn't be declared
+				inOutVariable_t var;
+				var.type = "vec4"; var.nameCg = "position"; var.nameGLSL = "gl_Position"; var.declareInOut = false; varsOut.Append(var);
+				var.type = "float"; var.nameCg = "clip0"; var.nameGLSL = "gl_ClipDistance[0]"; var.declareInOut = false; varsOut.Append(var);
+				var.type = "float"; var.nameCg = "clip1"; var.nameGLSL = "gl_ClipDistance[1]"; var.declareInOut = false; varsOut.Append(var);
+				var.type = "float"; var.nameCg = "clip2"; var.nameGLSL = "gl_ClipDistance[2]"; var.declareInOut = false; varsOut.Append(var);
+				var.type = "float"; var.nameCg = "clip3"; var.nameGLSL = "gl_ClipDistance[3]"; var.declareInOut = false; varsOut.Append(var);
+				var.type = "float"; var.nameCg = "clip4"; var.nameGLSL = "gl_ClipDistance[4]"; var.declareInOut = false; varsOut.Append(var);
+				var.type = "float"; var.nameCg = "clip5"; var.nameGLSL = "gl_ClipDistance[5]"; var.declareInOut = false; varsOut.Append(var);
 				ParseInOutStruct( src, AT_VS_OUT, varsOut );
 				program += "\n";
 				for ( int i = 0; i < varsOut.Num(); i++ ) {
@@ -685,6 +694,9 @@ idStr ConvertCG2GLSL( const idStr & in, const char * name, bool isVertexProgram,
 				}
 				continue;
 			} else if ( src.CheckTokenString( "PS_IN" ) ) {
+				inOutVariable_t var;
+				var.type = "vec4"; var.nameCg = "position"; var.nameGLSL = "gl_FragCoord"; var.declareInOut = false; varsIn.Append(var);
+				var.type = "float"; var.nameCg = "facing"; var.nameGLSL = "gl_FrontFacing"; var.declareInOut = false; varsIn.Append(var);
 				ParseInOutStruct( src, AT_PS_IN, varsIn );
 				program += "\n\n";
 				for ( int i = 0; i < varsIn.Num(); i++ ) {
@@ -692,13 +704,11 @@ idStr ConvertCG2GLSL( const idStr & in, const char * name, bool isVertexProgram,
 						program += "in " + varsIn[i].type + " " + varsIn[i].nameGLSL + ";\n";
 					}
 				}
-				inOutVariable_t var;
-				var.type = "vec4";
-				var.nameCg = "position";
-				var.nameGLSL = "gl_FragCoord";
-				varsIn.Append( var );
 				continue;
 			} else if ( src.CheckTokenString( "PS_OUT" ) ) {
+				// add the built-in gl_* fragment shader outputs; these shouldn't be declared
+				inOutVariable_t var;
+				var.type = "float"; var.nameCg = "depth"; var.nameGLSL = "gl_FragDepth"; var.declareInOut = false; varsOut.Append(var);
 				ParseInOutStruct( src, AT_PS_OUT, varsOut );
 				program += "\n";
 				for ( int i = 0; i < varsOut.Num(); i++ ) {
@@ -893,6 +903,7 @@ idStr ConvertCG2GLSL( const idStr & in, const char * name, bool isVertexProgram,
 	}
 
 	out += program;
+	out += "\n";
 
 	for ( int i = 0; i < uniformList.Num(); i++ ) {
 		uniforms += uniformList[i];
@@ -959,10 +970,19 @@ GLuint idRenderProgManager::LoadGLSLShader( GLenum target, const char * name, id
 		idStr programHLSL = StripDeadCode( hlslCode, inFile );
 		programGLSL = ConvertCG2GLSL( programHLSL, inFile, target == GL_VERTEX_SHADER, programUniforms );
 
-		fileSystem->WriteFile( outFileHLSL, programHLSL.c_str(), programHLSL.Length(), "fs_basepath" );
-		fileSystem->WriteFile( outFileGLSL, programGLSL.c_str(), programGLSL.Length(), "fs_basepath" );
+		// use small letters for file names
+		idStr _outFileHLSL( outFileHLSL );
+		idStr _outFileGLSL( outFileGLSL );
+		idStr _outFileUniforms( outFileUniforms );
+
+		_outFileHLSL.ToLower();
+		_outFileGLSL.ToLower();
+		_outFileUniforms.ToLower();
+
+		fileSystem->WriteFile( _outFileHLSL.c_str(), programHLSL.c_str(), programHLSL.Length(), "fs_basepath" );
+		fileSystem->WriteFile( _outFileGLSL.c_str(), programGLSL.c_str(), programGLSL.Length(), "fs_basepath" );
 		if ( r_useUniformArrays.GetBool() ) {
-			fileSystem->WriteFile( outFileUniforms, programUniforms.c_str(), programUniforms.Length(), "fs_basepath" );
+			fileSystem->WriteFile( _outFileUniforms.c_str(), programUniforms.c_str(), programUniforms.Length(), "fs_basepath" );
 		}
 	} else {
 		// read in the glsl file
@@ -1020,43 +1040,45 @@ GLuint idRenderProgManager::LoadGLSLShader( GLenum target, const char * name, id
 
 		qglShaderSource( shader, 1, source, NULL );
 		qglCompileShader( shader );
+		GLint compiled = GL_FALSE;
+		qglGetShaderiv( shader, GL_COMPILE_STATUS, &compiled );
 
-		int infologLength = 0;
-		qglGetShaderiv( shader, GL_INFO_LOG_LENGTH, &infologLength );
-		if ( infologLength > 1 ) {
-			idTempArray<char> infoLog( infologLength );
-			int charsWritten = 0;
-			qglGetShaderInfoLog( shader, infologLength, &charsWritten, infoLog.Ptr() );
+		if ( r_shadersPrintCompileIssues.GetInteger() == 1 || (r_shadersPrintCompileIssues.GetInteger() == 2 && compiled == GL_FALSE) ) {
+			int infologLength = 0;
+			qglGetShaderiv( shader, GL_INFO_LOG_LENGTH, &infologLength );
+			if ( infologLength > 1 ) {
+				idTempArray<char> infoLog( infologLength );
+				int charsWritten = 0;
+				qglGetShaderInfoLog( shader, infologLength, &charsWritten, infoLog.Ptr() );
 
-			// catch the strings the ATI and Intel drivers output on success
-			if ( strstr( infoLog.Ptr(), "successfully compiled to run on hardware" ) != NULL ||
-					strstr( infoLog.Ptr(), "No errors." ) != NULL ) {
-				//idLib::Printf( "%s program %s from %s compiled to run on hardware\n", typeName, GetName(), GetFileName() );
-			} else {
-				idLib::Printf( "While compiling %s program %s\n", ( target == GL_FRAGMENT_SHADER ) ? "fragment" : "vertex" , inFile.c_str() );
+				// catch the strings the ATI and Intel drivers output on success
+				if ( strstr( infoLog.Ptr(), "successfully compiled to run on hardware" ) != NULL ||
+						strstr( infoLog.Ptr(), "No errors." ) != NULL ) {
+					//idLib::Printf( "%s program %s from %s compiled to run on hardware\n", typeName, GetName(), GetFileName() );
+				} else {
+					idLib::Printf( "While compiling %s program %s\n", ( target == GL_FRAGMENT_SHADER ) ? "fragment" : "vertex" , inFile.c_str() );
 
-				const char separator = '\n';
-				idList<idStr> lines;
-				lines.Clear();
-				idStr source( programGLSL );
-				lines.Append( source );
-				for ( int index = 0, ofs = lines[index].Find( separator ); ofs != -1; index++, ofs = lines[index].Find( separator ) ) {
-					lines.Append( lines[index].c_str() + ofs + 1 );
-					lines[index].CapLength( ofs );
+					const char separator = '\n';
+					idList<idStr> lines;
+					lines.Clear();
+					idStr source( programGLSL );
+					lines.Append( source );
+					for ( int index = 0, ofs = lines[index].Find( separator ); ofs != -1; index++, ofs = lines[index].Find( separator ) ) {
+						lines.Append( lines[index].c_str() + ofs + 1 );
+						lines[index].CapLength( ofs );
+					}
+
+					idLib::Printf( "-----------------\n" );
+					for ( int i = 0; i < lines.Num(); i++ ) {
+						idLib::Printf( "%3d: %s\n", i+1, lines[i].c_str() );
+					}
+					idLib::Printf( "-----------------\n" );
+
+					idLib::Printf( "%s\n", infoLog.Ptr() );
 				}
-
-				idLib::Printf( "-----------------\n" );
-				for ( int i = 0; i < lines.Num(); i++ ) {
-					idLib::Printf( "%3d: %s\n", i+1, lines[i].c_str() );
-				}
-				idLib::Printf( "-----------------\n" );
-
-				idLib::Printf( "%s\n", infoLog.Ptr() );
 			}
 		}
 
-		GLint compiled = GL_FALSE;
-		qglGetShaderiv( shader, GL_COMPILE_STATUS, &compiled );
 		if ( compiled == GL_FALSE ) {
 			qglDeleteShader( shader );
 			return INVALID_PROGID;
@@ -1187,6 +1209,9 @@ void idRenderProgManager::LoadGLSLProgram( const int programIndex, const int ver
 				qglBindAttribLocation( program, attribsPC[i].bind, attribsPC[i].glsl );
 			}
 		}
+	
+		// bind fragment shader out variable to color number
+		qglBindFragDataLocation( program, 0, "d3_FragColor" );
 
 		qglLinkProgram( program );
 

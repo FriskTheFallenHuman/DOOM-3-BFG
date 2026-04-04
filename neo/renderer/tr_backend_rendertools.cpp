@@ -1673,7 +1673,7 @@ void RB_ClearDebugText( int time ) {
 	num	= 0;
 	text = rb_debugText;
 	for ( i = 0; i < rb_numDebugText; i++, text++ ) {
-		if ( text->lifeTime > time ) {
+		if ( text->lifeTime < 0 || text->lifeTime > time ) {
 			if ( num != i ) {
 				rb_debugText[ num ] = *text;
 			}
@@ -1699,7 +1699,11 @@ void RB_AddDebugText( const char *text, const idVec3 &origin, float scale, const
 		debugText->color		= color;
 		debugText->viewAxis		= viewAxis;
 		debugText->align		= align;
-		debugText->lifeTime		= rb_debugTextTime + lifetime;
+		if ( lifetime < 0 ) {
+			debugText->lifeTime = -1;
+		} else {
+			debugText->lifeTime = rb_debugTextTime + lifetime;
+		}
 		debugText->depthTest	= depthTest;
 	}
 }
@@ -1721,7 +1725,7 @@ float RB_DrawTextLength( const char *text, float scale, int len ) {
 		}
 		for ( i = 0; i < len; i++ ) {
 			charIndex = text[i] - 32;
-			if ( charIndex < 0 || charIndex > NUM_SIMPLEX_CHARS ) {
+			if ( charIndex < 0 || charIndex >= NUM_SIMPLEX_CHARS ) {
 				continue;
 			}
 			num = simplex[charIndex][0] * 2;
@@ -1904,7 +1908,7 @@ void RB_ClearDebugLines( int time ) {
 	num	= 0;
 	line = rb_debugLines;
 	for ( i = 0; i < rb_numDebugLines; i++, line++ ) {
-		if ( line->lifeTime > time ) {
+		if ( line->lifeTime < 0 || line->lifeTime > time ) {
 			if ( num != i ) {
 				rb_debugLines[ num ] = *line;
 			}
@@ -1928,7 +1932,11 @@ void RB_AddDebugLine( const idVec4 &color, const idVec3 &start, const idVec3 &en
 		line->start		= start;
 		line->end		= end;
 		line->depthTest = depthTest;
-		line->lifeTime	= rb_debugLineTime + lifeTime;
+		if ( lifeTime < 0 ) {
+			line->lifeTime = -1;
+		} else {
+			line->lifeTime = rb_debugLineTime + lifeTime;
+		}
 	}
 }
 
@@ -2022,7 +2030,7 @@ void RB_ClearDebugPolygons( int time ) {
 
 	poly = rb_debugPolygons;
 	for ( i = 0; i < rb_numDebugPolygons; i++, poly++ ) {
-		if ( poly->lifeTime > time ) {
+		if ( poly->lifeTime < 0 || poly->lifeTime > time ) {
 			if ( num != i ) {
 				rb_debugPolygons[ num ] = *poly;
 			}
@@ -2045,7 +2053,11 @@ void RB_AddDebugPolygon( const idVec4 &color, const idWinding &winding, const in
 		poly->rgb		= color;
 		poly->winding	= winding;
 		poly->depthTest = depthTest;
-		poly->lifeTime	= rb_debugPolygonTime + lifeTime;
+		if ( lifeTime < 0 ) {
+			poly->lifeTime = -1;
+		} else {
+			poly->lifeTime = rb_debugPolygonTime + lifeTime;
+		}
 	}
 }
 
@@ -2130,7 +2142,11 @@ void RB_ShowCenterOfProjection() {
 	qglScissor( 0, h * f - 1 , w, 3 );
 	qglClear( GL_COLOR_BUFFER_BIT );
 
-	qglScissor( 0, 0, w, h );
+	GL_Scissor( backEnd.viewDef->viewport.x1 + backEnd.viewDef->scissor.x1,
+		backEnd.viewDef->viewport.y1 + backEnd.viewDef->scissor.y1,
+		backEnd.viewDef->scissor.x2 + 1 - backEnd.viewDef->scissor.x1,
+		backEnd.viewDef->scissor.y2 + 1 - backEnd.viewDef->scissor.y1 );
+	backEnd.currentScissor = backEnd.viewDef->scissor;
 }
 
 /*
@@ -2327,7 +2343,7 @@ void RB_TestImage() {
 	if ( tr.testVideo ) {
 		cinData_t	cin;
 
-		cin = tr.testVideo->ImageForTime( Sys_Milliseconds() /*viewDef->renderView.time[1] - tr.testVideoStartTime*/ );
+		cin = tr.testVideo->ImageForTime( backEnd.viewDef->renderView.time[1] - tr.testVideoStartTime );
 		if ( cin.imageY != NULL ) {
 			image = cin.imageY;
 			imageCr = cin.imageCr;
@@ -2371,7 +2387,7 @@ void RB_TestImage() {
 	scale[0] = w; // scale
 	scale[5] = h; // scale
 	scale[12] = halfScreenWidth - ( halfScreenWidth * w ); // translate
-	scale[13] = halfScreenHeight / 2 - ( halfScreenHeight * h ); // translate
+	scale[13] = halfScreenHeight - ( halfScreenHeight * h ); // translate
 	scale[10] = 1.0f;
 	scale[15] = 1.0f;
 

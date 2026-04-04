@@ -84,6 +84,7 @@ extern PFNGLMAPBUFFERARBPROC				qglMapBufferARB;
 extern PFNGLUNMAPBUFFERARBPROC				qglUnmapBufferARB;
 extern PFNGLGETBUFFERPARAMETERIVARBPROC		qglGetBufferParameterivARB;
 extern PFNGLGETBUFFERPOINTERVARBPROC		qglGetBufferPointervARB;
+extern PFNGLCOPYBUFFERSUBDATAPROC			qglCopyBufferSubDataARB;
 
 // GL_ARB_map_buffer_Range
 extern PFNGLMAPBUFFERRANGEPROC				qglMapBufferRange;
@@ -100,12 +101,6 @@ extern PFNGLDELETEVERTEXARRAYSPROC			qglDeleteVertexArrays;
 extern PFNGLVERTEXATTRIBPOINTERARBPROC		qglVertexAttribPointerARB;
 extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC	qglEnableVertexAttribArrayARB;
 extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC	qglDisableVertexAttribArrayARB;
-extern PFNGLPROGRAMSTRINGARBPROC			qglProgramStringARB;
-extern PFNGLBINDPROGRAMARBPROC				qglBindProgramARB;
-extern PFNGLGENPROGRAMSARBPROC				qglGenProgramsARB;
-extern PFNGLDELETEPROGRAMSARBPROC			qglDeleteProgramsARB;
-extern PFNGLPROGRAMENVPARAMETER4FVARBPROC	qglProgramEnvParameter4fvARB;
-extern PFNGLPROGRAMLOCALPARAMETER4FVARBPROC	qglProgramLocalParameter4fvARB;
 
 // GLSL / OpenGL 2.0
 extern PFNGLCREATESHADERPROC				qglCreateShader;
@@ -127,6 +122,7 @@ extern PFNGLBINDATTRIBLOCATIONPROC			qglBindAttribLocation;
 extern PFNGLGETUNIFORMLOCATIONPROC			qglGetUniformLocation;
 extern PFNGLUNIFORM1IPROC					qglUniform1i;
 extern PFNGLUNIFORM4FVPROC					qglUniform4fv;
+extern PFNGLBINDFRAGDATALOCATIONPROC		qglBindFragDataLocation;
 
 // GL_ARB_uniform_buffer_object
 extern PFNGLGETUNIFORMBLOCKINDEXPROC		qglGetUniformBlockIndex;

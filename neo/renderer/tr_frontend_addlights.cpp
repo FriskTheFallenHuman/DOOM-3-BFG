@@ -417,9 +417,18 @@ static void R_AddSingleLight( viewLight_t * vLight ) {
 			shadowParms->shadowZMax = & shadowDrawSurf->scissorRect.zmax;
 			shadowParms->shadowVolumeState = & shadowDrawSurf->shadowVolumeState;
 
-			// the pre-light shadow volume "_prelight_light_3297" in "d3xpdm2" is malformed in that it contains the light origin so the precise inside test always fails
-			if ( tr.primaryWorld->mapName.IcmpPath( "maps/game/mp/d3xpdm2.map" ) == 0 && idStr::Icmp( light->parms.prelightModel->Name(), "_prelight_light_3297" ) == 0 ) {
-				shadowParms->useShadowPreciseInsideTest = false;
+			// the pre-light shadow volume "_prelight_light_3297" and "_prelight_light_8" in "d3xpdm2" and "_prelight_light_3982" in "d3xpdm4" are malformed in that it contains the light origin so the precise inside test always fails
+			if ( shadowParms->useShadowPreciseInsideTest ) {
+				if ( tr.primaryWorld->mapName.IcmpPath( "maps/game/mp/d3xpdm2.map" ) == 0) {
+					if ( idStr::Icmp( light->parms.prelightModel->Name(), "_prelight_light_3297" ) == 0 ||
+						idStr::Icmp( light->parms.prelightModel->Name(), "_prelight_light_8" ) == 0 ) {
+						shadowParms->useShadowPreciseInsideTest = false;
+					}
+				} else if ( tr.primaryWorld->mapName.IcmpPath( "maps/game/mp/d3xpdm4.map" ) == 0 ) {
+					if ( idStr::Icmp( light->parms.prelightModel->Name(), "_prelight_light_3982" ) == 0 ) {
+						shadowParms->useShadowPreciseInsideTest = false;
+					}
+				}
 			}
 
 			shadowDrawSurf->shadowVolumeState = SHADOWVOLUME_UNFINISHED;
