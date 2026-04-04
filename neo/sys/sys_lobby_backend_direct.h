@@ -35,7 +35,8 @@ idLobbyBackendDirect
 */
 class idLobbyBackendDirect : public idLobbyBackend {
 public:
-	idLobbyBackendDirect();
+								idLobbyBackendDirect();
+	virtual						~idLobbyBackendDirect() {}
 
 	// idLobbyBackend interface
 	virtual void				StartHosting( const idMatchParameters & p, float skillLevel, lobbyBackendType_t type );

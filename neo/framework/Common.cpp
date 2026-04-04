@@ -73,8 +73,9 @@ idCVar net_inviteOnly( "net_inviteOnly", "1", CVAR_BOOL | CVAR_ARCHIVE, "whether
 extern idCVar g_demoMode;
 
 idCVar com_engineHz( "com_engineHz", "60", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f );
+idCVar com_hiResClock( "com_hiResClock", "2", CVAR_INTEGER | CVAR_ARCHIVE, "high resolution clock: 0 = disabled, 1 = enabled, 2 = enabled + thread affinity", 0, 2 );
 float com_engineHz_latched = 60.0f; // Latched version of cvar, updated between map loads
-const int64 com_engineHz_numerator = 100LL * 1000LL;
+int64 com_engineHz_numerator = 100LL * 1000LL;
 int64 com_engineHz_denominator = 100LL * 60LL;
 
 #ifdef __DOOM_DLL__
@@ -91,9 +92,6 @@ idCVar com_skipIntroVideos( "com_skipIntroVideos", "0", CVAR_BOOL , "skips intro
 #else
 idCVar com_skipIntroVideos( "com_skipIntroVideos", "1", CVAR_BOOL , "skips intro videos" );
 #endif
-
-// For doom classic
-struct Globals;
 
 /*
 ==================
@@ -625,7 +623,7 @@ void idCommonLocal::FilterLangList( idStrList* list, idStr lang, bool strict ) {
 	for( int i = 0; i < list->Num(); i++ ) {
 		temp = (*list)[i];
 		temp = temp.Right(temp.Length()-strlen("strings/"));
-		if (strict) {
+		if ( strict ) {
 			temp = temp.Left(temp.Length()-strlen(".lang"));
 		} else {
 			temp = temp.Left(lang.Length());
@@ -1106,6 +1104,7 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 		// Support up to 2 digits after the decimal point
 		com_engineHz_denominator = 100LL * com_engineHz.GetFloat();
 		com_engineHz_latched = com_engineHz.GetFloat();
+		Sys_EnableThreadAffinity( com_hiResClock.GetInteger() == 2 );
 
 		// start the sound system, but don't do any hardware operations yet
 		soundSystem->Init();
@@ -1316,15 +1315,15 @@ void idCommonLocal::Shutdown() {
 	CleanupShell();
 
 	printf( "delete renderWorld;\n" );
-    renderSystem->FreeRenderWorld( renderWorld );
+	renderSystem->FreeRenderWorld( renderWorld );
 	renderWorld = NULL;
 
 	printf( "delete soundWorld;\n" );
-    soundSystem->FreeSoundWorld( soundWorld );
+	soundSystem->FreeSoundWorld( soundWorld );
 	soundWorld = NULL;
 
 	printf( "delete menuSoundWorld;\n" );
-    soundSystem->FreeSoundWorld( menuSoundWorld );
+	soundSystem->FreeSoundWorld( menuSoundWorld );
 	menuSoundWorld = NULL;
 
 	// shut down the session

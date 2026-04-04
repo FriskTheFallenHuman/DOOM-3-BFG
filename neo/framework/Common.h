@@ -38,8 +38,9 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 extern idCVar com_engineHz;
+extern idCVar com_hiResClock;
 extern float com_engineHz_latched;
-extern const int64 com_engineHz_numerator;
+extern int64 com_engineHz_numerator;
 extern int64 com_engineHz_denominator;
 
 // Returns the msec the frame starts on

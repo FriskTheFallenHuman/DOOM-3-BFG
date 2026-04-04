@@ -178,6 +178,8 @@ idLobbyToSessionCB * lobbyToSessionCB = &lobbyToSessionCBLocal;
 
 class idVoiceChatMgrWin : public idVoiceChatMgr {
 public:
+	virtual			~idVoiceChatMgrWin() {}
+
 	virtual bool	GetLocalChatDataInternal( int talkerIndex, byte * data, int & dataSize ) { return false; }
 	virtual void	SubmitIncomingChatDataInternal( int talkerIndex, const byte * data, int dataSize ) { }
 	virtual bool	TalkerHasData( int talkerIndex ) { return false; }
