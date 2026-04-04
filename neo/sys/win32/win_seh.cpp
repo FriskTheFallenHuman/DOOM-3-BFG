@@ -38,7 +38,7 @@ INT_PTR CALLBACK CrashHandlerDialogProc( HWND hDlg, UINT uMsg, WPARAM wParam, LP
 /*
 ** Sys_UnhandledExceptionFilter
 */
-LONG WINAPI Sys_UnhandledExceptionFilter( EXCEPTION_POINTERS *exceptionInfo ) {
+LONG CALLBACK Sys_UnhandledExceptionFilter( EXCEPTION_POINTERS *exceptionInfo ) {
 	static volatile LONG entered = 0;
 	if ( InterlockedExchange( &entered, 1 ) != 0 ) {
 		return EXCEPTION_EXECUTE_HANDLER;

@@ -31,6 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 
 //#pragma optimize( "", off )
 
+
 // #ifdef WIN32 // DG: this caused trouble, especially with SDL2
 #if 0
 #include <windows.h>
@@ -340,7 +341,7 @@ Will return NULL if the lines are colinear
 static	optVertex_t *EdgeIntersection( const optVertex_t *p1, const optVertex_t *p2,
 									  const optVertex_t *l1, const optVertex_t *l2, optimizeGroup_t *opt ) {
 	float	f;
-	idDrawVert *v;
+	idDrawVert	*v;
 	idVec3	dir1, dir2, cross1, cross2;
 
 	dir1 = p1->pv - l1->pv;
@@ -602,15 +603,15 @@ RemoveIfColinear
 #define	COLINEAR_EPSILON	0.1
 static	void RemoveIfColinear( optVertex_t *ov, optIsland_t *island ) {
 	optEdge_t	*e, *e1, *e2;
-	optVertex_t	*v1 = NULL, *v2 = NULL, *v3 = NULL;
+	optVertex_t *v1 = NULL, *v2 = NULL, *v3 = NULL;
 	idVec3		dir1, dir2;
-	float		len, dist;
+	float		dist;
 	idVec3		point;
 	idVec3		offset;
 	float		off;
-	
+
 	v2 = ov;
-	
+
 	// we must find exactly two edges before testing for colinear
 	e1 = NULL;
 	e2 = NULL;
@@ -631,19 +632,19 @@ static	void RemoveIfColinear( optVertex_t *ov, optIsland_t *island ) {
 			return;
 		}
 	}
-	
+
 	// can't remove if no edges
 	if ( !e1 ) {
 		return;
 	}
-	
+
 	if ( !e2 ) {
 		// this may still happen legally when a tiny triangle is
 		// the only thing in a group
 		common->Printf( "WARNING: vertex with only one edge\n" );
 		return;
 	}
-	
+
 	if ( e1->v1 == v2 ) {
 		v1 = e1->v2;
 	} else if ( e1->v2 == v2 ) {
@@ -660,18 +661,18 @@ static	void RemoveIfColinear( optVertex_t *ov, optIsland_t *island ) {
 		common->Error( "RemoveIfColinear: mislinked edge" );
 		return;
 	}
-	
+
 	if ( v1 == v3 ) {
 		common->Error( "RemoveIfColinear: mislinked edge" );
 		return;
 	}
-	
+
 	// they must point in opposite directions
 	dist = ( v3->pv - v2->pv ) * ( v1->pv - v2->pv );
 	if ( dist >= 0 ) {
 		return;
 	}
-	
+
 	// see if they are colinear
 	dir1 = v3->v.xyz - v1->v.xyz;
 	len = dir1.Normalize();
@@ -680,11 +681,11 @@ static	void RemoveIfColinear( optVertex_t *ov, optIsland_t *island ) {
 	VectorMA( v1->v.xyz, dist, dir1, point );
 	offset = point - v2->v.xyz;
 	off = offset.Length();
-	
+
 	if ( off > COLINEAR_EPSILON ) {
 		return;
 	}
-	
+
 	if ( dmapGlobals.drawflag ) {
 		qglBegin( GL_LINES );
 		qglColor3f( 1, 1, 0 );
@@ -699,45 +700,45 @@ static	void RemoveIfColinear( optVertex_t *ov, optIsland_t *island ) {
 		qglEnd();
 		qglFlush();
 	}
-	
+
 	// replace the two edges with a single edge
 	UnlinkEdge( e1, island );
 	UnlinkEdge( e2, island );
-	
+
 	// v2 should have no edges now
 	if ( v2->edges ) {
 		common->Error( "RemoveIfColinear: didn't remove properly" );
+		return;
 	}
-	
-	
+
+
 	// if there is an existing edge that already
 	// has these exact verts, we have just collapsed a
 	// sliver triangle out of existance, and all the edges
 	// can be removed
 	for ( e = island->edges ; e ; e = e->islandLink ) {
 		if ( ( e->v1 == v1 && e->v2 == v3 )
-				|| ( e->v1 == v3 && e->v2 == v1 ) ) {
+		|| ( e->v1 == v3 && e->v2 == v1 ) ) {
 			UnlinkEdge( e, island );
 			RemoveIfColinear( v1, island );
 			RemoveIfColinear( v3, island );
 			return;
 		}
 	}
-	
+
 	// if we can't add the combined edge, link
 	// the originals back in
-	if( !TryAddNewEdge( v1, v3, island ) )
-	{
+	if ( !TryAddNewEdge( v1, v3, island ) ) {
 		e1->islandLink = island->edges;
 		island->edges = e1;
 		LinkEdge( e1 );
-		
+
 		e2->islandLink = island->edges;
 		island->edges = e2;
 		LinkEdge( e2 );
 		return;
 	}
-	
+
 	// recursively try to combine both verts now,
 	// because things may have changed since the last combine test
 	RemoveIfColinear( v1, island );

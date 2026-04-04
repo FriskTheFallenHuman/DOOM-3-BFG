@@ -8491,9 +8491,9 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 		msg.WriteShort( attacker->GetEntityNumber() );
 		msg.WriteShort( GetEntityNumber() );		// victim
 		msg.WriteVectorFloat( dir );
-		msg.WriteLong( damageDef->Index() );
+		msg.WriteInt( damageDef->Index() );
 		msg.WriteFloat( damageScale );
-		msg.WriteLong( location );
+		msg.WriteInt( location );
 
 		idLobbyBase & lobby = session->GetActingGameStateLobbyBase();
 		lobby.SendReliableToHost( GAME_RELIABLE_MESSAGE_CLIENT_HITSCAN_HIT, msg );
@@ -10124,9 +10124,9 @@ idPlayer::WritePlayerStateToSnapshot
 */
 void idPlayer::WritePlayerStateToSnapshot( idBitMsg &msg ) const {
 	msg.WriteByte( bobCycle );
-	msg.WriteLong( stepUpTime );
+	msg.WriteInt( stepUpTime );
 	msg.WriteFloat( stepUpDelta );
-	msg.WriteLong( inventory.weapons );
+	msg.WriteInt( inventory.weapons );
 	msg.WriteByte( inventory.armor );
 
 	inventory.WriteAmmoToSnapshot( msg );
@@ -10143,10 +10143,10 @@ void idPlayer::ReadPlayerStateFromSnapshot( const idBitMsg &msg ) {
 	int newStepUpDelta = 0;
 
 	newBobCycle = msg.ReadByte();
-	newStepUpTime = msg.ReadLong();
+	newStepUpTime = msg.ReadInt();
 	newStepUpDelta = msg.ReadFloat();
 
-	inventory.weapons = msg.ReadLong();
+	inventory.weapons = msg.ReadInt();
 	inventory.armor = msg.ReadByte();
 
 	inventory.ReadAmmoFromSnapshot( msg, GetEntityNumber() );

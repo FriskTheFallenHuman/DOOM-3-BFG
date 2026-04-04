@@ -34,7 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <Windowsx.h>
 
-LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+LRESULT CALLBACK MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 extern idCVar r_windowX;
 extern idCVar r_windowY;
@@ -112,7 +112,7 @@ MainWndProc
 main window procedure
 ====================
 */
-LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
+LRESULT CALLBACK MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 	int key;
 	switch( uMsg ) {
 		case WM_WINDOWPOSCHANGED:
@@ -391,5 +391,5 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 		}
 	}
 
-    return DefWindowProc( hWnd, uMsg, wParam, lParam );
+	return DefWindowProc( hWnd, uMsg, wParam, lParam );
 }

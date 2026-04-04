@@ -128,7 +128,7 @@ bool idZipBuilder::Update( const char* zipPath, const char *folder, bool cleanFo
 idZipBuilder::GetFileTime
 ========================
 */
-bool idZipBuilder::GetFileTime( const idStr &filename, unsigned long *dostime ) const {
+bool idZipBuilder::GetFileTime( const idStr &filename, unsigned int *dostime ) const {
 	{
 		FILETIME filetime;
 		WIN32_FIND_DATA fileData;

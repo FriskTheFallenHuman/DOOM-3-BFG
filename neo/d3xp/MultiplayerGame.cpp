@@ -1092,7 +1092,7 @@ void idMultiplayerGame::NewState( gameState_t news, idPlayer *player ) {
 			idBitMsg	matchStartedTimeMsg;
 			byte		matchStartedTimeMsgBuf[ sizeof( matchStartedTime ) ];
 			matchStartedTimeMsg.InitWrite( matchStartedTimeMsgBuf, sizeof( matchStartedTimeMsgBuf ) );
-			matchStartedTimeMsg.WriteLong( matchStartedTime );
+			matchStartedTimeMsg.WriteInt( matchStartedTime );
 			session->GetActingGameStateLobbyBase().SendReliable( GAME_RELIABLE_MESSAGE_MATCH_STARTED_TIME, matchStartedTimeMsg, false );
 
 			fragLimitTimeout = 0;
@@ -1159,7 +1159,7 @@ void idMultiplayerGame::NewState( gameState_t news, idPlayer *player ) {
 			warmupEndTime = gameLocal.serverTime + 1000*cvarSystem->GetCVarInteger( "g_countDown" );
 
 			outMsg.InitWrite( msgBuf, sizeof( msgBuf ) );
-			outMsg.WriteLong( warmupEndTime );
+			outMsg.WriteInt( warmupEndTime );
 			session->GetActingGameStateLobbyBase().SendReliable( GAME_RELIABLE_MESSAGE_WARMUPTIME, outMsg, false );
 
 			// Reset all the scores.
@@ -1938,7 +1938,7 @@ void idMultiplayerGame::WriteToSnapshot( idBitMsg &msg ) const {
 	}
 
 	msg.WriteByte( gameState );
-	msg.WriteLong( nextStateSwitch );
+	msg.WriteInt( nextStateSwitch );
 	msg.WriteShort( currentTourneyPlayer[ 0 ] );
 	msg.WriteShort( currentTourneyPlayer[ 1 ] );
 	for ( i = 0; i < MAX_CLIENTS; i++ ) {
@@ -1975,7 +1975,7 @@ void idMultiplayerGame::ReadFromSnapshot( const idBitMsg &msg ) {
 	}
 
 	newState = (idMultiplayerGame::gameState_t)msg.ReadByte();
-	nextStateSwitch = msg.ReadLong();
+	nextStateSwitch = msg.ReadInt();
 	if ( newState != gameState && newState < STATE_COUNT ) {
 		gameLocal.DPrintf( "%s -> %s\n", GameStateStrings[ gameState ], GameStateStrings[ newState ] );
 		gameState = newState;
@@ -2045,7 +2045,7 @@ void idMultiplayerGame::PlayGlobalSound( int toPlayerNum, snd_evt_t evt, const c
 			if ( !shaderDecl ) {
 				return;
 			}
-			outMsg.WriteLong( gameLocal.ServerRemapDecl( -1, DECL_SOUND, shaderDecl->Index() ) );
+			outMsg.WriteInt( gameLocal.ServerRemapDecl( -1, DECL_SOUND, shaderDecl->Index() ) );
 			type = GAME_RELIABLE_MESSAGE_SOUND_INDEX;
 		} else {
 			outMsg.WriteByte( evt );
@@ -2853,7 +2853,7 @@ void idMultiplayerGame::VoiceChat( const idCmdArgs &args, bool team ) {
 	voiceChatThrottle = gameLocal.realClientTime + 1000;
 
 	outMsg.InitWrite( msgBuf, sizeof( msgBuf ) );
-	outMsg.WriteLong( index );
+	outMsg.WriteInt( index );
 	outMsg.WriteBits( team ? 1 : 0, 1 );
 	session->GetActingGameStateLobbyBase().SendReliableToHost( GAME_RELIABLE_MESSAGE_VCHAT, outMsg );
 }
@@ -2916,7 +2916,7 @@ void idMultiplayerGame::ServerWriteInitialReliableMessages( int clientNum, lobby
 	outMsg.BeginWriting();
 	// send the game state and start time
 	outMsg.WriteByte( gameState );
-	outMsg.WriteLong( matchStartedTime );
+	outMsg.WriteInt( matchStartedTime );
 	outMsg.WriteShort( startFragLimit );
 	// send the powerup states and the spectate states
 	for( int i = 0; i < gameLocal.numClients; i++ ) {
@@ -2934,7 +2934,7 @@ void idMultiplayerGame::ServerWriteInitialReliableMessages( int clientNum, lobby
 	if ( gameState == COUNTDOWN ) {
 		outMsg.BeginWriting();
 		outMsg.WriteByte( GAME_RELIABLE_MESSAGE_WARMUPTIME );
-		outMsg.WriteLong( warmupEndTime );
+		outMsg.WriteInt( warmupEndTime );
 		session->GetActingGameStateLobbyBase().SendReliableToLobbyUser( lobbyUserID, GAME_RELIABLE_MESSAGE_WARMUPTIME, outMsg );
 	}
 }
@@ -2947,7 +2947,7 @@ idMultiplayerGame::ClientReadStartState
 void idMultiplayerGame::ClientReadStartState( const idBitMsg &msg ) {
 	// read the state in preparation for reading snapshot updates
 	gameState = (idMultiplayerGame::gameState_t)msg.ReadByte();
-	matchStartedTime = msg.ReadLong( );
+	matchStartedTime = msg.ReadInt( );
 	startFragLimit = msg.ReadShort( );
 
 	int client;
@@ -2976,7 +2976,7 @@ idMultiplayerGame::ClientReadWarmupTime
 ================
 */
 void idMultiplayerGame::ClientReadWarmupTime( const idBitMsg &msg ) {
-	warmupEndTime = msg.ReadLong();
+	warmupEndTime = msg.ReadInt();
 }
 
 /*
@@ -2985,7 +2985,7 @@ idMultiplayerGame::ClientReadWarmupTime
 ================
 */
 void idMultiplayerGame::ClientReadMatchStartedTime( const idBitMsg & msg ) {
-	matchStartedTime = msg.ReadLong();
+	matchStartedTime = msg.ReadInt();
 }
 
 

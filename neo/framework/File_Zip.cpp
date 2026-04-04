@@ -90,7 +90,7 @@ bool idZipContainer::Init( const char *_fileName ) {
 			break;
 		}
 		if( file_info.uncompressed_size > 0 ) {
-			fs_headerLongs[fs_numHeaderLongs++] = LittleLong( file_info.crc );
+			fs_headerLongs[fs_numHeaderLongs++] = LittleInt( file_info.crc );
 		}
 
 		rt.filename = filename_inzip;
@@ -158,7 +158,7 @@ bool idZipContainer::Init( const char *_fileName ) {
 	*/
 
 	checksum = MD4_BlockChecksum( fs_headerLongs, 4 * fs_numHeaderLongs );
-	checksum = LittleLong( checksum );
+	checksum = LittleInt( checksum );
 
 	Mem_Free( fs_headerLongs );
 

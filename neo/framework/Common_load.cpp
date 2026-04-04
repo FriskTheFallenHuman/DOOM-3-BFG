@@ -648,6 +648,7 @@ bool idCommonLocal::SaveGame( const char * saveName ) {
 	game->GetSaveGameDetails( gameDetails );
 
 	gameDetails.descriptors.Set( SAVEGAME_DETAIL_FIELD_LANGUAGE, sys_lang.GetString() );
+	gameDetails.descriptors.Set( SAVEGAME_DETAIL_FIELD_ARCH, CPUSTRING );
 	gameDetails.descriptors.SetInt( SAVEGAME_DETAIL_FIELD_CHECKSUM, (int)gameDetails.descriptors.Checksum() );
 
 	gameDetails.slotName = saveName;
@@ -700,6 +701,19 @@ bool idCommonLocal::LoadGame( const char * saveName ) {
 				idStrStatic<256> langName = "#str_lang_" + sgdl[i].GetLanguage();
 				idStrStatic<256> msg;
 				msg.Format( idLocalization::GetString( "#str_dlg_wrong_language" ), idLocalization::GetString( langName ) );
+				Dialog().AddDynamicDialog( GDM_SAVEGAME_WRONG_LANGUAGE, callbacks, optionText, true, msg, false, true );
+				if ( wipeForced ) {
+					ClearWipe();
+				}
+				return false;
+			}
+
+			if ( sgdl[i].GetArchiteture() != CPUSTRING ) {
+				idStaticList< idSWFScriptFunction *, 4 > callbacks;
+				idStaticList< idStrId, 4 > optionText;
+				optionText.Append( idStrId( "#str_swf_continue" ) );
+				idStrStatic<256> msg;
+				msg.Format( "This save file was created in %s build and cannot be loaded in this build", sgdl[i].GetArchiteture().c_str() );
 				Dialog().AddDynamicDialog( GDM_SAVEGAME_WRONG_LANGUAGE, callbacks, optionText, true, msg, false, true );
 				if ( wipeForced ) {
 					ClearWipe();

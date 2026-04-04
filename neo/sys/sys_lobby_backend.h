@@ -135,9 +135,9 @@ struct lobbyUser_t {
 	void WriteToMsg( idBitMsg & msg ) {
 		address.WriteToMsg( msg );
 		lobbyUserID.WriteToMsg( msg );
-		msg.WriteLong( peerIndex );
+		msg.WriteInt( peerIndex );
 		msg.WriteShort( pingMs );
-		msg.WriteLong( partyToken );
+		msg.WriteInt( partyToken );
 		msg.WriteString( gamertag, MAX_GAMERTAG, false );
 		WriteClientMutableData( msg );
 	}
@@ -145,9 +145,9 @@ struct lobbyUser_t {
 	void ReadFromMsg( idBitMsg & msg ) {
 		address.ReadFromMsg( msg );
 		lobbyUserID.ReadFromMsg( msg );
-		peerIndex = msg.ReadLong();
+		peerIndex = msg.ReadInt();
 		pingMs = msg.ReadShort();
-		partyToken = msg.ReadLong();
+		partyToken = msg.ReadInt();
 		msg.ReadString( gamertag, MAX_GAMERTAG );
 		ReadClientMutableData( msg );
 	}

@@ -309,7 +309,7 @@ void idLib::PrintCallStack() {
 static short	(*_BigShort)( short l );
 static short	(*_LittleShort)( short l );
 static int		(*_BigLong)( int l );
-static int		(*_LittleLong)( int l );
+static int		(*_LittleInt)( int l );
 static float	(*_BigFloat)( float l );
 static float	(*_LittleFloat)( float l );
 static void		(*_BigRevBytes)( void *bp, int elsize, int elcount );
@@ -321,7 +321,7 @@ static int		(*_IntForSixtets)( byte *in );
 short	BigShort( short l ) { return _BigShort( l ); }
 short	LittleShort( short l ) { return _LittleShort( l ); }
 int		BigLong( int l ) { return _BigLong( l ); }
-int		LittleLong( int l ) { return _LittleLong( l ); }
+int		LittleInt( int l ) { return _LittleInt( l ); }
 float	BigFloat( float l ) { return _BigFloat( l ); }
 float	LittleFloat( float l ) { return _LittleFloat( l ); }
 void	BigRevBytes( void *bp, int elsize, int elcount ) { _BigRevBytes( bp, elsize, elcount ); }
@@ -574,7 +574,7 @@ void Swap_Init() {
 		_BigShort = ShortSwap;
 		_LittleShort = ShortNoSwap;
 		_BigLong = LongSwap;
-		_LittleLong = LongNoSwap;
+		_LittleInt = LongNoSwap;
 		_BigFloat = FloatSwap;
 		_LittleFloat = FloatNoSwap;
 		_BigRevBytes = RevBytesSwap;
@@ -587,7 +587,7 @@ void Swap_Init() {
 		_BigShort = ShortNoSwap;
 		_LittleShort = ShortSwap;
 		_BigLong = LongNoSwap;
-		_LittleLong = LongSwap;
+		_LittleInt = LongSwap;
 		_BigFloat = FloatNoSwap;
 		_LittleFloat = FloatSwap;
 		_BigRevBytes = RevBytesNoSwap;

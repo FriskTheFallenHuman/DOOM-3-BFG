@@ -248,7 +248,7 @@ WindingForTri
 ================
 */
 idWinding *WindingForTri( const mapTri_t *tri ) {
-	idWinding*	w;
+	idWinding	*w;
 
 	w = new idWinding( 3 );
 	w->SetNumPoints( 3 );
