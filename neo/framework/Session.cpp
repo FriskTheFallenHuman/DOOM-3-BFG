@@ -598,8 +598,8 @@ void idSessionLocal::HandleDedicatedServerQueryRequest( lobbyAddress_t & remoteA
 
 	bool canJoin = true;
 
-	const unsigned long localChecksum = 0;
-	const unsigned long remoteChecksum = msg.ReadLong();
+	const unsigned int localChecksum = 0;
+	const unsigned int remoteChecksum = msg.ReadInt();
 
 	if ( remoteChecksum != localChecksum ) {
 		NET_VERBOSE_PRINT( "HandleServerQueryRequest: Invalid version from %s\n", remoteAddr.ToString() );
@@ -1072,7 +1072,7 @@ idSessionLocal::ReadLeaderboardFromMsg
 ========================
 */
 const leaderboardDefinition_t * idSessionLocal::ReadLeaderboardFromMsg( idBitMsg & msg, column_t * stats ) {
-	int id = msg.ReadLong();
+	int id = msg.ReadInt();
 
 	const leaderboardDefinition_t * leaderboard = Sys_FindLeaderboardDef( id );
 
@@ -1241,7 +1241,7 @@ idSessionLocal::RecvLeaderboardStatsForPlayer
 void idSessionLocal::RecvLeaderboardStatsForPlayer( idBitMsg & msg ) {
 	column_t stats[ MAX_LEADERBOARD_COLUMNS ];
 
-	int userID = msg.ReadLong();
+	int userID = msg.ReadInt();
 
 	int sessionUserIndex = GetGameLobby().FindSessionUserByUserId( userID );
 

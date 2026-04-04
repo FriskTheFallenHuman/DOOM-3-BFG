@@ -37,8 +37,8 @@ FS_WriteFloatString
 =================
 */
 int FS_WriteFloatString( char *buf, const char *fmt, va_list argPtr ) {
-	long i;
-	unsigned long u;
+	int i;
+	unsigned int u;
 	double f;
 	char *str;
 	int index;
@@ -76,27 +76,27 @@ int FS_WriteFloatString( char *buf, const char *fmt, va_list argPtr ) {
 						break;
 					case 'd':
 					case 'i':
-						i = va_arg( argPtr, long );
+						i = va_arg( argPtr, int );
 						index += sprintf( buf+index, format.c_str(), i );
 						break;
 					case 'u':
-						u = va_arg( argPtr, unsigned long );
+						u = va_arg( argPtr, unsigned int );
 						index += sprintf( buf+index, format.c_str(), u );
 						break;
 					case 'o':
-						u = va_arg( argPtr, unsigned long );
+						u = va_arg( argPtr, unsigned int );
 						index += sprintf( buf+index, format.c_str(), u );
 						break;
 					case 'x':
-						u = va_arg( argPtr, unsigned long );
+						u = va_arg( argPtr, unsigned int );
 						index += sprintf( buf+index, format.c_str(), u );
 						break;
 					case 'X':
-						u = va_arg( argPtr, unsigned long );
+						u = va_arg( argPtr, unsigned int );
 						index += sprintf( buf+index, format.c_str(), u );
 						break;
 					case 'c':
-						i = va_arg( argPtr, long );
+						i = va_arg( argPtr, int );
 						index += sprintf( buf+index, format.c_str(), (char) i );
 						break;
 					case 's':
@@ -237,7 +237,7 @@ void idFile::Flush() {
 idFile::Seek
 =================
 */
-int idFile::Seek( long offset, fsOrigin_t origin ) {
+int idFile::Seek( int offset, fsOrigin_t origin ) {
 	return -1;
 }
 
@@ -308,7 +308,7 @@ int idFile::WriteFloatString( const char *fmt, ... ) {
  */
 int idFile::ReadInt( int &value ) {
 	int result = Read( &value, sizeof( value ) );
-	value = LittleLong(value);
+	value = LittleInt(value);
 	return result;
 }
 
@@ -319,7 +319,7 @@ int idFile::ReadInt( int &value ) {
  */
 int idFile::ReadUnsignedInt( unsigned int &value ) {
 	int result = Read( &value, sizeof( value ) );
-	value = LittleLong(value);
+	value = LittleInt(value);
 	return result;
 }
 
@@ -464,7 +464,7 @@ int idFile::ReadMat3( idMat3 &mat ) {
  =================
  */
 int idFile::WriteInt( const int value ) {
-	int v = LittleLong(value);
+	int v = LittleInt(value);
 	return Write( &v, sizeof( v ) );
 }
 
@@ -474,7 +474,7 @@ int idFile::WriteInt( const int value ) {
  =================
  */
 int idFile::WriteUnsignedInt( const unsigned int value ) {
-	unsigned int v = LittleLong(value);
+	unsigned int v = LittleInt(value);
 	return Write( &v, sizeof( v ) );
 }
 
@@ -896,7 +896,7 @@ idFile_Memory::Seek
   returns zero on success and -1 on failure
 =================
 */
-int idFile_Memory::Seek( long offset, fsOrigin_t origin ) {
+int idFile_Memory::Seek( int offset, fsOrigin_t origin ) {
 
 	switch( origin ) {
 		case FS_SEEK_CUR: {
@@ -1131,7 +1131,7 @@ idFile_BitMsg::Seek
   returns zero on success and -1 on failure
 =================
 */
-int idFile_BitMsg::Seek( long offset, fsOrigin_t origin ) {
+int idFile_BitMsg::Seek( int offset, fsOrigin_t origin ) {
 	return -1;
 }
 
@@ -1331,7 +1331,7 @@ idFile_Permanent::Seek
   returns zero on success and -1 on failure
 =================
 */
-int idFile_Permanent::Seek( long offset, fsOrigin_t origin ) {
+int idFile_Permanent::Seek( int offset, fsOrigin_t origin ) {
 	int retVal = INVALID_SET_FILE_POINTER;
 	switch( origin ) {
 		case FS_SEEK_CUR: retVal = SetFilePointer( o, offset, NULL, FILE_CURRENT ); break;
@@ -1430,7 +1430,7 @@ idFile_Cached::Seek
   returns zero on success and -1 on failure
 =================
 */
-int idFile_Cached::Seek( long offset, fsOrigin_t origin ) {
+int idFile_Cached::Seek( int offset, fsOrigin_t origin ) {
 	if ( origin == FS_SEEK_SET && offset >= bufferedStartOffset && offset < bufferedEndOffset ) {
 		// don't do anything to the actual file ptr, just update or internal position
 		internalFilePos = offset;
@@ -1549,7 +1549,7 @@ idFile_InZip::Seek
 */
 #define ZIP_SEEK_BUF_SIZE	(1<<15)
 
-int idFile_InZip::Seek( long offset, fsOrigin_t origin ) {
+int idFile_InZip::Seek( int offset, fsOrigin_t origin ) {
 	int res, i;
 	char *buf;
 
@@ -1669,7 +1669,7 @@ idFile_InnerResource::Seek
 =================
 */
 
-int idFile_InnerResource::Seek( long offset, fsOrigin_t origin ) {
+int idFile_InnerResource::Seek( int offset, fsOrigin_t origin ) {
 	switch( origin ) {
 		case FS_SEEK_END: {
 			internalFilePos = length - offset - 1;

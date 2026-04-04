@@ -90,7 +90,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #define ID_PC_WIN_8						( _WIN32_WINNT >= _WIN32_WINNT_WIN8 )
 
+#ifdef ID_PC_WIN64
+#define	CPUSTRING						"x64"
+#else
 #define	CPUSTRING						"x86"
+#endif
 
 #define	BUILD_STRING					"win-" CPUSTRING
 #define BUILD_OS_ID						0
@@ -134,8 +138,8 @@ Defines and macros usable in all code
 
 #define ALIGN( x, a ) ( ( ( x ) + ((a)-1) ) & ~((a)-1) )
 
-#define _alloca16( x )					((void *)ALIGN( (UINT_PTR)_alloca( ALIGN( x, 16 ) + 16 ), 16 ) )
-#define _alloca128( x )					((void *)ALIGN( (UINT_PTR)_alloca( ALIGN( x, 128 ) + 128 ), 128 ) )
+#define _alloca16( x )					((void *)ALIGN( (uintptr_t)_alloca( ALIGN( x, 16 ) + 16 ), 16 ) )
+#define _alloca128( x )					((void *)ALIGN( (uintptr_t)_alloca( ALIGN( x, 128 ) + 128 ), 128 ) )
 
 #define likely( x )	( x )
 #define unlikely( x )	( x )
@@ -197,6 +201,9 @@ bulk of the codebase, so it is the best place for analyze pragmas.
 
 // This might be a problem post-2019, the code uses ATL attributes for CodeAnalysis
 #pragma warning( disable: 4467 )	// warning C4467 : usage of ATL attributes is deprecated
+
+// x86_64 Warnings
+#pragma warning( disable: 4267 )	// warning C4267: conversion from 'size_t' to 'int', possible loss of data
 
 
 #if !defined(VERIFY_FORMAT_STRING)

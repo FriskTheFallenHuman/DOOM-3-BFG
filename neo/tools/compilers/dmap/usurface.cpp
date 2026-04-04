@@ -596,7 +596,7 @@ PutPrimitivesInAreas
 =====================
 */
 void PutPrimitivesInAreas( uEntity_t *e ) {
-	uBrush_t*		b;
+	uBrush_t		*b;
 	int				i;
 	side_t			*side;
 	primitive_t		*prim;
@@ -646,7 +646,7 @@ void PutPrimitivesInAreas( uEntity_t *e ) {
 				continue;
 			}
 			const char *modelName = entity->mapEntity->epairs.GetString( "model" );
-			if( !modelName ) {
+			if ( !modelName ) {
 				continue;
 			}
 			idRenderModel	*model = renderModelManager->FindModel( modelName );
@@ -728,7 +728,8 @@ static void ClipTriByLight( const mapLight_t *light, const mapTri_t *tri,
 		if ( oldInside ) {
 			oldInside->Split( light->frustumPlanes[i], 0, &outside[i], &inside );
 			delete oldInside;
-		} else {
+		}
+		else {
 			outside[i] = NULL;
 		}
 		if ( outside[i] ) {
@@ -817,8 +818,8 @@ static void CarveGroupsByLight( uEntity_t *e, mapLight_t *light ) {
 			nextGroup = group->nextGroup;
 			// if the surface doesn't get lit, don't carve it up
 			if ( ( light->def.lightShader->IsFogLight() && !group->material->ReceivesFog() )
-					|| ( !light->def.lightShader->IsFogLight() && !group->material->ReceivesLighting() )
-					|| !group->bounds.IntersectsBounds( light->def.globalLightBounds ) ) {
+				|| ( !light->def.lightShader->IsFogLight() && !group->material->ReceivesLighting() )
+				|| !group->bounds.IntersectsBounds( light->def.globalLightBounds ) ) {
 
 				group->nextGroup = carvedGroups;
 				carvedGroups = group;
@@ -827,14 +828,14 @@ static void CarveGroupsByLight( uEntity_t *e, mapLight_t *light ) {
 
 			if ( group->numGroupLights == MAX_GROUP_LIGHTS ) {
 				common->Error( "MAX_GROUP_LIGHTS around %f %f %f",
-							   group->triList->v[0].xyz[0], group->triList->v[0].xyz[1], group->triList->v[0].xyz[2] );
+					 group->triList->v[0].xyz[0], group->triList->v[0].xyz[1], group->triList->v[0].xyz[2] );
 			}
 
 			// if the group doesn't face the light,
 			// it won't get carved at all
 			if ( !light->def.lightShader->LightEffectsBackSides() &&
-					!group->material->ReceivesLightingOnBackSides() &&
-					dmapGlobals.mapPlanes[ group->planeNum ].Distance( light->def.parms.origin ) <= 0  ) {
+				!group->material->ReceivesLightingOnBackSides() &&
+				dmapGlobals.mapPlanes[ group->planeNum ].Distance( light->def.parms.origin ) <= 0  ) {
 
 				group->nextGroup = carvedGroups;
 				carvedGroups = group;

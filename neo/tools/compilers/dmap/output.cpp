@@ -160,10 +160,10 @@ static bool MatchVert( const idDrawVert *a, const idDrawVert *b ) {
 	if ( idMath::Fabs( a->xyz[2] - b->xyz[2] ) > XYZ_EPSILON ) {
 		return false;
 	}
-	if( idMath::Fabs( a->GetTexCoordS() - b->GetTexCoordS() ) > ST_EPSILON ) {
+	if ( idMath::Fabs( a->GetTexCoordS() - b->GetTexCoordS() ) > ST_EPSILON ) {
 		return false;
 	}
-	if( idMath::Fabs( a->GetTexCoordT() - b->GetTexCoordT() ) > ST_EPSILON ) {
+	if ( idMath::Fabs( a->GetTexCoordT() - b->GetTexCoordT() ) > ST_EPSILON ) {
 		return false;
 	}
 

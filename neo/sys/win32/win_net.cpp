@@ -70,8 +70,8 @@ static SOCKET	socks_socket;
 static char		socksBuf[4096];
 
 typedef struct {
-	unsigned long ip;
-	unsigned long mask;
+	unsigned int ip;
+	unsigned int mask;
 	char addr[16];
 } net_interface;
 
@@ -222,7 +222,7 @@ static bool Net_StringToSockaddr( const char *s, sockaddr_in *sadr, bool doDNSRe
 	sadr->sin_port = 0;
 
 	if( s[0] >= '0' && s[0] <= '9' ) {
-		unsigned long ret = inet_addr(s);
+		unsigned int ret = inet_addr(s);
 		if ( ret != INADDR_NONE ) {
 			*(int *)&sadr->sin_addr = ret;
 		} else {
@@ -689,7 +689,7 @@ void Sys_InitNetworking() {
 			idLib::Printf( "Found interface: %s %s - ", pAdapter->AdapterName, pAdapter->Description );
 			pIPAddrString = &pAdapter->IpAddressList;
 			while( pIPAddrString ) {
-				unsigned long ip_a, ip_m;
+				unsigned int ip_a, ip_m;
 				if( !idStr::Icmp( "127.0.0.1", pIPAddrString->IpAddress.String ) ) {
 					foundloopback = true;
 				}
@@ -796,9 +796,9 @@ bool Sys_IsLANAddress( const netadr_t adr ) {
 
 	if ( num_interfaces ) {
 		int i;
-		unsigned long *p_ip;
-		unsigned long ip;
-		p_ip = (unsigned long *)&adr.ip[0];
+		unsigned int *p_ip;
+		unsigned int ip;
+		p_ip = (unsigned int *)&adr.ip[0];
 		ip = ntohl( *p_ip );
 
 		for( i = 0; i < num_interfaces; i++ ) {

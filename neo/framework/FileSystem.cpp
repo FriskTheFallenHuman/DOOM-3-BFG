@@ -2455,7 +2455,7 @@ void idFileSystemLocal::CreateCRCsForResourceFileList( const idFileList & list )
 		}
 
 		// All tables read, now seek to each one and calculate the CRC.
-		idTempArray< unsigned int > innerFileCRCs( numFileResources ); // DG: use int instead of long for 64bit compatibility
+		idTempArray< unsigned int > innerFileCRCs( numFileResources );
 		for ( int innerFileIndex = 0; innerFileIndex < numFileResources; ++innerFileIndex ) {
 			const char * innerFileDataBegin = currentFile->GetDataPtr() + cacheEntries[innerFileIndex].offset;
 
@@ -2463,7 +2463,7 @@ void idFileSystemLocal::CreateCRCsForResourceFileList( const idFileList & list )
 		}
 
 		// Get the CRC for all the CRCs.
-		const unsigned int totalCRC = CRC32_BlockChecksum( innerFileCRCs.Ptr(), innerFileCRCs.Size() ); // DG: use int instead of long for 64bit compatibility
+		const unsigned int totalCRC = CRC32_BlockChecksum( innerFileCRCs.Ptr(), innerFileCRCs.Size() );
 
 		// Write the .crc file corresponding to the .resources file.
 		idStr crcFilename = list.GetFile( fileIndex );

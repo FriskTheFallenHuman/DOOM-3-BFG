@@ -35,9 +35,8 @@ newoption {
 
 workspace("Doom3")
 	configurations({"Debug", "Release", "Retail"})
-	platforms("Win32")
+	platforms({"Win32", "x64"})
 	location("../build")
-	preferredtoolarchitecture("x86")
 	--warnings( "Extra" )
 	--floatingpoint( "Fast" )
 	cppdialect("C++14")
@@ -50,26 +49,30 @@ workspace("Doom3")
 	end
 
 	filter("platforms:Win32")
-		system("Windows")
 		architecture("x86")
-		objdir("../build/out")
-		targetdir("../bin")
+		objdir("../build/out/x86")
 	filter({})
 
-	filter("kind:SharedLib")
-		-- We don't want manifests for DLLs
-		manifest("Off")
-	filter({})
-
-	filter("kind:not StaticLib")
-		targetdir("../bin/base")	
+	filter("platforms:x64")
+		architecture("x86_64")
+		objdir("../build/out/x86_64")
 	filter({})
 
 	-- _Common.props
 	filter("system:Windows")
-		defines({"_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE", "_USE_32BIT_TIME_T"})
+		system("Windows")
+		defines({"_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE"})
 		warnings("Extra")
 		multiprocessorcompile("On")
+
+		filter("platforms:Win32")
+			defines({"_USE_32BIT_TIME_T"})
+		filter({})
+
+		filter("kind:SharedLib")
+			-- We don't want manifests for DLLs
+			manifest("Off")
+		filter({})
 
 		-- _Debug.props
 		filter("configurations:Debug")
@@ -142,19 +145,13 @@ workspace("Doom3")
 
 	project("DoomEXE")
 		targetname("Doom3BFG")
+		targetdir("../bin")
 		kind("WindowedApp")
 		language("C++")
 		links({"external", "idLib"})
 		if not _OPTIONS["dll"] then
 			links({"Game-D3XP"})
 		end
-
-		filter("platforms:Win32")
-			libdirs({
-				"external/raylib/lib/x86"
-			})
-		filter({})
-		links({"raylibdll"})
 
 		pchsource("framework/precompiled.cpp")
 		pchheader("")

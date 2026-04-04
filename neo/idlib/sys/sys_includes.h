@@ -65,6 +65,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma warning(disable : 4714)				// function marked as __forceinline not inlined
 #pragma warning(disable : 4996)				// unsafe string operations
 
+#include <xmmintrin.h>						// needed for SIMD instructions like MXCSR manipulation
 #include <malloc.h>							// no malloc.h on mac or unix
 #include <windows.h>						// for qgl.h
 
@@ -90,13 +91,20 @@ If you have questions concerning this license or the applicable additional terms
 	#define NDEBUG
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <assert.h>
-#include <time.h>
-#include <ctype.h>
+// STD
+#include <cstdio>
+#include <cstdlib>
+#include <cstdarg>
+#include <cstring>
+#include <cassert>
+#include <ctime>
+#include <cctype>
+#include <cerrno>
+#include <cmath>
+#include <climits>
+#include <thread>
+
+// STL
 #include <typeinfo>
 #include <errno.h>
 #include <math.h>

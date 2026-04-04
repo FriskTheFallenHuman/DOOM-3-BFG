@@ -291,7 +291,7 @@ on an edge of the given mapTri, otherwise returns NULL.
 */
 static mapTri_t *FixTriangleAgainstHashVert( const mapTri_t *a, const hashVert_t *hv ) {
 	int			i;
-	const idDrawVert	*v1, *v2, *v3;
+	const idDrawVert	*v1, *v2;
 	idDrawVert	split;
 	idVec3		dir;
 	float		len;
@@ -318,7 +318,6 @@ static mapTri_t *FixTriangleAgainstHashVert( const mapTri_t *a, const hashVert_t
 	for ( i = 0 ; i < 3 ; i++ ) {
 		v1 = &a->v[i];
 		v2 = &a->v[(i+1)%3];
-		v3 = &a->v[(i+2)%3];
 		dir = v2->xyz - v1->xyz;
 
 		len = dir.Normalize();
@@ -603,9 +602,9 @@ void	FixGlobalTjunctions( uEntity_t *e ) {
 			if ( !modelName ) {
 				continue;
 			}
-			if ( !strstr( modelName, ".lwo" )
-				&& !strstr( modelName, ".ase" )
-				&& !strstr( modelName, ".ma" )
+			if ( !strstr( modelName, ".lwo" ) 
+				&& !strstr( modelName, ".ase" ) 
+				&& !strstr( modelName, ".ma" ) 
 #if USE_COLLADA
 				&& !strstr(modelName, ".dea")
 #endif

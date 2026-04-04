@@ -59,6 +59,7 @@ If you have questions concerning this license or the applicable additional terms
 #define SAVEGAME_DETAIL_FIELD_DIFFICULTY	"difficulty"
 #define SAVEGAME_DETAIL_FIELD_PLAYTIME		"playTime"
 #define SAVEGAME_DETAIL_FIELD_LANGUAGE		"language"
+#define SAVEGAME_DETAIL_FIELD_ARCH			"cpuarch"
 #define	SAVEGAME_DETAIL_FIELD_SAVE_VERSION	"saveVersion"
 #define	SAVEGAME_DETAIL_FIELD_CHECKSUM		"checksum"
 
@@ -158,6 +159,7 @@ public:
 	idStr	GetMapName() const { return descriptors.GetString( SAVEGAME_DETAIL_FIELD_MAP, "" ); }
 	idStr	GetLocation() const { return descriptors.GetString( SAVEGAME_DETAIL_FIELD_MAP_LOCATE, "" ); }
 	idStr	GetLanguage() const { return descriptors.GetString( SAVEGAME_DETAIL_FIELD_LANGUAGE, "" ); }
+	idStr	GetArchiteture() const { return descriptors.GetString( SAVEGAME_DETAIL_FIELD_ARCH, "" ); }
 	int		GetPlaytime() const { return descriptors.GetInt( SAVEGAME_DETAIL_FIELD_PLAYTIME, 0 ); }
 	int		GetExpansion() const { return descriptors.GetInt( SAVEGAME_DETAIL_FIELD_EXPANSION, 0 ); }
 	int		GetDifficulty() const { return descriptors.GetInt( SAVEGAME_DETAIL_FIELD_DIFFICULTY, -1 ); }

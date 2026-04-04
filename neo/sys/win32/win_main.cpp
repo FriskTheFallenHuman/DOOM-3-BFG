@@ -36,8 +36,8 @@ If you have questions concerning this license or the applicable additional terms
 #include <io.h>
 #include <conio.h>
 #include <mapi.h>
-#include <ShellAPI.h>
-#include <Shlobj.h>
+#include <shellapi.h>
+#include <shlobj.h>
 
 #ifndef __MRC__
 #include <sys/types.h>
@@ -51,7 +51,6 @@ If you have questions concerning this license or the applicable additional terms
 idCVar Win32Vars_t::sys_arch( "sys_arch", "", CVAR_SYSTEM | CVAR_INIT, "" );
 idCVar Win32Vars_t::sys_cpustring( "sys_cpustring", "detect", CVAR_SYSTEM | CVAR_INIT, "" );
 idCVar Win32Vars_t::in_mouse( "in_mouse", "1", CVAR_SYSTEM | CVAR_BOOL, "enable mouse input" );
-idCVar Win32Vars_t::win_username( "win_username", "", CVAR_SYSTEM | CVAR_INIT, "windows user name" );
 idCVar Win32Vars_t::win_outputEditString( "win_outputEditString", "1", CVAR_SYSTEM | CVAR_BOOL, "" );
 idCVar Win32Vars_t::win_viewlog( "win_viewlog", "0", CVAR_SYSTEM | CVAR_INTEGER, "" );
 idCVar Win32Vars_t::win_timerUpdate( "win_timerUpdate", "0", CVAR_SYSTEM | CVAR_BOOL, "allows the game to be updated while dragging the window" );
@@ -60,150 +59,7 @@ Win32Vars_t	win32;
 
 static char		sys_cmdline[MAX_STRING_CHARS];
 
-static sysMemoryStats_t exeLaunchMemoryStats;
-
 static HANDLE hProcessMutex;
-
-/*
-================
-Sys_GetExeLaunchMemoryStatus
-================
-*/
-void Sys_GetExeLaunchMemoryStatus( sysMemoryStats_t &stats ) {
-	stats = exeLaunchMemoryStats;
-}
-
-/*
-==================
-Sys_Sentry
-==================
-*/
-void Sys_Sentry() {
-}
-
-
-#pragma optimize( "", on )
-
-#ifdef DEBUG
-
-
-static unsigned int debug_total_alloc = 0;
-static unsigned int debug_total_alloc_count = 0;
-static unsigned int debug_current_alloc = 0;
-static unsigned int debug_current_alloc_count = 0;
-static unsigned int debug_frame_alloc = 0;
-static unsigned int debug_frame_alloc_count = 0;
-
-idCVar sys_showMallocs( "sys_showMallocs", "0", CVAR_SYSTEM, "" );
-
-// _HOOK_ALLOC, _HOOK_REALLOC, _HOOK_FREE
-
-typedef struct CrtMemBlockHeader
-{
-	struct _CrtMemBlockHeader *pBlockHeaderNext;	// Pointer to the block allocated just before this one:
-	struct _CrtMemBlockHeader *pBlockHeaderPrev;	// Pointer to the block allocated just after this one
-   char *szFileName;    // File name
-   int nLine;           // Line number
-   size_t nDataSize;    // Size of user block
-   int nBlockUse;       // Type of block
-   long lRequest;       // Allocation number
-	byte		gap[4];								// Buffer just before (lower than) the user's memory:
-} CrtMemBlockHeader;
-
-#include <crtdbg.h>
-
-/*
-==================
-Sys_AllocHook
-
-	called for every malloc/new/free/delete
-==================
-*/
-int Sys_AllocHook( int nAllocType, void *pvData, size_t nSize, int nBlockUse, long lRequest, const unsigned char * szFileName, int nLine )
-{
-	CrtMemBlockHeader	*pHead;
-	byte				*temp;
-
-	if ( nBlockUse == _CRT_BLOCK )
-	{
-	  return( TRUE );
-	}
-
-	// get a pointer to memory block header
-	temp = ( byte * )pvData;
-	temp -= 32;
-	pHead = ( CrtMemBlockHeader * )temp;
-
-	switch( nAllocType ) {
-		case	_HOOK_ALLOC:
-			debug_total_alloc += nSize;
-			debug_current_alloc += nSize;
-			debug_frame_alloc += nSize;
-			debug_total_alloc_count++;
-			debug_current_alloc_count++;
-			debug_frame_alloc_count++;
-			break;
-
-		case	_HOOK_FREE:
-			assert( pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd );
-
-			debug_current_alloc -= pHead->nDataSize;
-			debug_current_alloc_count--;
-			debug_total_alloc_count++;
-			debug_frame_alloc_count++;
-			break;
-
-		case	_HOOK_REALLOC:
-			assert( pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd );
-
-			debug_current_alloc -= pHead->nDataSize;
-			debug_total_alloc += nSize;
-			debug_current_alloc += nSize;
-			debug_frame_alloc += nSize;
-			debug_total_alloc_count++;
-			debug_current_alloc_count--;
-			debug_frame_alloc_count++;
-			break;
-	}
-	return( TRUE );
-}
-
-/*
-==================
-Sys_DebugMemory_f
-==================
-*/
-void Sys_DebugMemory_f() {
-	common->Printf( "Total allocation %8dk in %d blocks\n", debug_total_alloc / 1024, debug_total_alloc_count );
-	common->Printf( "Current allocation %8dk in %d blocks\n", debug_current_alloc / 1024, debug_current_alloc_count );
-}
-
-/*
-==================
-Sys_MemFrame
-==================
-*/
-void Sys_MemFrame() {
-	if( sys_showMallocs.GetInteger() ) {
-		common->Printf("Frame: %8dk in %5d blocks\n", debug_frame_alloc / 1024, debug_frame_alloc_count );
-	}
-
-	debug_frame_alloc = 0;
-	debug_frame_alloc_count = 0;
-}
-
-#endif
-
-/*
-==================
-Sys_FlushCacheMemory
-
-On windows, the vertex buffers are write combined, so they
-don't need to be flushed from the cache
-==================
-*/
-void Sys_FlushCacheMemory( void *base, int bytes ) {
-}
 
 /*
 =============
@@ -560,7 +416,7 @@ Sys_ListFiles
 int Sys_ListFiles( const char *directory, const char *extension, idStrList &list ) {
 	idStr		search;
 	struct _finddata_t findinfo;
-	int			findhandle;
+	intptr_t	findhandle;
 	int			flag;
 
 	if ( !extension) {
@@ -837,9 +693,55 @@ DLL Loading
 Sys_DLL_Load
 =====================
 */
-int Sys_DLL_Load( const char *dllName ) {
-	HINSTANCE libHandle = LoadLibrary( dllName );
-	return (int)libHandle;
+uintptr_t Sys_DLL_Load( const char *dllName ) {
+	HINSTANCE	libHandle;
+	libHandle = LoadLibrary( dllName );
+	if ( libHandle ) {
+		// since we can't have LoadLibrary load only from the specified path, check it did the right thing
+		char loadedPath[ MAX_OSPATH ];
+		GetModuleFileName( libHandle, loadedPath, sizeof( loadedPath ) - 1 );
+		if ( idStr::IcmpPath( dllName, loadedPath ) ) {
+			Sys_Printf( "ERROR: LoadLibrary '%s' wants to load '%s'\n", dllName, loadedPath );
+			Sys_DLL_Unload( (uintptr_t)libHandle );
+			return 0;
+		}
+	} else {
+		DWORD e = GetLastError();
+
+		if ( e ==  0x7E ) {
+			// 0x7E is "The specified module could not be found."
+			// don't print a warning for that error, it's expected
+			// when trying different possible paths for a DLL
+			return 0;
+		}
+
+		if ( e == 0xC1) {
+			// "[193 (0xC1)] is not a valid Win32 application"
+			// probably going to be common. Lets try to be less cryptic.
+			common->Warning( "LoadLibrary( \"%s\" ) Failed ! [%i (0x%X)]\tprobably the DLL is of the wrong architecture, "
+			                 "like x64 instead of x86 (this build expects %s)",
+			                 dllName, e, e, CPUSTRING );
+			return 0;
+		}
+
+		// for all other errors, print whatever FormatMessage() gives us
+		LPVOID msgBuf = NULL;
+
+		FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			e,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR)&msgBuf,
+			0, NULL);
+
+		common->Warning( "LoadLibrary( \"%s\" ) Failed ! [%i (0x%X)]\t%s", dllName, e, e, msgBuf );
+
+		::LocalFree( msgBuf );
+	}
+	return (uintptr_t)libHandle;
 }
 
 /*
@@ -847,8 +749,31 @@ int Sys_DLL_Load( const char *dllName ) {
 Sys_DLL_GetProcAddress
 =====================
 */
-void *Sys_DLL_GetProcAddress( int dllHandle, const char *procName ) {
-	return GetProcAddress( (HINSTANCE)dllHandle, procName );
+void *Sys_DLL_GetProcAddress( uintptr_t dllHandle, const char *procName ) {
+	void * adr = (void*)GetProcAddress((HINSTANCE)dllHandle, procName);
+	if (!adr)
+	{
+		DWORD e = GetLastError();
+		LPVOID msgBuf = NULL;
+
+		FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			e,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR)&msgBuf,
+			0, NULL);
+
+		idStr errorStr = va("[%i (0x%X)]\t%s", e, e, msgBuf);
+
+		if (errorStr.Length())
+			common->Warning("GetProcAddress( %i %s) Failed ! %s", dllHandle, procName, errorStr.c_str());
+
+		::LocalFree(msgBuf);
+	}
+	return adr;
 }
 
 /*
@@ -856,7 +781,7 @@ void *Sys_DLL_GetProcAddress( int dllHandle, const char *procName ) {
 Sys_DLL_Unload
 =====================
 */
-void Sys_DLL_Unload( int dllHandle ) {
+void Sys_DLL_Unload( uintptr_t dllHandle ) {
 	if ( !dllHandle ) {
 		return;
 	}
@@ -1035,22 +960,12 @@ Sys_Init
 The cvar system must already be setup
 ================
 */
-#define OSR2_BUILD_NUMBER 1111
-#define WIN98_BUILD_NUMBER 1998
 
 void Sys_Init() {
 
 	CoInitialize( NULL );
 
-	// get WM_TIMER messages pumped every millisecond
-//	SetTimer( NULL, 0, 100, NULL );
-
 	cmdSystem->AddCommand( "in_restart", Sys_In_Restart_f, CMD_FL_SYSTEM, "restarts the input system" );
-
-	//
-	// Windows user name
-	//
-	win32.win_username.SetString( Sys_GetCurrentUser() );
 
 	//
 	// Windows version
@@ -1060,48 +975,22 @@ void Sys_Init() {
 	if ( !GetVersionEx( (LPOSVERSIONINFO)&win32.osversion ) )
 		Sys_Error( "Couldn't get OS info" );
 
-	if ( win32.osversion.dwMajorVersion < 4 ) {
-		Sys_Error( GAME_NAME " requires Windows version 4 (NT) or greater" );
-	}
-	if ( win32.osversion.dwPlatformId == VER_PLATFORM_WIN32s ) {
-		Sys_Error( GAME_NAME " doesn't run on Win32s" );
+	if ( win32.osversion.dwMajorVersion < 7 ) {
+		Sys_Error( GAME_NAME " requires Windows 7 SP1 or greater" );
 	}
 
-	if( win32.osversion.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
-		if( win32.osversion.dwMajorVersion <= 4 ) {
-			win32.sys_arch.SetString( "WinNT (NT)" );
-		} else if( win32.osversion.dwMajorVersion == 5 && win32.osversion.dwMinorVersion == 0 ) {
-			win32.sys_arch.SetString( "Win2K (NT)" );
-		} else if( win32.osversion.dwMajorVersion == 5 && win32.osversion.dwMinorVersion == 1 ) {
-			win32.sys_arch.SetString( "WinXP (NT)" );
-		} else if ( win32.osversion.dwMajorVersion == 6 ) {
-			win32.sys_arch.SetString( "Vista" );
-		} else {
-			win32.sys_arch.SetString( "Unknown NT variant" );
-		}
-	} else if( win32.osversion.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS ) {
-		if( win32.osversion.dwMajorVersion == 4 && win32.osversion.dwMinorVersion == 0 ) {
-			// Win95
-			if( win32.osversion.szCSDVersion[1] == 'C' ) {
-				win32.sys_arch.SetString( "Win95 OSR2 (95)" );
-			} else {
-				win32.sys_arch.SetString( "Win95 (95)" );
-			}
-		} else if( win32.osversion.dwMajorVersion == 4 && win32.osversion.dwMinorVersion == 10 ) {
-			// Win98
-			if( win32.osversion.szCSDVersion[1] == 'A' ) {
-				win32.sys_arch.SetString( "Win98SE (95)" );
-			} else {
-				win32.sys_arch.SetString( "Win98 (95)" );
-			}
-		} else if( win32.osversion.dwMajorVersion == 4 && win32.osversion.dwMinorVersion == 90 ) {
-			// WinMe
-			win32.sys_arch.SetString( "WinMe (95)" );
-		} else {
-			win32.sys_arch.SetString( "Unknown 95 variant" );
-		}
+	if ( win32.osversion.dwMajorVersion >= 6 && win32.osversion.dwMinorVersion == 1 && ( win32.osversion.dwBuildNumber == 7600 || win32.osversion.dwBuildNumber == 7601 ) ) {
+		common->Printf( "Detected: Windows 7 %u.%u (Build: %u)\n", win32.osversion.dwMajorVersion, win32.osversion.dwMinorVersion, win32.osversion.dwBuildNumber );
+	} else if ( win32.osversion.dwMajorVersion >= 6 && win32.osversion.dwMinorVersion == 2 && ( win32.osversion.dwBuildNumber == 9200 ) ) {
+		common->Printf( "Detected: Windows 8 %u.%u (Build: %u)\n", win32.osversion.dwMajorVersion, win32.osversion.dwMinorVersion, win32.osversion.dwBuildNumber );
+	} else if ( win32.osversion.dwMajorVersion >= 6 && win32.osversion.dwMinorVersion == 3 && ( win32.osversion.dwBuildNumber == 9200 || win32.osversion.dwBuildNumber == 9600 ) ) {
+		common->Printf( "Detected: Windows 8.1 %u.%u (Build: %u)\n", win32.osversion.dwMajorVersion, win32.osversion.dwMinorVersion, win32.osversion.dwBuildNumber );
+	} else if ( win32.osversion.dwMajorVersion >= 10 && win32.osversion.dwBuildNumber < 21996 ) {
+		common->Printf( "Detected: Windows 10 %u.%u (Build: %u)\n", win32.osversion.dwMajorVersion, win32.osversion.dwMinorVersion, win32.osversion.dwBuildNumber );
+	} else if ( win32.osversion.dwMajorVersion >= 10 && win32.osversion.dwBuildNumber >= 21996 ) {
+		common->Printf( "Detected: Windows 11 %u.%u (Build: %u)\n", win32.osversion.dwMajorVersion, win32.osversion.dwMinorVersion, win32.osversion.dwBuildNumber );
 	} else {
-		win32.sys_arch.SetString( "unknown Windows variant" );
+		common->Printf( "Detected: Windows (Proton/Wine) %u.%u (Build: %u)", win32.osversion.dwMajorVersion, win32.osversion.dwMinorVersion, win32.osversion.dwBuildNumber );
 	}
 
 	//
@@ -1120,8 +1009,6 @@ void Sys_Init() {
 			string += "AMD CPU";
 		} else if ( win32.cpuid & CPUID_INTEL ) {
 			string += "Intel CPU";
-		} else if ( win32.cpuid & CPUID_UNSUPPORTED ) {
-			string += "unsupported CPU";
 		} else {
 			string += "generic CPU";
 		}
@@ -1130,20 +1017,8 @@ void Sys_Init() {
 		if ( win32.cpuid & CPUID_MMX ) {
 			string += "MMX & ";
 		}
-		if ( win32.cpuid & CPUID_3DNOW ) {
-			string += "3DNow! & ";
-		}
 		if ( win32.cpuid & CPUID_SSE ) {
 			string += "SSE & ";
-		}
-		if ( win32.cpuid & CPUID_SSE2 ) {
-			string += "SSE2 & ";
-		}
-		if ( win32.cpuid & CPUID_SSE3 ) {
-			string += "SSE3 & ";
-		}
-		if ( win32.cpuid & CPUID_HTT ) {
-			string += "HTT & ";
 		}
 		string.StripTrailing( " & " );
 		string.StripTrailing( " with " );
@@ -1163,16 +1038,8 @@ void Sys_Init() {
 				id |= CPUID_AMD;
 			} else if ( token.Icmp( "mmx" ) == 0 ) {
 				id |= CPUID_MMX;
-			} else if ( token.Icmp( "3dnow" ) == 0 ) {
-				id |= CPUID_3DNOW;
 			} else if ( token.Icmp( "sse" ) == 0 ) {
 				id |= CPUID_SSE;
-			} else if ( token.Icmp( "sse2" ) == 0 ) {
-				id |= CPUID_SSE2;
-			} else if ( token.Icmp( "sse3" ) == 0 ) {
-				id |= CPUID_SSE3;
-			} else if ( token.Icmp( "htt" ) == 0 ) {
-				id |= CPUID_HTT;
 			}
 		}
 		if ( id == CPUID_NONE ) {
@@ -1185,8 +1052,8 @@ void Sys_Init() {
 	common->Printf( "%s\n", win32.sys_cpustring.GetString() );
 	common->Printf( "%d MB System Memory\n", Sys_GetSystemRam() );
 	common->Printf( "%d MB Video Memory\n", Sys_GetVideoRam() );
-	if ( ( win32.cpuid & CPUID_SSE2 ) == 0 ) {
-		common->Error( "SSE2 not supported!" );
+	if ( ( win32.cpuid & CPUID_SSE ) == 0 ) {
+		common->Error( "SSE not supported!" );
 	}
 
 	win32.g_Joystick.Init();
@@ -1227,7 +1094,6 @@ const char *Sys_GetProcessorString() {
 
 //#define SET_THREAD_AFFINITY
 
-
 /*
 ====================
 Win_Frame
@@ -1245,26 +1111,16 @@ void Win_Frame() {
 	}
 }
 
-#define TEST_FPU_EXCEPTIONS	/*	FPU_EXCEPTION_INVALID_OPERATION |		*/	\
-							/*	FPU_EXCEPTION_DENORMALIZED_OPERAND |	*/	\
-							/*	FPU_EXCEPTION_DIVIDE_BY_ZERO |			*/	\
-							/*	FPU_EXCEPTION_NUMERIC_OVERFLOW |		*/	\
-							/*	FPU_EXCEPTION_NUMERIC_UNDERFLOW |		*/	\
-							/*	FPU_EXCEPTION_INEXACT_RESULT |			*/	\
-								0
-
 /*
 ==================
 WinMain
 ==================
 */
-int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow ) {
+int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow ) {
 
 	const HCURSOR hcurSave = ::SetCursor( LoadCursor( 0, IDC_WAIT ) );
 
 	Sys_SetPhysicalWorkMemory( 192 << 20, 1024 << 20 );
-
-	Sys_GetCurrentMemoryStatus( exeLaunchMemoryStats );
 
 	win32.hInstance = hInstance;
 	idStr::Copynz( sys_cmdline, lpCmdLine, sizeof( sys_cmdline ) );
@@ -1278,7 +1134,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	Sys_CreateConsole();
 
 	// Register the unhandled exception
-	LONG WINAPI Sys_UnhandledExceptionFilter( EXCEPTION_POINTERS * exceptionInfo );
+	LONG CALLBACK Sys_UnhandledExceptionFilter( EXCEPTION_POINTERS * exceptionInfo );
 	SetUnhandledExceptionFilter( Sys_UnhandledExceptionFilter );
 
 	// no abort/retry/fail errors
@@ -1296,14 +1152,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	_CrtSetDbgFlag( 0 );
 #endif
 
-//	Sys_FPU_EnableExceptions( TEST_FPU_EXCEPTIONS );
-	Sys_FPU_SetPrecision( FPU_PRECISION_DOUBLE_EXTENDED );
-
 	common->Init( 0, NULL, lpCmdLine );
-
-#if TEST_FPU_EXCEPTIONS != 0
-	common->Printf( Sys_FPU_GetState() );
-#endif
 
 	// hide or show the early console as necessary
 #ifndef _DEBUG
@@ -1334,51 +1183,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		Sys_MemFrame();
 #endif
 
-		// set exceptions, even if some crappy syscall changes them!
-		Sys_FPU_EnableExceptions( TEST_FPU_EXCEPTIONS );
-
 		// run the game
 		common->Frame();
 	}
 
 	// never gets here
 	return 0;
-}
-
-/*
-====================
-clrstk
-
-I tried to get the run time to call this at every function entry, but
-====================
-*/
-static int	parmBytes;
-__declspec( naked ) void clrstk() {
-	// eax = bytes to add to stack
-	__asm {
-		mov		[parmBytes],eax
-		neg     eax                     ; compute new stack pointer in eax
-		add     eax,esp
-		add     eax,4
-		xchg    eax,esp
-		mov     eax,dword ptr [eax]		; copy the return address
-		push    eax
-
-		; clear to zero
-		push	edi
-		push	ecx
-		mov		edi,esp
-		add		edi,12
-		mov		ecx,[parmBytes]
-		shr		ecx,2
-		xor		eax,eax
-		cld
-		rep	stosd
-		pop		ecx
-		pop		edi
-
-		ret
-	}
 }
 
 /*
