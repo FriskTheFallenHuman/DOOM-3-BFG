@@ -636,7 +636,8 @@ idSessionLocalCallbacks
 */
 class idSessionLocalCallbacks : public idSessionCallbacks {
 public:
-	idSessionLocalCallbacks( idSessionLocal * sessionLocal_ ) { sessionLocal = sessionLocal_; }
+									idSessionLocalCallbacks( idSessionLocal * sessionLocal_ ) { sessionLocal = sessionLocal_; }
+	virtual							~idSessionLocalCallbacks() {}
 
 	virtual idLobby &				GetPartyLobby()				{ return sessionLocal->GetPartyLobby(); }
 	virtual idLobby &				GetGameLobby()				{ return sessionLocal->GetGameLobby(); }

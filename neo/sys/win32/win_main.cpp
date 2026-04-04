@@ -55,11 +55,147 @@ idCVar Win32Vars_t::win_outputEditString( "win_outputEditString", "1", CVAR_SYST
 idCVar Win32Vars_t::win_viewlog( "win_viewlog", "0", CVAR_SYSTEM | CVAR_INTEGER, "" );
 idCVar Win32Vars_t::win_timerUpdate( "win_timerUpdate", "0", CVAR_SYSTEM | CVAR_BOOL, "allows the game to be updated while dragging the window" );
 
-Win32Vars_t	win32;
+Win32Vars_t win32 = {};
 
 static char		sys_cmdline[MAX_STRING_CHARS];
 
 static HANDLE hProcessMutex;
+
+extern "C" {
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
+#ifndef CREATE_WAITABLE_TIMER_HIGH_RESOLUTION
+	#define CREATE_WAITABLE_TIMER_HIGH_RESOLUTION 0x00000002
+#endif
+
+/*
+This class contains code adapted from Blat Blatnik's precise_sleep.c sample
+(retrieved 2024-04-10), which is under the Unlicense license:
+   https://github.com/blat-blatnik/Snippets/blob/main/precise_sleep.c
+   https://github.com/blat-blatnik/Snippets/blob/main/LICENSE
+*/
+class idTimeHiRes {
+
+public:
+				idTimeHiRes();
+	void		Init();
+	void		Shutdown();
+	int64       ClockCount();
+	double		ClockCountToMilliseconds( int64 count );
+	void		Sleep( double seconds );
+
+private:
+	HANDLE Timer;
+	int SchedulerPeriodMs;
+	int64 QpcPerSecond;
+};
+
+idTimeHiRes::idTimeHiRes() {
+	Timer = NULL;
+	SchedulerPeriodMs = 0;
+	QpcPerSecond = 0;
+}
+
+void idTimeHiRes::Init() {
+	if ( !Timer ) {
+		Timer = CreateWaitableTimerEx(NULL, NULL, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
+	}
+
+	TIMECAPS timeCaps;
+	bool capsObtained = false;
+	if ( timeGetDevCaps(&timeCaps, sizeof(timeCaps)) == MMSYSERR_NOERROR ) {
+		SchedulerPeriodMs = (int)timeCaps.wPeriodMin;
+		if ( SchedulerPeriodMs > 0 ) {
+			timeBeginPeriod((UINT)SchedulerPeriodMs);
+			capsObtained = true;
+		}
+	}
+	if ( !capsObtained ) {
+		SchedulerPeriodMs = 0;
+	}
+
+	LARGE_INTEGER qpf;
+	QueryPerformanceFrequency(&qpf);
+	QpcPerSecond = qpf.QuadPart;
+}
+
+void idTimeHiRes::Shutdown() {
+	if ( Timer ) {
+		CloseHandle(Timer);
+		Timer = NULL;
+	}
+	if ( SchedulerPeriodMs > 0 ) {
+		timeEndPeriod((UINT)SchedulerPeriodMs);
+	}
+	SchedulerPeriodMs = 0;
+}
+
+int64 idTimeHiRes::ClockCount() {
+	if ( !idLib::IsMainThread() ) {
+		return 0;
+	}
+	LARGE_INTEGER qpc;
+	QueryPerformanceCounter(&qpc);
+	int64 count = qpc.QuadPart;
+	return count;
+}
+
+double idTimeHiRes::ClockCountToMilliseconds( int64 count ) {
+	if ( !idLib::IsMainThread() ) {
+		return 0.0;
+	}
+	double msec = ((double)count / (double)QpcPerSecond) * 1000.0;
+	return msec;
+}
+
+void idTimeHiRes::Sleep( double milliseconds ) {
+	if ( !idLib::IsMainThread() ) {
+		return;
+	}
+	double seconds = milliseconds * 0.001;
+
+	LARGE_INTEGER qpc;
+	QueryPerformanceCounter(&qpc);
+	int64 targetQpc = qpc.QuadPart + (int64)(seconds * (double)QpcPerSecond);
+
+	if ( SchedulerPeriodMs > 0 ) {
+		// Try using a high resolution timer first.
+		if ( Timer ) {
+			const double TOLERANCE = 0.001'02;
+			int64 maxTicks = (int64)SchedulerPeriodMs * 9'500;
+			// Break sleep up into parts that are lower than scheduler period.
+			for (;;) {
+				double remainingSeconds = (double)(targetQpc - qpc.QuadPart) / (double)QpcPerSecond;
+				int64 sleepTicks = (int64)((remainingSeconds - TOLERANCE) * 10'000'000.0); // 100ns intervals
+				if ( sleepTicks <= 0 )
+					break;
+
+				LARGE_INTEGER due;
+				due.QuadPart = -(sleepTicks > maxTicks ? maxTicks : sleepTicks);
+				SetWaitableTimerEx(Timer, &due, 0, NULL, NULL, NULL, 0);
+				WaitForSingleObject(Timer, INFINITE);
+				QueryPerformanceCounter(&qpc);
+			}
+		} else { // Fallback to Sleep.
+			const double TOLERANCE = 0.000'02;
+			double sleepMs = (seconds - TOLERANCE) * 1000.0 - (double)SchedulerPeriodMs; // Sleep for 1 scheduler period less than requested.
+			int sleepSlices = (int)(sleepMs / (double)SchedulerPeriodMs);
+			if ( sleepSlices > 0 )
+				Sleep((DWORD)sleepSlices * (DWORD)SchedulerPeriodMs);
+			QueryPerformanceCounter(&qpc);
+		}
+	}
+
+	// Spin for any remaining time.
+	while ( qpc.QuadPart < targetQpc ) {
+		YieldProcessor();
+		QueryPerformanceCounter(&qpc);
+	}
+}
+
+idTimeHiRes sysTimeHiRes;
 
 /*
 =============
@@ -83,11 +219,11 @@ void Sys_Error( const char *error, ... ) {
 	Sys_ShowConsole();
 #endif
 
-	timeEndPeriod( 1 );
+	sysTimeHiRes.Shutdown();
 
 	Sys_ShutdownInput();
 
-	GLimp_Shutdown();
+	renderSystem->Shutdown();
 
 #ifdef _DEBUG
 	Sys_DestroyConsole();
@@ -161,7 +297,7 @@ Sys_Quit
 ==============
 */
 void Sys_Quit() {
-	timeEndPeriod( 1 );
+	sysTimeHiRes.Shutdown();
 	Sys_ShutdownInput();
 	Sys_DestroyConsole();
 	ExitProcess( 0 );
@@ -229,6 +365,65 @@ Sys_Sleep
 */
 void Sys_Sleep( int msec ) {
 	Sleep( msec );
+}
+
+/*
+==============
+Sys_EnableThreadAffinity
+==============
+*/
+void Sys_EnableThreadAffinity( bool enable ) {
+	static bool isEnabled = false;
+	static DWORD_PTR previousAffinityMask = 0;
+
+	if ( !idLib::IsMainThread() ) {
+		return;
+	}
+	if ( enable ) {
+		if ( !isEnabled ) {
+			isEnabled = true;
+			HANDLE hThread = GetCurrentThread();
+			previousAffinityMask = SetThreadAffinityMask(hThread, 0x1); // previousAffinityMask will be 0 if this call fails
+			Sleep(0);
+		}
+	} else {
+		if ( isEnabled ) {
+			isEnabled = false;
+			if ( previousAffinityMask ) {
+				HANDLE hThread = GetCurrentThread();
+				SetThreadAffinityMask(hThread, previousAffinityMask);
+				previousAffinityMask = 0;
+				Sleep(0);
+			}
+		}
+	}
+}
+
+/*
+==============
+Sys_HiResClockCount
+==============
+*/
+int64 Sys_HiResClockCount() {
+	return sysTimeHiRes.ClockCount();
+}
+
+/*
+==============
+Sys_HiResClockCountToMilliseconds
+==============
+*/
+double Sys_HiResClockCountToMilliseconds( int64 count ) {
+	return sysTimeHiRes.ClockCountToMilliseconds( count );
+}
+
+/*
+==============
+Sys_HiResClockCountToMilliseconds
+==============
+*/
+void Sys_SleepHiRes( double milliseconds ) {
+	sysTimeHiRes.Sleep( milliseconds );
 }
 
 /*
@@ -1117,8 +1312,7 @@ WinMain
 ==================
 */
 int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow ) {
-
-	const HCURSOR hcurSave = ::SetCursor( LoadCursor( 0, IDC_WAIT ) );
+	::SetCursor( NULL );
 
 	Sys_SetPhysicalWorkMemory( 192 << 20, 1024 << 20 );
 
@@ -1142,7 +1336,7 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	// make sure the timer is high precision, otherwise
 	// NT gets 18ms resolution
-	timeBeginPeriod( 1 );
+	sysTimeHiRes.Init();
 
 	// get the initial time base
 	Sys_Milliseconds();
@@ -1169,8 +1363,6 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	// give the main thread an affinity for the first cpu
 	SetThreadAffinityMask( GetCurrentThread(), 1 );
 #endif
-
-	::SetCursor( hcurSave );
 
 	::SetFocus( win32.hWnd );
 

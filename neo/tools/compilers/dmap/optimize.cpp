@@ -675,7 +675,7 @@ static	void RemoveIfColinear( optVertex_t *ov, optIsland_t *island ) {
 
 	// see if they are colinear
 	dir1 = v3->v.xyz - v1->v.xyz;
-	len = dir1.Normalize();
+	dir1.Normalize();
 	dir2 = v2->v.xyz - v1->v.xyz;
 	dist = dir2 * dir1;
 	VectorMA( v1->v.xyz, dist, dir1, point );

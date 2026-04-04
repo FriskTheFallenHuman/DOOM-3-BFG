@@ -55,7 +55,7 @@ which should also be nicely contained.
 idCVar com_deltaTimeClamp( "com_deltaTimeClamp", "50", CVAR_INTEGER, "don't process more than this time in a single frame" );
 
 idCVar com_fixedTic( "com_fixedTic", DEFAULT_FIXED_TIC, CVAR_BOOL, "run a single game frame per render frame" );
-idCVar com_noSleep( "com_noSleep", DEFAULT_NO_SLEEP, CVAR_BOOL, "don't sleep if the game is running too fast" );
+idCVar com_noSleep( "com_noSleep", DEFAULT_NO_SLEEP, CVAR_BOOL | CVAR_NOCHEAT, "don't sleep if the game is running too fast" );
 idCVar com_smp( "com_smp", "1", CVAR_BOOL|CVAR_SYSTEM|CVAR_NOCHEAT, "run the game and draw code in a separate thread" );
 idCVar com_aviDemoSamples( "com_aviDemoSamples", "16", CVAR_SYSTEM, "" );
 idCVar com_aviDemoWidth( "com_aviDemoWidth", "256", CVAR_SYSTEM, "" );
@@ -462,6 +462,9 @@ void idCommonLocal::Frame() {
 
 		// How many game frames to run
 		int numGameFrames = 0;
+		const double framePeriodMsec_hr = 1000.0 / (double)com_engineHz_latched;
+		const int hiResClockOption = com_hiResClock.GetInteger();
+		Sys_EnableThreadAffinity( hiResClockOption == 2) ;
 
 		for(;;) {
 			const int thisFrameTime = Sys_Milliseconds();
@@ -469,11 +472,26 @@ void idCommonLocal::Frame() {
 			const int deltaMilliseconds = thisFrameTime - lastFrameTime;
 			lastFrameTime = thisFrameTime;
 
+			const int64 thisFrameTime_hr = Sys_HiResClockCount();
+			static int64 lastFrameTime_hr = thisFrameTime_hr; // initialized only the first time
+			double deltaMilliseconds_hr = Sys_HiResClockCountToMilliseconds(thisFrameTime_hr - lastFrameTime_hr);
+			if ( deltaMilliseconds_hr < 0.0 ) {
+				// should never happen
+				deltaMilliseconds_hr = 0.0;
+			}
+			lastFrameTime_hr = thisFrameTime_hr;
+
 			// if there was a large gap in time since the last frame, or the frame
 			// rate is very very low, limit the number of frames we will run
-			const int clampedDeltaMilliseconds = Min( deltaMilliseconds, com_deltaTimeClamp.GetInteger() );
-
-			gameTimeResidual += clampedDeltaMilliseconds * timescale.GetFloat();
+			if ( hiResClockOption > 0 ) {
+				const double clampedDeltaMilliseconds_hr = Min( deltaMilliseconds_hr, (double)com_deltaTimeClamp.GetInteger() );
+				
+				gameTimeResidual += clampedDeltaMilliseconds_hr * timescale.GetFloat();
+			} else {
+				const int clampedDeltaMilliseconds = Min( deltaMilliseconds, com_deltaTimeClamp.GetInteger() );
+				
+				gameTimeResidual += clampedDeltaMilliseconds * timescale.GetFloat();
+			}
 
 			// debug cvar to force multiple game tics
 			if ( com_fixedTic.GetInteger() > 0 ) {
@@ -495,17 +513,28 @@ void idCommonLocal::Frame() {
 				break;
 			}
 
-			for ( ;; ) {
-				// How much time to wait before running the next frame,
-				// based on com_engineHz
-				const int frameDelay = FRAME_TO_MSEC( gameFrame + 1 ) - FRAME_TO_MSEC( gameFrame );
-				if ( gameTimeResidual < frameDelay ) {
-					break;
+			if ( hiResClockOption > 0 ) {
+				for ( ;; ) {
+					if ( gameTimeResidual < framePeriodMsec_hr ) {
+						break;
+					}
+					gameTimeResidual -= framePeriodMsec_hr;
+					gameFrame++;
+					numGameFrames++;
 				}
-				gameTimeResidual -= frameDelay;
-				gameFrame++;
-				numGameFrames++;
-				// if there is enough residual left, we may run additional frames
+			} else {
+				for ( ;; ) {
+					// How much time to wait before running the next frame,
+					// based on com_engineHz
+					const int frameDelay = FRAME_TO_MSEC( gameFrame + 1 ) - FRAME_TO_MSEC( gameFrame );
+					if ( gameTimeResidual < frameDelay ) {
+						break;
+					}
+					gameTimeResidual -= frameDelay;
+					gameFrame++;
+					numGameFrames++;
+					// if there is enough residual left, we may run additional frames
+				}
 			}
 
 			if ( numGameFrames > 0 ) {
@@ -526,7 +555,12 @@ void idCommonLocal::Frame() {
 			// not enough time has passed to run a frame, as might happen if
 			// we don't have vsync on, or the monitor is running at 120hz while
 			// com_engineHz is 60, so sleep a bit and check again
-			Sys_Sleep( 0 );
+			if ( hiResClockOption > 0 ) {
+				double waitMsec = framePeriodMsec_hr - gameTimeResidual;
+				Sys_SleepHiRes( waitMsec );
+			} else {
+				Sys_Sleep( 0 );
+			}
 		}
 
 		// don't run any frames when paused
