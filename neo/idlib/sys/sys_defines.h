@@ -204,7 +204,7 @@ bulk of the codebase, so it is the best place for analyze pragmas.
 
 // x86_64 Warnings
 #pragma warning( disable: 4267 )	// warning C4267: conversion from 'size_t' to 'int', possible loss of data
-
+#pragma warning( disable: 4201 )	// warning C4201: nonstandard extension used: nameless struct/union
 
 #if !defined(VERIFY_FORMAT_STRING)
 	// checking format strings catches a LOT of errors

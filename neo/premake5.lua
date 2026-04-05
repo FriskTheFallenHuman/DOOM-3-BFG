@@ -39,7 +39,7 @@ workspace("Doom3")
 	location("../build")
 	--warnings( "Extra" )
 	--floatingpoint( "Fast" )
-	cppdialect("C++14")
+	cppdialect("C++17")
 	characterset( "ASCII" )
 
 	includedirs({".", "external", "idlib"})
