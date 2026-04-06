@@ -33,7 +33,7 @@ newoption {
    description = "override the built-in game code with any custom gamex86.dll"
 }
 
-workspace("Doom3")
+workspace("Doom3BFG")
 	configurations({"Debug", "Release", "Retail"})
 	platforms({"Win32", "x64"})
 	location("../build")
@@ -42,7 +42,7 @@ workspace("Doom3")
 	cppdialect("C++17")
 	characterset( "ASCII" )
 
-	includedirs({".", "external", "external/raylib/include", "idlib"})
+	includedirs({".", "external", "idlib"})
 	defines({"__DOOM__", "ID_PC"})
 	if _OPTIONS["dll"] then
 		defines({"__DOOM_DLL__"})
