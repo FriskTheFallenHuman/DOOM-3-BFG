@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 extern idCVar net_connectTimeoutInSeconds;
 extern idCVar net_headlessServer;
 
-idCVar net_checkVersion( "net_checkVersion", "0", CVAR_INTEGER, "Check for matching version when clients connect. 0: normal rules, 1: force check, otherwise no check (pass always)" );
+idCVar net_checkVersion( "net_checkVersion", "1", CVAR_BOOL, "Check for matching version when clients connect. 0: normal rules, 1: force check, otherwise no check (pass always)" );
 idCVar net_peerTimeoutInSeconds( "net_peerTimeoutInSeconds", "30", CVAR_INTEGER, "If the host hasn't received a response from a peer in this amount of time (in seconds), the peer will be disconnected." );
 idCVar net_peerTimeoutInSeconds_Lobby( "net_peerTimeoutInSeconds_Lobby", "20", CVAR_INTEGER, "If the host hasn't received a response from a peer in this amount of time (in seconds), the peer will be disconnected." );
 
@@ -1519,7 +1519,7 @@ idLobby::CheckVersion
 bool idLobby::CheckVersion( idBitMsg & msg, lobbyAddress_t peerAddress ) {
 	const unsigned int remoteChecksum = msg.ReadInt();
 
-	if ( net_checkVersion.GetInteger() == 1 ) {
+	if ( net_checkVersion.GetBool() ) {
 		const unsigned int localChecksum = NetGetVersionChecksum();
 
 		NET_VERBOSE_PRINT( "NET: Comparing handshake version - localChecksum = %i, remoteChecksum = %i\n", localChecksum, remoteChecksum );

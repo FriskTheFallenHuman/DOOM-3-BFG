@@ -61,7 +61,7 @@ idCVar net_socksPort( "net_socksPort", "1080", CVAR_ARCHIVE | CVAR_INTEGER, "" )
 idCVar net_socksUsername( "net_socksUsername", "", CVAR_ARCHIVE, "" );
 idCVar net_socksPassword( "net_socksPassword", "", CVAR_ARCHIVE, "" );
 
-idCVar net_ip( "net_ip", "localhost", 0, "local IP address" );
+idCVar net_ip( "net_ip", "localhost", CVAR_NOCHEAT, "local IP address" );
 
 static struct sockaddr_in	socksRelayAddr;
 
