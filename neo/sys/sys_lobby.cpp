@@ -2448,7 +2448,7 @@ void idLobby::HandleReliableMsg( int p, idBitMsg & msg ) {
 		}
 	} else if ( reliableType == RELIABLE_KICK_PLAYER ) {
 		VERIFY_FROM_HOST( p, lobbyType, RELIABLE_KICK_PLAYER );
-		common->Dialog().AddDialog( GDM_KICKED, DIALOG_ACCEPT, NULL, NULL, false );
+		ADD_DIALOG( GDM_KICKED, DIALOG_ACCEPT, NULL, NULL, false );
 		if ( sessionCB->GetPartyLobby().IsHost() ) {
 			session->SetSessionOption( idSession::OPTION_LEAVE_WITH_PARTY );
 		}

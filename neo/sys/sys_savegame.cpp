@@ -663,7 +663,7 @@ void idSaveGameManager::ShowRetySaveDialog( const char * folder, const int64 byt
 	}
 	idStr msg = va( format.c_str(), size.c_str() );
 
-	common->Dialog().AddDynamicDialog( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg, true );
+	ADD_DYNAMIC_DIALOG( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg, true );
 }
 
 /*
@@ -898,6 +898,6 @@ void idSaveGameManager::Pump() {
 		idStaticList< idStrId, 4 > optionText;
 		callbacks.Append( new (TAG_SWF) idSWFScriptFunction_TryAgain( this, tempProcessor ) );
 		optionText.Append( idStrId( "#STR_SWF_RETRY" ) );
-		common->Dialog().AddDynamicDialog( GDM_ERROR_SAVING_SAVEGAME, callbacks, optionText, true, "" );
+		ADD_DYNAMIC_DIALOG( GDM_ERROR_SAVING_SAVEGAME, callbacks, optionText, true, "" );
 	}
 }

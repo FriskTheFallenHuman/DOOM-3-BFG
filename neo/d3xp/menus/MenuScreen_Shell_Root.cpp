@@ -320,7 +320,7 @@ void idMenuScreen_Shell_Root::HandleExitGameBtn() {
 	optionText.Append( idStrId( "#STR_SWF_ACCEPT" ) );
 	optionText.Append( idStrId( "#STR_SWF_CANCEL" ) );
 
-	common->Dialog().AddDynamicDialog( GDM_QUIT_GAME, callbacks, optionText, true, "" );
+	ADD_DYNAMIC_DIALOG( GDM_QUIT_GAME, callbacks, optionText, true, "" );
 }
 
 /*
@@ -466,7 +466,7 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 					}
 
 					if ( masterUser->GetOnlineCaps() & CAP_BLOCKED_PERMISSION ) {
-						common->Dialog().AddDialog( GDM_ONLINE_INCORRECT_PERMISSIONS, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
+						ADD_DIALOG( GDM_ONLINE_INCORRECT_PERMISSIONS, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
 					} else if ( !masterUser->CanPlayOnline() ) {
 						class idSWFScriptFunction_Accept : public idSWFScriptFunction_RefCounted {
 						public:
@@ -486,7 +486,7 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 							}
 						};
 
-						common->Dialog().AddDialog( GDM_PLAY_ONLINE_NO_PROFILE, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
+						ADD_DIALOG( GDM_PLAY_ONLINE_NO_PROFILE, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
 					} else {
 						idMatchParameters matchParameters;
 						matchParameters.matchFlags = DefaultPartyFlags;

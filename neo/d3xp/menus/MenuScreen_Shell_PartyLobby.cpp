@@ -391,7 +391,7 @@ void idMenuScreen_Shell_PartyLobby::ShowLeaderboards() {
 	const bool canPlayOnline = session->GetSignInManager().GetMasterLocalUser() != NULL && session->GetSignInManager().GetMasterLocalUser()->CanPlayOnline();
 
 	if ( !canPlayOnline ) {
-		common->Dialog().AddDialog( GDM_LEADERBOARD_ONLINE_NO_PROFILE, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
+		ADD_DIALOG( GDM_LEADERBOARD_ONLINE_NO_PROFILE, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
 	} else if ( menuData != NULL ) {
 		menuData->SetNextScreen( SHELL_AREA_LEADERBOARDS, MENU_TRANSITION_SIMPLE );
 	}
@@ -448,7 +448,7 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction & action, const
 			idLobbyBase & activeLobby = session->GetActivePlatformLobbyBase();
 
 			if( activeLobby.GetNumActiveLobbyUsers() > 1 ) {
-				common->Dialog().AddDialog( GDM_LEAVE_LOBBY_RET_MAIN, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
+				ADD_DIALOG( GDM_LEAVE_LOBBY_RET_MAIN, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
 			} else {
 				session->Cancel();
 			}
@@ -558,7 +558,7 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction & action, const
 				}
 				case PARTY_CMD_INVITE: {
 					if ( session->GetPartyLobbyBase().IsLobbyFull() ) {
-						common->Dialog().AddDialog( GDM_CANNOT_INVITE_LOBBY_FULL, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
+						ADD_DIALOG( GDM_CANNOT_INVITE_LOBBY_FULL, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
 						return true;
 					}
 

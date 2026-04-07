@@ -29,6 +29,9 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __COMMON_DIALOG_H__
 #define __COMMON_DIALOG_H__
 
+extern idCVar popupDialog_debug;
+extern idCVar dialog_saveClearLevel;
+
 static const int	MAX_DIALOGS			= 4;		// maximum dialogs that can be open at one time
 static const int	PC_KEYBOARD_WAIT	= 20000;
 
@@ -228,10 +231,10 @@ public:
 	}
 	gameDialogMessages_t	msg;
 	dialogType_t			type;
-	idSWFScriptFunction *	acceptCB;
-	idSWFScriptFunction *	cancelCB;
-	idSWFScriptFunction *	altCBOne;
-	idSWFScriptFunction *	altCBTwo;
+	void *                  acceptCB;
+	void *                  cancelCB;
+	void *                  altCBOne;
+	void *                  altCBTwo;
 	bool					showing;
 	bool					clear;
 	bool					waitClear;
@@ -250,17 +253,6 @@ public:
 };
 
 /*
-================================================
-idLoadScreenInfo
-================================================
-*/
-class idLoadScreenInfo {
-public:
-	idStr	varName;
-	idStr	value;
-};
-
-/*
 ==============================================================
 
   Common Dialog
@@ -270,49 +262,75 @@ public:
 
 class idCommonDialog {
 public:
-			idCommonDialog();
+					idCommonDialog();
+	virtual         ~idCommonDialog() {}
 
-	void	Init();
-	void	Render( bool loading );
-	void	Shutdown();
-	void	Restart();
+	virtual void    Init()     = 0;
+	virtual void    Shutdown() = 0;
+			void    Restart();
 
-	bool	IsDialogPausing() { return dialogPause; }
-	void	ClearDialogs( bool forceClear = false );
-	bool	HasDialogMsg( gameDialogMessages_t msg, bool * isNowActive );
-	void	AddDialog( gameDialogMessages_t msg, dialogType_t type, idSWFScriptFunction * acceptCallback, idSWFScriptFunction * cancelCallback, bool pause, const char * location = NULL, int lineNumber = 0, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
-	void	AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< idSWFScriptFunction *, 4 > & callbacks, const idStaticList< idStrId, 4 > & optionText, bool pause, idStrStatic< 256 > overrideMsg, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
-	void	AddDialogIntVal( const char * name, int val );
-	bool	IsDialogActive();
-	void	ClearDialog( gameDialogMessages_t msg, const char * location = NULL, int lineNumber = 0 );
-	void	ShowSaveIndicator( bool show );
-	bool	HasAnyActiveDialog() const { return ( messageList.Num() > 0 ) && ( !messageList[0].clear ); }
+	virtual void    Render( bool loading );
 
-	void	ClearAllDialogHack();
-	idStr	GetDialogMsg( gameDialogMessages_t msg, idStr & message, idStr & title );
-	bool	HandleDialogEvent( const sysEvent_t * sev );
+	void    AddDialog( gameDialogMessages_t msg, dialogType_t type, void * acceptCallback, void * cancelCallback, bool pause, const char * location = NULL, int lineNumber = 0, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
+	void    AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< void *, 4 > & callbacks, const idStaticList< idStrId, 4 > & optionText, bool pause, idStrStatic< 256 > overrideMsg, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
+
+	void    AddDialogIntVal( const char * name, int val );
+
+	void    ClearDialog( gameDialogMessages_t msg,
+						 const char * location = NULL,
+						 int lineNumber = 0 );
+	void    ClearDialogs( bool forceClear = false );
+	void    ClearAllDialogHack();
+
+	bool    HasDialogMsg( gameDialogMessages_t msg, bool * isNowActive );
+	bool    HasAnyActiveDialog() const;
+	bool    IsDialogPausing() const { return dialogPause; }
+
+	virtual void    ShowSaveIndicator( bool show )           = 0;
+	virtual bool    HandleDialogEvent( const sysEvent_t * sev ) = 0;
+	virtual bool    IsDialogActive() const                   = 0;
+
+	virtual idStr   GetDialogMsg( gameDialogMessages_t msg,
+								  idStr & outMessage,
+								  idStr & outTitle );
 
 protected:
-	void	RemoveWaitDialogs();
-	void	ShowDialog( const idDialogInfo & info );
-	void	ShowNextDialog();
-	void	ActivateDialog( bool activate );
-	void	AddDialogInternal( idDialogInfo & info );
-	void	ReleaseCallBacks( int index );
+	virtual bool    IsRendererLoaded()   const = 0;
+	virtual bool    IsRendererActive()   const = 0;
+	virtual void    ActivateRenderer( bool active ) = 0;
 
-private:
-	bool	dialogPause;
-	idSWF *	dialog;
-	idSWF *	saveIndicator;
-	bool	dialogShowingSaveIndicatorRequested;
-	int		dialogShowingSaveIndicatorTimeRemaining;
+	virtual bool    IsSaveIndicatorActive() const = 0;
+	virtual void    RenderDialog( int timeMicroseconds ) = 0;
+	virtual void    RenderSaveIndicator( int timeMicroseconds ) = 0;
 
-	idStaticList< idDialogInfo, MAX_DIALOGS > messageList;
-	idStaticList< idLoadScreenInfo, 16 > loadScreenInfo;
+	virtual void    SetRendererGlobalInt( const char * name, int val )         = 0;
+	virtual void    SetRendererGlobalString( const char * name, const char * val ) = 0;
 
-	int		startSaveTime;		// with stopSaveTime, useful to pass 360 TCR# 047.  Need to keep the dialog on the screen for a minimum amount of time
-	int		stopSaveTime;
-	bool	dialogInUse;		// this is to prevent an active msg getting lost during a map heap reset
+	virtual void    AddRefCallback( void * cb )  = 0;
+	virtual void    ReleaseCallback( void * cb ) = 0;
+
+	virtual void    InvokeCallback( void * cb )  = 0;
+
+	virtual void    BindDialogToRenderer( const idDialogInfo & info ) = 0;
+
+	void    AddDialogInternal( idDialogInfo & info );
+	void    ShowDialog( const idDialogInfo & info );
+	void    ShowNextDialog();
+	void    ActivateDialog( bool activate );
+	void    RemoveWaitDialogs();
+	void    ReleaseCallBacks( int index );
+
+	static bool DialogMsgShouldWait( gameDialogMessages_t msg );
+
+protected:
+	bool    dialogPause;
+	bool    dialogInUse;
+	bool    dialogShowingSaveIndicatorRequested;
+
+	int     startSaveTime;
+	int     stopSaveTime;
+
+	idStaticList< idDialogInfo, MAX_DIALOGS >   messageList;
 };
 
-#endif
+#endif // __COMMON_DIALOG_H__

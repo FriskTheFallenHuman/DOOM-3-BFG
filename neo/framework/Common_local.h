@@ -269,7 +269,7 @@ private:
 
 	int							gameDLL;
 
-	idCommonDialog				commonDialog;
+	idSWFDialog					commonDialog;
 
 	idFile_SaveGame 			saveFile;
 	idFile_SaveGame 			stringsFile;

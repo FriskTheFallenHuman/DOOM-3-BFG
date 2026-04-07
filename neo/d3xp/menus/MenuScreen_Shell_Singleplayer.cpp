@@ -228,7 +228,7 @@ void idMenuScreen_Shell_Singleplayer::ContinueGame() {
 			callbacks.Append( new (TAG_SWF) idSWFScriptFunction_ContinueDamaged() );
 			idStaticList< idStrId, 4 > optionText;
 			optionText.Append( idStrId( "#str_04339" ) );	// OK
-			common->Dialog().AddDynamicDialog( GDM_CORRUPT_CONTINUE, callbacks, optionText, false, "" );
+			ADD_DYNAMIC_DIALOG( GDM_CORRUPT_CONTINUE, callbacks, optionText, false, "" );
 		} else {
 			const idStr & name = sortedSaves[ 0 ].slotName;
 			cmdSystem->AppendCommandText( va( "loadgame %s\n", name.c_str() ) );
@@ -294,7 +294,7 @@ bool idMenuScreen_Shell_Singleplayer::HandleAction( idWidgetAction & action, con
 						idMenuHandler * menuData;
 						bool accept;
 					};
-					common->Dialog().AddDialog( GDM_DELETE_AUTOSAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_NewGame( menuData, true ), new idSWFScriptFunction_NewGame( menuData, false ), true );
+					ADD_DIALOG( GDM_DELETE_AUTOSAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_NewGame( menuData, true ), new idSWFScriptFunction_NewGame( menuData, false ), true );
 				} else if ( selectionIndex == 2 ) {
 					menuData->SetNextScreen( SHELL_AREA_LOAD, MENU_TRANSITION_SIMPLE );
 				}

@@ -382,7 +382,7 @@ void idMenuScreen_Shell_Pause::HandleExitGameBtn() {
 		}
 	}
 
-	common->Dialog().AddDialog( msg, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_QuitDialog( this, msg, true ), new idSWFScriptFunction_QuitDialog( this, msg, false ), false );
+	ADD_DIALOG( msg, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_QuitDialog( this, msg, true ), new idSWFScriptFunction_QuitDialog( this, msg, false ), false );
 }
 
 /*
@@ -411,7 +411,7 @@ void idMenuScreen_Shell_Pause::HandleRestartBtn() {
 		bool accept;
 	};
 
-	common->Dialog().AddDialog( GDM_SP_RESTART_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_RestartDialog( this, GDM_SP_RESTART_SAVE, true ), new idSWFScriptFunction_RestartDialog( this, GDM_SP_RESTART_SAVE, false ), false );
+	ADD_DIALOG( GDM_SP_RESTART_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_RestartDialog( this, GDM_SP_RESTART_SAVE, true ), new idSWFScriptFunction_RestartDialog( this, GDM_SP_RESTART_SAVE, false ), false );
 }
 
 /*

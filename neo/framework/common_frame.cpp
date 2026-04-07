@@ -740,7 +740,7 @@ void idCommonLocal::Frame() {
 		optionText.Append( idStrId( "#str_02013" ) );
 		idStrStatic<560> errorname = err.GetError();
 
-		Dialog().AddDynamicDialog( GDM_GAME_ERROR, callbacks, optionText, true, errorname, false, true );
+		ADD_DYNAMIC_DIALOG( GDM_GAME_ERROR, callbacks, optionText, true, errorname, false, true );
 		return;
 	}
 }

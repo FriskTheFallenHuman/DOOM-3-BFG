@@ -691,7 +691,7 @@ void idSessionLocal::HandleVoiceRestrictionDialog() {
 
 	// Pop a dialog up the first time we are in a lobby and have voice chat restrictions due to account privileges
 	if ( voiceChat != NULL && voiceChat->IsRestrictedByPrivleges() && !hasShownVoiceRestrictionDialog ) {
-		common->Dialog().AddDialog( GDM_VOICE_RESTRICTED, DIALOG_ACCEPT, NULL, NULL, false );
+		ADD_DIALOG( GDM_VOICE_RESTRICTED, DIALOG_ACCEPT, NULL, NULL, false );
 		hasShownVoiceRestrictionDialog = true;
 	}
 }
@@ -714,7 +714,7 @@ bool idSessionLocal::WaitOnLobbyCreate( idLobby & lobby ) {
 		// If we failed to create a lobby, assume connection to backend service was lost
 		MoveToMainMenu();
 		common->Dialog().ClearDialogs( true );
-		common->Dialog().AddDialog( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, true, "", 0, true );
+		ADD_DIALOG( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, true, "", 0, true );
 		return false;
 	}
 
@@ -747,7 +747,7 @@ bool idSessionLocal::DetectDisconnectFromService( bool cancelAndShowMsg ) {
 			if ( cancelAndShowMsg ) {
 				MoveToMainMenu();
 				common->Dialog().ClearDialogs( true );
-				common->Dialog().AddDialog( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, false, "", 0, true );
+				ADD_DIALOG( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, false, "", 0, true );
 			}
 
 			return true;
@@ -796,15 +796,15 @@ void idSessionLocal::HandleConnectionFailed( idLobby & lobby, bool wasFull ) {
 		}
 
 		if ( wasFull ) {
-			common->Dialog().AddDialog( GDM_LOBBY_FULL, DIALOG_ACCEPT, NULL, NULL, false );
+			ADD_DIALOG( GDM_LOBBY_FULL, DIALOG_ACCEPT, NULL, NULL, false );
 		} else if ( !canPlayOnline ) {
-			common->Dialog().AddDialog( GDM_PLAY_ONLINE_NO_PROFILE, DIALOG_ACCEPT, NULL, NULL, false );
+			ADD_DIALOG( GDM_PLAY_ONLINE_NO_PROFILE, DIALOG_ACCEPT, NULL, NULL, false );
 		} else {
 			// TEMP HACK: We detect the steam lobby is full in idLobbyBackendWin, and then STATE_FAILED, which brings us here. Need to find a way to notify
 			// session local that the game was full so we don't do this check here
 			// eeubanks: Pollard, how do you think we should handle this?
 			if ( !common->Dialog().HasDialogMsg( GDM_LOBBY_FULL, NULL ) ) {
-				common->Dialog().AddDialog( GDM_INVALID_INVITE, DIALOG_ACCEPT, NULL, NULL, false );
+				ADD_DIALOG( GDM_INVALID_INVITE, DIALOG_ACCEPT, NULL, NULL, false );
 			}
 		}
 		MoveToMainMenu();
@@ -1575,7 +1575,7 @@ void idSessionLocal::EndMatchInternal( bool premature/*=false*/ ) {
 	} else if ( premature ) {
 		// Notify client that host left early and thats why we are back in the lobby
 		const bool stats = MatchTypeHasStats( GetActingGameStateLobby().GetMatchParms().matchFlags ) && ( GetFlushedStats() == false );
-		common->Dialog().AddDialog( stats ? GDM_HOST_RETURNED_TO_LOBBY_STATS_DROPPED : GDM_HOST_RETURNED_TO_LOBBY, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true );
+		ADD_DIALOG( stats ? GDM_HOST_RETURNED_TO_LOBBY_STATS_DROPPED : GDM_HOST_RETURNED_TO_LOBBY, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true );
 	}
 
 	if ( GetGameStateLobby().IsLobbyActive() ) {
@@ -1668,12 +1668,12 @@ void idSessionLocal::ValidateLobby( idLobby & lobby ) {
 		NET_VERBOSE_PRINT( "NET: ValidateLobby: FAILED (lobbyType = %i, state = %s)\n", lobby.lobbyType, stateToString[ localState ] );
 		if ( lobby.failedReason == idLobby::FAILED_MIGRATION_CONNECT_FAILED || lobby.failedReason == idLobby::FAILED_CONNECT_FAILED ) {
 			MoveToMainMenu();
-			common->Dialog().AddDialog( GDM_INVALID_INVITE, DIALOG_ACCEPT, NULL, NULL, false );		// The game session no longer exists
+			ADD_DIALOG( GDM_INVALID_INVITE, DIALOG_ACCEPT, NULL, NULL, false );		// The game session no longer exists
 		} else {
 			// If the lobbyBackend goes bad under our feet for no known reason, assume we lost connection to the back end service
 			MoveToMainMenu();
 			common->Dialog().ClearDialogs( true );
-			common->Dialog().AddDialog( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, false );		// Lost connection to XBox LIVE
+			ADD_DIALOG( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, false );		// Lost connection to XBox LIVE
 		}
 	}
 }
@@ -1773,7 +1773,7 @@ void idSessionLocal::Pump() {
 
 	if ( showMigratingInfoStartTime != 0 ) {
 		if ( !isShowingMigrate ) {
-			common->Dialog().AddDialog( GDM_MIGRATING, DIALOG_WAIT, NULL, NULL, false, "", 0, false, false, true );
+			ADD_DIALOG( GDM_MIGRATING, DIALOG_WAIT, NULL, NULL, false, "", 0, false, false );
 		}
 	} else if ( isShowingMigrate ) {
 		common->Dialog().ClearDialog( GDM_MIGRATING );
@@ -2131,7 +2131,7 @@ void idSessionLocal::UpdateSignInManager() {
 			if ( ( Sys_Milliseconds() - offlineTransitionTimerStart ) > net_offlineTransitionThreshold.GetInteger() ) {
 				MoveToMainMenu();
 				common->Dialog().ClearDialogs();
-				common->Dialog().AddDialog( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, false, "", 0, true );
+				ADD_DIALOG( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, false, "", 0, true );
 			}
 		}
 		return;		// Bail out so signInManager->ValidateLocalUsers below doesn't prematurely remove the master user before we can detect loss of connection
@@ -3562,10 +3562,10 @@ void idSessionLocal::PrePickNewHost( idLobby & lobby, bool forceMe, bool inviteO
 		// Throw up the appropriate dialog message so the player knows what happeend
 		if ( localState >= idSessionLocal::STATE_LOADING ) {
 			NET_VERBOSE_PRINT("idSessionLocal::PrePickNewHost: localState >= idSessionLocal::STATE_LOADING (%s)\n", lobby.GetLobbyName() );
-			common->Dialog().AddDialog( GDM_BECAME_HOST_GAME_STATS_DROPPED, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true );
+			ADD_DIALOG( GDM_BECAME_HOST_GAME_STATS_DROPPED, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true );
 		} else {
 			NET_VERBOSE_PRINT("idSessionLocal::PrePickNewHost: localState < idSessionLocal::STATE_LOADING (%s)\n", lobby.GetLobbyName() );
-			common->Dialog().AddDialog( GDM_LOBBY_BECAME_HOST_GAME, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true  );
+			ADD_DIALOG( GDM_LOBBY_BECAME_HOST_GAME, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true  );
 		}
 
 		CreateMatch( GetActivePlatformLobby()->parms );
@@ -3599,7 +3599,7 @@ void idSessionLocal::PrePickNewHost( idLobby & lobby, bool forceMe, bool inviteO
 	} else {
 		NET_VERBOSE_PRINT("idSessionLocal::PrePickNewHost: GetBackState() < idSessionLocal::PARTY_LOBBY && GetState() != idSession::PARTY_LOBBY (%s)\n", lobby.GetLobbyName() );
 		if ( localState >= idSessionLocal::STATE_LOADING ) {
-			common->Dialog().AddDialog( GDM_HOST_QUIT, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true  );		// The host has quit the session. Returning to the main menu.
+			ADD_DIALOG( GDM_HOST_QUIT, DIALOG_ACCEPT, NULL, NULL, false, __FUNCTION__, __LINE__, true  );		// The host has quit the session. Returning to the main menu.
 		}
 
 		// Go back to main menu
