@@ -382,7 +382,7 @@ void idMenuScreen_Shell_Save::SaveGame( int index ) {
 			index--;
 		}
 
-		common->Dialog().AddDialog( GDM_OVERWRITE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, true, index, this ), new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, false, index, this ), false );
+		ADD_DIALOG( GDM_OVERWRITE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, true, index, this ), new idSWFScriptFunction_OverwriteSave( GDM_OVERWRITE_SAVE, false, index, this ), false );
 	}
 
 }
@@ -429,7 +429,7 @@ void idMenuScreen_Shell_Save::DeleteGame( int index ) {
 
 	index--;	// Subtract 1 from the index for 'New Game'
 
-	common->Dialog().AddDialog( GDM_DELETE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, true, index, this ), new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, false, index, this ), false );
+	ADD_DIALOG( GDM_DELETE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, true, index, this ), new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, false, index, this ), false );
 
 }
 

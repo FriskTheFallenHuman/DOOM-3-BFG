@@ -605,7 +605,7 @@ void idCommonLocal::CheckStartupStorageRequirements() {
 		}
 		idStr msg = va( format.c_str(), size.c_str() );
 
-		common->Dialog().AddDynamicDialog( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg );
+		ADD_DYNAMIC_DIALOG( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg );
 	}
 
 

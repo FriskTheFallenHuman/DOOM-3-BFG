@@ -95,7 +95,7 @@ void idProfileMgr::Pump() {
 				profile->SaveSettings( true );
 			} else if ( parms.GetError() == SAVEGAME_E_CORRUPTED ) {
 				idLib::Warning( "Profile corrupt, creating a new one..." );
-				common->Dialog().AddDialog( GDM_CORRUPT_PROFILE, DIALOG_CONTINUE, NULL, NULL, false );
+				ADD_DIALOG( GDM_CORRUPT_PROFILE, DIALOG_CONTINUE, NULL, NULL, false );
 				profile->SetDefaults();
 				profile->SaveSettings( true );
 			} else if ( parms.GetError() != SAVEGAME_E_NONE ) {
@@ -259,7 +259,7 @@ void idProfileMgr::OnSaveSettingsCompleted( idSaveLoadParms * parms ) {
 	common->Dialog().ShowSaveIndicator( false );
 
 	if ( parms->GetError() != SAVEGAME_E_NONE ) {
-		common->Dialog().AddDialog( GDM_PROFILE_SAVE_ERROR, DIALOG_CONTINUE, NULL, NULL, false );
+		ADD_DIALOG( GDM_PROFILE_SAVE_ERROR, DIALOG_CONTINUE, NULL, NULL, false );
 	}
 	if ( game ) {
 		game->Shell_UpdateSavedGames();

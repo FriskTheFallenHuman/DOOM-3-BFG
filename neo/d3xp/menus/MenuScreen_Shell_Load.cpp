@@ -295,7 +295,7 @@ void idMenuScreen_Shell_Load::LoadDamagedGame( int index ) {
 	optionText.Append( idStrId( "#str_02315" ) );	// DELETE
 	optionText.Append( idStrId( "#STR_SWF_CANCEL" ) );
 
-	common->Dialog().AddDynamicDialog( GDM_LOAD_DAMAGED_FILE, callbacks, optionText, false, "" );
+	ADD_DYNAMIC_DIALOG( GDM_LOAD_DAMAGED_FILE, callbacks, optionText, false, "" );
 }
 
 /*
@@ -346,7 +346,7 @@ void idMenuScreen_Shell_Load::LoadGame( int index ) {
 
 		if ( index < sortedSaves.Num() ) {
 			const idStr & name = sortedSaves[ index ].slotName;
-			common->Dialog().AddDialog( GDM_SP_LOAD_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_LoadDialog( GDM_SP_LOAD_SAVE, true, name.c_str() ), new idSWFScriptFunction_LoadDialog( GDM_SP_LOAD_SAVE, false, name.c_str() ), false );
+			ADD_DIALOG( GDM_SP_LOAD_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_LoadDialog( GDM_SP_LOAD_SAVE, true, name.c_str() ), new idSWFScriptFunction_LoadDialog( GDM_SP_LOAD_SAVE, false, name.c_str() ), false );
 		}
 
 	} else {
@@ -389,7 +389,7 @@ void idMenuScreen_Shell_Load::DeleteGame( int index ) {
 		idMenuScreen_Shell_Load * screen;
 	};
 
-	common->Dialog().AddDialog( GDM_DELETE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, true, index, this ), new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, false, index, this ), false );
+	ADD_DIALOG( GDM_DELETE_SAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, true, index, this ), new idSWFScriptFunction_DeleteGame( GDM_DELETE_SAVE, false, index, this ), false );
 
 }
 

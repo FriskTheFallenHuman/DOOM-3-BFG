@@ -235,7 +235,7 @@ void idAchievementManager::EventCompletesAchievement( const achievement_t eventI
 #ifdef ID_RETAIL
 	if ( common->GetConsoleUsed() ) {
 		if ( !cheatingDialogShown ) {
-			common->Dialog().AddDialog( GDM_ACHIEVEMENTS_DISABLED_DUE_TO_CHEATING, DIALOG_ACCEPT, NULL, NULL, true );
+			ADD_DIALOG( GDM_ACHIEVEMENTS_DISABLED_DUE_TO_CHEATING, DIALOG_ACCEPT, NULL, NULL, true );
 			cheatingDialogShown = true;
 		}
 		return;
@@ -305,7 +305,7 @@ void idAchievementManager::LocalUser_CompleteAchievement( achievement_t id ) {
 #ifdef ID_RETAIL
 	if ( common->GetConsoleUsed() ) {
 		if ( !cheatingDialogShown ) {
-			common->Dialog().AddDialog( GDM_ACHIEVEMENTS_DISABLED_DUE_TO_CHEATING, DIALOG_ACCEPT, NULL, NULL, true );
+			ADD_DIALOG( GDM_ACHIEVEMENTS_DISABLED_DUE_TO_CHEATING, DIALOG_ACCEPT, NULL, NULL, true );
 			cheatingDialogShown = true;
 		}
 		return;

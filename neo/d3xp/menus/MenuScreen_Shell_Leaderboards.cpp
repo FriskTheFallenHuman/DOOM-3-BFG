@@ -940,7 +940,7 @@ void idLBCache::Update( const idLeaderboardCallback * callback ) {
 				if ( shell != NULL ) {
 					shell->SetNextScreen( SHELL_AREA_ROOT, MENU_TRANSITION_SIMPLE );
 				}*/
-				common->Dialog().AddDialog( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, true, "", 0, true );
+				ADD_DIALOG( GDM_CONNECTION_LOST, DIALOG_ACCEPT, NULL, NULL, true, "", 0, true );
 				break;
 			default:
 				break;

@@ -411,7 +411,7 @@ bool idMenuScreen_Shell_GameLobby::HandleAction( idWidgetAction & action, const 
 			idLobbyBase & activeLobby = session->GetActivePlatformLobbyBase();
 
 			if( activeLobby.GetNumActiveLobbyUsers() > 1 ) {
-				common->Dialog().AddDialog( GDM_LEAVE_LOBBY_RET_NEW_PARTY, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
+				ADD_DIALOG( GDM_LEAVE_LOBBY_RET_NEW_PARTY, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
 			} else {
 				session->Cancel();
 			}
@@ -482,7 +482,7 @@ bool idMenuScreen_Shell_GameLobby::HandleAction( idWidgetAction & action, const 
 				}
 				case GAME_CMD_INVITE: {
 					if ( session->GetActivePlatformLobbyBase().IsLobbyFull() ) {
-						common->Dialog().AddDialog( GDM_CANNOT_INVITE_LOBBY_FULL, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
+						ADD_DIALOG( GDM_CANNOT_INVITE_LOBBY_FULL, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
 						return true;
 					}
 

@@ -390,4 +390,6 @@ public:
 
 };
 
+#include "SWF_Dialogs.h"
+
 #endif // !__SWF_H__

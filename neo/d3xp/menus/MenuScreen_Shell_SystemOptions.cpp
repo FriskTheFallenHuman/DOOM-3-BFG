@@ -224,7 +224,7 @@ void idMenuScreen_Shell_SystemOptions::HideScreen( const mainMenuTransition_t tr
 		callbacks.Append( new idSWFScriptFunction_Restart( GDM_GAME_RESTART_REQUIRED, true ) );
 		optionText.Append( idStrId( "#str_00100113" ) ); // Continue
 		optionText.Append( idStrId( "#str_02487" ) ); // Restart Now
-		common->Dialog().AddDynamicDialog( GDM_GAME_RESTART_REQUIRED, callbacks, optionText, true, idStr() );
+		ADD_DYNAMIC_DIALOG( GDM_GAME_RESTART_REQUIRED, callbacks, optionText, true, idStr() );
 	}
 
 	if ( systemData.IsDataChanged() ) {

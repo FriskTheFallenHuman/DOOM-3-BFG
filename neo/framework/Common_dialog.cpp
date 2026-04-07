@@ -31,6 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "Common_dialog.h"
 
 idCVar popupDialog_debug( "popupDialog_debug", "0", CVAR_BOOL | CVAR_ARCHIVE, "display debug spam" );
+idCVar dialog_saveClearLevel( "dialog_saveClearLevel", "1000", CVAR_INTEGER, "Time required to show long message" );
 
 extern idCVar g_demoMode;
 
@@ -177,16 +178,14 @@ static const char * dialogStateToString[ GDM_MAX + 1 ] = {
 	ASSERT_ENUM_STRING( GDM_MAX, 139 )
 };
 
-idCVar dialog_saveClearLevel( "dialog_saveClearLevel", "1000", CVAR_INTEGER, "Time required to show long message" );
-
 /*
 ========================
-bool DialogMsgShouldWait
+idCommonDialog::DialogMsgShouldWait
 
 There are a few dialog types that should pause so the user has the ability to read what's going on
 ========================
 */
-bool DialogMsgShouldWait( gameDialogMessages_t msg ) {
+bool idCommonDialog::DialogMsgShouldWait( gameDialogMessages_t msg ) {
 	switch ( msg ) {
 		case GDM_SAVING:
 		case GDM_LOADING_PROFILE:
@@ -223,14 +222,21 @@ void idCommonDialog::ClearDialogs( bool forceClear ) {
 }
 
 /*
+========================
+idCommonDialog::HasAnyActiveDialog
+========================
+*/
+bool idCommonDialog::HasAnyActiveDialog() const {
+	return ( messageList.Num() > 0 ) && ( !messageList[0].clear );
+}
+
+/*
 ================================================
 idCommonDialog::AddDialogIntVal
 ================================================
 */
 void idCommonDialog::AddDialogIntVal( const char * name, int val ) {
-	if ( dialog != NULL ) {
-		dialog->SetGlobal( name, val );
-	}
+	SetRendererGlobalInt( name, val );
 }
 
 /*
@@ -238,8 +244,8 @@ void idCommonDialog::AddDialogIntVal( const char * name, int val ) {
 idCommonDialog::AddDialog
 ================================================
 */
-void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, idSWFScriptFunction * acceptCallback,
-								idSWFScriptFunction * cancelCallback, bool pause, const char * location, int lineNumber,
+void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, void * acceptCallback,
+								void * cancelCallback, bool pause, const char * location, int lineNumber,
 								bool leaveOnMapHeapReset, bool waitOnAtlas, bool renderDuringLoad ) {
 
 	idKeyInput::ClearStates();
@@ -248,7 +254,7 @@ void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, idS
 
 	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s] msg: %s, pause: %d from: %s:%d\n", __FUNCTION__, dialogStateToString[msg], pause, location == NULL ? "NULL" : location, lineNumber );
 
-	if ( dialog == NULL ) {
+	if ( !IsRendererLoaded() ) {
 		return;
 	}
 
@@ -272,11 +278,11 @@ void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, idS
 idCommonDialog::AddDynamicDialog
 ========================
 */
-void idCommonDialog::AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< idSWFScriptFunction *, 4 > & callbacks,
+void idCommonDialog::AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< void *, 4 > & callbacks,
 										const idStaticList< idStrId, 4 > & optionText, bool pause, idStrStatic< 256 > overrideMsg,
 										bool leaveOnMapHeapReset, bool waitOnAtlas, bool renderDuringLoad ) {
+	if ( !IsRendererLoaded() ) {
 
-	if ( dialog == NULL ) {
 		return;
 	}
 
@@ -329,19 +335,19 @@ void idCommonDialog::AddDialogInternal( idDialogInfo & info ) {
 	}
 
 	if ( info.acceptCB != NULL ) {
-		info.acceptCB->AddRef();
+		AddRefCallback(info.acceptCB);
 	}
 
 	if ( info.cancelCB != NULL ) {
-		info.cancelCB->AddRef();
+		AddRefCallback(info.cancelCB);
 	}
 
 	if ( info.altCBOne != NULL ) {
-		info.altCBOne->AddRef();
+		AddRefCallback(info.altCBOne);
 	}
 
 	if ( info.altCBTwo != NULL ) {
-		info.altCBTwo->AddRef();
+		AddRefCallback(info.altCBTwo);
 	}
 
 	if ( messageList.Num() == 0 ) {
@@ -352,13 +358,14 @@ void idCommonDialog::AddDialogInternal( idDialogInfo & info ) {
 		// one from the list in order to not crash, but this really isn't a good
 		// thing to be happening...
 		if ( !verify( messageList.Num() < MAX_DIALOGS ) ) {
+			ReleaseCallBacks( MAX_DIALOGS - 1 );
 			messageList.RemoveIndex( MAX_DIALOGS - 1 );
 		}
 
 		if ( messageList.Num() > 0 ) {
 			idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s] msg: %s new dialog added over old\n", __FUNCTION__, dialogStateToString[info.msg] );
 
-			dialog->Activate( false );
+			ActivateRenderer( false );
 			messageList.Insert( info, 0 );
 		}
 	}
@@ -375,9 +382,7 @@ idCommonDialog::ActivateDialog
 */
 void idCommonDialog::ActivateDialog( bool activate ) {
 	dialogInUse = activate;
-	if ( dialog != NULL ) {
-		dialog->Activate( activate );
-	}
+	ActivateRenderer( activate );
 }
 
 /*
@@ -396,47 +401,11 @@ void idCommonDialog::ShowDialog( const idDialogInfo & info ) {
 	}
 
 	if ( IsDialogActive() ) {
-		dialog->Activate( false );
+		ActivateRenderer( false );
 	}
 
-	idStr message, title;
-	GetDialogMsg( info.msg, message, title );
-
-	dialog->SetGlobal( "titleVal", title );
-	if ( info.overrideMsg.IsEmpty() ) {
-		dialog->SetGlobal( "messageInfo", message );
-	} else {
-		dialog->SetGlobal( "messageInfo", info.overrideMsg );
-	}
-	dialog->SetGlobal( "Infotype", info.type );
-
-	if ( info.acceptCB == NULL && ( info.type != DIALOG_WAIT && info.type != DIALOG_WAIT_BLACKOUT ) ) {
-		class idSWFScriptFunction_Accept : public idSWFScriptFunction_RefCounted {
-		public:
-			idSWFScriptFunction_Accept( gameDialogMessages_t _msg ) {
-				msg = _msg;
-			}
-			idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
-				common->Dialog().ClearDialog( msg );
-				return idSWFScriptVar();
-			}
-		private:
-			gameDialogMessages_t msg;
-		};
-
-		dialog->SetGlobal( "acceptCallBack", new (TAG_SWF) idSWFScriptFunction_Accept( info.msg ) );
-
-	} else {
-		dialog->SetGlobal( "acceptCallBack", info.acceptCB );
-	}
-
-	dialog->SetGlobal( "cancelCallBack", info.cancelCB );
-	dialog->SetGlobal( "altCBOne", info.altCBOne );
-	dialog->SetGlobal( "altCBTwo", info.altCBTwo );
-	dialog->SetGlobal( "opt1Txt", info.txt1.GetLocalizedString() );
-	dialog->SetGlobal( "opt2Txt", info.txt2.GetLocalizedString() );
-	dialog->SetGlobal( "opt3Txt", info.txt3.GetLocalizedString() );
-	dialog->SetGlobal( "opt4Txt", info.txt4.GetLocalizedString() );
+	// Delegate all renderer binding to the subclass
+	BindDialogToRenderer( info );
 
 	ActivateDialog( true );
 }
@@ -449,33 +418,15 @@ idCommonDialog::ShowNextDialog
 void idCommonDialog::ShowNextDialog() {
 	for ( int index = 0; index < messageList.Num(); ++index ) {
 		if ( !messageList[index].clear ) {
-			idDialogInfo info = messageList[index];
-			ShowDialog( info );
+			ShowDialog(messageList[index]);
 			break;
 		}
 	}
 }
 
 /*
-================================================
-idCommonDialog::ShowSaveIndicator
-================================================
-*/
-void idCommonDialog::ShowSaveIndicator( bool show ) {
-	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s]\n", __FUNCTION__ );
-
-	if ( show ) {
-		idStr msg = idStrId( "#str_dlg_pc_saving" ).GetLocalizedString();
-
-		common->Dialog().AddDialog( GDM_SAVING, DIALOG_WAIT, NULL, NULL, true, "", 0, false, true, true );
-	} else {
-		common->Dialog().ClearDialog( GDM_SAVING );
-	}
-}
-
-/*
 ========================
-idCommonDialog::RemoveSaveDialog
+idCommonDialog::RemoveWaitDialogs
 
 From TCR# 047
 Games must display a message during storage writes for the following conditions and the respective amount of time:
@@ -551,40 +502,41 @@ void idCommonDialog::ClearDialog( gameDialogMessages_t msg, const char * locatio
 	for ( int index = 0; index < messageList.Num(); ++index ) {
 		idDialogInfo & info = messageList[index];
 
-		if ( info.msg == msg && !info.clear ) {
-			if ( DialogMsgShouldWait( info.msg ) ) {
+		if ( info.msg != msg || info.clear ) {
+			continue;
+		}
 
-				// you can have 2 saving dialogs simultaneously, if you clear back-to-back, we need to let the 2nd dialog
-				// get the clear message
-				if ( messageList[index].waitClear ) {
-					continue;
-				}
+		if ( DialogMsgShouldWait( info.msg ) ) {
+			// you can have 2 saving dialogs simultaneously, if you clear back-to-back, we need to let the 2nd dialog
+			// get the clear message
+			if ( messageList[index].waitClear ) {
+				continue;
+			}
 
-				int timeShown = Sys_Milliseconds() - messageList[index].startTime;
+			int timeShown = Sys_Milliseconds() - messageList[index].startTime;
 
 				// for the time being always use the long saves
-				if ( timeShown < dialog_saveClearLevel.GetInteger() ) {
-					messageList[index].killTime = Sys_Milliseconds() + ( dialog_saveClearLevel.GetInteger() - timeShown );
-					messageList[index].waitClear = true;
-				} else {
-					messageList[index].clear = true;
-					if ( index == 0 ) {
-						topMessageCleared = true;
-					}
-				}
+			if ( timeShown < dialog_saveClearLevel.GetInteger() ) {
+				messageList[index].killTime = Sys_Milliseconds() + ( dialog_saveClearLevel.GetInteger() - timeShown );
+				messageList[index].waitClear = true;
 			} else {
 				messageList[index].clear = true;
 				if ( index == 0 ) {
 					topMessageCleared = true;
 				}
 			}
-			assert( info.msg >= GDM_INVALID && info.msg < GDM_MAX );	// not sure why /analyze complains about this
-			idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s] msg: %s, from: %s:%d, topMessageCleared = %d, m.clear = %d, m.waitClear = %d, m.killTime = %d\n",
-				__FUNCTION__, dialogStateToString[info.msg], location == NULL ? "NULL" : location, lineNumber,
-				topMessageCleared, messageList[index].clear,
-				messageList[index].waitClear, messageList[index].killTime );
-			break;
+		} else {
+			messageList[index].clear = true;
+			if ( index == 0 ) {
+				topMessageCleared = true;
+			}
 		}
+		assert( info.msg >= GDM_INVALID && info.msg < GDM_MAX );	// not sure why /analyze complains about this
+		idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s] msg: %s, from: %s:%d, topMessageCleared = %d, m.clear = %d, m.waitClear = %d, m.killTime = %d\n",
+			__FUNCTION__, dialogStateToString[info.msg], location == NULL ? "NULL" : location, lineNumber,
+			topMessageCleared, messageList[index].clear,
+			messageList[index].waitClear, messageList[index].killTime );
+		break;
 	}
 
 	if ( topMessageCleared && messageList.Num() > 0 ) {
@@ -598,27 +550,28 @@ idCommonDialog::ReleaseCallBacks
 ================================================
 */
 void idCommonDialog::ReleaseCallBacks( int index ) {
+	if ( index >= messageList.Num() ) {
+		return;
+	}
 
-	if ( index < messageList.Num() ) {
-		if ( messageList[index].acceptCB != NULL ) {
-			messageList[index].acceptCB->Release();
-			messageList[index].acceptCB = NULL;
-		}
+	if ( messageList[index].acceptCB != NULL ) {
+		ReleaseCallback(messageList[index].acceptCB);
+		messageList[index].acceptCB = NULL;
+	}
+	if ( messageList[index].cancelCB != NULL ) {
+		ReleaseCallback(messageList[index].cancelCB);
+		messageList[index].cancelCB = NULL;
+	}
 
-		if ( messageList[index].cancelCB != NULL ) {
-			messageList[index].cancelCB->Release();
-			messageList[index].cancelCB = NULL;
-		}
+	if ( messageList[index].altCBOne != NULL ) {
+		ReleaseCallback(messageList[index].altCBOne);
+		messageList[index].altCBOne = NULL;
+	}
 
-		if ( messageList[index].altCBOne != NULL ) {
-			messageList[index].altCBOne->Release();
-			messageList[index].altCBOne = NULL;
-		}
+	if ( messageList[index].altCBTwo != NULL ) {
+		ReleaseCallback(messageList[index].altCBTwo);
+		messageList[index].altCBTwo = NULL;
 
-		if ( messageList[index].altCBTwo != NULL ) {
-			messageList[index].altCBTwo->Release();
-			messageList[index].altCBTwo = NULL;
-		}
 	}
 }
 
@@ -631,7 +584,7 @@ void idCommonDialog::Render( bool loading ) {
 
 	dialogPause = false;
 
-	if ( dialog == NULL ) {
+	if ( !IsRendererLoaded() ) {
 		return;
 	}
 
@@ -653,46 +606,50 @@ void idCommonDialog::Render( bool loading ) {
 
 	dialogPause = pauseCheck;
 
-	if ( messageList.Num() > 0 && !dialog->IsActive() ) {
+	if ( messageList.Num() > 0 && !IsRendererActive() ) {
 		ShowNextDialog();
 	}
 
-	if ( messageList.Num() == 0 && dialog->IsActive() ) {
-		dialog->Activate( false );
+	if ( messageList.Num() == 0 && IsRendererActive() ) {
+		ActivateRenderer( false );
 	}
 
 	// Decrement the time remaining on the save indicator or turn it off
-	if ( !dialogShowingSaveIndicatorRequested && saveIndicator->IsActive() ) {
+	if ( !dialogShowingSaveIndicatorRequested && IsSaveIndicatorActive() ) {
 		ShowSaveIndicator( false );
 	}
 
-	if ( messageList.Num() > 0 && messageList[0].type == DIALOG_TIMER_ACCEPT_REVERT ) {
-		int startTime = messageList[0].startTime;
-		int endTime = startTime + PC_KEYBOARD_WAIT;
+	// Handle countdown timer for DIALOG_TIMER_ACCEPT_REVERT
+	if ( messageList.Num() > 0 &&
+		 messageList[0].type == DIALOG_TIMER_ACCEPT_REVERT ) {
+		int startTime     = messageList[0].startTime;
+		int endTime       = startTime + PC_KEYBOARD_WAIT;
 		int timeRemaining = ( endTime - Sys_Milliseconds() ) / 1000;
 
 		if ( timeRemaining <= 0 ) {
 			if ( messageList[0].cancelCB != NULL ) {
-				idSWFParmList parms;
-				messageList[0].cancelCB->Call( NULL, parms );
+				InvokeCallback(messageList[0].cancelCB);
+
 			}
 			messageList[0].clear = true;
 		} else {
 			idStrId txtTime = idStrId( "#str_time_remaining" );
-			dialog->SetGlobal( "countdownInfo", va( txtTime.GetLocalizedString(), timeRemaining ) );
+			SetRendererGlobalString( "countdownInfo", va( txtTime.GetLocalizedString(), timeRemaining ) );
 		}
 	}
 
-	if ( messageList.Num() > 0 && loading && ( messageList[0].renderDuringLoad == false ) ) {
+	if ( messageList.Num() > 0 && loading && !messageList[0].renderDuringLoad ) {
 		return;
 	}
 
-	if ( dialog->IsActive() ) {
-		dialog->Render( renderSystem, Sys_Microseconds() );
+	int timeMicroseconds = Sys_Microseconds();
+
+	if ( IsRendererActive() ) {
+		RenderDialog( timeMicroseconds );
 	}
 
-	if ( saveIndicator != NULL && saveIndicator->IsActive() ) {
-		saveIndicator->Render( renderSystem, Sys_Microseconds() );
+	if ( IsSaveIndicatorActive() ) {
+		RenderSaveIndicator( timeMicroseconds );
 	}
 }
 
@@ -703,64 +660,10 @@ idCommonDialog::idCommonDialog
 */
 idCommonDialog::idCommonDialog() {
 	dialogPause = false;
-	dialog = NULL;
-	saveIndicator = NULL;
-	dialogShowingSaveIndicatorRequested = false;
-	dialogShowingSaveIndicatorTimeRemaining = 0;
-
+	dialogInUse = false;
+	dialogShowingSaveIndicatorRequested  = false;
 	startSaveTime = 0;
 	stopSaveTime = 0;
-	dialogInUse = false;
-}
-
-/*
-================================================
-idCommonDialog::Init
-================================================
-*/
-void idCommonDialog::Init() {
-
-	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s]\n", __FUNCTION__ );
-
-	Shutdown();
-
-	dialog = new (TAG_SWF) idSWF( "dialog" );
-	saveIndicator = new (TAG_SWF) idSWF( "save_indicator" );
-
-#define BIND_DIALOG_CONSTANT( x ) dialog->SetGlobal( #x, x )
-	if ( dialog != NULL ) {
-		BIND_DIALOG_CONSTANT( DIALOG_ACCEPT );
-		BIND_DIALOG_CONSTANT( DIALOG_CONTINUE );
-		BIND_DIALOG_CONSTANT( DIALOG_ACCEPT_CANCEL );
-		BIND_DIALOG_CONSTANT( DIALOG_YES_NO );
-		BIND_DIALOG_CONSTANT( DIALOG_CANCEL );
-		BIND_DIALOG_CONSTANT( DIALOG_WAIT );
-		BIND_DIALOG_CONSTANT( DIALOG_WAIT_BLACKOUT );
-		BIND_DIALOG_CONSTANT( DIALOG_WAIT_CANCEL );
-		BIND_DIALOG_CONSTANT( DIALOG_DYNAMIC );
-		BIND_DIALOG_CONSTANT( DIALOG_QUICK_SAVE );
-		BIND_DIALOG_CONSTANT( DIALOG_TIMER_ACCEPT_REVERT );
-		BIND_DIALOG_CONSTANT( DIALOG_CRAWL_SAVE );
-		BIND_DIALOG_CONSTANT( DIALOG_CONTINUE_LARGE );
-		BIND_DIALOG_CONSTANT( DIALOG_BENCHMARK );
-	}
-}
-
-/*
-================================================
-idCommonDialog::Shutdown
-================================================
-*/
-void idCommonDialog::Shutdown() {
-	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s]\n", __FUNCTION__ );
-
-	ClearDialogs();
-
-	delete dialog;
-	dialog = NULL;
-
-	delete saveIndicator;
-	saveIndicator = NULL;
 }
 
 /*
@@ -1327,86 +1230,11 @@ idStr idCommonDialog::GetDialogMsg( gameDialogMessages_t msg, idStr & message, i
 	return message;
 }
 
-/*
-================================================
-idCommonDialog::HandleDialogEvent
-================================================
-*/
-bool idCommonDialog::HandleDialogEvent( const sysEvent_t * sev ) {
-
-	if ( dialog != NULL && dialog->IsLoaded() && dialog->IsActive() ) {
-		if ( saveIndicator->IsActive() ) {
-			return false;
-		} else {
-			if ( dialog->HandleEvent( sev ) ) {
-				idKeyInput::ClearStates();
-				Sys_ClearEvents();
-			}
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-/*
-================================================
-idCommonDialog::IsDialogActive
-================================================
-*/
-bool idCommonDialog::IsDialogActive() {
-	if ( dialog != NULL ) {
-		return dialog->IsActive();
-	}
-
-	return false;
-}
-
 CONSOLE_COMMAND( commonDialogClear, "clears all dialogs that may be hung", 0 ) {
 	common->Dialog().ClearAllDialogHack();
 }
 
 CONSOLE_COMMAND( testShowDialog, "show a dialog", 0 ) {
 	int dialogId = atoi( args.Argv( 1 ) );
-	common->Dialog().AddDialog( (gameDialogMessages_t)dialogId, DIALOG_ACCEPT, NULL, NULL, false );
-}
-
-CONSOLE_COMMAND( testShowDynamicDialog, "show a dynamic dialog", 0 ) {
-	class idSWFScriptFunction_Continue : public idSWFScriptFunction_RefCounted {
-	public:
-		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
-			common->Dialog().ClearDialog( GDM_INSUFFICENT_STORAGE_SPACE );
-			return idSWFScriptVar();
-		}
-	};
-
-	idStaticList< idSWFScriptFunction *, 4 > callbacks;
-	idStaticList< idStrId, 4 > optionText;
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_Continue() );
-	optionText.Append( idStrId( "#str_swf_continue" ) );
-
-	// build custom space required string
-	// #str_dlg_space_required ~= "There is insufficient storage available.  Please free %s and try again."
-	idStr format = idStrId( "#str_dlg_space_required" ).GetLocalizedString();
-	idStr size;
-	int requiredSpaceInBytes = 150000;
-	if ( requiredSpaceInBytes > ( 1024 * 1024 ) ) {
-		size = va( "%.1f MB", (float) requiredSpaceInBytes / ( 1024.0f * 1024.0f ) );
-	} else {
-		size = va( "%.0f KB", (float) requiredSpaceInBytes / 1024.0f );
-	}
-	idStr msg = va( format.c_str(), size.c_str() );
-
-	common->Dialog().AddDynamicDialog( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg );
-}
-
-CONSOLE_COMMAND( testShowDialogBug, "show a dynamic dialog", 0 ) {
-	common->Dialog().ShowSaveIndicator( true );
-	common->Dialog().ShowSaveIndicator( false );
-
-	// This locks the game because it thinks it's paused because we're passing in pause = true but the
-	// dialog isn't ever added because of the abuse of dialog->isActive when the save indicator is shown.
-	int dialogId = atoi( args.Argv( 1 ) );
-	common->Dialog().AddDialog( (gameDialogMessages_t)dialogId, DIALOG_ACCEPT, NULL, NULL, true );
+	ADD_DIALOG( (gameDialogMessages_t)dialogId, DIALOG_ACCEPT, NULL, NULL, false );
 }
