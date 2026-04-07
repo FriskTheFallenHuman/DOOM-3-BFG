@@ -47,26 +47,14 @@ If you have questions concerning this license or the applicable additional terms
 #include "rc/doom_resource.h"
 #include "../../renderer/tr_local.h"
 
-// WGL_ARB_extensions_string
-PFNWGLGETEXTENSIONSSTRINGARBPROC		wglGetExtensionsStringARB;
-
 // WGL_EXT_swap_interval
 PFNWGLSWAPINTERVALEXTPROC				wglSwapIntervalEXT;
 
 // WGL_ARB_pixel_format
-PFNWGLGETPIXELFORMATATTRIBIVARBPROC		wglGetPixelFormatAttribivARB;
-PFNWGLGETPIXELFORMATATTRIBFVARBPROC		wglGetPixelFormatAttribfvARB;
 PFNWGLCHOOSEPIXELFORMATARBPROC			wglChoosePixelFormatARB;
 
 // WGL_ARB_create_context
 PFNWGLCREATECONTEXTATTRIBSARBPROC		wglCreateContextAttribsARB;
-
-//
-// function declaration
-//
-bool QGL_Init( const char *dllname );
-void QGL_Shutdown();
-
 
 /*
 ========================
@@ -183,12 +171,6 @@ R_CheckWinExtension
 ========================
 */
 bool R_CheckWinExtension( const char * name ) {
-
-	if ( !strstr( glConfig.wgl_extensions_string, name ) ) {
-		idLib::Printf( "X..%s not found\n", name );
-		return false;
-	}
-
 	idLib::Printf( "...using %s\n", name );
 	return true;
 }
@@ -259,14 +241,6 @@ GLW_GetWGLExtensionsWithFakeWindow
 ==================
 */
 void GLW_CheckWGLExtensions( HDC hDC ) {
-	wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)
-							  GLimp_ExtensionPointer("wglGetExtensionsStringARB");
-	if ( wglGetExtensionsStringARB ) {
-		glConfig.wgl_extensions_string = (const char *) wglGetExtensionsStringARB(hDC);
-	} else {
-		glConfig.wgl_extensions_string = "";
-	}
-
 	// WGL_EXT_swap_control
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC) GLimp_ExtensionPointer( "wglSwapIntervalEXT" );
 	r_swapInterval.SetModified();	// force a set next frame
@@ -275,8 +249,6 @@ void GLW_CheckWGLExtensions( HDC hDC ) {
 	glConfig.swapControlTearAvailable = R_CheckWinExtension( "WGL_EXT_swap_control_tear" );
 
 	// WGL_ARB_pixel_format
-	wglGetPixelFormatAttribivARB = (PFNWGLGETPIXELFORMATATTRIBIVARBPROC)GLimp_ExtensionPointer("wglGetPixelFormatAttribivARB");
-	wglGetPixelFormatAttribfvARB = (PFNWGLGETPIXELFORMATATTRIBFVARBPROC)GLimp_ExtensionPointer("wglGetPixelFormatAttribfvARB");
 	wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)GLimp_ExtensionPointer("wglChoosePixelFormatARB");
 
 	// wglCreateContextAttribsARB
@@ -1120,7 +1092,6 @@ parameters and try again.
 ===================
 */
 bool GLimp_Init( glimpParms_t parms ) {
-	const char	*driverName;
 	HDC		hDC;
 
 	cmdSystem->AddCommand( "testSwapBuffers", GLimp_TestSwapBuffers, CMD_FL_SYSTEM, "Times swapbuffer options" );
@@ -1150,15 +1121,6 @@ bool GLimp_Init( glimpParms_t parms ) {
 
 	// this will load the dll and set all our qgl* function pointers,
 	// but doesn't create a window
-
-	// r_glDriver is only intended for using instrumented OpenGL
-	// dlls.  Normal users should never have to use it, and it is
-	// not archived.
-	driverName = r_glDriver.GetString()[0] ? r_glDriver.GetString() : "opengl32";
-	if ( !QGL_Init( driverName ) ) {
-		common->Printf( "^3GLimp_Init() could not load r_glDriver \"%s\"^0\n", driverName );
-		return false;
-	}
 
 	// getting the wgl extensions involves creating a fake window to get a context,
 	// which is pretty disgusting, and seems to mess with the AGP VAR allocation
@@ -1196,9 +1158,6 @@ bool GLimp_Init( glimpParms_t parms ) {
 
 	// wglSwapinterval, etc
 	GLW_CheckWGLExtensions( win32.hDC );
-
-	// check logging
-	GLimp_EnableLogging( ( r_logFile.GetInteger() != 0 ) );
 
 	return true;
 }
@@ -1261,10 +1220,8 @@ void GLimp_Shutdown() {
 	common->Printf( "Shutting down OpenGL subsystem\n" );
 
 	// set current context to NULL
-	if ( qwglMakeCurrent ) {
-		retVal = qwglMakeCurrent( NULL, NULL ) != 0;
-		common->Printf( "...wglMakeCurrent( NULL, NULL ): %s\n", success[retVal] );
-	}
+	retVal = qwglMakeCurrent( NULL, NULL ) != 0;
+	common->Printf( "...wglMakeCurrent( NULL, NULL ): %s\n", success[retVal] );
 
 	// delete HGLRC
 	if ( win32.hGLRC ) {
@@ -1297,9 +1254,6 @@ void GLimp_Shutdown() {
 
 	// restore gamma
 	GLimp_RestoreGamma();
-
-	// shutdown QGL subsystem
-	QGL_Shutdown();
 }
 
 /*

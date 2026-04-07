@@ -821,7 +821,6 @@ extern glconfig_t			glConfig;		// outside of TR since it shouldn't be cleared du
 // cvars
 //
 extern idCVar r_debugContext;				// enable various levels of context debug
-extern idCVar r_glDriver;					// "opengl32", etc
 extern idCVar r_skipIntelWorkarounds;		// skip work arounds for Intel driver bugs
 extern idCVar r_vidMode;					// video mode number
 extern idCVar r_displayRefresh;				// optional display refresh rate option for vid mode
@@ -1040,9 +1039,6 @@ void		GLimp_DeactivateContext();
 // most OpenGL implementations, this will result in all OpenGL calls
 // being immediate returns, which lets us guage how much time is
 // being spent inside OpenGL.
-
-void		GLimp_EnableLogging( bool enable );
-
 
 /*
 ============================================================

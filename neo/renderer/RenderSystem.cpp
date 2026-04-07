@@ -265,9 +265,6 @@ static void R_CheckCvars() {
 			qglDisable( GL_MULTISAMPLE_ARB );
 		}
 	}
-
-	// check for changes to logging state
-	GLimp_EnableLogging( r_logFile.GetInteger() != 0 );
 }
 
 /*

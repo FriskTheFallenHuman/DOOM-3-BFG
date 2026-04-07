@@ -33,15 +33,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "../../renderer/OpenGL/wglext.h"		// windows OpenGL extensions
 #include "win_input.h"
 
-// WGL_ARB_extensions_string
-extern	PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
-
 // WGL_EXT_swap_interval
 extern	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 
 // WGL_ARB_pixel_format
-extern	PFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB;
-extern	PFNWGLGETPIXELFORMATATTRIBFVARBPROC wglGetPixelFormatAttribfvARB;
 extern	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
 
 #define	WINDOW_STYLE	(WS_OVERLAPPED|WS_BORDER|WS_CAPTION|WS_VISIBLE|WS_THICKFRAME|WS_SYSMENU)
@@ -95,8 +90,6 @@ struct Win32Vars_t {
 	HGLRC			hGLRC;						// handle to GL rendering context
 	PIXELFORMATDESCRIPTOR pfd;
 	int				pixelformat;
-
-	HINSTANCE		hinstOpenGL;	// HINSTANCE for the OpenGL library
 
 	int				desktopBitsPixel;
 	int				desktopWidth, desktopHeight;
