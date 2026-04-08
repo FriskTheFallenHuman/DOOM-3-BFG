@@ -210,7 +210,7 @@ void idMenuScreen_Shell_SystemOptions::HideScreen( const mainMenuTransition_t tr
 					if ( cmdLine.Find( "com_skipIntroVideos" ) < 0 ) {
 						cmdLine.Append( " +set com_skipIntroVideos 1" );
 					}
-					Sys_ReLaunch( (void*)cmdLine.c_str(), cmdLine.Length() );
+					sys->RelaunchProcess( (void*)cmdLine.c_str(), cmdLine.Length() );
 				}
 				return idSWFScriptVar();
 			}

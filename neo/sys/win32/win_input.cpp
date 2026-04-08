@@ -32,7 +32,15 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "win_local.h"
 
-#define DINPUT_BUFFERSIZE           256
+// the rest of the engine will only reference the "inputDevice" variable, while all local aspects stay hidden
+idInputDevicesWin32 inputDeviceLocal;
+idInputDevices *inputDevice = &inputDeviceLocal;	// statically pointed at an idInputDevicesWin32
+
+// the rest of the engine will only reference the "joystick" variable, while all local aspects stay hidden
+idJoystickWin32 joystickLocal;
+idJoystick *joystick = &joystickLocal;	// statically pointed at an idJoystickWin32
+
+idCVar idInputDevicesWin32::in_mouse( "in_mouse", "1", CVAR_SYSTEM | CVAR_BOOL, "enable mouse input" );
 
 /*
 ============================================================
@@ -42,7 +50,20 @@ DIRECT INPUT KEYBOARD CONTROL
 ============================================================
 */
 
-bool IN_StartupKeyboard() {
+/*
+========================
+idInputDevicesWin32::idInputDevicesWin32
+========================
+*/
+idInputDevicesWin32::idInputDevicesWin32() {
+}
+
+/*
+========================
+idInputDevicesWin32::StartupKeyboard
+========================
+*/
+bool idInputDevicesWin32::StartupKeyboard() {
     HRESULT hr;
     bool    bExclusive;
     bool    bForeground;
@@ -50,14 +71,14 @@ bool IN_StartupKeyboard() {
     bool    bDisableWindowsKey;
     DWORD   dwCoopFlags;
 
-	if (!win32.g_pdi) {
+	if (!g_pdi) {
 		common->Printf("keyboard: DirectInput has not been started\n");
 		return false;
 	}
 
-	if (win32.g_pKeyboard) {
-		win32.g_pKeyboard->Release();
-		win32.g_pKeyboard = NULL;
+	if ( g_pKeyboard ) {
+		g_pKeyboard->Release();
+		g_pKeyboard = NULL;
 	}
 
     // Detrimine where the buffer would like to be allocated
@@ -81,7 +102,7 @@ bool IN_StartupKeyboard() {
         dwCoopFlags |= DISCL_NOWINKEY;
 
     // Obtain an interface to the system keyboard device.
-    if( FAILED( hr = win32.g_pdi->CreateDevice( GUID_SysKeyboard, &win32.g_pKeyboard, NULL ) ) ) {
+    if( FAILED( hr = g_pdi->CreateDevice( GUID_SysKeyboard, &g_pKeyboard, NULL ) ) ) {
 		common->Printf("keyboard: couldn't find a keyboard device\n");
         return false;
 	}
@@ -93,13 +114,13 @@ bool IN_StartupKeyboard() {
     //
     // This tells DirectInput that we will be passing an array
     // of 256 bytes to IDirectInputDevice::GetDeviceState.
-    if( FAILED( hr = win32.g_pKeyboard->SetDataFormat( &c_dfDIKeyboard ) ) )
+    if( FAILED( hr = g_pKeyboard->SetDataFormat( &c_dfDIKeyboard ) ) )
         return false;
 
     // Set the cooperativity level to let DirectInput know how
     // this device should interact with the system and with other
     // DirectInput applications.
-    hr = win32.g_pKeyboard->SetCooperativeLevel( win32.hWnd, dwCoopFlags );
+    hr = g_pKeyboard->SetCooperativeLevel( win32.hWnd, dwCoopFlags );
     if( hr == DIERR_UNSUPPORTED && !bForeground && bExclusive ) {
         common->Printf("keyboard: SetCooperativeLevel() returned DIERR_UNSUPPORTED.\nFor security reasons, background exclusive keyboard access is not allowed.\n");
         return false;
@@ -127,12 +148,12 @@ bool IN_StartupKeyboard() {
         dipdw.diph.dwHow        = DIPH_DEVICE;
         dipdw.dwData            = DINPUT_BUFFERSIZE; // Arbitary buffer size
 
-        if( FAILED( hr = win32.g_pKeyboard->SetProperty( DIPROP_BUFFERSIZE, &dipdw.diph ) ) )
+        if( FAILED( hr = g_pKeyboard->SetProperty( DIPROP_BUFFERSIZE, &dipdw.diph ) ) )
             return false;
     }
 
     // Acquire the newly created device
-    win32.g_pKeyboard->Acquire();
+    g_pKeyboard->Acquire();
 
 	common->Printf( "keyboard: DirectInput initialized.\n");
     return true;
@@ -140,14 +161,14 @@ bool IN_StartupKeyboard() {
 
 /*
 ==========================
-IN_DeactivateKeyboard
+idInputDevicesWin32::DeactivateKeyboard
 ==========================
 */
-void IN_DeactivateKeyboard() {
-	if (!win32.g_pKeyboard) {
+void idInputDevicesWin32::DeactivateKeyboard() {
+	if (!g_pKeyboard) {
 		return;
 	}
-	win32.g_pKeyboard->Unacquire( );
+	g_pKeyboard->Unacquire( );
 }
 
 /*
@@ -160,42 +181,42 @@ DIRECT INPUT MOUSE CONTROL
 
 /*
 ========================
-IN_InitDirectInput
+idInputDevicesWin32::InitDirectInput
 ========================
 */
 
-void IN_InitDirectInput() {
+void idInputDevicesWin32::InitDirectInput() {
     HRESULT		hr;
 
 	common->Printf( "Initializing DirectInput...\n" );
 
-	if ( win32.g_pdi != NULL ) {
-		win32.g_pdi->Release();			// if the previous window was destroyed we need to do this
-		win32.g_pdi = NULL;
+	if ( g_pdi != NULL ) {
+		g_pdi->Release();			// if the previous window was destroyed we need to do this
+		g_pdi = NULL;
 	}
 
     // Register with the DirectInput subsystem and get a pointer
     // to a IDirectInput interface we can use.
     // Create the base DirectInput object
-	if ( FAILED( hr = DirectInput8Create( GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&win32.g_pdi, NULL ) ) ) {
+	if ( FAILED( hr = DirectInput8Create( GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&g_pdi, NULL ) ) ) {
 		common->Printf ("DirectInputCreate failed\n");
     }
 }
 
 /*
 ========================
-IN_InitDIMouse
+idInputDevicesWin32::InitDIMouse
 ========================
 */
-bool IN_InitDIMouse() {
+bool idInputDevicesWin32::InitDIMouse() {
     HRESULT		hr;
 
-	if ( win32.g_pdi == NULL) {
+	if ( g_pdi == NULL) {
 		return false;
 	}
 
 	// obtain an interface to the system mouse device.
-	hr = win32.g_pdi->CreateDevice( GUID_SysMouse, &win32.g_pMouse, NULL);
+	hr = g_pdi->CreateDevice( GUID_SysMouse, &g_pMouse, NULL);
 
 	if (FAILED(hr)) {
 		common->Printf ("mouse: Couldn't open DI mouse device\n");
@@ -209,13 +230,13 @@ bool IN_InitDIMouse() {
     //
     // This tells DirectInput that we will be passing a
     // DIMOUSESTATE2 structure to IDirectInputDevice::GetDeviceState.
-    if( FAILED( hr = win32.g_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) ) {
+    if( FAILED( hr = g_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) ) {
 		common->Printf ("mouse: Couldn't set DI mouse format\n");
 		return false;
 	}
 
 	// set the cooperativity level.
-	hr = win32.g_pMouse->SetCooperativeLevel( win32.hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
+	hr = g_pMouse->SetCooperativeLevel( win32.hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
 
 	if (FAILED(hr)) {
 		common->Printf ("mouse: Couldn't set DI coop level\n");
@@ -239,16 +260,16 @@ bool IN_InitDIMouse() {
     dipdw.diph.dwHow        = DIPH_DEVICE;
     dipdw.dwData            = DINPUT_BUFFERSIZE; // Arbitary buffer size
 
-    if( FAILED( hr = win32.g_pMouse->SetProperty( DIPROP_BUFFERSIZE, &dipdw.diph ) ) ) {
+    if( FAILED( hr = g_pMouse->SetProperty( DIPROP_BUFFERSIZE, &dipdw.diph ) ) ) {
 		common->Printf ("mouse: Couldn't set DI buffersize\n");
 		return false;
 	}
 
-	IN_ActivateMouse();
+	ActivateMouse();
 
 	// clear any pending samples
 	int	mouseEvents[MAX_MOUSE_EVENTS][2];
-	Sys_PollMouseInputEvents( mouseEvents );
+	PollMouseInputEvents( mouseEvents );
 
 	common->Printf( "mouse: DirectInput initialized.\n");
 	return true;
@@ -257,18 +278,18 @@ bool IN_InitDIMouse() {
 
 /*
 ==========================
-IN_ActivateMouse
+idInputDevicesWin32::ActivateMouse
 ==========================
 */
-void IN_ActivateMouse() {
+void idInputDevicesWin32::ActivateMouse() {
 	int i;
 	HRESULT hr;
 
-	if ( !win32.in_mouse.GetBool() || win32.mouseGrabbed || !win32.g_pMouse ) {
+	if ( !in_mouse.GetBool() || mouseGrabbed || !g_pMouse ) {
 		return;
 	}
 
-	win32.mouseGrabbed = true;
+	mouseGrabbed = true;
 	for ( i = 0; i < 10; i++ ) {
 		if ( ::ShowCursor( false ) < 0 ) {
 			break;
@@ -276,45 +297,45 @@ void IN_ActivateMouse() {
 	}
 
 	// we may fail to reacquire if the window has been recreated
-	hr = win32.g_pMouse->Acquire();
+	hr = g_pMouse->Acquire();
 	if (FAILED(hr)) {
 		return;
 	}
 
 	// set the cooperativity level.
-	hr = win32.g_pMouse->SetCooperativeLevel( win32.hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
+	hr = g_pMouse->SetCooperativeLevel( win32.hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
 }
 
 /*
 ==========================
-IN_DeactivateMouse
+idInputDevicesWin32::DeactivateMouse
 ==========================
 */
-void IN_DeactivateMouse() {
+void idInputDevicesWin32::DeactivateMouse() {
 	int i;
 
-	if (!win32.g_pMouse || !win32.mouseGrabbed ) {
+	if (!g_pMouse || !mouseGrabbed ) {
 		return;
 	}
 
-	win32.g_pMouse->Unacquire();
+	g_pMouse->Unacquire();
 
 	for ( i = 0; i < 10; i++ ) {
 		if ( ::ShowCursor( true ) >= 0 ) {
 			break;
 		}
 	}
-	win32.mouseGrabbed = false;
+	mouseGrabbed = false;
 }
 
 /*
 ==========================
-IN_DeactivateMouseIfWindowed
+idInputDevicesWin32::DeactivateMouseIfWindowed
 ==========================
 */
-void IN_DeactivateMouseIfWindowed() {
+void idInputDevicesWin32::DeactivateMouseIfWindowed() {
 	if ( !win32.cdsFullscreen ) {
-		IN_DeactivateMouse();
+		DeactivateMouse();
 	}
 }
 
@@ -329,65 +350,67 @@ void IN_DeactivateMouseIfWindowed() {
 
 /*
 ===========
-Sys_ShutdownInput
+idInputDevicesWin32::Shutdown
 ===========
 */
-void Sys_ShutdownInput() {
-	IN_DeactivateMouse();
-	IN_DeactivateKeyboard();
-	if ( win32.g_pKeyboard ) {
-		win32.g_pKeyboard->Release();
-		win32.g_pKeyboard = NULL;
+void idInputDevicesWin32::Shutdown() {
+	DeactivateMouse();
+	DeactivateKeyboard();
+	if ( g_pKeyboard ) {
+		g_pKeyboard->Release();
+		g_pKeyboard = NULL;
 	}
 
-    if ( win32.g_pMouse ) {
-		win32.g_pMouse->Release();
-		win32.g_pMouse = NULL;
+    if ( g_pMouse ) {
+		g_pMouse->Release();
+		g_pMouse = NULL;
 	}
 
-    if ( win32.g_pdi ) {
-		win32.g_pdi->Release();
-		win32.g_pdi = NULL;
+    if ( g_pdi ) {
+		g_pdi->Release();
+		g_pdi = NULL;
 	}
 }
 
 /*
 ===========
-Sys_InitInput
+idInputDevicesWin32::Init
 ===========
 */
-void Sys_InitInput() {
+void idInputDevicesWin32::Init() {
 	common->Printf ("\n------- Input Initialization -------\n");
-	IN_InitDirectInput();
-	if ( win32.in_mouse.GetBool() ) {
-		IN_InitDIMouse();
+	InitDirectInput();
+	if ( in_mouse.GetBool() ) {
+		InitDIMouse();
 		// don't grab the mouse on initialization
-		Sys_GrabMouseCursor( false );
+		GrabMouseCursor( false );
 	} else {
 		common->Printf ("Mouse control not active.\n");
 	}
-	IN_StartupKeyboard();
+	StartupKeyboard();
+
+	cmdSystem->AddCommand( "in_restart", idInputDevicesWin32::In_Restart_f, CMD_FL_SYSTEM, "restarts the input system" );
 
 	common->Printf ("------------------------------------\n");
-	win32.in_mouse.ClearModified();
+	in_mouse.ClearModified();
 }
 
 /*
 ==================
-IN_Frame
+idInputDevicesWin32::Frame
 
 Called every frame, even if not generating commands
 ==================
 */
-void IN_Frame() {
+void idInputDevicesWin32::Frame() {
 	bool	shouldGrab = true;
 
-	if ( !win32.in_mouse.GetBool() ) {
+	if ( !in_mouse.GetBool() ) {
 		shouldGrab = false;
 	}
 	// if fullscreen, we always want the mouse
 	if ( !win32.cdsFullscreen ) {
-		if ( win32.mouseReleased ) {
+		if ( mouseReleased ) {
 			shouldGrab = false;
 		}
 		if ( win32.movingWindow ) {
@@ -398,19 +421,19 @@ void IN_Frame() {
 		}
 	}
 
-	if ( shouldGrab != win32.mouseGrabbed ) {
+	if ( shouldGrab != mouseGrabbed ) {
 		if ( usercmdGen != NULL ) {
 			usercmdGen->Clear();
 		}
 
-		if ( win32.mouseGrabbed ) {
-			IN_DeactivateMouse();
+		if ( mouseGrabbed ) {
+			DeactivateMouse();
 		} else {
-			IN_ActivateMouse();
+			ActivateMouse();
 
 #if 0	// if we can't reacquire, try reinitializing
 			if ( !IN_InitDIMouse() ) {
-				win32.in_mouse.SetBool( false );
+				in_mouse.SetBool( false );
 				return;
 			}
 #endif
@@ -419,41 +442,29 @@ void IN_Frame() {
 }
 
 
-void	Sys_GrabMouseCursor( bool grabIt ) {
-	win32.mouseReleased = !grabIt;
+void idInputDevicesWin32::GrabMouseCursor( bool grabIt ) {
+	mouseReleased = !grabIt;
 	if ( !grabIt ) {
 		// release it right now
-		IN_Frame();
+		Frame();
 	}
 }
 
-//=====================================================================================
-
-static DIDEVICEOBJECTDATA polled_didod[ DINPUT_BUFFERSIZE ];  // Receives buffered data
-
-static int diFetch;
-static byte toggleFetch[2][ 256 ];
-
-
-#if 1
-// I tried doing the full-state get to address a keyboard problem on one system,
-// but it didn't make any difference
-
 /*
 ====================
-Sys_PollKeyboardInputEvents
+idInputDevicesWin32::PollKeyboardInputEvents
 ====================
 */
-int Sys_PollKeyboardInputEvents() {
+int idInputDevicesWin32::PollKeyboardInputEvents() {
     DWORD              dwElements;
     HRESULT            hr;
 
-    if( win32.g_pKeyboard == NULL ) {
+    if( g_pKeyboard == NULL ) {
         return 0;
 	}
 
     dwElements = DINPUT_BUFFERSIZE;
-    hr = win32.g_pKeyboard->GetDeviceData( sizeof(DIDEVICEOBJECTDATA),
+    hr = g_pKeyboard->GetDeviceData( sizeof(DIDEVICEOBJECTDATA),
                                      polled_didod, &dwElements, 0 );
     if( hr != DI_OK )
     {
@@ -463,7 +474,7 @@ int Sys_PollKeyboardInputEvents() {
         // device has been lost, either due to an external
         // interruption, or because the buffer overflowed
         // and some events were lost.
-        hr = win32.g_pKeyboard->Acquire();
+        hr = g_pKeyboard->Acquire();
 
 
 
@@ -472,7 +483,7 @@ int Sys_PollKeyboardInputEvents() {
 			//Bug 951: The following command really clears the garbage input.
 			//The original will still process keys in the buffer and was causing
 			//some problems.
-			win32.g_pKeyboard->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), NULL, &dwElements, 0 );
+			g_pKeyboard->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), NULL, &dwElements, 0 );
 			dwElements = 0;
 		}
         // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
@@ -487,71 +498,12 @@ int Sys_PollKeyboardInputEvents() {
 	return dwElements;
 }
 
-#else
-
 /*
 ====================
-Sys_PollKeyboardInputEvents
-
-Fake events by getting the entire device state
-and checking transitions
+idInputDevicesWin32::PollKeyboardInputEvents
 ====================
 */
-int Sys_PollKeyboardInputEvents() {
-    HRESULT            hr;
-
-    if( win32.g_pKeyboard == NULL ) {
-        return 0;
-	}
-
-	hr = win32.g_pKeyboard->GetDeviceState( sizeof( toggleFetch[ diFetch ] ), toggleFetch[ diFetch ] );
-    if( hr != DI_OK )
-    {
-        // We got an error or we got DI_BUFFEROVERFLOW.
-        //
-        // Either way, it means that continuous contact with the
-        // device has been lost, either due to an external
-        // interruption, or because the buffer overflowed
-        // and some events were lost.
-        hr = win32.g_pKeyboard->Acquire();
-
-		// nuke the garbage
-		if (!FAILED(hr)) {
-			hr = win32.g_pKeyboard->GetDeviceState( sizeof( toggleFetch[ diFetch ] ), toggleFetch[ diFetch ] );
-		}
-        // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-        // may occur when the app is minimized or in the process of
-        // switching, so just try again later
-    }
-
-    if( FAILED(hr) ) {
-        return 0;
-	}
-
-	// build faked events
-	int		numChanges = 0;
-
-	for ( int i = 0 ; i < 256 ; i++ ) {
-		if ( toggleFetch[0][i] != toggleFetch[1][i] ) {
-			polled_didod[ numChanges ].dwOfs = i;
-			polled_didod[ numChanges ].dwData = toggleFetch[ diFetch ][i] ? 0x80 : 0;
-			numChanges++;
-		}
-	}
-
-	diFetch ^= 1;
-
-	return numChanges;
-}
-
-#endif
-
-/*
-====================
-Sys_PollKeyboardInputEvents
-====================
-*/
-int Sys_ReturnKeyboardInputEvent( const int n, int &ch, bool &state ) {
+int idInputDevicesWin32::ReturnKeyboardInputEvent( const int n, int &ch, bool &state ) {
 	ch = polled_didod[ n ].dwOfs;
 	state = ( polled_didod[ n ].dwData & 0x80 ) == 0x80;
 	if ( ch == K_PRINTSCREEN || ch == K_LCTRL || ch == K_LALT || ch == K_RCTRL || ch == K_RALT ) {
@@ -564,29 +516,22 @@ int Sys_ReturnKeyboardInputEvent( const int n, int &ch, bool &state ) {
 	return ch;
 }
 
-
-void Sys_EndKeyboardInputEvents() {
-}
-
-//=====================================================================================
-
-
-int Sys_PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] ) {
+int idInputDevicesWin32::PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] ) {
 	DWORD				dwElements;
 	HRESULT				hr;
 
-	if ( !win32.g_pMouse || !win32.mouseGrabbed ) {
+	if ( !g_pMouse || !mouseGrabbed ) {
 		return 0;
 	}
 
     dwElements = DINPUT_BUFFERSIZE;
-    hr = win32.g_pMouse->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), polled_didod, &dwElements, 0 );
+    hr = g_pMouse->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), polled_didod, &dwElements, 0 );
 
     if( hr != DI_OK ) {
-        hr = win32.g_pMouse->Acquire();
+        hr = g_pMouse->Acquire();
 		// clear the garbage
 		if (!FAILED(hr)) {
-			win32.g_pMouse->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), polled_didod, &dwElements, 0 );
+			g_pMouse->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), polled_didod, &dwElements, 0 );
 		}
     }
 
@@ -636,27 +581,21 @@ int Sys_PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] ) {
 	return dwElements;
 }
 
+/*
+=================
+idInputDevicesWin32::In_Restart_f
+
+Restart the input subsystem
+=================
+*/
+void idInputDevicesWin32::In_Restart_f( const idCmdArgs &args ) {
+	inputDeviceLocal.Shutdown();
+	inputDeviceLocal.Init();
+}
+
 //=====================================================================================
 //	Joystick Input Handling
 //=====================================================================================
-
-void Sys_SetRumble( int device, int low, int hi ) {
-	return win32.g_Joystick.SetRumble( device, low, hi );
-}
-
-int Sys_PollJoystickInputEvents( int deviceNum ) {
-	return win32.g_Joystick.PollInputEvents( deviceNum );
-}
-
-
-int Sys_ReturnJoystickInputEvent( const int n, int &action, int &value ) {
-	return win32.g_Joystick.ReturnInputEvent( n, action, value );
-}
-
-
-void Sys_EndJoystickInputEvents() {
-}
-
 
 /*
 ========================
@@ -704,10 +643,10 @@ void JoystickSamplingThread( void *data ) {
 			}
 
 			// do this short amount of processing inside a critical section
-			idScopedCriticalSection cs( win32.g_Joystick.mutexXis );
+			idScopedCriticalSection cs( joystickLocal.mutexXis );
 
 			for ( int i = 0 ; i < MAX_JOYSTICKS ; i++ ) {
-				controllerState_t * cs = &win32.g_Joystick.controllers[i];
+				controllerState_t * cs = &joystickLocal.controllers[i];
 
 				if ( !validData[i] ) {
 					cs->valid = false;
@@ -732,7 +671,7 @@ void JoystickSamplingThread( void *data ) {
 		}
 
 		// we want this to be processed at least 250 times a second
-		WaitForSingleObject( win32.g_Joystick.timer, INFINITE );
+		WaitForSingleObject( joystickLocal.timer, INFINITE );
 	}
 }
 
@@ -756,8 +695,6 @@ idJoystickWin32::Init
 ========================
 */
 bool idJoystickWin32::Init() {
-	idJoystick::Init();
-
 	// setup the timer that the high frequency thread will wait on
 	// to fire every 4 msec
 	timer = CreateWaitableTimer( NULL, FALSE, "JoypadTimer" );
@@ -769,6 +706,8 @@ bool idJoystickWin32::Init() {
 
 	// spawn the high frequency joystick reading thread
 	Sys_CreateThread( (xthread_t)JoystickSamplingThread, NULL, THREAD_HIGHEST, "Joystick", CORE_1A );
+
+	idLib::Printf( "joystick: XInput2 initialized.\n");
 
 	return false;
 }

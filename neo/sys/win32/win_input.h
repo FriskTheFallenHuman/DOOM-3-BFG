@@ -36,6 +36,70 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int MAX_JOYSTICKS = 4;
 
+#define DINPUT_BUFFERSIZE           256
+
+/*
+================================================================================================
+
+	Input Devices Win32
+
+================================================================================================
+*/
+
+class idInputDevicesWin32 : public idInputDevices  {
+public:
+					idInputDevicesWin32();
+
+	// input is tied to windows, so it needs to be started up and shut down whenever
+	// the main window is recreated
+	virtual void	Init();
+	virtual void	Shutdown();
+	virtual void	Frame();
+
+	// keyboard input polling
+	virtual int		PollKeyboardInputEvents();
+	virtual int		ReturnKeyboardInputEvent( const int n, int &ch, bool &state );
+	virtual void	EndKeyboardInputEvents() {}
+
+	// mouse input polling
+	virtual int		PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] );
+
+	// when the console is down, or the game is about to perform a lengthy
+	// operation like map loading, the system can release the mouse cursor
+	// when in windowed mode
+	virtual void	GrabMouseCursor( bool grabIt );
+
+	virtual void	DeactivateMouseIfWindowed();
+	virtual void	DeactivateMouse();
+	virtual void	ActivateMouse();
+
+	static void		In_Restart_f( const idCmdArgs &args );
+
+protected:
+	// keyboard input
+	bool StartupKeyboard();
+	void DeactivateKeyboard();
+	void InitDirectInput();
+
+	// mouse input
+	bool InitDIMouse();
+
+	static idCVar	in_mouse;
+
+	DIDEVICEOBJECTDATA polled_didod[ DINPUT_BUFFERSIZE ];  // Receives buffered data
+
+	int diFetch;
+	byte toggleFetch[2][ 256 ];
+
+	LPDIRECTINPUT8			g_pdi;
+	LPDIRECTINPUTDEVICE8	g_pMouse;
+	LPDIRECTINPUTDEVICE8	g_pKeyboard;
+
+	bool mouseReleased;	 // when the game has the console down or is doing a long operation
+	bool mouseGrabbed;	 // current state of grab and hide
+};
+
+
 /*
 ================================================================================================
 
@@ -62,7 +126,7 @@ struct controllerState_t {
 };
 
 
-class idJoystickWin32 : idJoystick {
+class idJoystickWin32 : public idJoystick {
 public:
 					idJoystickWin32();
 

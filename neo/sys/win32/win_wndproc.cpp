@@ -190,7 +190,9 @@ LRESULT CALLBACK MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				win32.activeApp = (fActive != WA_INACTIVE);
 				if ( win32.activeApp ) {
 					idKeyInput::ClearStates();
-					Sys_GrabMouseCursor( true );
+					if ( inputDevice ) {
+						inputDevice->GrabMouseCursor( true );
+					}
 					if ( common->IsInitialized() ) {
 						SetCursor( NULL );
 					}
