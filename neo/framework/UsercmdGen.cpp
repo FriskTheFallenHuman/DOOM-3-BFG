@@ -1205,9 +1205,13 @@ idUsercmdGenLocal::Mouse
 ===================
 */
 void idUsercmdGenLocal::Mouse() {
+	if ( !inputDevice ) {
+		return;
+	}
+
 	int	mouseEvents[MAX_MOUSE_EVENTS][2];
 
-	int numEvents = Sys_PollMouseInputEvents( mouseEvents );
+	int numEvents = inputDevice->PollMouseInputEvents( mouseEvents );
 
 	// Study each of the buffer elements and process them.
 	for ( int i = 0; i < numEvents; i++ ) {
@@ -1258,19 +1262,22 @@ idUsercmdGenLocal::Keyboard
 ===============
 */
 void idUsercmdGenLocal::Keyboard() {
+	if ( !inputDevice ) {
+		return;
+	}
 
-	int numEvents = Sys_PollKeyboardInputEvents();
+	int numEvents = inputDevice->PollKeyboardInputEvents();
 
     // Study each of the buffer elements and process them.
 	for ( int i = 0; i < numEvents; i++ ) {
 		int key;
 		bool state;
-		if ( Sys_ReturnKeyboardInputEvent( i, key, state ) ) {
+		if ( inputDevice->ReturnKeyboardInputEvent( i, key, state ) ) {
 			Key( key, state );
 		}
 	}
 
-	Sys_EndKeyboardInputEvents();
+	inputDevice->EndKeyboardInputEvents();
 }
 
 /*
@@ -1279,13 +1286,17 @@ idUsercmdGenLocal::Joystick
 ===============
 */
 void idUsercmdGenLocal::Joystick( int deviceNum ) {
-	int numEvents = Sys_PollJoystickInputEvents( deviceNum );
+	if ( !joystick ) {
+		return;
+	}
+
+	int numEvents = joystick->PollInputEvents( deviceNum );
 
 	// Study each of the buffer elements and process them.
 	for ( int i = 0; i < numEvents; i++ ) {
 		int action;
 		int value;
-		if ( Sys_ReturnJoystickInputEvent( i, action, value ) ) {
+		if ( joystick->ReturnInputEvent( i, action, value ) ) {
 			if ( action >= J_ACTION1 && action <= J_ACTION_MAX ) {
 				int joyButton = K_JOY1 + ( action - J_ACTION1 );
 				Key( joyButton, ( value != 0 ) );
@@ -1300,7 +1311,7 @@ void idUsercmdGenLocal::Joystick( int deviceNum ) {
 		}
 	}
 
-	Sys_EndJoystickInputEvents();
+	joystick->EndInputEvents();
 }
 
 /*

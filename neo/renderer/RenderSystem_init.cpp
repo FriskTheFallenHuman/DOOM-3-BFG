@@ -700,7 +700,9 @@ void R_InitOpenGL() {
 
 
 	// input and sound systems need to be tied to the new window
-	Sys_InitInput();
+	if ( inputDevice ) {
+		inputDevice->Init();
+	}
 
 	// get our config strings
 	glConfig.vendor_string = (const char *)qglGetString( GL_VENDOR );

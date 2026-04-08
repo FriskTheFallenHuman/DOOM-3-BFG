@@ -1166,44 +1166,68 @@ void checkInput( void *data ) {
 		Sys_GetEvent();
 
 		bool escapeEvent = false;
-		// allow to skip video by pressing anything
-		int numKeyEvents = Sys_PollKeyboardInputEvents();
-		if ( numKeyEvents > 0 ) {
-			for ( int i = 0; i < numKeyEvents; i++ ) {
-				int key;
-				bool state;
 
-				if ( Sys_ReturnKeyboardInputEvent( i, key, state ) ) {
-					if ( key == K_ESCAPE && state == true ) {
-						escapeEvent = true;
+		if ( inputDevice ) {
+			// allow to skip video by pressing anything
+			int numKeyEvents = inputDevice->PollKeyboardInputEvents();
+			if ( numKeyEvents > 0 ) {
+				for ( int i = 0; i < numKeyEvents; i++ ) {
+					int key;
+					bool state;
+
+					if ( inputDevice->ReturnKeyboardInputEvent( i, key, state ) ) {
+						if ( key == K_ESCAPE && state == true ) {
+							escapeEvent = true;
+						}
+						break;
 					}
-					break;
 				}
+
+				inputDevice->EndKeyboardInputEvents();
 			}
 
-			Sys_EndKeyboardInputEvents();
+			int	mouseEvents[MAX_MOUSE_EVENTS][2];
+			int numMouseEvents = inputDevice->PollMouseInputEvents( mouseEvents );
+			if ( numMouseEvents > 0 ) {
+				for ( int i = 0; i < numMouseEvents; i++ ) {
+					int action = mouseEvents[i][0];
+					switch ( action ) {
+						case M_ACTION1:
+						case M_ACTION2:
+						case M_ACTION3:
+						case M_ACTION4:
+						case M_ACTION5:
+						case M_ACTION6:
+						case M_ACTION7:
+						case M_ACTION8:
+							escapeEvent = true;
+							break;
+
+						default:	// some other undefined button
+							break;
+					}
+				}
+			}
 		}
 
-		int	mouseEvents[MAX_MOUSE_EVENTS][2];
-		int numMouseEvents = Sys_PollMouseInputEvents( mouseEvents );
-		if ( numMouseEvents > 0 ) {
-			for ( int i = 0; i < numMouseEvents; i++ ) {
-				int action = mouseEvents[i][0];
-				switch ( action ) {
-					case M_ACTION1:
-					case M_ACTION2:
-					case M_ACTION3:
-					case M_ACTION4:
-					case M_ACTION5:
-					case M_ACTION6:
-					case M_ACTION7:
-					case M_ACTION8:
-						escapeEvent = true;
-						break;
+		if ( joystick ) {
+			int numJoystickEvents = joystick->PollInputEvents( 0 );
+			if ( numJoystickEvents > 0 ) {
+				for ( int i = 0; i < numJoystickEvents; i++ ) {
+					int action;
+					int value;
 
-					default:	// some other undefined button
-						break;
+					if ( joystick->ReturnInputEvent( i, action, value ) ) {
+						if ( action >= J_ACTION1 && action <= J_ACTION_MAX ) {
+							if ( value != 0 ) {
+								escapeEvent = true;
+								break;
+							}
+						}
+					}
 				}
+
+				joystick->EndInputEvents();
 			}
 		}
 

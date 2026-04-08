@@ -434,31 +434,6 @@ void			Sys_GenerateEvents();
 sysEvent_t		Sys_GetEvent();
 void			Sys_ClearEvents();
 
-// input is tied to windows, so it needs to be started up and shut down whenever
-// the main window is recreated
-void			Sys_InitInput();
-void			Sys_ShutdownInput();
-
-// keyboard input polling
-int				Sys_PollKeyboardInputEvents();
-int				Sys_ReturnKeyboardInputEvent( const int n, int &ch, bool &state );
-void			Sys_EndKeyboardInputEvents();
-
-// mouse input polling
-static const int MAX_MOUSE_EVENTS = 256;
-int				Sys_PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] );
-
-// joystick input polling
-void			Sys_SetRumble( int device, int low, int hi );
-int				Sys_PollJoystickInputEvents( int deviceNum );
-int				Sys_ReturnJoystickInputEvent( const int n, int &action, int &value );
-void			Sys_EndJoystickInputEvents();
-
-// when the console is down, or the game is about to perform a lengthy
-// operation like map loading, the system can release the mouse cursor
-// when in windowed mode
-void			Sys_GrabMouseCursor( bool grabIt );
-
 void			Sys_ShowWindow( bool show );
 bool			Sys_IsWindowVisible();
 void			Sys_ShowConsole();
@@ -596,24 +571,63 @@ void			Sys_ShutdownNetworking();
 
 /*
 ================================================
+idInputDevices is managed by each platform's local Sys implementation, and
+provides full *Input Device* support (keyboard and mouse).
+================================================
+*/
+
+static const int MAX_MOUSE_EVENTS = 256;
+
+class idInputDevices {
+public:
+	virtual			~idInputDevices() {};
+
+	// input is tied to windows, so it needs to be started up and shut down whenever
+	// the main window is recreated
+	virtual void	Init() = 0;
+	virtual void	Shutdown() = 0;
+	virtual void	Frame() = 0;
+
+	// keyboard input polling
+	virtual int		PollKeyboardInputEvents() = 0;
+	virtual int		ReturnKeyboardInputEvent( const int n, int &ch, bool &state ) = 0;
+	virtual void	EndKeyboardInputEvents() = 0;
+
+	// mouse input polling
+	virtual int		PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] ) = 0;
+
+	// when the console is down, or the game is about to perform a lengthy
+	// operation like map loading, the system can release the mouse cursor
+	// when in windowed mode
+	virtual void	GrabMouseCursor( bool grabIt ) = 0;
+
+	virtual void	DeactivateMouseIfWindowed() = 0;
+	virtual void	DeactivateMouse() = 0;
+	virtual void	ActivateMouse() = 0;
+};
+
+extern idInputDevices *			inputDevice;
+
+/*
+================================================
 idJoystick is managed by each platform's local Sys implementation, and
 provides full *Joy Pad* support (the most common device, these days).
 ================================================
 */
 class idJoystick {
 public:
-	virtual			~idJoystick() { }
+	virtual			~idJoystick() {};
 
-	virtual bool	Init() { return false; }
+	virtual bool	Init() = 0;
 	virtual void	Shutdown() { }
 	virtual void	Deactivate() { }
-	virtual void	SetRumble( int deviceNum, int rumbleLow, int rumbleHigh ) { }
-	virtual int		PollInputEvents( int inputDeviceNum ) { return 0; }
-	virtual int		ReturnInputEvent( const int n, int &action, int &value ) { return 0; }
-	virtual void	EndInputEvents() { }
+	virtual void	SetRumble( int deviceNum, int rumbleLow, int rumbleHigh ) = 0;
+	virtual int		PollInputEvents( int inputDeviceNum ) = 0;
+	virtual int		ReturnInputEvent( const int n, int &action, int &value ) = 0;
+	virtual void	EndInputEvents() = 0;
 };
 
-
+extern idJoystick *			joystick;
 
 /*
 ==============================================================

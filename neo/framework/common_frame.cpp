@@ -283,7 +283,9 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse ) {
 
 	// release the mouse capture back to the desktop
 	if ( releaseMouse ) {
-		Sys_GrabMouseCursor( false );
+		if ( inputDevice ) {
+			inputDevice->GrabMouseCursor( false );
+		}
 	}
 
 	// build all the draw commands without running a new game tic
@@ -308,11 +310,13 @@ idCommonLocal::ProcessGameReturn
 */
 void idCommonLocal::ProcessGameReturn( const gameReturn_t & ret ) {
 	// set joystick rumble
-	if ( in_useJoystick.GetBool() && in_joystickRumble.GetBool() && !game->Shell_IsActive() && session->GetSignInManager().GetMasterInputDevice() >= 0 ) {
-		Sys_SetRumble( session->GetSignInManager().GetMasterInputDevice(), ret.vibrationLow, ret.vibrationHigh );		// Only set the rumble on the active controller
-	} else {
-		for ( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {
-			Sys_SetRumble( i, 0, 0 );
+	if ( joystick ) {
+		if ( in_useJoystick.GetBool() && in_joystickRumble.GetBool() && !game->Shell_IsActive() && session->GetSignInManager().GetMasterInputDevice() >= 0 ) {
+			joystick->SetRumble( session->GetSignInManager().GetMasterInputDevice(), ret.vibrationLow, ret.vibrationHigh );
+		} else {
+			for ( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {
+				joystick->SetRumble( i, 0, 0 );
+			}
 		}
 	}
 
@@ -378,12 +382,16 @@ void idCommonLocal::Frame() {
 		bool chatting = false;
 		if ( common->IsPaused() || console->Active() || Dialog().IsDialogActive() || session->IsSystemUIShowing() || (game && game->InhibitControls())) {
 			if ( console->Active() || !mapSpawned ) {
-				Sys_GrabMouseCursor( false );
+				if ( inputDevice ) {
+					inputDevice->GrabMouseCursor( false );
+				}
 			}
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, true );
 			chatting = true;
 		} else {
-			Sys_GrabMouseCursor( true );
+			if ( inputDevice ) {
+				inputDevice->GrabMouseCursor( true );
+			}
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, false );
 		}
 
@@ -617,9 +625,11 @@ void idCommonLocal::Frame() {
 		int deviceNum = session->GetSignInManager().GetMasterInputDevice();
 		usercmdGen->BuildCurrentUsercmd( deviceNum );
 		if ( deviceNum == -1 ) {
-			for ( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {
-				Sys_PollJoystickInputEvents( i );
-				Sys_EndJoystickInputEvents();
+			if ( joystick ) {
+				for ( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {
+					joystick->PollInputEvents( i );
+					joystick->EndInputEvents();
+				}
 			}
 		}
 		if ( pauseGame ) {

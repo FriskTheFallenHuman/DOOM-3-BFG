@@ -48,9 +48,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "win_local.h"
 #include "../../renderer/tr_local.h"
 
-idCVar Win32Vars_t::sys_arch( "sys_arch", "", CVAR_SYSTEM | CVAR_INIT, "" );
-idCVar Win32Vars_t::sys_cpustring( "sys_cpustring", "detect", CVAR_SYSTEM | CVAR_INIT, "" );
-idCVar Win32Vars_t::in_mouse( "in_mouse", "1", CVAR_SYSTEM | CVAR_BOOL, "enable mouse input" );
 idCVar Win32Vars_t::win_outputEditString( "win_outputEditString", "1", CVAR_SYSTEM | CVAR_BOOL, "" );
 idCVar Win32Vars_t::win_viewlog( "win_viewlog", "0", CVAR_SYSTEM | CVAR_INTEGER, "" );
 idCVar Win32Vars_t::win_timerUpdate( "win_timerUpdate", "0", CVAR_SYSTEM | CVAR_BOOL, "allows the game to be updated while dragging the window" );
@@ -221,7 +218,9 @@ void Sys_Error( const char *error, ... ) {
 
 	sysTimeHiRes.Shutdown();
 
-	Sys_ShutdownInput();
+	if ( inputDevice ) {
+		inputDevice->Shutdown();
+	}
 
 	renderSystem->Shutdown();
 
@@ -298,7 +297,9 @@ Sys_Quit
 */
 void Sys_Quit() {
 	sysTimeHiRes.Shutdown();
-	Sys_ShutdownInput();
+	if ( inputDevice ) {
+		inputDevice->Shutdown();
+	}
 	Sys_DestroyConsole();
 	ExitProcess( 0 );
 }
@@ -1088,7 +1089,9 @@ void Sys_GenerateEvents() {
 	Sys_PumpEvents();
 
 	// grab or release the mouse cursor if necessary
-	IN_Frame();
+	if ( inputDevice ) {
+		inputDevice->Frame();
+	}
 
 	// check for console commands
 	s = Sys_ConsoleInput();
@@ -1134,20 +1137,6 @@ sysEvent_t Sys_GetEvent() {
 	return ev;
 }
 
-//================================================================
-
-/*
-=================
-Sys_In_Restart_f
-
-Restart the input subsystem
-=================
-*/
-void Sys_In_Restart_f( const idCmdArgs &args ) {
-	Sys_ShutdownInput();
-	Sys_InitInput();
-}
-
 /*
 ================
 Sys_Init
@@ -1159,8 +1148,6 @@ The cvar system must already be setup
 void Sys_Init() {
 
 	CoInitialize( NULL );
-
-	cmdSystem->AddCommand( "in_restart", Sys_In_Restart_f, CMD_FL_SYSTEM, "restarts the input system" );
 
 	//
 	// Windows version
@@ -1251,7 +1238,12 @@ void Sys_Init() {
 		common->Error( "SSE not supported!" );
 	}
 
-	win32.g_Joystick.Init();
+	//
+	// Joystick
+	//
+	if ( joystick ) {
+		joystick->Init();
+	}
 }
 
 /*

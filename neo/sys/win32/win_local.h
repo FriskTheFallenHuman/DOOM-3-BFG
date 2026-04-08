@@ -50,14 +50,6 @@ char	*Sys_ConsoleInput ();
 
 cpuid_t	Sys_GetCPUId();
 
-// add additional non keyboard / non mouse movement on top of the keyboard move cmd
-
-void	IN_DeactivateMouseIfWindowed();
-void	IN_DeactivateMouse();
-void	IN_ActivateMouse();
-
-void	IN_Frame();
-
 uint64 Sys_Microseconds();
 
 // window procedure
@@ -70,9 +62,7 @@ struct Win32Vars_t {
 	HINSTANCE		hInstance;
 
 	bool			activeApp;			// changed with WM_ACTIVATE messages
-	bool			mouseReleased;		// when the game has the console down or is doing a long operation
 	bool			movingWindow;		// inhibit mouse grab when dragging the window
-	bool			mouseGrabbed;		// current state of grab and hide
 
 	OSVERSIONINFOEX	osversion;
 
@@ -101,21 +91,11 @@ struct Win32Vars_t {
 	unsigned short	oldHardwareGamma[3][256];
 	// desktop gamma is saved here for restoration at exit
 
-	static idCVar	sys_arch;
-	static idCVar	sys_cpustring;
-	static idCVar	in_mouse;
 	static idCVar	win_outputEditString;
 	static idCVar	win_viewlog;
 	static idCVar	win_timerUpdate;
 
 	mutexHandle_t criticalSections[MAX_CRITICAL_SECTIONS];
-
-	HINSTANCE		hInstDI;			// direct input
-
-	LPDIRECTINPUT8			g_pdi;
-	LPDIRECTINPUTDEVICE8	g_pMouse;
-	LPDIRECTINPUTDEVICE8	g_pKeyboard;
-	idJoystickWin32			g_Joystick;
 
 	int				wglErrors;
 

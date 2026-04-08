@@ -766,7 +766,9 @@ bool	idConsoleLocal::ProcessEvent( const sysEvent_t *event, bool forceAccept ) {
 		// a down event will toggle the destination lines
 		if ( keyCatching ) {
 			Close();
-			Sys_GrabMouseCursor( true );
+			if ( inputDevice ) {
+				inputDevice->GrabMouseCursor( true );
+			}
 		} else {
 			consoleField.Clear();
 			keyCatching = true;
