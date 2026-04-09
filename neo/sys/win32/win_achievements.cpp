@@ -49,7 +49,7 @@ idAchievementSystemWin::IsInitialized
 ========================
 */
 bool idAchievementSystemWin::IsInitialized() {
-	return false;
+	return (platform && platform->IsInitialized());
 }
 
 /*
@@ -58,6 +58,17 @@ idAchievementSystemWin::AchievementUnlock
 ================================
 */
 void idAchievementSystemWin::AchievementUnlock( idLocalUser * user, int achievementID ) {
+	// Needs to match the value of ACHIEVEMENTS_NUM in d3xp/Achievements.h
+	if ( !IsInitialized() || achievementID < 0 || achievementID >= 51 ) {
+		return;
+	}
+
+	//const char *achievementName = va( "%s%s", STEAM_ACHIEVEMENT_PREFIX, achievementNames[achievementID] );
+	//platform->SetAchievement( achievementName );
+
+	//if ( achievements_Verbose.GetBool() ) {
+	//	idLib::Printf( "Unlocked achievement: %s\n", achievementName );
+	//}
 }
 
 /*
@@ -66,6 +77,10 @@ idAchievementSystemWin::AchievementLock
 ========================
 */
 void idAchievementSystemWin::AchievementLock( idLocalUser * user, const int achievementID ) {
+	// Needs to match the value of ACHIEVEMENTS_NUM in d3xp/Achievements.h
+	if ( !IsInitialized() || achievementID < 0 || achievementID >= 51 ) {
+		return;
+	}
 }
 
 /*
@@ -74,6 +89,15 @@ idAchievementSystemWin::AchievementLockAll
 ========================
 */
 void idAchievementSystemWin::AchievementLockAll( idLocalUser * user, const int maxId ) {
+	if ( !IsInitialized() ) {
+		return;
+	}
+
+	platform->ResetAchievements();
+
+	if ( achievements_Verbose.GetBool() ) {
+		idLib::Printf( "Locked all achievements\n" );
+	}
 }
 
 /*
@@ -100,4 +124,5 @@ idAchievementSystemWin::Pump
 ================================
 */
 void idAchievementSystemWin::Pump() {
+
 }

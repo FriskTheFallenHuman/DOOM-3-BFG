@@ -288,6 +288,9 @@ idSessionLocalWin::PlatformPump
 ========================
 */
 void idSessionLocalWin::PlatformPump() {
+	if ( platform ) {
+		platform->RunCallbacks();
+	}
 }
 
 /*
@@ -433,6 +436,10 @@ idSessionLocalWin::IsSystemUIShowing
 ========================
 */
 bool idSessionLocalWin::IsSystemUIShowing() const {
+	if ( platform ) {
+		return platform->IsOverlayOpen();
+	}
+
 	return isSysUIShowing;
 }
 
