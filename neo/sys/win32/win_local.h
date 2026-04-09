@@ -91,6 +91,8 @@ struct Win32Vars_t {
 	unsigned short	oldHardwareGamma[3][256];
 	// desktop gamma is saved here for restoration at exit
 
+	static idCVar	sys_arch;
+	static idCVar	sys_cpustring;
 	static idCVar	win_outputEditString;
 	static idCVar	win_viewlog;
 	static idCVar	win_timerUpdate;
