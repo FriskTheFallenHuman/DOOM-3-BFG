@@ -121,6 +121,8 @@ If you have questions concerning this license or the applicable additional terms
 #define ID_FORCE_INLINE_EXTERN			extern __forceinline
 #endif
 
+#define atoll							_atoi64
+
 // we should never rely on this define in our code. this is here so dodgy external libraries don't get confused
 #ifndef WIN32
 	#define WIN32

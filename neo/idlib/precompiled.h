@@ -116,6 +116,9 @@ const int MAX_EXPRESSION_REGISTERS = 4096;
 // game
 #include "../d3xp/Game.h"
 
+// platform
+#include "../sys/sys_platform_public.h"
+
 // Session / Network
 #include "../sys/LightweightCompression.h"
 #include "../sys/Snapshot.h"
@@ -143,6 +146,9 @@ const int MAX_EXPRESSION_REGISTERS = 4096;
 #else
 
 #include "../framework/DemoChecksum.h"
+
+// platform local
+#include "../sys/sys_platform_local.h"
 
 // framework
 #include "../framework/Compressor.h"

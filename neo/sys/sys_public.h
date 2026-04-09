@@ -567,7 +567,15 @@ const char *	Sys_GetLocalIP( int i );
 void			Sys_InitNetworking();
 void			Sys_ShutdownNetworking();
 
+/*
+==============================================================
 
+	idSysPlatform
+
+==============================================================
+*/
+
+#include "sys_platform_public.h"
 
 /*
 ================================================

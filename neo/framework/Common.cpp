@@ -215,9 +215,12 @@ void idCommonLocal::ParseCommandLine( int argc, const char * const * argv ) {
 	current_count = 0;
 	// API says no program path
 	for ( i = 0; i < argc; i++ ) {
-		if ( idStr::Icmp( argv[ i ], "+connect_lobby" ) == 0 ) {
+		if ( idStr::Icmp( argv[ i ], "+connect" ) == 0 ) {
 			// Handle Steam bootable invites.
-			session->HandleBootableInvite( _atoi64( argv[ i + 1 ] ) );
+			session->ConnectToServer( atoll( argv[ i + 1 ] ) );
+		} else if ( idStr::Icmp( argv[ i ], "+connect_lobby" ) == 0 ) {
+			// Handle Steam bootable invites.
+			session->HandleBootableInvite( atoll( argv[ i + 1 ] ) );
 		} else if ( argv[ i ][ 0 ] == '+' ) {
 			com_numConsoleLines++;
 			com_consoleLines[ com_numConsoleLines-1 ].AppendArg( argv[ i ] + 1 );
@@ -1054,6 +1057,11 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 		// init commands
 		InitCommands();
 
+		// Platform initialization
+		if ( platform ) {
+			platform->Initialize();
+		}
+
 		// initialize the file system
 		fileSystem->Init();
 
@@ -1392,6 +1400,10 @@ void idCommonLocal::Shutdown() {
 	// shut down the file system
 	printf( "fileSystem->Shutdown( false );\n" );
 	fileSystem->Shutdown( false );
+
+	// shut down platform specific services
+	printf( "platform->Shutdown();\n" );
+	platform->Shutdown();
 
 	// shut down non-portable system services
 	printf( "Sys_Shutdown();\n" );
