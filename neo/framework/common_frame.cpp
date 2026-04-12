@@ -432,7 +432,7 @@ void idCommonLocal::Frame() {
 		frameTiming.finishSyncTime = Sys_Microseconds();
 
 		// slow down engine in background so it does not eat up so many resources along other 3D tools
-		if( !IsFocused()  ) {
+		if( !IsFocused() && !IsServer() ) {
 			const float backgroundEngineHz = 15.0f;
 			com_engineHz_denominator = 100LL * backgroundEngineHz;
 			com_engineHz_latched = backgroundEngineHz;

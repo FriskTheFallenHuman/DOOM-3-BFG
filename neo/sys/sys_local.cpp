@@ -325,3 +325,12 @@ const char * Sys_DefaultLanguage() {
 
 	return sys_lang.GetString();
 }
+
+/*
+================
+Sys_SetLanguageFromSystem
+================
+*/
+void Sys_SetLanguageFromSystem() {
+	sys_lang.SetString( Sys_DefaultLanguage() );
+}

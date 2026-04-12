@@ -124,6 +124,7 @@ idCommonLocal::idCommonLocal() :
 	com_errorEntered = ERP_NONE;
 	com_shuttingDown = false;
 	com_paused = false;
+	com_focuslost = false;
 
 	logFile = NULL;
 

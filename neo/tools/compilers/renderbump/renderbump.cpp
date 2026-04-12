@@ -139,7 +139,7 @@ static void ResizeWindow( int width, int height ) {
 		r.top = 0;
 		r.right = width;
 
-		AdjustWindowRect (&r, WINDOW_STYLE|WS_SYSMENU, FALSE);
+		AdjustWindowRect (&r, WS_OVERLAPPED|WS_BORDER|WS_CAPTION|WS_VISIBLE|WS_THICKFRAME|WS_SYSMENU|WS_SYSMENU, FALSE);
 		winHeight = r.bottom - r.top;
 		winWidth = r.right - r.left;
 
@@ -170,7 +170,7 @@ static void RestoreWindow() {
 		r.top = 0;
 		r.right = oldWidth;
 
-		AdjustWindowRect (&r, WINDOW_STYLE|WS_SYSMENU, FALSE);
+		AdjustWindowRect (&r, WS_OVERLAPPED|WS_BORDER|WS_CAPTION|WS_VISIBLE|WS_THICKFRAME|WS_SYSMENU|WS_SYSMENU, FALSE);
 		winHeight = r.bottom - r.top;
 		winWidth = r.right - r.left;
 	}

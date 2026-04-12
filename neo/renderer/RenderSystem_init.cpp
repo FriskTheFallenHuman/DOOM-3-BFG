@@ -696,6 +696,9 @@ void R_InitOpenGL() {
 		common->FatalError( "R_InitOpenGL called while active" );
 	}
 
+	// make sure SDL has setup video so getting supported modes in R_SetNewMode() works
+	GLimp_PreInit();
+
 	R_SetNewMode( true );
 
 
@@ -1588,11 +1591,7 @@ void GfxInfo_f( const idCmdArgs &args ) {
 
 	common->Printf( "-------\n" );
 
-	// WGL_EXT_swap_interval
-	typedef BOOL (WINAPI * PFNWGLSWAPINTERVALEXTPROC) (int interval);
-	extern	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
-
-	if ( r_swapInterval.GetInteger() && wglSwapIntervalEXT != NULL ) {
+	if ( r_swapInterval.GetInteger() ) {
 		common->Printf( "Forcing swapInterval %i\n", r_swapInterval.GetInteger() );
 	} else {
 		common->Printf( "swapInterval not forced\n" );

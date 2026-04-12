@@ -29,57 +29,24 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __WIN_LOCAL_H__
 #define __WIN_LOCAL_H__
 
+#ifdef ID_PC_WIN
 #include <windows.h>
-#include "../../renderer/OpenGL/wglext.h"		// windows OpenGL extensions
-#include "win_input.h"
+#endif
 
-// WGL_EXT_swap_interval
-extern	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+#undef strncmp
+#undef strcasecmp
+#undef vsnprintf
 
-// WGL_ARB_pixel_format
-extern	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
-
-#define	WINDOW_STYLE	(WS_OVERLAPPED|WS_BORDER|WS_CAPTION|WS_VISIBLE|WS_THICKFRAME|WS_SYSMENU)
-
-void	Sys_QueEvent( sysEventType_t type, int value, int value2, int ptrLength, void *ptr, int inputDeviceNum );
-
-void	Sys_CreateConsole();
-void	Sys_DestroyConsole();
-
-char	*Sys_ConsoleInput ();
-
-cpuid_t	Sys_GetCPUId();
-
-uint64 Sys_Microseconds();
-
-// window procedure
-LRESULT CALLBACK MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_cpuinfo.h>
 
 void Conbuf_AppendText( const char *msg );
 
 struct Win32Vars_t {
-	HWND			hWnd;
-	HINSTANCE		hInstance;
-
-	bool			activeApp;			// changed with WM_ACTIVATE messages
-	bool			movingWindow;		// inhibit mouse grab when dragging the window
+	SDL_Window  *window;
+	SDL_GLContext glContext;
 
 	OSVERSIONINFOEX	osversion;
-
-	cpuid_t			cpuid;
-
-	// when we get a windows message, we store the time off so keyboard processing
-	// can know the exact time of an event (not really needed now that we use async direct input)
-	int				sysMsgTime;
-
-	bool			windowClassRegistered;
-
-	WNDPROC			wndproc;
-
-	HDC				hDC;							// handle to device context
-	HGLRC			hGLRC;						// handle to GL rendering context
-	PIXELFORMATDESCRIPTOR pfd;
-	int				pixelformat;
 
 	int				desktopBitsPixel;
 	int				desktopWidth, desktopHeight;
@@ -88,19 +55,11 @@ struct Win32Vars_t {
 
 	idFileHandle	log_fp;
 
-	unsigned short	oldHardwareGamma[3][256];
-	// desktop gamma is saved here for restoration at exit
-
-	static idCVar	sys_arch;
-	static idCVar	sys_cpustring;
 	static idCVar	win_outputEditString;
 	static idCVar	win_viewlog;
 	static idCVar	win_timerUpdate;
 
 	mutexHandle_t criticalSections[MAX_CRITICAL_SECTIONS];
-
-	int				wglErrors;
-
 };
 
 extern Win32Vars_t	win32;

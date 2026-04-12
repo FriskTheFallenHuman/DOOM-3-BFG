@@ -42,7 +42,7 @@ workspace("Doom3BFG")
 	cppdialect("C++17")
 	characterset( "ASCII" )
 
-	includedirs({".", "external", "idlib"})
+	includedirs({".", "external", "external/SDL3/include", "idlib"})
 	defines({"__DOOM__", "ID_PC"})
 	if _OPTIONS["dll"] then
 		defines({"__DOOM_DLL__"})
@@ -152,6 +152,16 @@ workspace("Doom3BFG")
 		if not _OPTIONS["dll"] then
 			links({"Game-D3XP"})
 		end
+
+		filter("system:Windows")
+			filter("platforms:Win32")
+				libdirs({"external/SDL3/lib/x86"})
+			filter({})
+			filter("platforms:x64")
+				libdirs({"external/SDL3/lib/x64"})
+			filter({})
+		filter({})
+		links({"SDL3"})
 
 		pchsource("framework/precompiled.cpp")
 		pchheader("")

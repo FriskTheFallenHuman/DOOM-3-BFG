@@ -51,9 +51,10 @@ LONG CALLBACK Sys_UnhandledExceptionFilter( EXCEPTION_POINTERS *exceptionInfo ) 
 	Sys_WriteMiniDump( exceptionInfo );
  
 	// Minimise the game window.
-	if ( win32.hWnd ) {
-		ShowWindow( win32.hWnd, SW_MINIMIZE );
-	}
+	//if ( win32.hWnd ) {
+	//	ShowWindow( win32.hWnd, SW_MINIMIZE );
+	//}
+	Sys_ShowWindow( false );
  
 	// Show the crash dialog.
 	HWND hParent = FindParentWindow();

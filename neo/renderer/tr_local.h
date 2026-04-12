@@ -1007,6 +1007,11 @@ struct glimpParms_t {
 	int			multiSamples;
 };
 
+
+void GLimp_PreInit();
+// R_GetModeListForDisplay is called before GLimp_Init(), but SDL needs SDL_Init() first.
+// So add PreInit for platforms that need it, others can just stub it.
+
 bool		GLimp_Init( glimpParms_t parms );
 // If the desired mode can't be set satisfactorily, false will be returned.
 // If succesful, sets glConfig.nativeScreenWidth, glConfig.nativeScreenHeight, and glConfig.pixelAspect
@@ -1039,6 +1044,17 @@ void		GLimp_DeactivateContext();
 // most OpenGL implementations, this will result in all OpenGL calls
 // being immediate returns, which lets us guage how much time is
 // being spent inside OpenGL.
+
+const int GRAB_ENABLE = (1 << 0);
+const int GRAB_REENABLE = (1 << 1);
+const int GRAB_HIDECURSOR = (1 << 2);
+const int GRAB_SETSTATE = (1 << 3);
+
+void GLimp_GrabInput( int flags );
+// GRAB_ENABLE will grab the input, GRAB_REENABLE will regrab if the window regains focus,
+// GRAB_HIDECURSOR will hide the cursor, 
+// GRAB_SETSTATE will set the grab state to the current state of the flags.  If GRAB_SETSTATE is not set, then the grab state will be modified by the other flags.
+// If GRAB_ENABLE is not set, then the grab state will be cleared of the other flags.
 
 /*
 ============================================================

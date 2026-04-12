@@ -408,9 +408,6 @@ void			Sys_FPU_SetDAZ( bool enable );
 // returns amount of system ram
 int				Sys_GetSystemRam();
 
-// returns amount of video ram
-int				Sys_GetVideoRam();
-
 // returns amount of drive space in path
 int				Sys_GetDriveFreeSpace( const char *path );
 
@@ -436,8 +433,12 @@ void			Sys_ClearEvents();
 
 void			Sys_ShowWindow( bool show );
 bool			Sys_IsWindowVisible();
+
 void			Sys_ShowConsole();
 void			Sys_HideConsole();
+void			Sys_CreateConsole();
+void			Sys_DestroyConsole();
+char *			Sys_ConsoleInput();
 
 // This really isn't the right place to have this, but since this is the 'top level' include
 // and has a function signature with 'FILE' in it, it kinda needs to be here =/
