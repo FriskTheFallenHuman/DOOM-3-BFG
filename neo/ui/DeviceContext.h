@@ -123,6 +123,7 @@ public:
 
 	// fonts
 	virtual void		InitFonts() = 0;
+	virtual idFont *	GetActiveFont() = 0;
 	virtual void		SetFont( idFont * font ) = 0;
 	virtual void		SetFont( int num ) = 0;
 	virtual int			FindFont( const char *name ) = 0;
@@ -173,6 +174,7 @@ public:
 	virtual void		EnableClipping(bool b);
 
 	virtual void		SetFont( idFont * font ) { activeFont = font; }
+	virtual idFont *	GetActiveFont() { return activeFont; }
 	virtual void		SetFont( int num ) {}
 	virtual int			FindFont( const char * name ) { return 0; }
 
@@ -258,7 +260,7 @@ private:
 };
 
 class idDeviceContextOptimized : public idDeviceContextLocal {
-
+public:
 	virtual bool		ClippedCoords(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2);
 	virtual void		PushClipRect(idRectangle r);
 	virtual void		PopClipRect();
