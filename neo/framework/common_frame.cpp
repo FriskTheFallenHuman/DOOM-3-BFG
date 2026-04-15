@@ -745,7 +745,7 @@ void idCommonLocal::Frame() {
 		LeaveGame();
 
 		// Show the message box
-		idStaticList< idSWFScriptFunction *, 4 > callbacks;
+		idStaticList< idDialogCallback *, 4 > callbacks;
 		idStaticList< idStrId, 4 > optionText;
 		optionText.Append( idStrId( "#str_02013" ) );
 		idStrStatic<560> errorname = err.GetError();

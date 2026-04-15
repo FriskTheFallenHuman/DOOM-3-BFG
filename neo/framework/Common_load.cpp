@@ -699,7 +699,7 @@ bool idCommonLocal::LoadGame( const char * saveName ) {
 	for ( int i = 0; i < sgdl.Num(); i++ ) {
 		if ( sgdl[i].slotName == saveName ) {
 			if ( sgdl[i].GetLanguage() != sys_lang.GetString() ) {
-				idStaticList< idSWFScriptFunction *, 4 > callbacks;
+				idStaticList< idDialogCallback *, 4 > callbacks;
 				idStaticList< idStrId, 4 > optionText;
 				optionText.Append( idStrId( "#str_swf_continue" ) );
 				idStrStatic<256> langName = "#str_lang_" + sgdl[i].GetLanguage();
@@ -713,7 +713,7 @@ bool idCommonLocal::LoadGame( const char * saveName ) {
 			}
 
 			if ( sgdl[i].GetArchiteture() != CPUSTRING ) {
-				idStaticList< idSWFScriptFunction *, 4 > callbacks;
+				idStaticList< idDialogCallback *, 4 > callbacks;
 				idStaticList< idStrId, 4 > optionText;
 				optionText.Append( idStrId( "#str_swf_continue" ) );
 				idStrStatic<256> msg;

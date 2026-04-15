@@ -583,19 +583,17 @@ void idCommonLocal::CheckStartupStorageRequirements() {
 	idLib::Printf( "requiredSizeBytes: %lld\n", requiredSizeBytes );
 
 	if ( (int64)( requiredSizeBytes - availableSpace ) > 0 ) {
-		class idSWFScriptFunction_Continue : public idSWFScriptFunction_RefCounted {
+		class idDialogContinueCallback : public idDialogCallback {
 		public:
-			virtual ~idSWFScriptFunction_Continue() {}
-			idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+			void Call() override {
 				common->Dialog().ClearDialog( GDM_INSUFFICENT_STORAGE_SPACE );
 				common->Quit();
-				return idSWFScriptVar();
 			}
 		};
 
-		idStaticList< idSWFScriptFunction *, 4 > callbacks;
+		idStaticList< idDialogCallback *, 4 > callbacks;
 		idStaticList< idStrId, 4 > optionText;
-		callbacks.Append( new (TAG_SWF) idSWFScriptFunction_Continue() );
+		callbacks.Append( new (TAG_SWF) idDialogContinueCallback() );
 		optionText.Append( idStrId( "#STR_SWF_ACCEPT" ) );
 
 		// build custom space required string

@@ -208,6 +208,27 @@ enum dialogType_t {
 
 /*
 ================================================
+idDialogCallback
+
+Generic engine-level callback interface for dialog buttons.
+================================================
+*/
+class idDialogCallback {
+public:
+    idDialogCallback() : refCount( 0 ) {}
+    virtual ~idDialogCallback() {}
+
+    void    AddRef()  { refCount++; }
+    void    Release() { if ( --refCount <= 0 ) { delete this; } }
+
+    virtual void Call() = 0;
+
+private:
+    int refCount;
+};
+
+/*
+================================================
 idDialogInfo
 ================================================
 */
@@ -231,10 +252,10 @@ public:
 	}
 	gameDialogMessages_t	msg;
 	dialogType_t			type;
-	void *                  acceptCB;
-	void *                  cancelCB;
-	void *                  altCBOne;
-	void *                  altCBTwo;
+    idDialogCallback *		acceptCB;
+    idDialogCallback *		cancelCB;
+    idDialogCallback *		altCBOne;
+    idDialogCallback *		altCBTwo;
 	bool					showing;
 	bool					clear;
 	bool					waitClear;
@@ -271,8 +292,8 @@ public:
 
 	virtual void    Render( bool loading );
 
-	void    AddDialog( gameDialogMessages_t msg, dialogType_t type, void * acceptCallback, void * cancelCallback, bool pause, const char * location = NULL, int lineNumber = 0, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
-	void    AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< void *, 4 > & callbacks, const idStaticList< idStrId, 4 > & optionText, bool pause, idStrStatic< 256 > overrideMsg, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
+	void    AddDialog( gameDialogMessages_t msg, dialogType_t type, idDialogCallback * acceptCallback, idDialogCallback * cancelCallback, bool pause, const char * location = NULL, int lineNumber = 0, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
+	void    AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< idDialogCallback *, 4 > & callbacks, const idStaticList< idStrId, 4 > & optionText, bool pause, idStrStatic< 256 > overrideMsg, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
 
 	void    AddDialogIntVal( const char * name, int val );
 
@@ -306,10 +327,10 @@ protected:
 	virtual void    SetRendererGlobalInt( const char * name, int val )         = 0;
 	virtual void    SetRendererGlobalString( const char * name, const char * val ) = 0;
 
-	virtual void    AddRefCallback( void * cb )  = 0;
-	virtual void    ReleaseCallback( void * cb ) = 0;
+    void    AddRefCallback( idDialogCallback * cb )  { if ( cb ) cb->AddRef(); }
+    void    ReleaseCallback( idDialogCallback * cb ) { if ( cb ) cb->Release(); }
 
-	virtual void    InvokeCallback( void * cb )  = 0;
+    void    InvokeCallback( idDialogCallback * cb )  { if ( cb ) cb->Call(); }
 
 	virtual void    BindDialogToRenderer( const idDialogInfo & info ) = 0;
 

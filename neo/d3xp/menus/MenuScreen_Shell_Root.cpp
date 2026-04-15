@@ -294,29 +294,28 @@ idMenuScreen_Shell_Root::HandleExitGameBtn
 ========================
 */
 void idMenuScreen_Shell_Root::HandleExitGameBtn() {
-	class idSWFScriptFunction_QuitDialog : public idSWFScriptFunction_RefCounted {
+	class idDialogQuitCallback : public idDialogCallback {
 	public:
-		idSWFScriptFunction_QuitDialog( gameDialogMessages_t _msg, int _accept ) {
+		idDialogQuitCallback( gameDialogMessages_t _msg, int _accept ) {
 			msg = _msg;
 			accept = _accept;
 		}
-		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+		void Call() override {
 			common->Dialog().ClearDialog( msg );
 			if ( accept == 1 ) {
 				common->Quit();
 			}
-			return idSWFScriptVar();
 		}
 	private:
 		gameDialogMessages_t msg;
 		int accept;
 	};
 
-	idStaticList< idSWFScriptFunction *, 4 > callbacks;
+	idStaticList< idDialogCallback *, 4 > callbacks;
 	idStaticList< idStrId, 4 > optionText;
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, 1 ) );
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, 0 ) );
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, -1 ) );
+	callbacks.Append( new (TAG_SWF) idDialogQuitCallback( GDM_QUIT_GAME, 1 ) );
+	callbacks.Append( new (TAG_SWF) idDialogQuitCallback( GDM_QUIT_GAME, 0 ) );
+	callbacks.Append( new (TAG_SWF) idDialogQuitCallback( GDM_QUIT_GAME, -1 ) );
 	optionText.Append( idStrId( "#STR_SWF_ACCEPT" ) );
 	optionText.Append( idStrId( "#STR_SWF_CANCEL" ) );
 
@@ -468,25 +467,23 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 					if ( masterUser->GetOnlineCaps() & CAP_BLOCKED_PERMISSION ) {
 						ADD_DIALOG( GDM_ONLINE_INCORRECT_PERMISSIONS, DIALOG_CONTINUE, NULL, NULL, true, __FUNCTION__, __LINE__, false );
 					} else if ( !masterUser->CanPlayOnline() ) {
-						class idSWFScriptFunction_Accept : public idSWFScriptFunction_RefCounted {
+						class idDialogAcceptCallback : public idDialogCallback {
 						public:
-							idSWFScriptFunction_Accept() { }
-							idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+							idDialogAcceptCallback() { }
+							void Call() override {
 								common->Dialog().ClearDialog( GDM_PLAY_ONLINE_NO_PROFILE );
 								session->ShowOnlineSignin();
-								return idSWFScriptVar();
 							}
 						};
-						class idSWFScriptFunction_Cancel : public idSWFScriptFunction_RefCounted {
+						class idDialogCancelCallback : public idDialogCallback {
 						public:
-							idSWFScriptFunction_Cancel() { }
-							idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+							idDialogCancelCallback() { }
+							void Call() override {
 								common->Dialog().ClearDialog( GDM_PLAY_ONLINE_NO_PROFILE );
-								return idSWFScriptVar();
 							}
 						};
 
-						ADD_DIALOG( GDM_PLAY_ONLINE_NO_PROFILE, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
+						ADD_DIALOG( GDM_PLAY_ONLINE_NO_PROFILE, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idDialogAcceptCallback(), new (TAG_SWF) idDialogCancelCallback(), false );
 					} else {
 						idMatchParameters matchParameters;
 						matchParameters.matchFlags = DefaultPartyFlags;

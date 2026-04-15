@@ -397,14 +397,14 @@ idMenuScreen_Shell_Bindings::HandleRestoreDefaults
 void idMenuScreen_Shell_Bindings::HandleRestoreDefaults() {
 
 
-	class idSWFScriptFunction_Restore : public idSWFScriptFunction_RefCounted {
+	class idDialogRestoreCallback : public idDialogCallback {
 	public:
-		idSWFScriptFunction_Restore( gameDialogMessages_t _msg, bool _accept, idMenuScreen_Shell_Bindings * _menu ) {
+		idDialogRestoreCallback( gameDialogMessages_t _msg, bool _accept, idMenuScreen_Shell_Bindings * _menu ) {
 			msg = _msg;
 			accept = _accept;
 			menu = _menu;
 		}
-		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+		void Call() override {
 			common->Dialog().ClearDialog( msg );
 			if ( accept ) {
 				idLocalUser * user = session->GetSignInManager().GetMasterLocalUser();
@@ -419,7 +419,6 @@ void idMenuScreen_Shell_Bindings::HandleRestoreDefaults() {
 					}
 				}
 			}
-			return idSWFScriptVar();
 		}
 	private:
 		gameDialogMessages_t msg;
@@ -427,7 +426,7 @@ void idMenuScreen_Shell_Bindings::HandleRestoreDefaults() {
 		idMenuScreen_Shell_Bindings * menu;
 	};
 
-	ADD_DIALOG( GDM_BINDINGS_RESTORE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_Restore( GDM_BINDINGS_RESTORE, true, this ), new idSWFScriptFunction_Restore( GDM_BINDINGS_RESTORE, false, this ), false );
+	ADD_DIALOG( GDM_BINDINGS_RESTORE, DIALOG_ACCEPT_CANCEL, new idDialogRestoreCallback( GDM_BINDINGS_RESTORE, true, this ), new idDialogRestoreCallback( GDM_BINDINGS_RESTORE, false, this ), false );
 
 }
 

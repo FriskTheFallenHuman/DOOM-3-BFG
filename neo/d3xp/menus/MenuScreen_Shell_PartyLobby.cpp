@@ -426,29 +426,26 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction & action, const
 			return true;
 		}
 		case WIDGET_ACTION_GO_BACK: {
-			class idSWFScriptFunction_Accept : public idSWFScriptFunction_RefCounted {
+			class idDialogAcceptCallback : public idDialogCallback {
 			public:
-				idSWFScriptFunction_Accept() { }
-				idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+				idDialogAcceptCallback() { }
+				void Call() override {
 					common->Dialog().ClearDialog( GDM_LEAVE_LOBBY_RET_MAIN );
 					session->Cancel();
-
-					return idSWFScriptVar();
 				}
 			};
-			class idSWFScriptFunction_Cancel : public idSWFScriptFunction_RefCounted {
+			class idDialogCancelCallback : public idDialogCallback {
 			public:
-				idSWFScriptFunction_Cancel() { }
-				idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+				idDialogCancelCallback() { }
+				void Call() override {
 					common->Dialog().ClearDialog( GDM_LEAVE_LOBBY_RET_MAIN );
-					return idSWFScriptVar();
 				}
 			};
 
 			idLobbyBase & activeLobby = session->GetActivePlatformLobbyBase();
 
 			if( activeLobby.GetNumActiveLobbyUsers() > 1 ) {
-				ADD_DIALOG( GDM_LEAVE_LOBBY_RET_MAIN, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idSWFScriptFunction_Accept(), new (TAG_SWF) idSWFScriptFunction_Cancel(), false );
+				ADD_DIALOG( GDM_LEAVE_LOBBY_RET_MAIN, DIALOG_ACCEPT_CANCEL, new (TAG_SWF) idDialogAcceptCallback(), new (TAG_SWF) idDialogCancelCallback(), false );
 			} else {
 				session->Cancel();
 			}
