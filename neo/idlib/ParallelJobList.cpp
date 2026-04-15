@@ -25,8 +25,10 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
+
 #include "precompiled.h"
 #pragma hdrstop
+
 #include "ParallelJobList.h"
 
 /*
@@ -36,6 +38,17 @@ If you have questions concerning this license or the applicable additional terms
 
 ================================================================================================
 */
+
+// GetSystemTimePreciseAsFileTime has too much overhead
+// luckily, these time measurements are only used for computing thread-private deltas
+// and they are only used for diagnostics, so they can be a bit inexact...
+#if 1
+	#define JobTimer_Clock uint64( Sys_GetClockTicks() )
+	#define JobTimer_Frequency uint64( Sys_ClockTicksPerSecond() )
+#else
+	#define JobTimer_Clock Sys_GetTimeMicroseconds()
+	#define JobTimer_Frequency 1000000ull
+#endif
 
 const char * jobNames[] = {
 	ASSERT_ENUM_STRING( JOBLIST_RENDERER_FRONTEND,	0 ),
@@ -127,7 +140,7 @@ idParallelJobList_Threads
 ================================================================================================
 */
 
-static idCVar jobs_longJobMicroSec( "jobs_longJobMicroSec", "10000", CVAR_INTEGER, "print a warning for jobs that take more than this number of microseconds" );
+static idCVar jobs_longJobMicroSec( "jobs_longJobMicroSec", "100000", CVAR_INTEGER, "print a warning for jobs that take more than this number of microseconds" );
 
 
 const static int		MAX_THREADS	= 32;
@@ -180,14 +193,15 @@ public:
 
 	unsigned int			GetNumExecutedJobs() const { return threadStats.numExecutedJobs; }
 	unsigned int			GetNumSyncs() const { return threadStats.numExecutedSyncs; }
-	uint64					GetSubmitTimeMicroSec() const { return threadStats.submitTime; }
-	uint64					GetStartTimeMicroSec() const { return threadStats.startTime; }
-	uint64					GetFinishTimeMicroSec() const { return threadStats.endTime; }
-	uint64					GetWaitTimeMicroSec() const { return threadStats.waitTime; }
+	uint64					GetSubmitTimeMicroSec() const { return TimerClockToMicrosec( threadStats.submitTime ); }
+	uint64					GetStartTimeMicroSec() const { return TimerClockToMicrosec( threadStats.startTime ); }
+	uint64					GetFinishTimeMicroSec() const { return TimerClockToMicrosec( threadStats.endTime ); }
+	uint64					GetWaitTimeMicroSec() const { return TimerClockToMicrosec( threadStats.waitTime ); }
 	uint64					GetTotalProcessingTimeMicroSec() const;
 	uint64					GetTotalWastedTimeMicroSec() const;
 	uint64					GetUnitProcessingTimeMicroSec( int unit ) const;
 	uint64					GetUnitWastedTimeMicroSec( int unit ) const;
+	uint64					TimerClockToMicrosec( uint64 durationClocks ) const;
 
 	jobListId_t				GetId() const { return listId; }
 	jobListPriority_t		GetPriority() const { return listPriority; }
@@ -236,6 +250,7 @@ private:
 
 	threadStats_t						deferredThreadStats;
 	threadStats_t						threadStats;
+	uint64								timerFrequency;
 
 	int						RunJobsInternal( unsigned int threadNum, threadJobListState_t & state, bool singleJob );
 
@@ -278,6 +293,7 @@ idParallelJobList_Threads::idParallelJobList_Threads( jobListId_t id, jobListPri
 
 	memset( &deferredThreadStats, 0, sizeof( threadStats_t ) );
 	memset( &threadStats, 0, sizeof( threadStats_t ) );
+	timerFrequency = JobTimer_Frequency;
 }
 
 /*
@@ -289,6 +305,8 @@ idParallelJobList_Threads::~idParallelJobList_Threads() {
 	Wait();
 }
 
+static idCVar jobs_debugCheck( "jobs_debugCheck", "0", CVAR_TOOL|CVAR_BOOL, "check job data integrity" );
+
 /*
 ========================
 idParallelJobList_Threads::AddJob
@@ -296,20 +314,31 @@ idParallelJobList_Threads::AddJob
 */
 ID_INLINE void idParallelJobList_Threads::AddJob( jobRun_t function, void * data ) {
 	assert( done );
-#if defined( _DEBUG )
+	if ( int(maxJobs) == jobList.Num() ) {
+		static int runOnce = []() {
+			idLib::Warning( "idParallelJobList_Threads overflow\n" );
+			return 0;
+		} ( );
+		return;
+	}
 	// make sure there isn't already a job with the same function and data in the list
-	if ( jobList.Num() < 1000 ) {	// don't do this N^2 slow check on big lists
+	if ( jobs_debugCheck.GetBool() ) {
 		for ( int i = 0; i < jobList.Num(); i++ ) {
-			assert( jobList[i].function != function || jobList[i].data != data );
+			//assert( jobList[i].function != function || jobList[i].data != data );
+			if ( jobList[i].function != function || jobList[i].data != data )
+				; // ok
+			else
+				idLib::Warning( "jobs_debugCheck failed\n" );
 		}
 	}
-#endif
-	if ( 1 ) { // JDC: this never worked in tech5!  !jobList.IsFull() ) {
+//	if ( 1 ) { // JDC: this never worked in tech5!  !jobList.IsFull() ) {
+#if 1
 		job_t & job = jobList.Alloc();
 		job.function = function;
 		job.data = data;
 		job.executed = 0;
-	} else {
+//	} else {
+#else
 		// debug output to show us what is overflowing
 		int currentJobCount[MAX_REGISTERED_JOBS] = {};
 
@@ -330,7 +359,8 @@ ID_INLINE void idParallelJobList_Threads::AddJob( jobRun_t function, void * data
 			}
 		}
 		idLib::Error( "Can't add job '%s', too many jobs %d", GetJobName( function ), jobList.Num() );
-	}
+//	}
+#endif
 }
 
 /*
@@ -385,7 +415,7 @@ void idParallelJobList_Threads::Submit( idParallelJobList_Threads * waitForJobLi
 	memset( &deferredThreadStats, 0, sizeof( deferredThreadStats ) );
 	deferredThreadStats.numExecutedJobs = jobList.Num() - numSyncs * 2;
 	deferredThreadStats.numExecutedSyncs = numSyncs;
-	deferredThreadStats.submitTime = Sys_Microseconds();
+	deferredThreadStats.submitTime = JobTimer_Clock;
 	deferredThreadStats.startTime = 0;
 	deferredThreadStats.endTime = 0;
 	deferredThreadStats.waitTime = 0;
@@ -434,7 +464,7 @@ void idParallelJobList_Threads::Wait() {
 		}
 
 		bool waited = false;
-		uint64 waitStart = Sys_Microseconds();
+		uint64 waitStart = JobTimer_Clock;
 
 		while ( signalJobCount[signalJobCount.Num() - 1].GetValue() > 0 ) {
 			Sys_Yield();
@@ -446,12 +476,12 @@ void idParallelJobList_Threads::Wait() {
 			waited = true;
 		}
 
-		jobList.SetNum( 0 );
-		signalJobCount.SetNum( 0 );
+		jobList.Clear();
+		signalJobCount.Clear();
 		numSyncs = 0;
 		lastSignalJob = 0;
 
-		uint64 waitEnd = Sys_Microseconds();
+		uint64 waitEnd = JobTimer_Clock;
 		deferredThreadStats.waitTime = waited ? ( waitEnd - waitStart ) : 0;
 	}
 	memcpy( & threadStats, & deferredThreadStats, sizeof( threadStats ) );
@@ -490,7 +520,7 @@ uint64 idParallelJobList_Threads::GetTotalProcessingTimeMicroSec() const {
 	for ( int unit = 0; unit < MAX_THREADS; unit++ ) {
 		total += threadStats.threadExecTime[unit];
 	}
-	return total;
+	return TimerClockToMicrosec( total );
 }
 
 /*
@@ -503,7 +533,7 @@ uint64 idParallelJobList_Threads::GetTotalWastedTimeMicroSec() const {
 	for ( int unit = 0; unit < MAX_THREADS; unit++ ) {
 		total += threadStats.threadTotalTime[unit] - threadStats.threadExecTime[unit];
 	}
-	return total;
+	return TimerClockToMicrosec( total );
 }
 
 /*
@@ -515,7 +545,7 @@ uint64 idParallelJobList_Threads::GetUnitProcessingTimeMicroSec( int unit ) cons
 	if ( unit < 0 || unit >= MAX_THREADS ) {
 		return 0;
 	}
-	return threadStats.threadExecTime[unit];
+	return TimerClockToMicrosec( threadStats.threadExecTime[unit] );
 }
 
 /*
@@ -527,7 +557,19 @@ uint64 idParallelJobList_Threads::GetUnitWastedTimeMicroSec( int unit ) const {
 	if ( unit < 0 || unit >= MAX_THREADS ) {
 		return 0;
 	}
-	return threadStats.threadTotalTime[unit] - threadStats.threadExecTime[unit];
+	return TimerClockToMicrosec( threadStats.threadTotalTime[unit] - threadStats.threadExecTime[unit] );
+}
+
+/*
+========================
+idParallelJobList_Threads::TimerClockToMicrosec
+========================
+*/
+uint64 idParallelJobList_Threads::TimerClockToMicrosec( uint64 durationClocks ) const {
+	// on 5 GHz CPU it overflows in > 1 hour
+	// more than enough for one joblist to finish
+	assert( durationClocks < UINT64_MAX / 1000000u );
+	return durationClocks * 1000000u / timerFrequency;
 }
 
 #ifndef _DEBUG
@@ -550,7 +592,7 @@ int idParallelJobList_Threads::RunJobsInternal( unsigned int threadNum, threadJo
 	assert( threadNum < MAX_THREADS );
 
 	if ( deferredThreadStats.startTime == 0 ) {
-		deferredThreadStats.startTime = Sys_Microseconds();	// first time any thread is running jobs from this list
+		deferredThreadStats.startTime = JobTimer_Clock;	// first time any thread is running jobs from this list
 	}
 
 	int result = RUN_OK;
@@ -627,19 +669,19 @@ int idParallelJobList_Threads::RunJobsInternal( unsigned int threadNum, threadJo
 
 		// execute the next job
 		{
-			uint64 jobStart = Sys_Microseconds();
+			uint64 jobStart = JobTimer_Clock;
 
 			jobList[state.nextJobIndex].function( jobList[state.nextJobIndex].data );
 			jobList[state.nextJobIndex].executed = 1;
 
-			uint64 jobEnd = Sys_Microseconds();
+			uint64 jobEnd = JobTimer_Clock;
 			deferredThreadStats.threadExecTime[threadNum] += jobEnd - jobStart;
 
 #ifndef _DEBUG
-			if ( jobs_longJobMicroSec.GetInteger() > 0 ) {
-				if ( jobEnd - jobStart > jobs_longJobMicroSec.GetInteger()
-					&& GetId() != JOBLIST_UTILITY ) {
-					longJobTime = ( jobEnd - jobStart ) * ( 1.0f / 1000.0f );
+			if ( jobs_longJobMicroSec.GetInteger() > 0 && GetId() != JOBLIST_UTILITY ) {
+				uint64 durationUs = TimerClockToMicrosec( jobEnd - jobStart );
+				if ( durationUs > jobs_longJobMicroSec.GetInteger() ) {
+					longJobTime = durationUs * ( 1.0f / 1000.0f );
 					longJobFunc = jobList[state.nextJobIndex].function;
 					longJobData = jobList[state.nextJobIndex].data;
 					const char * jobName = GetJobName( jobList[state.nextJobIndex].function );
@@ -656,7 +698,7 @@ int idParallelJobList_Threads::RunJobsInternal( unsigned int threadNum, threadJo
 		if ( signalJobCount[state.signalIndex].Decrement() == 0 ) {
 			// if this was the very last job of the job list
 			if ( state.signalIndex == signalJobCount.Num() - 1 ) {
-				deferredThreadStats.endTime = Sys_Microseconds();
+				deferredThreadStats.endTime = JobTimer_Clock;
 				return ( result | RUN_DONE );
 			}
 		}
@@ -672,7 +714,7 @@ idParallelJobList_Threads::RunJobs
 ========================
 */
 int idParallelJobList_Threads::RunJobs( unsigned int threadNum, threadJobListState_t & state, bool singleJob ) {
-	uint64 start = Sys_Microseconds();
+	uint64 start = JobTimer_Clock;
 
 	numThreadsExecuting.Increment();
 
@@ -680,7 +722,7 @@ int idParallelJobList_Threads::RunJobs( unsigned int threadNum, threadJobListSta
 
 	numThreadsExecuting.Decrement();
 
-	deferredThreadStats.threadTotalTime[threadNum] += Sys_Microseconds() - start;
+	deferredThreadStats.threadTotalTime[threadNum] += JobTimer_Clock - start;
 
 	return result;
 }
@@ -1096,9 +1138,7 @@ extern void Sys_CPUCount( int & logicalNum, int & coreNum, int & packageNum );
 //
 // Hyperthreading is not dead yet.  Intel's Core i7 Processor is quad-core with HT for 8 logicals.
 
-// DOOM3: We don't have that many jobs, so just set this fairly low so we don't spin up a ton of idle threads
-#define MAX_JOB_THREADS		2
-#define NUM_JOB_THREADS		"2"
+#define MAX_JOB_THREADS		32
 #define JOB_THREAD_CORES	{	CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
@@ -1109,7 +1149,10 @@ extern void Sys_CPUCount( int & logicalNum, int & coreNum, int & packageNum );
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY }
 
 
-idCVar jobs_numThreads( "jobs_numThreads", NUM_JOB_THREADS, CVAR_INTEGER | CVAR_NOCHEAT, "number of threads used to crunch through jobs", 0, MAX_JOB_THREADS );
+idCVar jobs_numThreadsRealtime( "jobs_numThreadsRealtime", "-1", CVAR_INTEGER | CVAR_NOCHEAT | CVAR_ARCHIVE, "Number of threads used by job system during gameplay (REALTIME joblists).\n -1 means it is determined automatically.", -1, MAX_JOB_THREADS );
+idCVar jobs_offsetThreadsRealtime( "jobs_offsetThreadsRealtime", "0", CVAR_INTEGER | CVAR_NOCHEAT | CVAR_ARCHIVE, "Added to automatically computed number of threads for jobs system during gameplay.\n Only takes effect if jobs_numThreadsRealtime is set to auto.\n For instance: set -1 if you want to leave one free thread for graphics driver.", -MAX_JOB_THREADS, MAX_JOB_THREADS );
+idCVar jobs_numThreadsNonInteractive( "jobs_numThreadsNonInteractive", "-1", CVAR_INTEGER | CVAR_NOCHEAT | CVAR_ARCHIVE, "Number of threads used by job system for non-interactive tasks (NONINTERACTIVE joblists).\n -1 means it is determined automatically.", -1, MAX_JOB_THREADS );
+idCVar jobs_maxHddThreads( "jobs_maxHddThreads", "1", CVAR_INTEGER | CVAR_NOCHEAT | CVAR_ARCHIVE, "Maximum number of threads used for jobs that read from disk if game is on Hard Disk Drive.\n HDDs are slow-seeking devices, parallel reads to them makes things slower, not faster.", 0, MAX_JOB_THREADS );
 
 class idParallelJobManagerLocal : public idParallelJobManager {
 public:
@@ -1125,7 +1168,7 @@ public:
 	virtual int					GetNumFreeJobLists() const;
 	virtual idParallelJobList *	GetJobList( int index );
 
-	virtual int					GetNumProcessingUnits();
+	virtual int					GetNumProcessingUnits( int parallelism = JOBLIST_PARALLELISM_REALTIME );
 
 	virtual void				WaitForAllJobLists();
 
@@ -1133,11 +1176,16 @@ public:
 
 private:
 	idJobThread						threads[MAX_JOB_THREADS];
-	unsigned int					maxThreads;
+	int								maxThreads;					// how many OS threads are spawned currently
+
+	// information about hardware:
 	int								numPhysicalCpuCores;
 	int								numLogicalCpuCores;
 	int								numCpuPackages;
+	bool							isRunningOnHdd;
 	idStaticList< idParallelJobList *, MAX_JOBLISTS >	jobLists;
+
+	void							ChangePhysicalThreadsCount( int wantPhysicalThreads );
 };
 
 idParallelJobManagerLocal parallelJobManagerLocal;
@@ -1158,16 +1206,21 @@ idParallelJobManagerLocal::Init
 ========================
 */
 void idParallelJobManagerLocal::Init() {
-	// on consoles this will have specific cores for the threads, but on PC they will all be CORE_ANY
-	core_t cores[] = JOB_THREAD_CORES;
-	assert( sizeof( cores ) / sizeof( cores[0] ) >= MAX_JOB_THREADS );
+	Sys_CPUCount( numLogicalCpuCores, numPhysicalCpuCores, numCpuPackages );
+	idLib::Printf( "CPU core count: %d physical, %d logical\n", numPhysicalCpuCores, numLogicalCpuCores );
 
-	for ( int i = 0; i < MAX_JOB_THREADS; i++ ) {
-		threads[i].Start( cores[i], i );
+	isRunningOnHdd = Sys_IsFileOnHdd( Sys_EXEPath() );
+	if ( isRunningOnHdd ) {
+		idLib::Printf( "HDD detected: number of loading threads limited\n" );
+	} else {
+		idLib::Printf( "HDD not detected: loading threads unlimited\n" );
 	}
-	maxThreads = jobs_numThreads.GetInteger();
 
-	Sys_CPUCount( numPhysicalCpuCores, numLogicalCpuCores, numCpuPackages );
+	maxThreads = 0;
+	assert(numLogicalCpuCores >= 0);
+	// note: some of these threads can run idle, not consuming CPU resources
+	// idParallelJobManagerLocal::Submit runs joblist onto first K threads, where K is configured
+	ChangePhysicalThreadsCount(numLogicalCpuCores);
 }
 
 /*
@@ -1176,8 +1229,28 @@ idParallelJobManagerLocal::Shutdown
 ========================
 */
 void idParallelJobManagerLocal::Shutdown() {
-	for ( int i = 0; i < MAX_JOB_THREADS; i++ ) {
+	for ( int i = 0; i < maxThreads; i++ ) {
 		threads[i].StopThread();
+	}
+	maxThreads = 0;
+}
+
+/*
+========================
+idParallelJobManagerLocal::ChangePhysicalThreadsCount
+========================
+*/
+void idParallelJobManagerLocal::ChangePhysicalThreadsCount( int wantPhysicalThreads ) {
+	// on consoles this will have specific cores for the threads, but on PC they will all be CORE_ANY
+	core_t cores[] = JOB_THREAD_CORES;
+	wantPhysicalThreads = idMath::ClampInt( 0, MAX_JOB_THREADS, wantPhysicalThreads );
+	while ( maxThreads < wantPhysicalThreads ) {
+		int idx = maxThreads++;
+		threads[idx].Start( cores[idx], idx );
+	}
+	while ( maxThreads > wantPhysicalThreads ) {
+		int idx = --maxThreads;
+		threads[idx].StopThread( false );
 	}
 }
 
@@ -1190,6 +1263,9 @@ idParallelJobList * idParallelJobManagerLocal::AllocJobList( jobListId_t id, job
 	for ( int i = 0; i < jobLists.Num(); i++ ) {
 		if ( jobLists[i]->GetId() == id ) {
 			// idStudio may cause job lists to be allocated multiple times
+			assert( false );
+			// renderer joblists are persistent
+			// utility joblists are not, but we should finish old one beforehand
 		}
 	}
 	idParallelJobList * jobList = new (TAG_JOBLIST) idParallelJobList( id, priority, maxJobs, maxSyncs, color );
@@ -1207,7 +1283,7 @@ void idParallelJobManagerLocal::FreeJobList( idParallelJobList * jobList ) {
 		return;
 	}
 	// wait for all job threads to finish because job list deletion is not thread safe
-	for ( unsigned int i = 0; i < maxThreads; i++ ) {
+	for ( int i = 0; i < maxThreads; i++ ) {
 		threads[i].WaitForThread();
 	}
 	int index = jobLists.FindIndex( jobList );
@@ -1246,15 +1322,6 @@ idParallelJobList * idParallelJobManagerLocal::GetJobList( int index ) {
 
 /*
 ========================
-idParallelJobManagerLocal::GetNumProcessingUnits
-========================
-*/
-int idParallelJobManagerLocal::GetNumProcessingUnits() {
-	return maxThreads;
-}
-
-/*
-========================
 idParallelJobManagerLocal::WaitForAllJobLists
 ========================
 */
@@ -1271,24 +1338,7 @@ idParallelJobManagerLocal::Submit
 ========================
 */
 void idParallelJobManagerLocal::Submit( idParallelJobList_Threads * jobList, int parallelism ) {
-	if ( jobs_numThreads.IsModified() ) {
-		maxThreads = idMath::ClampInt( 0, MAX_JOB_THREADS, jobs_numThreads.GetInteger() );
-		jobs_numThreads.ClearModified();
-	}
-
-	// determine the number of threads to use
-	int numThreads = maxThreads;
-	if ( parallelism == JOBLIST_PARALLELISM_DEFAULT ) {
-		numThreads = maxThreads;
-	} else if ( parallelism == JOBLIST_PARALLELISM_MAX_CORES ) {
-		numThreads = numLogicalCpuCores;
-	} else if ( parallelism == JOBLIST_PARALLELISM_MAX_THREADS ) {
-		numThreads = MAX_JOB_THREADS;
-	} else if ( parallelism > MAX_JOB_THREADS ) {
-		numThreads = MAX_JOB_THREADS;
-	} else {
-		numThreads = parallelism;
-	}
+	int numThreads = GetNumProcessingUnits( parallelism );
 
 	if ( numThreads <= 0 ) {
 		threadJobListState_t state( jobList->GetVersion() );
@@ -1300,4 +1350,47 @@ void idParallelJobManagerLocal::Submit( idParallelJobList_Threads * jobList, int
 		threads[i].AddJobList( jobList );
 		threads[i].SignalWork();
 	}
+}
+
+/*
+========================
+idParallelJobManagerLocal::GetNumProcessingUnits
+========================
+*/
+int idParallelJobManagerLocal::GetNumProcessingUnits( int parallelism ) {
+	bool disk = (parallelism & JOBLIST_PARALLELISM_FLAG_DISK) != 0;
+	parallelism &= ~JOBLIST_PARALLELISM_FLAG_DISK;
+
+	// determine the number of threads to use
+	int numThreads;
+	if ( parallelism == JOBLIST_PARALLELISM_REALTIME ) {
+		int dedicatedOccupiedThreads = 1 /*+ session->IsFrontendThreadUsed()*/;	// usually we have frontend and backend on dedicated threads (depending on com_smp)
+		numThreads = numPhysicalCpuCores - dedicatedOccupiedThreads + 1;	// we assume that calling thread will wait immediately and free its core for one of the worker threads
+		numThreads += jobs_offsetThreadsRealtime.GetInteger();	// leave a few cores for OS background tasks, and maybe for OpenGL driver since they often do work in separate thread
+
+		if ( jobs_numThreadsRealtime.GetInteger() >= 0 ) {
+			numThreads = jobs_numThreadsRealtime.GetInteger();
+		}
+	} else if ( parallelism == JOBLIST_PARALLELISM_NONINTERACTIVE ) {
+		numThreads = numLogicalCpuCores;
+
+		if ( jobs_numThreadsNonInteractive.GetInteger() >= 0 ) {
+			numThreads = jobs_numThreadsNonInteractive.GetInteger();
+		}
+	} else if ( parallelism == JOBLIST_PARALLELISM_NONE ) {
+		numThreads = 0;
+	} else {
+		idLib::Warning( "Explicit number of threads %d used for testing", parallelism );
+		numThreads = parallelism;
+	}
+
+	// can't run more threads than we physically have
+	// note: we should have spawned enough threads at game start
+	numThreads = Min( numThreads, maxThreads );
+
+	if ( disk && isRunningOnHdd ) {
+		numThreads = Min( numThreads, jobs_maxHddThreads.GetInteger() );
+	}
+
+	return numThreads;
 }
