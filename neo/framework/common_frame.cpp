@@ -397,20 +397,6 @@ void idCommonLocal::Frame() {
 
 		const bool pauseGame = ( !mapSpawned || ( !IsMultiplayer() && ( Dialog().IsDialogPausing() || session->IsSystemUIShowing() || ( game && game->Shell_IsActive() ) || common->IsPaused() ) ) );
 
-		// save the screenshot and audio from the last draw if needed
-		if ( aviCaptureMode ) {
-			g_screenshotFormat = 0;
-			idStr name = va("demos/%s/%s_%05i.tga", aviDemoShortName.c_str(), aviDemoShortName.c_str(), aviDemoFrameCount++ );
-			renderSystem->TakeScreenshot( com_aviDemoWidth.GetInteger(), com_aviDemoHeight.GetInteger(), name, com_aviDemoSamples.GetInteger(), NULL );
-
-			// remove any printed lines at the top before taking the screenshot
-			console->ClearNotifyLines();
-
-			// this will call Draw, possibly multiple times if com_aviDemoSamples is > 1
-			g_screenshotFormat = 0;
-			renderSystem->TakeScreenshot( com_aviDemoWidth.GetInteger(), com_aviDemoHeight.GetInteger(), name, com_aviDemoSamples.GetInteger(), NULL );
-		}
-
 		//--------------------------------------------
 		// wait for the GPU to finish drawing
 		//
