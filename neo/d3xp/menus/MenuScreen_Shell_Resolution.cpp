@@ -253,15 +253,15 @@ bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction & action, const
 					cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 					cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "vid_restart\n" );
 
-					class idSWFFuncAcceptVideoChanges : public idSWFScriptFunction_RefCounted {
+					class idDialogAcceptVideoChanges : public idDialogCallback {
 					public:
-						idSWFFuncAcceptVideoChanges( idMenuHandler * _menu, gameDialogMessages_t _msg, const optionData_t & _optionData, bool _accept ) {
+						idDialogAcceptVideoChanges( idMenuHandler * _menu, gameDialogMessages_t _msg, const optionData_t & _optionData, bool _accept ) {
 							menuHandler = _menu;
 							msg = _msg;
 							optionData = _optionData;
 							accept = _accept;
 						}
-						idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+						void Call() override {
 							common->Dialog().ClearDialog( msg );
 							if ( accept ) {
 								cvarSystem->SetModifiedFlags( CVAR_ARCHIVE );
@@ -274,7 +274,6 @@ bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction & action, const
 								cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 								cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "vid_restart\n" );
 							}
-							return idSWFScriptVar();
 						}
 					private:
 						idMenuHandler * menuHandler;
@@ -282,7 +281,7 @@ bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction & action, const
 						optionData_t optionData;
 						bool accept;
 					};
-					ADD_DIALOG( GDM_CONFIRM_VIDEO_CHANGES, DIALOG_TIMER_ACCEPT_REVERT, new ( TAG_SWF ) idSWFFuncAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, currentOption, true ), new ( TAG_SWF ) idSWFFuncAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, originalOption, false ), false );
+					ADD_DIALOG( GDM_CONFIRM_VIDEO_CHANGES, DIALOG_TIMER_ACCEPT_REVERT, new ( TAG_SWF ) idDialogAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, currentOption, true ), new ( TAG_SWF ) idDialogAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, originalOption, false ), false );
 				}
 				return true;
 			}

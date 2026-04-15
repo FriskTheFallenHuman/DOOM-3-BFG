@@ -336,12 +336,12 @@ extern idCommon *		common;
 
 #define ADD_DIALOG(...) do { \
     idSWFDialog &dlg = static_cast<idSWFDialog &>( common->Dialog() ); \
-    dlg.AddDialogSWF(__VA_ARGS__); \
+    dlg.AddDialog(__VA_ARGS__); \
 } while (0)
 
 #define ADD_DYNAMIC_DIALOG(...) do { \
     idSWFDialog &dlg = static_cast<idSWFDialog &>( common->Dialog() ); \
-    dlg.AddDynamicDialogSWF(__VA_ARGS__); \
+    dlg.AddDynamicDialog(__VA_ARGS__); \
 } while (0)
 
 #endif /* !__COMMON_H__ */

@@ -216,16 +216,15 @@ void idMenuScreen_Shell_Singleplayer::ContinueGame() {
 	sortedSaves.SortWithTemplate( idSort_SavesByDate() );
 	if ( sortedSaves.Num() > 0 ) {
 		if ( sortedSaves[0].damaged ) {
-			class idSWFScriptFunction_ContinueDamaged : public idSWFScriptFunction_RefCounted {
+			class idDialogContinueDamagedCallback : public idDialogCallback {
 			public:
-				idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+				void Call() override {
 					common->Dialog().ClearDialog( GDM_CORRUPT_CONTINUE );
-					return idSWFScriptVar();
 				}
 			};
 
-			idStaticList< idSWFScriptFunction *, 4 > callbacks;
-			callbacks.Append( new (TAG_SWF) idSWFScriptFunction_ContinueDamaged() );
+			idStaticList< idDialogCallback *, 4 > callbacks;
+			callbacks.Append( new (TAG_SWF) idDialogContinueDamagedCallback() );
 			idStaticList< idStrId, 4 > optionText;
 			optionText.Append( idStrId( "#str_04339" ) );	// OK
 			ADD_DYNAMIC_DIALOG( GDM_CORRUPT_CONTINUE, callbacks, optionText, false, "" );
@@ -277,24 +276,23 @@ bool idMenuScreen_Shell_Singleplayer::HandleAction( idWidgetAction & action, con
 					ContinueGame();
 
 				} else if ( selectionIndex == 1 ) {
-					class idSWFScriptFunction_NewGame : public idSWFScriptFunction_RefCounted {
+					class idDialogNewGameCallback : public idDialogCallback {
 					public:
-						idSWFScriptFunction_NewGame( idMenuHandler * _menuData, bool _accept ) {
+						idDialogNewGameCallback( idMenuHandler * _menuData, bool _accept ) {
 							menuData = _menuData;
 							accept = _accept;
 						}
-						idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+						void Call() override {
 							common->Dialog().ClearDialog( GDM_DELETE_AUTOSAVE );
 							if ( accept ) {
 								menuData->SetNextScreen( SHELL_AREA_NEW_GAME, MENU_TRANSITION_SIMPLE );
 							}
-							return idSWFScriptVar();
 						}
 					private:
 						idMenuHandler * menuData;
 						bool accept;
 					};
-					ADD_DIALOG( GDM_DELETE_AUTOSAVE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_NewGame( menuData, true ), new idSWFScriptFunction_NewGame( menuData, false ), true );
+					ADD_DIALOG( GDM_DELETE_AUTOSAVE, DIALOG_ACCEPT_CANCEL, new idDialogNewGameCallback( menuData, true ), new idDialogNewGameCallback( menuData, false ), true );
 				} else if ( selectionIndex == 2 ) {
 					menuData->SetNextScreen( SHELL_AREA_LOAD, MENU_TRANSITION_SIMPLE );
 				}

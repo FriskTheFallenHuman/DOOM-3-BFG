@@ -48,9 +48,6 @@ public:
 	virtual bool    HandleDialogEvent( const sysEvent_t *sev );
 	virtual bool    IsDialogActive() const;
 
-	void    AddDialogSWF( gameDialogMessages_t msg, dialogType_t type, idSWFScriptFunction *acceptCB, idSWFScriptFunction *cancelCB, bool pause, const char *location = NULL, int lineNumber = 0, bool leaveOnMapHeapReset = false, bool renderDuringLoad = false );
-	void    AddDynamicDialogSWF( gameDialogMessages_t msg, const idStaticList< idSWFScriptFunction *, 4 > &callbacks, const idStaticList< idStrId, 4 > &optionText, bool pause, idStrStatic< 256 > overrideMsg, bool leaveOnMapHeapReset = false, bool renderDuringLoad = false );
-
 protected:
 
 	virtual bool    IsRendererLoaded() const;

@@ -310,9 +310,9 @@ bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t * sev ) {
 
 						idMenuScreen_Shell_Bindings * bindScreen = dynamic_cast< idMenuScreen_Shell_Bindings * >( menuScreens[ SHELL_AREA_KEYBOARD ] );
 						if ( bindScreen != NULL ) {
-							class idSWFScriptFunction_RebindKey : public idSWFScriptFunction_RefCounted {
+							class idDialogRebindKeyCallback : public idDialogCallback {
 							public:
-								idSWFScriptFunction_RebindKey( idMenuScreen_Shell_Bindings * _menu, gameDialogMessages_t _msg, bool _accept, idMenuHandler_Shell * _mgr, int _key, const char * _bind ) {
+								idDialogRebindKeyCallback( idMenuScreen_Shell_Bindings * _menu, gameDialogMessages_t _msg, bool _accept, idMenuHandler_Shell * _mgr, int _key, const char * _bind ) {
 									menu = _menu;
 									msg = _msg;
 									accept = _accept;
@@ -320,7 +320,7 @@ bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t * sev ) {
 									key = _key;
 									bind = _bind;
 								}
-								idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+								void Call() override {
 									common->Dialog().ClearDialog( msg );
 									mgr->ClearWaitForBinding();
 									menu->ToggleWait( false );
@@ -330,7 +330,6 @@ bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t * sev ) {
 										menu->UpdateBindingDisplay();
 										menu->Update();
 									}
-									return idSWFScriptVar();
 								}
 							private:
 								idMenuScreen_Shell_Bindings * menu;
@@ -341,7 +340,7 @@ bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t * sev ) {
 								const char * bind;
 							};
 
-							ADD_DIALOG( GDM_BINDING_ALREDY_SET, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_RebindKey( bindScreen, GDM_BINDING_ALREDY_SET, true, this, sev->evValue, waitBind ), new idSWFScriptFunction_RebindKey( bindScreen, GDM_BINDING_ALREDY_SET, false, this, sev->evValue, waitBind ), false );
+							ADD_DIALOG( GDM_BINDING_ALREDY_SET, DIALOG_ACCEPT_CANCEL, new idDialogRebindKeyCallback( bindScreen, GDM_BINDING_ALREDY_SET, true, this, sev->evValue, waitBind ), new idDialogRebindKeyCallback( bindScreen, GDM_BINDING_ALREDY_SET, false, this, sev->evValue, waitBind ), false );
 						}
 
 					}
@@ -765,29 +764,29 @@ idMenuHandler_Shell::HandleExitGameBtn
 ========================
 */
 void idMenuHandler_Shell::HandleExitGameBtn() {
-	class idSWFScriptFunction_QuitDialog : public idSWFScriptFunction_RefCounted {
+	class idDialogQuitDialogCallback : public idDialogCallback {
 	public:
-		idSWFScriptFunction_QuitDialog( gameDialogMessages_t _msg, int _accept ) {
+		idDialogQuitDialogCallback( gameDialogMessages_t _msg, int _accept ) {
 			msg = _msg;
 			accept = _accept;
 		}
-		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+
+		void Call() override {
 			common->Dialog().ClearDialog( msg );
 			if ( accept == 1 ) {
 				common->Quit();
 			}
-			return idSWFScriptVar();
 		}
 	private:
 		gameDialogMessages_t msg;
 		int accept;
 	};
 
-	idStaticList< idSWFScriptFunction *, 4 > callbacks;
+	idStaticList< idDialogCallback *, 4 > callbacks;
 	idStaticList< idStrId, 4 > optionText;
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, 1 ) );
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, 0 ) );
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_QuitDialog( GDM_QUIT_GAME, -1 ) );
+	callbacks.Append( new (TAG_SWF) idDialogQuitDialogCallback( GDM_QUIT_GAME, 1 ) );
+	callbacks.Append( new (TAG_SWF) idDialogQuitDialogCallback( GDM_QUIT_GAME, 0 ) );
+	callbacks.Append( new (TAG_SWF) idDialogQuitDialogCallback( GDM_QUIT_GAME, -1 ) );
 	optionText.Append( idStrId( "#STR_SWF_ACCEPT" ) );
 	optionText.Append( idStrId( "#STR_SWF_CANCEL" ) );
 

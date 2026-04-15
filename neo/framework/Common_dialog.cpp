@@ -244,8 +244,8 @@ void idCommonDialog::AddDialogIntVal( const char * name, int val ) {
 idCommonDialog::AddDialog
 ================================================
 */
-void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, void * acceptCallback,
-								void * cancelCallback, bool pause, const char * location, int lineNumber,
+void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, idDialogCallback * acceptCallback,
+								idDialogCallback * cancelCallback, bool pause, const char * location, int lineNumber,
 								bool leaveOnMapHeapReset, bool waitOnAtlas, bool renderDuringLoad ) {
 
 	idKeyInput::ClearStates();
@@ -278,7 +278,7 @@ void idCommonDialog::AddDialog( gameDialogMessages_t msg, dialogType_t type, voi
 idCommonDialog::AddDynamicDialog
 ========================
 */
-void idCommonDialog::AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< void *, 4 > & callbacks,
+void idCommonDialog::AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< idDialogCallback *, 4 > & callbacks,
 										const idStaticList< idStrId, 4 > & optionText, bool pause, idStrStatic< 256 > overrideMsg,
 										bool leaveOnMapHeapReset, bool waitOnAtlas, bool renderDuringLoad ) {
 	if ( !IsRendererLoaded() ) {
@@ -550,28 +550,26 @@ idCommonDialog::ReleaseCallBacks
 ================================================
 */
 void idCommonDialog::ReleaseCallBacks( int index ) {
-	if ( index >= messageList.Num() ) {
-		return;
-	}
+    if ( index >= messageList.Num() ) {
+        return;
+    }
+    idDialogInfo & info = messageList[ index ];
 
-	if ( messageList[index].acceptCB != NULL ) {
-		ReleaseCallback(messageList[index].acceptCB);
-		messageList[index].acceptCB = NULL;
+    if ( info.acceptCB ) {
+		info.acceptCB->Release();
+		info.acceptCB = NULL;
 	}
-	if ( messageList[index].cancelCB != NULL ) {
-		ReleaseCallback(messageList[index].cancelCB);
-		messageList[index].cancelCB = NULL;
+    if ( info.cancelCB ) {
+		info.cancelCB->Release();
+		info.cancelCB = NULL;
 	}
-
-	if ( messageList[index].altCBOne != NULL ) {
-		ReleaseCallback(messageList[index].altCBOne);
-		messageList[index].altCBOne = NULL;
+    if ( info.altCBOne ) {
+		info.altCBOne->Release();
+		info.altCBOne = NULL;
 	}
-
-	if ( messageList[index].altCBTwo != NULL ) {
-		ReleaseCallback(messageList[index].altCBTwo);
-		messageList[index].altCBTwo = NULL;
-
+    if ( info.altCBTwo ) {
+		info.altCBTwo->Release();
+		info.altCBTwo = NULL;
 	}
 }
 

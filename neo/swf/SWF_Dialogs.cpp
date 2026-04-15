@@ -224,6 +224,32 @@ void idSWFDialog::BindDialogToRenderer( const idDialogInfo &info ) {
 		return;
 	}
 
+	class idSWFScriptFunction_CallbackAdapter : public idSWFScriptFunction_RefCounted {
+	public:
+		explicit idSWFScriptFunction_CallbackAdapter( idDialogCallback * cb )
+			: callback( cb ) {
+			if ( callback )
+				callback->AddRef();
+		}
+		~idSWFScriptFunction_CallbackAdapter() {
+			if ( callback )
+				callback->Release();
+		}
+		idSWFScriptVar Call( idSWFScriptObject *, const idSWFParmList & ) override {
+			if ( callback )
+				callback->Call();
+			return idSWFScriptVar();
+		}
+	private:
+		idDialogCallback * callback;
+	};
+
+	auto Wrap = []( idDialogCallback * cb ) -> idSWFScriptFunction * {
+		if ( cb == NULL )
+			return NULL;
+		return new (TAG_SWF) idSWFScriptFunction_CallbackAdapter( cb );
+	};
+
 	idStr message, title;
 	GetDialogMsg( info.msg, message, title );
 
@@ -235,29 +261,30 @@ void idSWFDialog::BindDialogToRenderer( const idDialogInfo &info ) {
 	}
 	dialog->SetGlobal( "Infotype", info.type );
 
-	if ( info.acceptCB == NULL && ( info.type != DIALOG_WAIT && info.type != DIALOG_WAIT_BLACKOUT ) ) {
-		class idSWFScriptFunction_Accept : public idSWFScriptFunction_RefCounted {
+	if ( info.acceptCB == NULL &&
+		 info.type != DIALOG_WAIT &&
+		 info.type != DIALOG_WAIT_BLACKOUT ) {
+
+		// Default accept: just clears this dialog
+		class idSWFScriptFunction_DefaultAccept : public idSWFScriptFunction_RefCounted {
 		public:
-			idSWFScriptFunction_Accept( gameDialogMessages_t _msg ) {
-				msg = _msg;
-			}
-			idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
+			explicit idSWFScriptFunction_DefaultAccept( gameDialogMessages_t m ) : msg( m ) {}
+			idSWFScriptVar Call( idSWFScriptObject *, const idSWFParmList & ) override {
 				common->Dialog().ClearDialog( msg );
 				return idSWFScriptVar();
 			}
 		private:
 			gameDialogMessages_t msg;
 		};
-
-		dialog->SetGlobal( "acceptCallBack", new (TAG_SWF) idSWFScriptFunction_Accept( info.msg ) );
-
+		dialog->SetGlobal( "acceptCallBack", new (TAG_SWF) idSWFScriptFunction_DefaultAccept( info.msg ) );
 	} else {
-		dialog->SetGlobal( "acceptCallBack", static_cast<idSWFScriptFunction*>(info.acceptCB) );
+		dialog->SetGlobal( "acceptCallBack", Wrap(info.acceptCB) );
 	}
 
-	dialog->SetGlobal( "cancelCallBack", static_cast<idSWFScriptFunction*>(info.cancelCB) );
-	dialog->SetGlobal( "altCBOne", static_cast<idSWFScriptFunction*>(info.altCBOne) );
-	dialog->SetGlobal( "altCBTwo", static_cast<idSWFScriptFunction*>(info.altCBTwo) );
+	dialog->SetGlobal( "cancelCallBack", Wrap(info.cancelCB) );
+	dialog->SetGlobal( "altCBOne",	Wrap(info.altCBOne) );
+	dialog->SetGlobal( "altCBTwo",	Wrap(info.altCBTwo) );
+
 	dialog->SetGlobal( "opt1Txt", info.txt1.GetLocalizedString() );
 	dialog->SetGlobal( "opt2Txt", info.txt2.GetLocalizedString() );
 	dialog->SetGlobal( "opt3Txt", info.txt3.GetLocalizedString() );
@@ -316,47 +343,18 @@ void idSWFDialog::ShowSaveIndicator( bool show ) {
 	}
 }
 
-/*
-========================
-idSWFDialog::AddDialogSWF
-========================
-*/
-void idSWFDialog::AddDialogSWF( gameDialogMessages_t msg, dialogType_t type, idSWFScriptFunction *acceptCB,
-									   idSWFScriptFunction *cancelCB, bool pause, const char *location, int lineNumber,
-									   bool leaveOnMapHeapReset, bool renderDuringLoad ) {
-	AddDialog( msg, type, static_cast<void *>(acceptCB), static_cast<void *>(cancelCB), pause, location, lineNumber, leaveOnMapHeapReset, false, renderDuringLoad );
-}
-
-/*
-========================
-idSWFDialog::AddDynamicDialogSWF
-========================
-*/
-void idSWFDialog::AddDynamicDialogSWF( gameDialogMessages_t msg, const idStaticList< idSWFScriptFunction*, 4 > &callbacks,
-											const idStaticList< idStrId, 4 >& optionText, bool pause, idStrStatic< 256 > overrideMsg,
-											bool leaveOnMapHeapReset, bool renderDuringLoad ) {
-
-	idStaticList< void*, 4 > voidCallbacks;
-	for (int i = 0; i < callbacks.Num(); ++i) {
-		voidCallbacks.Append(static_cast<void*>(callbacks[i]));
-	}
-
-	AddDynamicDialog( msg, voidCallbacks, optionText, pause, overrideMsg.c_str(), leaveOnMapHeapReset, false, renderDuringLoad );
-}
-
 CONSOLE_COMMAND( testShowDynamicDialog, "show a dynamic dialog", 0 ) {
-	class idSWFScriptFunction_Continue : public idSWFScriptFunction_RefCounted {
-	public:
-		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) {
-			common->Dialog().ClearDialog( GDM_INSUFFICENT_STORAGE_SPACE );
-			return idSWFScriptVar();
-		}
-	};
+    class idDialogContinueCallback : public idDialogCallback {
+    public:
+        void Call() override {
+            common->Dialog().ClearDialog( GDM_INSUFFICENT_STORAGE_SPACE );
+        }
+    };
 
-	idStaticList< idSWFScriptFunction *, 4 > callbacks;
-	idStaticList< idStrId, 4 > optionText;
-	callbacks.Append( new (TAG_SWF) idSWFScriptFunction_Continue() );
-	optionText.Append( idStrId( "#str_swf_continue" ) );
+    idStaticList< idDialogCallback *, 4 > callbacks;
+    idStaticList< idStrId, 4 > optionText;
+    callbacks.Append( new idDialogContinueCallback() );
+    optionText.Append( idStrId( "#str_swf_continue" ) );
 
 	// build custom space required string
 	// #str_dlg_space_required ~= "There is insufficient storage available.  Please free %s and try again."
@@ -370,9 +368,7 @@ CONSOLE_COMMAND( testShowDynamicDialog, "show a dynamic dialog", 0 ) {
 	}
 	idStr msg = va( format.c_str(), size.c_str() );
 
-	// common->Dialog() returns idCommonDialog&, so downcast for the typed helper
-	idSWFDialog &dlg = static_cast<idSWFDialog &>( common->Dialog() );
-	dlg.AddDynamicDialogSWF( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg );
+	ADD_DYNAMIC_DIALOG( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg );
 }
 
 CONSOLE_COMMAND( testShowDialogBug, "show a dynamic dialog", 0 ) {
