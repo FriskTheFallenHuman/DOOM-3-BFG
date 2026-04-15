@@ -132,57 +132,60 @@ int64 Sys_GetDriveFreeSpaceInBytes( const char * path ) {
 
 /*
 ================
-Sys_GetVideoRam
-returns in megabytes
+Sys_IsFileOnHdd
+
+Checks whether the disk containing the file incurs seeking penalty.
+Taken from Raymond Chen blog: https://devblogs.microsoft.com/oldnewthing/20201023-00/?p=104395
 ================
 */
-int Sys_GetVideoRam() {
-	unsigned int retSize = 64;
-
-	CComPtr<IWbemLocator> spLoc = NULL;
-	HRESULT hr = CoCreateInstance( CLSID_WbemLocator, 0, CLSCTX_SERVER, IID_IWbemLocator, ( LPVOID * ) &spLoc );
-	if ( hr != S_OK || spLoc == NULL ) {
-		return retSize;
+HANDLE GetVolumeHandleForFile( const char *filePath ) {
+	char volumePath[MAX_PATH];
+	if ( !GetVolumePathName(filePath, volumePath, ARRAYSIZE(volumePath)) ) {
+		return INVALID_HANDLE_VALUE;
 	}
 
-	CComBSTR bstrNamespace( _T( "\\\\.\\root\\CIMV2" ) );
-	CComPtr<IWbemServices> spServices;
-
-	// Connect to CIM
-	hr = spLoc->ConnectServer( bstrNamespace, NULL, NULL, 0, NULL, 0, 0, &spServices );
-	if ( hr != WBEM_S_NO_ERROR ) {
-		return retSize;
+	char volumeName[MAX_PATH];
+	if ( !GetVolumeNameForVolumeMountPoint(volumePath, volumeName, ARRAYSIZE(volumeName)) ) {
+		return INVALID_HANDLE_VALUE;
 	}
 
-	// Switch the security level to IMPERSONATE so that provider will grant access to system-level objects.
-	hr = CoSetProxyBlanket( spServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL, RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE );
-	if ( hr != S_OK ) {
-		return retSize;
+	size_t length = strlen(volumeName);
+	if ( length && volumeName[length - 1] == '\\' ) {
+		volumeName[length - 1] = '\0';
 	}
 
-	// Get the vid controller
-	CComPtr<IEnumWbemClassObject> spEnumInst = NULL;
-	hr = spServices->CreateInstanceEnum( CComBSTR( "Win32_VideoController" ), WBEM_FLAG_SHALLOW, NULL, &spEnumInst );
-	if ( hr != WBEM_S_NO_ERROR || spEnumInst == NULL ) {
-		return retSize;
+	return CreateFile(
+		volumeName, 0,
+		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+		nullptr, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, nullptr
+	);
+}
+bool Sys_IsFileOnHdd( const char *filePath ) {
+	HANDLE volume = GetVolumeHandleForFile(filePath);
+	if ( volume == INVALID_HANDLE_VALUE ) {
+		return false;	// supposedly happens for files on network
 	}
 
-	ULONG uNumOfInstances = 0;
-	CComPtr<IWbemClassObject> spInstance = NULL;
-	hr = spEnumInst->Next( 10000, 1, &spInstance, &uNumOfInstances );
+	// note: if you get compile error here, make sure windows.h is included without WIN32_LEAN_AND_MEAN
+	// Note that MFC headers define and require this define, so we can't use PCH in this cpp file
+	STORAGE_PROPERTY_QUERY query{};
+	query.PropertyId = StorageDeviceSeekPenaltyProperty;
+	query.QueryType = PropertyStandardQuery;
+	DWORD bytesWritten;
+	DEVICE_SEEK_PENALTY_DESCRIPTOR result{};
 
-	if ( hr == S_OK && spInstance ) {
-		// Get properties from the object
-		CComVariant varSize;
-		hr = spInstance->Get( CComBSTR( _T( "AdapterRAM" ) ), 0, &varSize, 0, 0 );
-		if ( hr == S_OK ) {
-			retSize = varSize.uintVal / (1024 * 1024);
-			if ( retSize == 0 ) {
-				retSize = 64;
-			}
-		}
+	BOOL ok = DeviceIoControl(
+		volume, IOCTL_STORAGE_QUERY_PROPERTY,
+		&query, sizeof(query),
+		&result, sizeof(result),
+		&bytesWritten, nullptr
+	);
+	CloseHandle( volume );
+
+	if ( ok ) {
+		return result.IncursSeekPenalty;
 	}
-	return retSize;
+	return true;	// supposedly happens for multi-disk volumes
 }
 
 /*
