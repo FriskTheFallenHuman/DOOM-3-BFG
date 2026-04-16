@@ -27,7 +27,9 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "../renderer/Font.h"
+
+#include "../Game_local.h"
+//#include "../renderer/Font.h"
 
 idSWFScriptObject_TextInstancePrototype textInstanceScriptObjectPrototype;
 
@@ -974,9 +976,9 @@ SWF_TEXT_NATIVE_VAR_DEFINE_SET( mode ) {
 SWF_TEXT_NATIVE_VAR_DEFINE_SET( scroll ) {
 	SWF_TEXT_PTHIS_SET( "scroll" );
 
-	int time = Sys_Milliseconds();
+	int time = sys->Milliseconds();
 	if ( time >= pThis->scrollTime ) {
-		pThis->scrollTime = Sys_Milliseconds() + swf_textScrollSpeed.GetInteger();
+		pThis->scrollTime = sys->Milliseconds() + swf_textScrollSpeed.GetInteger();
 		pThis->scroll = value.ToInteger();
 	}
 }

@@ -106,52 +106,6 @@ struct glconfig_t {
 	GLuint				global_vao;
 };
 
-const int GLYPH_START			= 0;
-const int GLYPH_END				= 255;
-const int GLYPH_CHARSTART		= 32;
-const int GLYPH_CHAREND			= 127;
-const int GLYPHS_PER_FONT		= GLYPH_END - GLYPH_START + 1;
-
-typedef struct
-{
-	int					height;			// number of scan lines
-	int					top;			// top of glyph in buffer
-	int					bottom;			// bottom of glyph in buffer
-	int					pitch;			// width for copying
-	int					xSkip;			// x adjustment
-	int					imageWidth;		// width of actual image
-	int					imageHeight;	// height of actual image
-	float				s;				// x offset in image where glyph starts
-	float				t;				// y offset in image where glyph starts
-	float				s2;
-	float				t2;
-	const idMaterial* 	glyph;			// shader with the glyph
-	char				shaderName[32];
-} glyphInfo_t;
-
-typedef struct
-{
-	glyphInfo_t			glyphs [GLYPHS_PER_FONT];
-	float				glyphScale;
-	char				name[64];
-} fontInfo_t;
-
-typedef struct
-{
-	fontInfo_t			fontInfoSmall;
-	fontInfo_t			fontInfoMedium;
-	fontInfo_t			fontInfoLarge;
-	int					maxHeight;
-	int					maxWidth;
-	int					maxHeightSmall;
-	int					maxWidthSmall;
-	int					maxHeightMedium;
-	int					maxWidthMedium;
-	int					maxHeightLarge;
-	int					maxWidthLarge;
-	char				name[64];
-} fontInfoEx_t;
-
 struct emptyCommand_t;
 
 bool R_IsInitialized();
@@ -175,6 +129,14 @@ const int TITLESAFE_HEIGHT		= TITLESAFE_BOTTOM - TITLESAFE_TOP;
 
 class idRenderWorld;
 
+enum idImageType {
+	TYPE_TGA = 0,
+	TYPE_BMP,
+	TYPE_PNG,
+	TYPE_JPEG
+};
+
+struct vidMode_t;
 
 class idRenderSystem {
 public:
@@ -224,7 +186,6 @@ public:
 	virtual bool			AreAutomaticBackgroundSwapsRunning( autoRenderIconType_t * icon = NULL ) const = 0;
 
 	// font support
-	virtual bool			RegisterFont( const char * fontName, fontInfoEx_t & font ) = 0;
 	virtual class idFont *	RegisterFont( const char * fontName ) = 0;
 	virtual void			ResetFonts() = 0;
 
@@ -309,6 +270,16 @@ public:
 
 	// each 60 hz frame
 	virtual int				GetFrameCount() const = 0;
+
+	// the number of displays can be found by itterating this until it returns false
+	// displayNum is the 0 based value passed to EnumDisplayDevices(), you must add
+	// 1 to this to get an r_fullScreen value.
+	virtual bool			GetModeListForDisplay( const int displayNum, idList<vidMode_t> & modeList ) = 0;
+
+
+	// Image loading and writing.
+	virtual void			WriteImage( idImageType filetype, const char *filename, const byte *data, int bytesPerPixel, int width, int height, bool flipVertical = false, const char *basePath = "fs_savepath" ) = 0;
+	virtual void			LoadImage( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp ) = 0;
 };
 
 extern idRenderSystem *			renderSystem;

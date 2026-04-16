@@ -36,7 +36,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "ImageOpts.h"
 #include "Image.h"
 #include "RenderTexture.h"
-#include "Font.h"
+#include "Font_Local.h"
 
 // everything that is needed by the backend needs
 // to be double buffered to allow it to run in
@@ -701,7 +701,6 @@ public:
 	virtual void			EndAutomaticBackgroundSwaps();
 	virtual bool			AreAutomaticBackgroundSwapsRunning( autoRenderIconType_t * usingAlternateIcon = NULL ) const;
 
-	virtual bool			RegisterFont( const char * fontName, fontInfoEx_t & font );
 	virtual idFont *		RegisterFont( const char * fontName );
 	virtual void			ResetFonts();
 	virtual void			PrintMemInfo( MemInfo_t *mi );
@@ -733,6 +732,11 @@ public:
 	virtual void			CaptureRenderToFile( const char *fileName, bool fixAlpha );
 	virtual void			UnCrop();
 	virtual bool			UploadImage( const char *imageName, const byte *data, int width, int height );
+
+	virtual bool			GetModeListForDisplay( const int displayNum, idList<vidMode_t> & modeList );
+
+	virtual void			WriteImage( idImageType filetype, const char *filename, const byte *data, int bytesPerPixel, int width, int height, bool flipVertical = false, const char *basePath = "fs_savepath" );
+	virtual void			LoadImage( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp );
 
 
 

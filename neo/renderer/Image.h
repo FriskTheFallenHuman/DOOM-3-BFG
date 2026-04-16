@@ -26,6 +26,9 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#ifndef __IMAGE_H__
+#define __IMAGE_H__
+
 /*
 ====================================================================
 
@@ -219,13 +222,6 @@ IMAGE TYPES
 =================================================================
 */
 
-enum idImageType {
-	TYPE_TGA = 0,
-	TYPE_BMP,
-	TYPE_PNG,
-	TYPE_JPEG
-};
-
 void	R_WriteImage( idImageType filetype, const char *filename, const byte *data, int bytesPerPixel, int width, int height, bool flipVertical = false, const char *basePath = "fs_savepath" );
 void	RB_LoadImage( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp );
 
@@ -300,10 +296,6 @@ public:
 
 	// Loads unloaded level images
 	int					LoadLevelImages( bool pacifier );
-
-	// used to clear and then write the dds conversion batch file
-	void				StartBuild();
-	void				FinishBuild( bool removeDups = false );
 
 	void				PrintMemInfo( MemInfo_t *mi );
 
@@ -387,3 +379,4 @@ IMAGEPROGRAM
 void R_LoadImageProgram( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp, textureUsage_t * usage = NULL );
 const char *R_ParsePastImageProgram( idLexer &src );
 
+#endif /* !__IMAGE_H__ */

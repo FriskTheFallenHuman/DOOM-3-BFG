@@ -28,8 +28,16 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "../renderer/Image.h"
+#include "../Game_local.h"
 
+// include this first, otherwise build breaks because of  use_idStr_* #defines in Str.h
+#if defined(__APPLE__) && !defined(__clang__) && defined(__GNUC__) && __GNUC__ < 5
+  // Extra-Hack for ancient GCC 4.2-based Apple compilers that don't support __thread
+  #define STBI_NO_THREAD_LOCALS
+#endif
+#ifdef GAME_DLL
+#define STB_IMAGE_IMPLEMENTATION
+#endif
 #define STBI_NO_HDR
 #define STBI_NO_LINEAR
 #define STBI_NO_STDIO  // images are passed as buffers
@@ -192,7 +200,7 @@ void idSWF::WriteSwfImageAtlas( const char *filename ) {
 	}
 
 	// the TGA is only for examination during development
-	R_WriteImage( TYPE_TGA, filename, swfAtlas.Ptr(), 4, atlasWidth, atlasHeight, false, "fs_basepath" );
+	renderSystem->WriteImage( TYPE_TGA, filename, swfAtlas.Ptr(), 4, atlasWidth, atlasHeight, false, "fs_basepath" );
 }
 
 /*

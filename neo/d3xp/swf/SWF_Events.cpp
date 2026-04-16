@@ -28,6 +28,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+#include "../Game_local.h"
+
 /*
 ===================
 idSWF::HitTest
@@ -284,7 +286,7 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 
 			return false;
 		}
-		const char * keyName = idKeyInput::KeyNumToString( (keyNum_t)event->evValue );
+		const char * keyName = keyBindMgr->KeyNumToString( (keyNum_t)event->evValue );
 		idSWFScriptVar var = shortcutKeys->Get( keyName );
 		// anything more than 32 levels of indirection we can be pretty sure is an infinite loop
 		for ( int runaway = 0; runaway < 32; runaway++ ) {
@@ -321,7 +323,7 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 
 			idSWFScriptVar useFunction = globals->Get( "useFunction" );
 			if ( useFunction.IsFunction() && event->evValue2 ) {
-				const char * action = idKeyInput::GetBinding( event->evValue );
+				const char * action = keyBindMgr->GetBinding( event->evValue );
 				if ( idStr::Cmp( "_use", action ) == 0 ) {
 					useFunction.GetFunction()->Call( NULL, idSWFParmList() );
 				}
@@ -372,7 +374,7 @@ bool idSWF::HandleEvent( const sysEvent_t * event ) {
 			if ( onChar.IsFunction() ) {
 				idSWFParmList parms;
 				parms.Append( event->evValue );
-				parms.Append( idKeyInput::KeyNumToString( (keyNum_t)event->evValue ) );
+				parms.Append( keyBindMgr->KeyNumToString( (keyNum_t)event->evValue ) );
 				onChar.GetFunction()->Call( focusWindow.GetObject(), parms ).ToBool();
 				return true;
 			}

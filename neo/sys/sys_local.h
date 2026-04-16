@@ -39,8 +39,16 @@ If you have questions concerning this license or the applicable additional terms
 
 class idSysLocal : public idSys {
 public:
+	virtual const char *	GetCmdLine();
+	virtual void			ReLaunch( void * launchData, unsigned int launchDataSize );
+
 	virtual void			DebugPrintf( VERIFY_FORMAT_STRING const char *fmt, ... );
 	virtual void			DebugVPrintf( const char *fmt, va_list arg );
+
+	virtual void			Sleep( int msec );
+
+	virtual int				Milliseconds();
+	virtual uint64			Microseconds();
 
 	virtual double			GetClockTicks();
 	virtual double			ClockTicksPerSecond();
@@ -57,6 +65,13 @@ public:
 	virtual void *			DLL_GetProcAddress( uintptr_t dllHandle, const char *procName );
 	virtual void			DLL_Unload( uintptr_t dllHandle );
 	virtual void			DLL_GetFileName( const char *baseName, char *dllName, int maxLength );
+
+	virtual void			GenerateEvents();
+	virtual sysEvent_t		GetEvent();
+	virtual void			ClearEvents();
+
+	virtual const char *	TimeStampToStr( ID_TIME_T timeStamp );
+	virtual const char *	SecToStr( int sec );
 
 	virtual sysEvent_t		GenerateMouseButtonEvent( int button, bool down );
 	virtual sysEvent_t		GenerateMouseMoveEvent( int deltax, int deltay );

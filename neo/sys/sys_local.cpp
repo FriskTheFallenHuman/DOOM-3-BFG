@@ -38,6 +38,14 @@ idCVar sys_lang( "sys_lang", ID_LANG_ENGLISH, CVAR_SYSTEM | CVAR_INIT | CVAR_ARC
 idSysLocal			sysLocal;
 idSys *				sys = &sysLocal;
 
+const char *idSysLocal::GetCmdLine() {
+	return Sys_GetCmdLine();
+}
+
+void idSysLocal::ReLaunch( void *launchData, unsigned int launchDataSize ) {
+	Sys_ReLaunch( launchData, launchDataSize );
+}
+
 void idSysLocal::DebugPrintf( const char *fmt, ... ) {
 	va_list argptr;
 
@@ -48,6 +56,18 @@ void idSysLocal::DebugPrintf( const char *fmt, ... ) {
 
 void idSysLocal::DebugVPrintf( const char *fmt, va_list arg ) {
 	Sys_DebugVPrintf( fmt, arg );
+}
+
+void idSysLocal::Sleep( int msec ) {
+	Sys_Sleep( msec );
+}
+
+int idSysLocal::Milliseconds() {
+	return Sys_Milliseconds();
+}
+
+uint64 idSysLocal::Microseconds() {
+	return Sys_Microseconds();
 }
 
 double idSysLocal::GetClockTicks() {
@@ -96,6 +116,26 @@ void idSysLocal::DLL_Unload( uintptr_t dllHandle ) {
 
 void idSysLocal::DLL_GetFileName( const char *baseName, char *dllName, int maxLength ) {
 	idStr::snPrintf( dllName, maxLength, "%s" CPUSTRING ".dll", baseName );
+}
+
+void idSysLocal::GenerateEvents() {
+	Sys_GenerateEvents();
+}
+
+sysEvent_t idSysLocal::GetEvent() {
+	return Sys_GetEvent();
+}
+
+void idSysLocal::ClearEvents() {
+	Sys_ClearEvents();
+}
+
+const char *idSysLocal::TimeStampToStr( ID_TIME_T timeStamp ) {
+	return Sys_TimeStampToStr( timeStamp );
+}
+
+const char *idSysLocal::SecToStr( int sec ) {
+	return Sys_SecToStr( sec );
 }
 
 sysEvent_t idSysLocal::GenerateMouseButtonEvent( int button, bool down ) {

@@ -129,8 +129,8 @@ public:
 	bool WriteDelta( idSnapShot & old, int visIndex, idFile * file, int maxLength, int optimalLength = 0 );
 
 	// Adds an object to the state, overwrites any existing object with the same number
-	objectState_t * S_AddObject( int objectNum, uint32 visMask, const idBitMsg & msg, const char * tag = NULL ) { return S_AddObject( objectNum, visMask, msg.GetReadData(), msg.GetSize(), tag ); }
-	objectState_t * S_AddObject( int objectNum, uint32 visMask, const byte * buffer, int size, const char * tag = NULL ) { return S_AddObject( objectNum, visMask, (const char *)buffer, size, tag ); }
+	virtual objectState_t * S_AddObject( int objectNum, uint32 visMask, const idBitMsg & msg, const char * tag = NULL ) { return S_AddObject( objectNum, visMask, msg.GetReadData(), msg.GetSize(), tag ); }
+	virtual objectState_t * S_AddObject( int objectNum, uint32 visMask, const byte * buffer, int size, const char * tag = NULL ) { return S_AddObject( objectNum, visMask, (const char *)buffer, size, tag ); }
 	objectState_t * S_AddObject( int objectNum, uint32 visMask, const char * buffer, int size, const char * tag = NULL );
 	bool CopyObject( const idSnapShot & oldss, int objectNum, bool forceStale = false );
 	int CompareObject( const idSnapShot * oldss, int objectNum, int start=0, int end=0, int oldStart=0 );
@@ -139,7 +139,7 @@ public:
 	int NumObjects() const { return objectStates.Num(); }
 
 	// Returns the object number of the specified object, also fills the bitmsg
-	int GetObjectMsgByIndex( int i, idBitMsg & msg, bool ignoreIfStale = false ) const;
+	virtual int GetObjectMsgByIndex( int i, idBitMsg & msg, bool ignoreIfStale = false ) const;
 
 	// returns true if the object was found in the snapshot
 	bool GetObjectMsgByID( int objectNum, idBitMsg & msg, bool ignoreIfStale = false ) { return GetObjectMsgByIndex( FindObjectIndexByID( objectNum ), msg, ignoreIfStale ) == objectNum; }
@@ -151,9 +151,9 @@ public:
 	objectState_t *	FindObjectByID( int objectNum ) const;
 
 	// Returns whether or not an object is stale
-	bool ObjectIsStaleByIndex( int i ) const;
+	virtual bool ObjectIsStaleByIndex( int i ) const;
 
-	int ObjectChangedCountByIndex( int i ) const;
+	virtual int ObjectChangedCountByIndex( int i ) const;
 
 	// clears the empty states from the snapshot snapshot
 	void CleanupEmptyStates();

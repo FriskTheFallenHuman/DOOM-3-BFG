@@ -1063,3 +1063,30 @@ bool idRenderSystemLocal::UploadImage( const char *imageName, const byte *data, 
 	image->UploadScratch( data, width, height );
 	return true;
 }
+
+/*
+===============
+idRenderSystemLocal::GetModeListForDisplay
+===============
+*/
+bool idRenderSystemLocal::GetModeListForDisplay( const int displayNum, idList<vidMode_t> &modeList ) {
+	return R_GetModeListForDisplay( displayNum, modeList );
+}
+
+/*
+===============
+idRenderSystemLocal::WriteImage
+===============
+*/
+void idRenderSystemLocal::WriteImage( idImageType filetype, const char *filename, const byte *data, int bytesPerPixel, int width, int height, bool flipVertical, const char *basePath ) {
+	R_WriteImage( filetype, filename, data, bytesPerPixel, width, height, flipVertical, basePath );
+}
+
+/*
+===============
+idRenderSystemLocal::LoadImage
+===============
+*/
+void idRenderSystemLocal::LoadImage( const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp ) {
+	RB_LoadImage( name, pic, width, height, timestamp );
+}

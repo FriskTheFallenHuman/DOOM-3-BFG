@@ -62,6 +62,8 @@ struct gameReturn_t {
 #define TIME_GROUP1		0
 #define TIME_GROUP2		1
 
+class idCommonDialog;
+
 class idGame {
 public:
 	virtual						~idGame() {}
@@ -167,6 +169,7 @@ public:
 	// MAIN MENU FUNCTIONS
 	virtual bool				InhibitControls() = 0;
 	virtual void				Shell_Init( const char * filename, idSoundWorld * sw ) = 0;
+	virtual idCommonDialog &	Shell_GetDialog() = 0;
 	virtual void				Shell_Cleanup() = 0;
 	virtual void				Shell_CreateMenu( bool inGame ) = 0;
 	virtual void				Shell_ClosePause() = 0;
@@ -371,6 +374,11 @@ typedef struct {
 
 	int							version;				// API version
 	idSys *						sys;					// non-portable system services
+	idInputDevices *			inputDevices;			// input devices
+	idJoystick *				joystick;				// joystick
+	idKeyInput *				keyBindMgr;				// key binding manager
+	idKey *						keys;					// keys system
+	idSession *					session;				// networking and session services
 	idCommon *					common;					// common
 	idCmdSystem *				cmdSystem;				// console command system
 	idCVarSystem *				cvarSystem;				// console variable system

@@ -64,15 +64,15 @@ public:
 		LOAD_REQUESTED,
 		ERR
 	};
-protected:
-					idPlayerProfile(); // don't instantiate. we static_cast the child all over the place
+//protected:
+//					idPlayerProfile(); // don't instantiate. we static_cast the child all over the place
 public:
 
 	virtual			~idPlayerProfile();
 
 	static idPlayerProfile * CreatePlayerProfile( int deviceIndex );
 
-	void			SetDefaults();
+	virtual void	SetDefaults() = 0;
 	bool			Serialize( idSerializer & ser );
 
 	const int		GetDeviceNumForProfile() const { return deviceNum; }
@@ -83,7 +83,7 @@ public:
 	state_t			GetRequestedState() const { return requestedState; }
 	bool			IsDirty() { return dirty; }
 
-	bool			GetAchievement( const int id ) const;
+	virtual bool	GetAchievement( const int id ) const = 0;
 	void			SetAchievement( const int id );
 	void			ClearAchievement( const int id );
 
@@ -96,10 +96,10 @@ public:
 	// Config
 	//------------------------
 	int				GetConfig() const { return configSet; }
-	void			SetConfig( int config, bool save );
-	void			RestoreDefault();
+	virtual void	SetConfig( int config, bool save ) = 0;
+	virtual void	RestoreDefault() = 0;
 
-	void			SetLeftyFlip( bool lf );
+	virtual void	SetLeftyFlip( bool lf ) = 0;
 	bool			GetLeftyFlip() const { return leftyFlip; }
 
 private:
@@ -111,9 +111,9 @@ private:
 	void			SetRequestedState( state_t value ) { requestedState = value; }
 	void			MarkDirty( bool isDirty ) { dirty = isDirty; }
 
+protected:
 	void			ExecConfig( bool save = false, bool forceDefault = false );
 
-protected:
 	// Do not save:
 	state_t			state;
 	state_t			requestedState;

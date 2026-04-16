@@ -28,6 +28,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+#include "../Game_local.h"
+
 idCVar swf_debug( "swf_debug", "0", CVAR_INTEGER|CVAR_ARCHIVE, "debug swf scripts.  1 shows traces/errors.  2 also shows warnings.  3 also shows disassembly.  4 shows parameters in the disassembly." );
 idCVar swf_debugInvoke( "swf_debugInvoke", "0", CVAR_INTEGER, "debug swf functions being called from game." );
 
@@ -675,7 +677,7 @@ idSWFScriptVar idSWFScriptFunction_Script::Run( idSWFScriptObject * thisObject, 
 				stack.Pop( 1 );
 				break;
 			case Action_GetTime:
-				stack.Alloc().SetInteger( Sys_Milliseconds() );
+				stack.Alloc().SetInteger( sys->Milliseconds() );
 				break;
 			case Action_RandomNumber:
 				assert( thisSprite && thisSprite->sprite && thisSprite->sprite->GetSWF() );

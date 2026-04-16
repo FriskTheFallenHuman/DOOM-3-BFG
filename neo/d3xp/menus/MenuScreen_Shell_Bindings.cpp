@@ -233,8 +233,6 @@ void idMenuScreen_Shell_Bindings::HideScreen( const mainMenuTransition_t transit
 	idMenuScreen::HideScreen( transitionType );
 }
 
-extern idCVar in_useJoystick;
-
 /*
 ========================
 idMenuScreen_Shell_Bindings::UpdateBindingDisplay
@@ -250,11 +248,11 @@ void idMenuScreen_Shell_Bindings::UpdateBindingDisplay() {
 		option.Append( keyboardBinds[i].display );
 
 		if ( ( idStr::Icmp( keyboardBinds[i].bind, "" ) != 0 ) ) {
-			keyBindings_t bind = idKeyInput::KeyBindingsFromBinding( keyboardBinds[i].bind, false, true );
+			keyBindings_t bind = keyBindMgr->KeyBindingsFromBinding( keyboardBinds[i].bind, false, true );
 
 			idStr bindings;
 
-			if ( !bind.gamepad.IsEmpty() && in_useJoystick.GetBool() ) {
+			if ( !bind.gamepad.IsEmpty() && cvarSystem->GetCVarBool("in_useJoystick") ) {
 				idStrList joyBinds;
 				int start = 0;
 				while ( start < bind.gamepad.Length() ) {
@@ -382,7 +380,7 @@ idMenuScreen_Shell_Bindings::SetBinding
 void idMenuScreen_Shell_Bindings::SetBinding( int keyNum ) {
 
 	int listIndex = options->GetViewIndex();
-	idKeyInput::SetBinding( keyNum, keyboardBinds[ listIndex ].bind );
+	keyBindMgr->SetBinding( keyNum, keyboardBinds[ listIndex ].bind );
 	UpdateBindingDisplay();
 	ToggleWait( false );
 	Update();

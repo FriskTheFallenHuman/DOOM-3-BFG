@@ -140,8 +140,8 @@ idMenuScreen_Shell_Resolution::ShowScreen
 void idMenuScreen_Shell_Resolution::ShowScreen( const mainMenuTransition_t transitionType ) {
 
 
-	originalOption.fullscreen = r_fullscreen.GetInteger();
-	originalOption.vidmode = r_vidMode.GetInteger();
+	originalOption.fullscreen = cvarSystem->GetCVarInteger( "r_fullscreen" );
+	originalOption.vidmode = cvarSystem->GetCVarInteger( "r_vidMode" );
 
 	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
 	menuOptions.Alloc().Alloc() = "#str_swf_disabled";
@@ -151,7 +151,7 @@ void idMenuScreen_Shell_Resolution::ShowScreen( const mainMenuTransition_t trans
 	idList< idList<vidMode_t> > displays;
 	for ( int displayNum = 0 ; ; displayNum++ ) {
 		idList<vidMode_t> & modeList = displays.Alloc();
-		if ( !R_GetModeListForDisplay( displayNum, modeList ) ) {
+		if ( !renderSystem->GetModeListForDisplay( displayNum, modeList ) ) {
 			displays.RemoveIndex( displays.Num() - 1 );
 			break;
 		}
@@ -243,13 +243,13 @@ bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction & action, const
 					menuData->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
 				} else if ( currentOption.fullscreen == 0 ) {
 					// Changing to windowed mode
-					r_fullscreen.SetInteger( 0 );
+					cvarSystem->SetCVarInteger( "r_fullscreen", 0 );
 					cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "vid_restart\n" );
 					menuData->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
 				} else {
 					// Changing to fullscreen mode
-					r_fullscreen.SetInteger( currentOption.fullscreen );
-					r_vidMode.SetInteger( currentOption.vidmode );
+					cvarSystem->SetCVarInteger( "r_fullscreen", currentOption.fullscreen );
+					cvarSystem->SetCVarInteger( "r_vidMode", currentOption.vidmode );
 					cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 					cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "vid_restart\n" );
 
@@ -269,8 +269,8 @@ bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction & action, const
 									menuHandler->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
 								}
 							} else {
-								r_fullscreen.SetInteger( optionData.fullscreen );
-								r_vidMode.SetInteger( optionData.vidmode );
+								cvarSystem->SetCVarInteger( "r_fullscreen", optionData.fullscreen );
+								cvarSystem->SetCVarInteger( "r_vidMode", optionData.vidmode );
 								cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 								cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "vid_restart\n" );
 							}

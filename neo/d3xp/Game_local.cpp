@@ -34,6 +34,11 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef GAME_DLL
 
 idSys *						sys = NULL;
+idInputDevices *			inputDevice = NULL;
+idJoystick *				joystick = NULL;
+idKeyInput *				keyBindMgr = NULL;
+idKey *						keys = NULL;
+idSession *					session = NULL;
 idCommon *					common = NULL;
 idCmdSystem *				cmdSystem = NULL;
 idCVarSystem *				cvarSystem = NULL;
@@ -124,6 +129,11 @@ extern "C" gameExport_t *GetGameAPI( gameImport_t *import ) {
 
 		// set interface pointers used by the game
 		sys							= import->sys;
+		inputDevice					= import->inputDevices;
+		joystick					= import->joystick;
+		keyBindMgr					= import->keyBindMgr;
+		keys						= import->keys;
+		session						= import->session;
 		common						= import->common;
 		cmdSystem					= import->cmdSystem;
 		cvarSystem					= import->cvarSystem;
@@ -166,6 +176,11 @@ void TestGameAPI() {
 	gameExport_t testExport;
 
 	testImport.sys						= ::sys;
+	testImport.inputDevices				= ::inputDevice;
+	testImport.joystick					= ::joystick;
+	testImport.keyBindMgr				= ::keyBindMgr;
+	testImport.keys						= ::keys;
+	testImport.session					= ::session;
 	testImport.common					= ::common;
 	testImport.cmdSystem				= ::cmdSystem;
 	testImport.cvarSystem				= ::cvarSystem;
@@ -280,6 +295,7 @@ void idGameLocal::Clear() {
 	nextLoadTip = 0;
 	isHellMap = false;
 	defaultLoadscreen = false;
+	loadingScreenMaterial = NULL;
 }
 
 /*
@@ -307,6 +323,9 @@ void idGameLocal::Init() {
 
 	// initialize processor specific SIMD
 	idSIMD::InitProcessor( "game", com_forceGenericSIMD.GetBool() );
+
+	// set the pointer to the language dictionary for localized strings
+	idLocalization::SetDictionaryPtr( common->GetLanguageDictionary() );
 
 #endif
 
@@ -439,9 +458,6 @@ void idGameLocal::Shutdown() {
 	// remove auto-completion function pointers pointing into this DLL
 	cvarSystem->RemoveFlaggedAutoCompletion( CVAR_GAME );
 
-	// enable leak test
-	Mem_EnableLeakTest( "game" );
-
 	// shutdown idLib
 	idLib::ShutDown();
 
@@ -463,7 +479,7 @@ void idGameLocal::SaveGame( idFile *f, idFile *strings ) {
 	idEntity *ent;
 	idEntity *link;
 
-	int startTimeMs = Sys_Milliseconds();
+	int startTimeMs = sys->Milliseconds();
 	if ( g_recordSaveGameTrace.GetBool() ) {
 		bool result = BeginTraceRecording( "e:\\savegame_trace.pix2" );
 		if ( !result ) {
@@ -648,7 +664,7 @@ void idGameLocal::SaveGame( idFile *f, idFile *strings ) {
 
 	savegame.Close();
 
-	int endTimeMs = Sys_Milliseconds();
+	int endTimeMs = sys->Milliseconds();
 	idLib::Printf( "Save time: %dms\n", ( endTimeMs - startTimeMs ) );
 
 	if ( g_recordSaveGameTrace.GetBool() ) {
@@ -676,13 +692,12 @@ void idGameLocal::GetSaveGameDetails( idSaveGameDetails & gameDetails ) {
 	int playTime = player ? player->GetPlayedTime() : 0;
 	gameExpansionType_t expansionType = player ? player->GetExpansionType() : GAME_BASE;
 
-	gameDetails.descriptors.Clear();
-	gameDetails.descriptors.SetInt( SAVEGAME_DETAIL_FIELD_EXPANSION, expansionType );
-	gameDetails.descriptors.Set( SAVEGAME_DETAIL_FIELD_MAP, mapPrettyName );
-	gameDetails.descriptors.Set( SAVEGAME_DETAIL_FIELD_MAP_LOCATE, locationStr );
-	gameDetails.descriptors.SetInt( SAVEGAME_DETAIL_FIELD_SAVE_VERSION, BUILD_NUMBER );
-	gameDetails.descriptors.SetInt( SAVEGAME_DETAIL_FIELD_DIFFICULTY, g_skill.GetInteger() );
-	gameDetails.descriptors.SetInt( SAVEGAME_DETAIL_FIELD_PLAYTIME, playTime );
+	declManager->SetDictInt( &gameDetails.descriptors, SAVEGAME_DETAIL_FIELD_EXPANSION, expansionType );
+	declManager->SetDictStr( &gameDetails.descriptors, SAVEGAME_DETAIL_FIELD_MAP, mapPrettyName );
+	declManager->SetDictStr( &gameDetails.descriptors, SAVEGAME_DETAIL_FIELD_MAP_LOCATE, locationStr );
+	declManager->SetDictInt( &gameDetails.descriptors, SAVEGAME_DETAIL_FIELD_SAVE_VERSION, BUILD_NUMBER );
+	declManager->SetDictInt( &gameDetails.descriptors, SAVEGAME_DETAIL_FIELD_DIFFICULTY, g_skill.GetInteger() );
+	declManager->SetDictInt( &gameDetails.descriptors, SAVEGAME_DETAIL_FIELD_PLAYTIME, playTime );
 
 	// PS3 only strings that use the dict just set
 
@@ -1176,7 +1191,7 @@ void idGameLocal::MapPopulate() {
 
 	// Must set GAME_FPS for script after populating, because some maps run their own scripts
 	// when spawning the world, and GAME_FPS will not be found before then.
-	SetScriptFPS( com_engineHz_latched );
+	SetScriptFPS( common->GetEngineHzLatched() );
 }
 
 /*
@@ -1249,8 +1264,8 @@ bool idGameLocal::InitFromSaveGame( const char *mapName, idRenderWorld *renderWo
 	// load the map needed for this savegame
 	LoadMap( mapName, 0 );
 
-	idFile_SaveGamePipelined * pipelineFile = new (TAG_SAVEGAMES) idFile_SaveGamePipelined();
-	pipelineFile->OpenForReading( saveGameFile );
+	idFile_SaveGamePipelined *pipelineFile = fileSystem->GetSaveGamePipelined();
+	fileSystem->OpenPipelineFileForReading( pipelineFile, saveGameFile );
 	idRestoreGame savegame( pipelineFile, stringTableFile, saveGameVersion );
 
 	// Create the list of all objects in the game
@@ -1263,12 +1278,11 @@ bool idGameLocal::InitFromSaveGame( const char *mapName, idRenderWorld *renderWo
 		// with the player persistent data.
 		savegame.DeleteObjects();
 		program.Restart();
-		SetScriptFPS( com_engineHz_latched );
+		SetScriptFPS( common->GetEngineHzLatched() );
 		return false;
 	}
 
-	SetScriptFPS( com_engineHz_latched );
-
+	SetScriptFPS( common->GetEngineHzLatched() );
 	savegame.ReadInt( i );
 	g_skill.SetInteger( i );
 
@@ -2542,7 +2556,7 @@ void idGameLocal::RunSingleUserCmd( usercmd_t & cmd, idPlayer & player ) {
 		const float forcedClientEngineHz = ( clientEngineHz < 90.0f ) ? 60.0f : 120.0f;
 		SetScriptFPS( forcedClientEngineHz );
 	} else {
-		SetScriptFPS( com_engineHz_latched );
+		SetScriptFPS( common->GetEngineHzLatched() );
 	}
 
 	if ( !common->IsMultiplayer() || common->IsServer() ) {
@@ -2663,11 +2677,9 @@ void idGameLocal::RunAllUserCmdsForPlayer( idUserCmdMgr & cmdMgr, const int play
 	int numPasses = 0;
 
 	for ( ; numPasses < MaxExtraCommandsPerFrame; numPasses++ ) {
-		// Run remote player extra commands
-		extern idCVar net_ucmdRate;
 		// Add some extra time to smooth out network inconsistencies.
 		const int extraFrameMilliseconds = FRAME_TO_MSEC( common->GetGameFrame() + 2 ) - FRAME_TO_MSEC( common->GetGameFrame() );
-		const int millisecondBuffer = MSEC_ALIGN_TO_FRAME( net_ucmdRate.GetInteger() + extraFrameMilliseconds );
+		const int millisecondBuffer = MSEC_ALIGN_TO_FRAME( cvarSystem->GetCVarInteger("net_ucmdRate") + extraFrameMilliseconds );
 
 		const bool hasNextCmd = cmdMgr.HasUserCmdForClientTimeBuffer( playerNumber, millisecondBuffer );
 
@@ -2688,7 +2700,7 @@ void idGameLocal::RunAllUserCmdsForPlayer( idUserCmdMgr & cmdMgr, const int play
 
 	// Reset the script FPS in case it was changed to accomodate an MP client
 	// running at a different framerate.
-	SetScriptFPS( com_engineHz_latched );
+	SetScriptFPS( common->GetEngineHzLatched() );
 
 //idLib::Printf( "\n" );//!@#
 }
@@ -3131,8 +3143,7 @@ idGameLocal::CheatsOk
 ==================
 */
 bool idGameLocal::CheatsOk( bool requirePlayer ) {
-	extern idCVar net_allowCheats;
-	if ( common->IsMultiplayer() && !net_allowCheats.GetBool() ) {
+	if ( common->IsMultiplayer() && !cvarSystem->GetCVarBool("net_allowCheats") ) {
 		Printf( "Not allowed in multiplayer.\n" );
 		return false;
 	}
@@ -5042,7 +5053,7 @@ idGameLocal::Shell_Render
 */
 void idGameLocal::Shell_RenderLoadingShell() {
 	if ( loadGUI != NULL ) {
-		loadGUI->Render( renderSystem, Sys_Milliseconds() );
+		loadGUI->Render( renderSystem, sys->Milliseconds() );
 	}
 }
 
@@ -5159,13 +5170,13 @@ void idGameLocal::Shell_LoadingShell( const char *mapName, bool & hellMap ) {
 	if ( g_demoMode.GetBool() ) {
 		hellMap = false;
 		if ( loadGUI != NULL ) {
-			const idMaterial * defaultMat = declManager->FindMaterial( "guis/assets/loadscreens/default" );
+			loadingScreenMaterial = declManager->FindMaterial( "guis/assets/loadscreens/default" );
 			renderSystem->LoadLevelImages();
 
 			loadGUI->Activate( true );
 			idSWFSpriteInstance * bgImg = loadGUI->GetRootObject().GetSprite( "bgImage" );
 			if ( bgImg != NULL ) {
-				bgImg->SetMaterial( defaultMat );
+				bgImg->SetMaterial( loadingScreenMaterial );
 			}
 		}
 		defaultLoadscreen = true;
@@ -5180,12 +5191,12 @@ void idGameLocal::Shell_LoadingShell( const char *mapName, bool & hellMap ) {
 	// use default load screen for demo
 	idStrStatic< MAX_OSPATH > matName = "guis/assets/loadscreens/";
 	matName.Append( stripped );
-	const idMaterial * mat = declManager->FindMaterial( matName );
+	loadingScreenMaterial = declManager->FindMaterial( matName );
 
 	renderSystem->LoadLevelImages();
 
-	if ( mat->GetImageWidth() < 32 ) {
-		mat = declManager->FindMaterial( "guis/assets/loadscreens/default" );
+	if ( loadingScreenMaterial->GetImageWidth() < 32 ) {
+		loadingScreenMaterial = declManager->FindMaterial( "guis/assets/loadscreens/default" );
 		renderSystem->LoadLevelImages();
 	}
 
@@ -5196,11 +5207,11 @@ void idGameLocal::Shell_LoadingShell( const char *mapName, bool & hellMap ) {
 
 	if ( loadGUI != NULL ) {
 		loadGUI->Activate( true );
-		nextLoadTip = Sys_Milliseconds() + LOAD_TIP_CHANGE_INTERVAL;
+		nextLoadTip = sys->Milliseconds() + LOAD_TIP_CHANGE_INTERVAL;
 
 		idSWFSpriteInstance * bgImg = loadGUI->GetRootObject().GetSprite( "bgImage" );
 		if ( bgImg != NULL ) {
-			bgImg->SetMaterial( mat );
+			bgImg->SetMaterial( loadingScreenMaterial );
 		}
 
 		idSWFSpriteInstance * overlay = loadGUI->GetRootObject().GetSprite( "overlay" );

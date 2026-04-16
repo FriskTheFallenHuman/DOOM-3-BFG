@@ -27,7 +27,8 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "../renderer/image.h"
+
+#include "../Game_local.h"
 
 #pragma warning(disable: 4355) // 'this' : used in base member initializer list
 
@@ -36,8 +37,6 @@ idCVar swf_loadBinary( "swf_loadBinary", "1", CVAR_INTEGER, "used to set whether
 int idSWF::mouseX = -1;
 int idSWF::mouseY = -1;
 bool idSWF::isMouseInClientArea = false;
-
-extern idCVar in_useJoystick;
 
 /*
 ===================
@@ -51,7 +50,7 @@ idSWF::idSWF( const char * filename_, idSoundWorld * soundWorld_ ) {
 	swfScale = 1.0f;
 	scaleToVirtual.Set( 1.0f, 1.0f );
 
-	random.SetSeed( Sys_Milliseconds() );
+	random.SetSeed( sys->Milliseconds() );
 
 	guiSolid = declManager->FindMaterial( "guiSolid" );
 	guiCursor_arrow = declManager->FindMaterial( "ui/assets/guicursor_arrow" );
@@ -253,7 +252,7 @@ when a SWF is deactivated, it rewinds the timeline back to the start
 void idSWF::Activate( bool b ) {
 	if ( !isActive && b ) {
 		inhibitControl = false;
-		lastRenderTime = Sys_Milliseconds();
+		lastRenderTime = sys->Milliseconds();
 
 		mainspriteInstance->FreeDisplayList();
 		mainspriteInstance->Play();
@@ -450,7 +449,7 @@ idSWF::GetPlatform
 int	idSWF::GetPlatform() {
 
 
-	if ( in_useJoystick.GetBool() || forceNonPCPlatform ) {
+	if ( cvarSystem->GetCVarBool("in_useJoystick") || forceNonPCPlatform ) {
 		forceNonPCPlatform = false;
 		return 0;
 	}

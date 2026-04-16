@@ -83,6 +83,8 @@ const float MAX_FOV				= 120.0f;
 
 void gameError( const char *fmt, ... );
 
+#include "swf/SWF.h"
+
 #include "gamesys/Event.h"
 #include "gamesys/Class.h"
 #include "gamesys/SysCvar.h"
@@ -339,6 +341,9 @@ public:
 	bool					defaultLoadscreen;
 	idStaticList<int, LOAD_TIP_COUNT>	loadTipList;
 
+	idSWFDialog				commonDialog;
+	const idMaterial *		loadingScreenMaterial;
+
 	virtual void			SelectTimeGroup( int timeGroup );
 	virtual int				GetTimeGroupTime( int timeGroup );
 
@@ -524,6 +529,7 @@ public:
 
 	// MAIN MENU FUNCTIONS
 	virtual void					Shell_Init( const char * filename, idSoundWorld * sw );
+	virtual idCommonDialog &		Shell_GetDialog() { return commonDialog; }
 	virtual void					Shell_Cleanup();
 	virtual void					Shell_Show( bool show );
 	virtual void					Shell_ClosePause();

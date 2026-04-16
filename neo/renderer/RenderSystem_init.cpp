@@ -2108,9 +2108,7 @@ idRenderSystemLocal::Shutdown
 void idRenderSystemLocal::Shutdown() {
 	common->Printf( "idRenderSystem::Shutdown()\n" );
 
-	if ( !common->IsLegacyFont() )  {
-		fonts.DeleteContents();
-	}
+	fonts.DeleteContents();
 
 	if ( R_IsInitialized() ) {
 		globalImages->PurgeAllImages();
@@ -2234,10 +2232,6 @@ idRenderSystemLocal::RegisterFont
 ============
 */
 idFont * idRenderSystemLocal::RegisterFont( const char * fontName ) {
-	if ( common->IsLegacyFont() ) {
-		return NULL;
-	}
-
 	idStrStatic< MAX_OSPATH > baseFontName = fontName;
 	baseFontName.Replace( "fonts/", "" );
 	for ( int i = 0; i < fonts.Num(); i++ ) {
@@ -2246,7 +2240,7 @@ idFont * idRenderSystemLocal::RegisterFont( const char * fontName ) {
 			return fonts[i];
 		}
 	}
-	idFont * newFont = new (TAG_FONT) idFont( baseFontName );
+	idFont * newFont = new (TAG_FONT) idFontLocal( baseFontName );
 	fonts.Append( newFont );
 	return newFont;
 }
@@ -2257,10 +2251,6 @@ idRenderSystemLocal::ResetFonts
 ========================
 */
 void idRenderSystemLocal::ResetFonts() {
-	if ( common->IsLegacyFont() ) {
-		return;
-	}
-
 	fonts.DeleteContents( true );
 }
 /*

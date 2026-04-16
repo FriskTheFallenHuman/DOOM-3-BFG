@@ -149,7 +149,7 @@ idEventLoop::ProcessEvent
 void idEventLoop::ProcessEvent( sysEvent_t ev ) {
 	// track key up / down states
 	if ( ev.evType == SE_KEY ) {
-		idKeyInput::PreliminaryKeyEvent( ev.evValue, ( ev.evValue2 != 0 ) );
+		keyBindMgr->PreliminaryKeyEvent( ev.evValue, ( ev.evValue2 != 0 ) );
 	}
 
 	if ( ev.evType == SE_CONSOLE ) {

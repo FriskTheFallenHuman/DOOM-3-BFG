@@ -166,7 +166,7 @@ workspace("Doom3BFG")
 		pchsource("framework/precompiled.cpp")
 		pchheader("")
 
-		files({"premake5.lua", "cm/**", "framework/**", "renderer/**", "sound/**", "swf/**", "sys/**", "tools/**", "ui/**" } )
+		files({"premake5.lua", "cm/**", "framework/**", "renderer/**", "sound/**", "sys/**", "tools/**", "ui/**" } )
 		removefiles({"framework/Session.cpp", "tools/compilers/roqvq/roq.m", "ui/GameWindow.cpp", "sys/win32/win_stats.*", "sys/win32/win_snd.cpp", "sys/win32/win_gamma.cpp", "renderer/BoundsTrack.cpp"})
 
 		filter("files:renderer/jobs/**.cpp")

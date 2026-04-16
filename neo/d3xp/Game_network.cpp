@@ -30,7 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "Game_local.h"
-#include "..\framework\Common_local.h"
 
 static const int SNAP_GAMESTATE = 0;
 static const int SNAP_SHADERPARMS = 1;
@@ -54,7 +53,8 @@ static const int SNAP_LAST_CLIENT_FRAME_END = SNAP_LAST_CLIENT_FRAME + MAX_PLAYE
 
 idCVar net_clientSmoothing( "net_clientSmoothing", "0.8", CVAR_GAME | CVAR_FLOAT, "smooth other clients angles and position.", 0.0f, 0.95f );
 idCVar net_clientSelfSmoothing( "net_clientSelfSmoothing", "0.6", CVAR_GAME | CVAR_FLOAT, "smooth self position if network causes prediction error.", 0.0f, 0.95f );
-extern idCVar net_clientMaxPrediction;
+idCVar net_clientMaxPrediction( "net_clientMaxPrediction", "5000", CVAR_SYSTEM | CVAR_INTEGER | CVAR_NOCHEAT, "maximum number of milliseconds a client can predict ahead of server." );
+idCVar net_inviteOnly( "net_inviteOnly", "1", CVAR_BOOL | CVAR_ARCHIVE, "whether or not the private server you create allows friends to join or invite only" );
 
 idCVar cg_predictedSpawn_debug( "cg_predictedSpawn_debug", "0", CVAR_BOOL, "Debug predictive spawning of presentables" );
 idCVar g_clientFire_checkLineOfSightDebug( "g_clientFire_checkLineOfSightDebug", "0", CVAR_BOOL, "" );
@@ -231,13 +231,14 @@ void idGameLocal::ServerSendNetworkSyncCvars() {
 
 	outMsg.InitWrite( msgBuf, sizeof( msgBuf ) );
 	outMsg.BeginWriting();
-	idDict syncedCvars;
-	cvarSystem->MoveCVarsToDict( CVAR_NETWORKSYNC, syncedCvars, true );
-	outMsg.WriteDeltaDict( syncedCvars, NULL );
+	idDict *syncedCvars = cvarSystem->GetSyncedCvars();
+	cvarSystem->MoveCVarsToDict( CVAR_NETWORKSYNC, *syncedCvars, true );
+	outMsg.WriteDeltaDict( *syncedCvars, NULL );
 	lobby.SendReliable( GAME_RELIABLE_MESSAGE_SYNCEDCVARS, outMsg, false );
 
 	idLib::Printf( "Sending networkSync cvars:\n" );
-	syncedCvars.Print();
+	syncedCvars->Print();
+	//delete syncedCvars;
 }
 
 /*
@@ -260,13 +261,13 @@ void idGameLocal::ServerWriteInitialReliableMessages( int clientNum, lobbyUserID
 
 	outMsg.InitWrite( msgBuf, sizeof( msgBuf ) );
 	outMsg.BeginWriting();
-	idDict syncedCvars;
-	cvarSystem->MoveCVarsToDict( CVAR_NETWORKSYNC, syncedCvars, true );
-	outMsg.WriteDeltaDict( syncedCvars, NULL );
+	idDict *syncedCvars = cvarSystem->GetSyncedCvars();
+	cvarSystem->MoveCVarsToDict( CVAR_NETWORKSYNC, *syncedCvars, true );
+	outMsg.WriteDeltaDict( *syncedCvars, NULL );
 	lobby.SendReliableToLobbyUser( lobbyUserID, GAME_RELIABLE_MESSAGE_SYNCEDCVARS, outMsg );
 
 	idLib::Printf( "Sending initial networkSync cvars:\n" );
-	syncedCvars.Print();
+	syncedCvars->Print();
 
 	// send all saved events
 	for ( entityNetEvent_t * event = savedEventQueue.Start(); event; event = event->next ) {
@@ -791,7 +792,7 @@ void idGameLocal::ClientReadSnapshot( const idSnapShot & ss ) {
 			spawnCount = spawnId;
 
 			if ( entityNumber < MAX_CLIENTS ) {
-				commonLocal.GetUCmdMgr().ResetPlayer( entityNumber );
+				common->GetUCmdMgr().ResetPlayer( entityNumber );
 				SpawnPlayer( entityNumber );
 				ent = entities[ entityNumber ];
 				ent->FreeModelDef();

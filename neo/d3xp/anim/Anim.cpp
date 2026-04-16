@@ -1059,7 +1059,7 @@ idAnimManagerLocal::Preload
 void idAnimManagerLocal::Preload( const idPreloadManifest &manifest ) {
 	if ( manifest.NumResources() >= 0 ) {
 		common->Printf( "Preloading anims...\n" );
-		int	start = Sys_Milliseconds();
+		int	start = sys->Milliseconds();
 		int numLoaded = 0;
 		for ( int i = 0; i < manifest.NumResources(); i++ ) {
 			const preloadEntry_s & p = manifest.GetPreloadByIndex( i );
@@ -1068,7 +1068,7 @@ void idAnimManagerLocal::Preload( const idPreloadManifest &manifest ) {
 				numLoaded++;
 			}
 		}
-		int	end = Sys_Milliseconds();
+		int	end = sys->Milliseconds();
 		common->Printf( "%05d anims preloaded ( or were already loaded ) in %5.1f seconds\n", numLoaded, ( end - start ) * 0.001 );
 		common->Printf( "----------------------------------------\n" );
 	}

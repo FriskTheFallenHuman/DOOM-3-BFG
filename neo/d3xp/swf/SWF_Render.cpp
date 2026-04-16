@@ -27,7 +27,11 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "../renderer/tr_local.h"
+
+#include "../Game_local.h"
+
+#include "../renderer/Font.h"
+#include "../renderer/GLState.h"
 
 idCVar swf_timescale( "swf_timescale", "1", CVAR_FLOAT, "timescale for swf files" );
 idCVar swf_stopat( "swf_stopat", "0", CVAR_FLOAT, "stop at a specific frame" );
@@ -38,7 +42,6 @@ idCVar swf_forceAlpha( "swf_forceAlpha", "0", CVAR_FLOAT, "force an alpha value 
 
 extern idCVar swf_textStrokeSize;
 extern idCVar swf_textStrokeSizeGlyphSpacer;
-extern idCVar in_useJoystick;
 
 #define ALPHA_EPSILON	0.001f
 
@@ -86,7 +89,7 @@ void idSWF::Render( idRenderSystem * gui, int time, bool isSplitscreen ) {
 		}
 	}
 
-	int currentTime = Sys_Milliseconds();
+	int currentTime = sys->Milliseconds();
 	int framesToRun = 0;
 
 	if ( paused ) {
@@ -691,14 +694,14 @@ void idSWF::RenderEditText( idRenderSystem * gui, idSWFTextInstance * textInstan
 	if ( textInstance->variable.IsEmpty() ) {
 		if ( textInstance->renderMode == SWF_TEXT_RENDER_PARAGRAPH ) {
 			if ( textInstance->NeedsGenerateRandomText() ) {
-				textInstance->StartParagraphText( Sys_Milliseconds() );
+				textInstance->StartParagraphText( sys->Milliseconds() );
 			}
-			text = textInstance->GetParagraphText( Sys_Milliseconds() );
+			text = textInstance->GetParagraphText( sys->Milliseconds() );
 		} else if ( textInstance->renderMode == SWF_TEXT_RENDER_RANDOM_APPEAR || textInstance->renderMode == SWF_TEXT_RENDER_RANDOM_APPEAR_CAPS ) {
 			if ( textInstance->NeedsGenerateRandomText() ) {
-				textInstance->StartRandomText( Sys_Milliseconds() );
+				textInstance->StartRandomText( sys->Milliseconds() );
 			}
-			text = textInstance->GetRandomText( Sys_Milliseconds() );
+			text = textInstance->GetRandomText( sys->Milliseconds() );
 		} else {
 			text = idLocalization::GetString( textInstance->text );
 		}
@@ -1455,19 +1458,19 @@ This replaces text like "_use" with platform specific text like "<JOY1>"
 void idSWF::FindTooltipIcons( idStr * text ) {
 
 	tooltipIconList.Clear();
-
+#ifndef GAME_DLL
 	for ( int i = UB_MAX_BUTTONS - 1; i >= 0; i-- ) {
 	//for ( userCmdString_t * ucs = userCmdStrings ; ucs->string ; ucs++ ) {
 		userCmdString_t ucs = userCmdStrings[i];
 		if ( ucs.string && idStr::FindText( text->c_str(), ucs.string, false ) != idStr::INVALID_POSITION ) {
 			idStr replacement;
 
-			keyBindings_t bind = idKeyInput::KeyBindingsFromBinding( ucs.string, true );
+			keyBindings_t bind = keyBindMgr->KeyBindingsFromBinding( ucs.string, true );
 			idStr gamepad = "<";
 			gamepad.Append( bind.gamepad );
 			gamepad.Append( ">" );
 
-			if ( !in_useJoystick.GetBool() ) {
+			if ( !cvarSystem->GetCVarBool("in_useJoystick") ) {
 
 				if ( !bind.mouse.IsEmpty() ) {
 					replacement.Format( "<%s>", bind.mouse.c_str() );
@@ -1522,6 +1525,7 @@ void idSWF::FindTooltipIcons( idStr * text ) {
 			}
 		}
 	}
+#endif
 }
 
 

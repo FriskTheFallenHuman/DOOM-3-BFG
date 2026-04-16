@@ -68,10 +68,6 @@ idCVar com_productionMode( "com_productionMode", "0", CVAR_SYSTEM | CVAR_BOOL, "
 
 idCVar preload_CommonAssets( "preload_CommonAssets", "1", CVAR_SYSTEM | CVAR_BOOL, "preload common assets" );
 
-idCVar net_inviteOnly( "net_inviteOnly", "1", CVAR_BOOL | CVAR_ARCHIVE, "whether or not the private server you create allows friends to join or invite only" );
-
-extern idCVar g_demoMode;
-
 idCVar com_engineHz( "com_engineHz", "60", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f );
 idCVar com_hiResClock( "com_hiResClock", "2", CVAR_INTEGER | CVAR_ARCHIVE, "high resolution clock: 0 = disabled, 1 = enabled, 2 = enabled + thread affinity", 0, 2 );
 float com_engineHz_latched = 60.0f; // Latched version of cvar, updated between map loads
@@ -315,7 +311,7 @@ void idCommonLocal::WriteConfigToFile( const char *filename ) {
 		return;
 	}
 
-	idKeyInput::WriteBindings( f );
+	keyBindMgr->WriteBindings( f );
 	cvarSystem->WriteFlaggedVariables( CVAR_ARCHIVE, "set", f );
 	fileSystem->CloseFile( f );
 }
@@ -364,7 +360,7 @@ Returns the key bound to the command
 ===============
 */
 const char* idCommonLocal::KeysFromBinding( const char *bind ) {
-	return idKeyInput::KeysFromBinding( bind );
+	return keyBindMgr->KeysFromBinding( bind );
 }
 
 /*
@@ -374,7 +370,7 @@ Returns the binding bound to key
 ===============
 */
 const char* idCommonLocal::BindingFromKey( const char *key ) {
-	return idKeyInput::BindingFromKey( key );
+	return keyBindMgr->BindingFromKey( key );
 }
 
 /*
@@ -700,27 +696,6 @@ CONSOLE_COMMAND( reloadLanguage, "reload language dict", NULL ) {
 
 /*
 =================
-Com_StartBuild_f
-=================
-*/
-CONSOLE_COMMAND( startBuild, "prepares to make a build", NULL ) {
-	globalImages->StartBuild();
-}
-
-/*
-=================
-Com_FinishBuild_f
-=================
-*/
-CONSOLE_COMMAND( finishBuild, "finishes the build process", NULL ) {
-	if ( game ) {
-		game->CacheDictionaryMedia( NULL );
-	}
-	globalImages->FinishBuild( ( args.Argc() > 1 ) );
-}
-
-/*
-=================
 idCommonLocal::RenderSplash
 =================
 */
@@ -730,8 +705,9 @@ void idCommonLocal::RenderSplash( bool photsensitivity ) {
 	const float sysAspect = sysWidth / sysHeight;
 	const float splashAspect = 16.0f / 9.0f;
 	const float adjustment = sysAspect / splashAspect;
-	const float barHeight = ( adjustment >= 1.0f ) ? 0.0f : ( 1.0f - adjustment ) * (float)SCREEN_HEIGHT * 0.25f;
-	const float barWidth = ( adjustment <= 1.0f ) ? 0.0f : ( adjustment - 1.0f ) * (float)SCREEN_WIDTH * 0.25f;
+	const float invAdjustment = 1.0f / adjustment;
+	const float barHeight = (adjustment >= 1.0f) ? 0.0f : (1.0f - adjustment) * (float)SCREEN_HEIGHT * 0.5f;
+	const float barWidth = (adjustment <= 1.0f) ? 0.0f : (1.0f - invAdjustment) * (float)SCREEN_WIDTH * 0.5f;
 	if ( barHeight > 0.0f ) {
 		renderSystem->SetColor( colorBlack );
 		renderSystem->DrawStretchPic( 0, 0, SCREEN_WIDTH, barHeight, 0, 0, 1, 1, whiteMaterial );
@@ -771,7 +747,6 @@ void idCommonLocal::RenderVideo( const char * path ) {
 	material->ResetCinematicTime( Sys_Milliseconds() );
 
 	int cinematicLength = material->CinematicLength();
-	int	mouseEvents[MAX_MOUSE_EVENTS][2];
 
 	bool escapeEvent = false;
 	while ( ( Sys_Milliseconds() <= ( material->GetCinematicStartTime() + cinematicLength ) ) && material->CinematicIsPlaying() ) {
@@ -899,13 +874,18 @@ void idCommonLocal::LoadGameDLL() {
 	GetGameAPI = (GetGameAPI_t) Sys_DLL_GetProcAddress( gameDLL, functionName );
 	if ( !GetGameAPI ) {
 		Sys_DLL_Unload( gameDLL );
-		gameDLL = NULL;
+		gameDLL = 0;
 		common->FatalError( "couldn't find game DLL API" );
 		return;
 	}
 
 	gameImport.version					= GAME_API_VERSION;
 	gameImport.sys						= ::sys;
+	gameImport.inputDevices				= ::inputDevice;
+	gameImport.joystick					= ::joystick;
+	gameImport.keyBindMgr				= ::keyBindMgr;
+	gameImport.keys						= ::keys;
+	gameImport.session					= ::session;
 	gameImport.common					= ::common;
 	gameImport.cmdSystem				= ::cmdSystem;
 	gameImport.cvarSystem				= ::cvarSystem;
@@ -922,7 +902,7 @@ void idCommonLocal::LoadGameDLL() {
 
 	if ( gameExport.version != GAME_API_VERSION ) {
 		Sys_DLL_Unload( gameDLL );
-		gameDLL = NULL;
+		gameDLL = 0;
 		common->FatalError( "wrong game DLL API version" );
 		return;
 	}
@@ -1034,7 +1014,7 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 		Printf( "%s\n", version.string );
 
 		// initialize key input/binding, done early so bind command exists
-		idKeyInput::Init();
+		keyBindMgr->Init();
 
 		// init the console so we can take prints
 		console->Init();
@@ -1094,7 +1074,7 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 #ifdef CONFIG_FILE
 		// skip the config file if "safe" is on the command line
-		if ( !SafeMode() && !g_demoMode.GetBool() ) {
+		if ( !SafeMode() && !cvarSystem->GetCVarBool("g_demoMode") ) {
 			cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "exec " CONFIG_FILE "\n" );
 		}
 #endif
@@ -1224,7 +1204,9 @@ void idCommonLocal::Init( int argc, const char * const * argv, const char *cmdli
 
 		CreateMainMenu();
 
-		commonDialog.Init();
+		if ( game ) {
+			game->Shell_GetDialog().Init();
+		}
 
 		// load the console history file
 		consoleHistory.LoadHistoryFile();
@@ -1375,8 +1357,10 @@ void idCommonLocal::Shutdown() {
 	printf( "soundSystem->Shutdown();\n" );
 	soundSystem->Shutdown();
 
-	printf( "commonDialog.Shutdown();\n" );
-	commonDialog.Shutdown();
+	if ( game ) {
+		printf( "game->Shell_GetDialog().Shutdown();\n" );
+		game->Shell_GetDialog().Shutdown();
+	}
 
 	// unload the game dll
 	printf( "UnloadGameDLL();\n" );
@@ -1408,8 +1392,8 @@ void idCommonLocal::Shutdown() {
 	console->Shutdown();
 
 	// shut down the key system
-	printf( "idKeyInput::Shutdown();\n" );
-	idKeyInput::Shutdown();
+	printf( "keyBindMgr->Shutdown();\n" );
+	keyBindMgr->Shutdown();
 
 	// shut down the cvar system
 	printf( "cvarSystem->Shutdown();\n" );
@@ -1612,7 +1596,7 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t *event ) {
 
 	// in game, exec bindings for all key downs
 	if ( event->evType == SE_KEY && event->evValue2 == 1 ) {
-		idKeyInput::ExecKeyBinding( event->evValue );
+		keyBindMgr->ExecKeyBinding( event->evValue );
 		return true;
 	}
 

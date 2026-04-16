@@ -936,7 +936,7 @@ ID_INLINE void idPlayer::idCrouchRate::Reset() {
 ID_INLINE float idPlayer::idCrouchRate::GetValue() {
 	if ( baseRate != pm_crouchrate.GetFloat() ) {
 		baseRate = pm_crouchrate.GetFloat();
-		adjustedRate = idMath::Pow( baseRate, 60.0f / com_engineHz_latched );
+		adjustedRate = idMath::Pow( baseRate, 60.0f / common->GetEngineHzLatched() );
 	}
 	return adjustedRate;
 }

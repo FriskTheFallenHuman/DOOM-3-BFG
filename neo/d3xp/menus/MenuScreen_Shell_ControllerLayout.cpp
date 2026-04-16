@@ -213,7 +213,7 @@ void idMenuScreen_Shell_ControllerLayout::UpdateBindingInfo() {
 		txtVal = GetSprite()->GetScriptObject()->GetNestedText( "info", "controlInfo", "layout360", txtField );
 
 		if ( txtVal != NULL ) {
-			const char * binding = idKeyInput::GetBinding( keyNum );
+			const char * binding = keyBindMgr->GetBinding( keyNum );
 			if ( binding == NULL || binding[0] == 0 ) {
 				txtVal->SetText( "" );
 			} else if ( keyNum == K_JOY7 ) {

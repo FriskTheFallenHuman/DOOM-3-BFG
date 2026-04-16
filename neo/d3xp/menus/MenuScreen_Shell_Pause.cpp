@@ -41,7 +41,6 @@ enum pauseMenuCmds_t {
 	PAUSE_CMD_RETURN,
 	PAUSE_CMD_LOAD,
 	PAUSE_CMD_SAVE,
-	PAUSE_CMD_PS3,
 	PAUSE_CMD_INVITE_FRIENDS
 };
 
@@ -460,10 +459,6 @@ bool idMenuScreen_Shell_Pause::HandleAction( idWidgetAction & action, const idWi
 				}
 				case PAUSE_CMD_SAVE: {
 					menuData->SetNextScreen( SHELL_AREA_SAVE, MENU_TRANSITION_SIMPLE );
-					break;
-				}
-				case PAUSE_CMD_PS3: {
-					menuData->SetNextScreen( SHELL_AREA_PLAYSTATION, MENU_TRANSITION_SIMPLE );
 					break;
 				}
 				case PAUSE_CMD_INVITE_FRIENDS: {

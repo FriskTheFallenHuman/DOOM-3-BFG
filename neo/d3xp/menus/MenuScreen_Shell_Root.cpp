@@ -122,7 +122,6 @@ enum rootMenuCmds_t {
 	ROOT_CMD_DEV,
 	ROOT_CMD_CAMPAIGN,
 	ROOT_CMD_MULTIPLAYER,
-	ROOT_CMD_PLAYSTATION,
 	ROOT_CMD_CREDITS
 };
 
@@ -489,10 +488,6 @@ bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction & action, const idWid
 						matchParameters.matchFlags = DefaultPartyFlags;
 						session->CreatePartyLobby( matchParameters );
 					}
-					break;
-				}
-				case ROOT_CMD_PLAYSTATION: {
-					menuData->SetNextScreen( SHELL_AREA_PLAYSTATION, MENU_TRANSITION_SIMPLE );
 					break;
 				}
 				case ROOT_CMD_CREDITS: {

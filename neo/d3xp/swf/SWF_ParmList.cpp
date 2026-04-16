@@ -25,53 +25,63 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#ifndef __SWF_DIALOGS_H__
-#define __SWF_DIALOGS_H__
 
-#include "../framework/Common_dialog.h"
-#include "../swf/SWF.h"
+#include "precompiled.h"
+#pragma hdrstop
 
-/*
-================================================
-idSWFDialog
-================================================
-*/
-class idSWFDialog : public idCommonDialog {
-public:
-					idSWFDialog();
-	virtual         ~idSWFDialog();
+#include "../Game_local.h"
 
-	virtual void    Init();
-	virtual void    Shutdown();
-
-	virtual void    ShowSaveIndicator( bool show );
-	virtual bool    HandleDialogEvent( const sysEvent_t *sev );
-	virtual bool    IsDialogActive() const;
-
-protected:
-
-	virtual bool    IsRendererLoaded() const;
-	virtual bool    IsRendererActive() const;
-	virtual void    ActivateRenderer( bool active );
-	virtual bool    IsSaveIndicatorActive()  const;
-	virtual void    RenderDialog( int timeMicroseconds );
-	virtual void    RenderSaveIndicator( int timeMicroseconds );
-
-	virtual void    SetRendererGlobalInt( const char *name, int val );
-	virtual void    SetRendererGlobalString( const char *name, const char *val );
-
-	virtual void    AddRefCallback( void *cb );
-	virtual void    ReleaseCallback( void *cb );
-	virtual void    InvokeCallback( void *cb ) ;
-
-	virtual void    BindDialogToRenderer( const idDialogInfo &info );
-
-private:
-
-	static idSWFScriptFunction *AsSWF( void *cb ) { return static_cast< idSWFScriptFunction * >( cb ); }
-
-	idSWF *dialog;
-	idSWF *saveIndicator;
-};
-
-#endif /* !__SWF_DIALOGS_H__ */
+void idSWFParmList::Append( const idSWFScriptVar & other ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		*var = other;
+	}
+}
+void idSWFParmList::Append( idSWFScriptObject * o ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetObject( o );
+	}
+}
+void idSWFParmList::Append( idSWFScriptFunction * f ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetFunction( f );
+	}
+}
+void idSWFParmList::Append( const char * s ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetString( s );
+	}
+}
+void idSWFParmList::Append( const idStr & s ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetString( s );
+	}
+}
+void idSWFParmList::Append( idSWFScriptString * s ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetString( s );
+	}
+}
+void idSWFParmList::Append( const float f ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetFloat( f );
+	}
+}
+void idSWFParmList::Append( const int32 i ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetInteger( i );
+	}
+}
+void idSWFParmList::Append( const bool b ) {
+	idSWFScriptVar * var = Alloc();
+	if ( var != NULL ) {
+		var->SetBool( b );
+	}
+}

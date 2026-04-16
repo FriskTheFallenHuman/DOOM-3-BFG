@@ -140,6 +140,7 @@ public:
 	virtual void				ClearWarnings( const char *reason );
 	virtual void				Error( VERIFY_FORMAT_STRING const char *fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF(1,2);
 	virtual void				FatalError( VERIFY_FORMAT_STRING const char *fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF(1,2);
+	virtual idLangDict *		GetLanguageDictionary() { return &idLocalization::languageDict; }
 	virtual bool				IsShuttingDown() const { return com_shuttingDown; }
 
 	virtual const char *		KeysFromBinding( const char *bind );
@@ -174,7 +175,7 @@ public:
 	virtual idSoundWorld *		SW() { return soundWorld; }
 	virtual idSoundWorld *		MenuSW() { return menuSoundWorld; }
 	virtual idSession *			Session() { return session; }
-	virtual idCommonDialog &	Dialog() { return commonDialog; }
+	virtual idCommonDialog &	Dialog() { return Game()->Shell_GetDialog(); }
 
 	virtual void				OnSaveCompleted( idSaveLoadParms & parms );
 	virtual void				OnLoadCompleted( idSaveLoadParms & parms );
@@ -198,6 +199,10 @@ public:
 
 	virtual idUserCmdMgr &		GetUCmdMgr() { return userCmdMgr; }
 
+	virtual float				GetEngineHzLatched() { return com_engineHz_latched; }
+	virtual int64				GetEngineHzNumerator() { return com_engineHz_numerator; }
+	virtual int64				GetEngineHzDenominator() { return com_engineHz_denominator; }
+
 	// Return true if the main windows has lost focus, this is like pause but its mainly use to trotle down the fps
 	virtual void				SetFocus( bool bstate ) { com_focuslost = bstate; }
 	virtual bool				IsFocused() { return com_focuslost; }
@@ -205,9 +210,6 @@ public:
 	// Return true if the game is paused (either by focus lost or on deman)
 	virtual void				SetPaused( bool bstate ) { com_paused = bstate; }
 	virtual bool				IsPaused() { return com_paused; }
-
-	// Returns true if the game is requesting legacy font rendering
-	virtual bool				IsLegacyFont() { return false; };
 
 public:
 	void	Draw();			// called by gameThread
@@ -265,9 +267,7 @@ private:
 	idStrList					warningList;
 	idStrList					errorList;
 
-	int							gameDLL;
-
-	idSWFDialog					commonDialog;
+	uintptr_t					gameDLL;
 
 	idFile_SaveGame 			saveFile;
 	idFile_SaveGame 			stringsFile;

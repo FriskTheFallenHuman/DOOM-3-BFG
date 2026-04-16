@@ -27,7 +27,13 @@ else
 end
 
 project( "Game-D3XP" )
-	targetname("gamex86")
+	targetdir("../../bin/base")
+	filter("platforms:Win32")
+		targetname("gamex86")
+	filter({})
+	filter("platforms:x64")
+		targetname("gamex64")
+	filter({})
 	if _OPTIONS["dll"] then
 		kind("SharedLib")
 	else
@@ -35,7 +41,7 @@ project( "Game-D3XP" )
 	end
 	language("C++")
 	if _OPTIONS["dll"] then
-		links({"idLib"})
+		links({"idLib", "external"})
 	end
 
 	defines({"_D3XP", "CTF"})

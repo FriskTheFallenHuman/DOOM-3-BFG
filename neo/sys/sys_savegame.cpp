@@ -212,27 +212,6 @@ bool SavegameReadDetailsFromFile( idFile * file, idSaveGameDetails & details ) {
 
 /*
 ========================
-idSaveGameDetails::idSaveGameDetails
-========================
-*/
-idSaveGameDetails::idSaveGameDetails() {
-	Clear();
-}
-
-/*
-========================
-idSaveGameDetails::Clear
-========================
-*/
-void idSaveGameDetails::Clear() {
-	descriptors.Clear();
-	damaged = false;
-	date = 0;
-	slotName[0] = NULL;
-}
-
-/*
-========================
 idSaveLoadParms::idSaveLoadParms
 ========================
 */

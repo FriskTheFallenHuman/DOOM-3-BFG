@@ -25,21 +25,53 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#include "precompiled.h"
-#pragma hdrstop
+#ifndef __SWF_DIALOGS_H__
+#define __SWF_DIALOGS_H__
+
+#include "../framework/Common_dialog.h"
+#include "../swf/SWF.h"
 
 /*
-========================
-idSWF::DefineSound
-========================
+================================================
+idSWFDialog
+================================================
 */
-void idSWF::DefineSound( idSWFBitStream & bitstream ) {
-}
+class idSWFDialog : public idCommonDialog {
+public:
+					idSWFDialog();
+	virtual         ~idSWFDialog();
 
-/*
-========================
-idSWFSpriteInstance::StartSound
-========================
-*/
-void idSWFSpriteInstance::StartSound( idSWFBitStream & bitstream ) {
-}
+	virtual void    Init();
+	virtual void    Shutdown();
+
+	virtual void    ShowSaveIndicator( bool show );
+	virtual bool    HandleDialogEvent( const sysEvent_t *sev );
+	virtual bool    IsDialogActive() const;
+
+protected:
+
+	virtual bool    IsRendererLoaded() const;
+	virtual bool    IsRendererActive() const;
+	virtual void    ActivateRenderer( bool active );
+	virtual bool    IsSaveIndicatorActive()  const;
+	virtual void    RenderDialog( int timeMicroseconds );
+	virtual void    RenderSaveIndicator( int timeMicroseconds );
+
+	virtual void    SetRendererGlobalInt( const char *name, int val );
+	virtual void    SetRendererGlobalString( const char *name, const char *val );
+
+	virtual void    AddRefCallback( idDialogCallback *cb );
+	virtual void    ReleaseCallback( idDialogCallback *cb );
+	virtual void    InvokeCallback( idDialogCallback *cb ) ;
+
+	virtual void    BindDialogToRenderer( const idDialogInfo &info );
+
+private:
+
+	static idSWFScriptFunction *AsSWF( void *cb ) { return static_cast< idSWFScriptFunction * >( cb ); }
+
+	idSWF *dialog;
+	idSWF *saveIndicator;
+};
+
+#endif /* !__SWF_DIALOGS_H__ */

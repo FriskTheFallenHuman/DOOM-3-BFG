@@ -122,7 +122,7 @@ const char *idListWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 			if (Contains(gui->CursorX(), gui->CursorY())) {
 				int cur = ( int )( ( gui->CursorY() - actualY - pixelOffset ) / vert ) + top;
 				if ( cur >= 0 && cur < listItems.Num() ) {
-					if ( multipleSel && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+					if ( multipleSel && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 						if ( IsSelected( cur ) ) {
 							ClearSelection( cur );
 						} else {
@@ -153,7 +153,7 @@ const char *idListWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 				numLines = -numLines;
 			}
 
-			if ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) {
+			if ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) {
 				top += numLines;
 			} else {
 				SetCurrentSel( GetCurrentSel() + numLines );
@@ -192,7 +192,7 @@ const char *idListWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 	}
 
 	if ( scroller->GetHigh() > 0.0f ) {
-		if ( !idKeyInput::IsDown( K_LCTRL ) && !idKeyInput::IsDown( K_RCTRL ) ) {
+		if ( !keyBindMgr->IsDown( K_LCTRL ) && !keyBindMgr->IsDown( K_RCTRL ) ) {
 			if ( top > GetCurrentSel() - 1 ) {
 				top = GetCurrentSel() - 1;
 			}

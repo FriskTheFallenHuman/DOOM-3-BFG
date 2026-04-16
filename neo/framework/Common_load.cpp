@@ -38,8 +38,6 @@ idCVar com_disableAllSaves( "com_disableAllSaves", "0", CVAR_SYSTEM | CVAR_BOOL,
 
 extern idCVar sys_lang;
 
-extern idCVar g_demoMode;
-
 // This is for the dirty hack to get a dialog to show up before we capture the screen for autorender.
 const int NumScreenUpdatesToShowDialog = 25;
 
@@ -649,6 +647,7 @@ bool idCommonLocal::SaveGame( const char * saveName ) {
 	pipelineFile->Finish();
 
 	idSaveGameDetails gameDetails;
+	gameDetails.descriptors.Clear();
 	game->GetSaveGameDetails( gameDetails );
 
 	gameDetails.descriptors.Set( SAVEGAME_DETAIL_FIELD_LANGUAGE, sys_lang.GetString() );
@@ -969,9 +968,7 @@ Common_RestartMap_f
 ==================
 */
 CONSOLE_COMMAND_SHIP( restartMap, "restarts the current map", NULL ) {
-	if ( g_demoMode.GetBool() ) {
-		cmdSystem->AppendCommandText( va( "devmap %s %d\n", commonLocal.GetCurrentMapName(), 0 ) );
-	}
+	cmdSystem->AppendCommandText( va( "map %s %d\n", commonLocal.GetCurrentMapName(), 0 ) );
 }
 
 /*

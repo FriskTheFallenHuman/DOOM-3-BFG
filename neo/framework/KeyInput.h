@@ -42,31 +42,45 @@ int Key_CovertHIDCode( int hid );
 
 class idKeyInput {
 public:
-	static void				Init();
-	static void				Shutdown();
+	virtual						~idKeyInput() {}
 
-	static void				ArgCompletion_KeyName( const idCmdArgs &args, void(*callback)( const char *s ) );
-	static void				PreliminaryKeyEvent( int keyNum, bool down );
-	static bool				IsDown( int keyNum );
-	static int				GetUsercmdAction( int keyNum );
-	static bool				GetOverstrikeMode();
-	static void				SetOverstrikeMode( bool state );
-	static void				ClearStates();
+	virtual void				Init() = 0;
+	virtual void				Shutdown() = 0;
 
-	static keyNum_t			StringToKeyNum( const char * str );		// This is used by the "bind" command
-	static const char *		KeyNumToString( keyNum_t keyNum );		// This is the inverse of StringToKeyNum, used for config files
-	static const char *		LocalizedKeyName( keyNum_t keyNum );	// This returns text suitable to print on screen
+	virtual void				PreliminaryKeyEvent( int keyNum, bool down ) = 0;
+	virtual bool				IsDown( int keyNum ) = 0;
+	virtual int					GetUsercmdAction( int keyNum ) = 0;
+	virtual bool				GetOverstrikeMode() = 0;
+	virtual void				SetOverstrikeMode( bool state ) = 0;
+	virtual void				ClearStates() = 0;
 
-	static void				SetBinding( int keyNum, const char *binding );
-	static const char *		GetBinding( int keyNum );
-	static bool				UnbindBinding( const char *bind );
-	static int				NumBinds( const char *binding );
-	static bool				ExecKeyBinding( int keyNum );
-	static const char *		KeysFromBinding( const char *bind );
-	static const char *		BindingFromKey( const char *key );
-	static bool				KeyIsBoundTo( int keyNum, const char *binding );
-	static void				WriteBindings( idFile *f );
-	static keyBindings_t	KeyBindingsFromBinding( const char * bind, bool firstOnly = false, bool localized = false );
+	virtual keyNum_t			StringToKeyNum( const char * str ) = 0;		// This is used by the "bind" command
+	virtual const char *		KeyNumToString( keyNum_t keyNum ) = 0;		// This is the inverse of StringToKeyNum, used for config files
+	virtual const char *		LocalizedKeyName( keyNum_t keyNum ) = 0;	// This returns text suitable to print on screen
+
+	virtual void				SetBinding( int keyNum, const char *binding ) = 0;
+	virtual const char *		GetBinding( int keyNum ) = 0;
+	virtual bool				UnbindBinding( const char *bind ) = 0;
+	virtual int					NumBinds( const char *binding ) = 0;
+	virtual bool				ExecKeyBinding( int keyNum ) = 0;
+	virtual const char *		KeysFromBinding( const char *bind ) = 0;
+	virtual const char *		BindingFromKey( const char *key ) = 0;
+	virtual bool				KeyIsBoundTo( int keyNum, const char *binding ) = 0;
+	virtual void				WriteBindings( idFile *f ) = 0;
+	virtual keyBindings_t		KeyBindingsFromBinding( const char * bind, bool firstOnly = false, bool localized = false ) = 0;
 };
+
+extern idKeyInput *keyBindMgr;
+
+class idKey {
+public:
+					idKey() { down = false; repeats = 0; usercmdAction = 0; }
+	bool			down;
+	int				repeats;		// if > 1, it is autorepeating
+	idStr			binding;
+	int				usercmdAction;	// for testing by the asyncronous usercmd generation
+};
+
+extern idKey *keys;
 
 #endif /* !__KEYINPUT_H__ */

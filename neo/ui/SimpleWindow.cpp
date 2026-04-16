@@ -41,11 +41,7 @@ idSimpleWindow::idSimpleWindow(idWindow *win) {
 	clientRect = win->clientRect;
 	textRect = win->textRect;
 	origin = win->origin;
-	if ( common->IsLegacyFont() ) {
-		fontNum = win->fontNum;
-	} else {
-		font = win->font;
-	}
+	font = win->font;
 	name = win->name;
 	matScalex = win->matScalex;
 	matScaley = win->matScaley;
@@ -223,11 +219,7 @@ void idSimpleWindow::Redraw(float x, float y) {
 	}
 
 	CalcClientRect(0, 0);
-	if ( common->IsLegacyFont() ) {
-		dc->SetFont( fontNum );
-	} else {
-		dc->SetFont( font );
-	}
+	dc->SetFont( font );
 	drawRect.Offset(x, y);
 	clientRect.Offset(x, y);
 	textRect.Offset(x, y);
@@ -344,9 +336,6 @@ void idSimpleWindow::WriteToSaveGame( idFile *savefile ) {
 	savefile->Write( &clientRect, sizeof( clientRect ) );
 	savefile->Write( &textRect, sizeof( textRect ) );
 	savefile->Write( &origin, sizeof( origin ) );
-	if ( common->IsLegacyFont() ) {
-		savefile->Write( &fontNum, sizeof( fontNum ) );
-	}
 	savefile->Write( &matScalex, sizeof( matScalex ) );
 	savefile->Write( &matScaley, sizeof( matScaley ) );
 	savefile->Write( &borderSize, sizeof( borderSize ) );
@@ -354,9 +343,6 @@ void idSimpleWindow::WriteToSaveGame( idFile *savefile ) {
 	savefile->Write( &textAlignx, sizeof( textAlignx ) );
 	savefile->Write( &textAligny, sizeof( textAligny ) );
 	savefile->Write( &textShadow, sizeof( textShadow ) );
-	if ( !common->IsLegacyFont() ) {
-		savefile->WriteString( font->GetName() );
-	}
 
 	text.WriteToSaveGame( savefile );
 	visible.WriteToSaveGame( savefile );
@@ -395,9 +381,6 @@ void idSimpleWindow::ReadFromSaveGame( idFile *savefile ) {
 	savefile->Read( &clientRect, sizeof( clientRect ) );
 	savefile->Read( &textRect, sizeof( textRect ) );
 	savefile->Read( &origin, sizeof( origin ) );
-	if ( common->IsLegacyFont() ) {
-		savefile->Read( &fontNum, sizeof( fontNum ) );
-	}
 	savefile->Read( &matScalex, sizeof( matScalex ) );
 	savefile->Read( &matScaley, sizeof( matScaley ) );
 	savefile->Read( &borderSize, sizeof( borderSize ) );
@@ -405,11 +388,10 @@ void idSimpleWindow::ReadFromSaveGame( idFile *savefile ) {
 	savefile->Read( &textAlignx, sizeof( textAlignx ) );
 	savefile->Read( &textAligny, sizeof( textAligny ) );
 	savefile->Read( &textShadow, sizeof( textShadow ) );
-	if ( !common->IsLegacyFont() ) {
-		idStr fontName;
-		savefile->ReadString( fontName );
-		font = renderSystem->RegisterFont( fontName );
-	}
+
+	idStr fontName;
+	savefile->ReadString( fontName );
+	font = renderSystem->RegisterFont( fontName );
 
 	text.ReadFromSaveGame( savefile );
 	visible.ReadFromSaveGame( savefile );

@@ -296,7 +296,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
    		}
 		if ( key == K_RIGHTARROW )  {
 			if ( cursorPos < len ) {
-				if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+				if ( ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 					// skip to next word
 					while( ( cursorPos < len ) && ( buffer[ cursorPos ] != ' ' ) ) {
 						cursorPos++;
@@ -318,7 +318,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 		}
 
 		if ( key == K_LEFTARROW ) {
-			if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+			if ( ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 				// skip to previous word
 				while( ( cursorPos > 0 ) && ( buffer[ cursorPos - 1 ] == ' ' ) ) {
 					cursorPos--;
@@ -339,7 +339,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 		}
 
 		if ( key == K_HOME ) {
-			if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) || cursorLine <= 0 || ( cursorLine >= breaks.Num() ) ) {
+			if ( ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) || cursorLine <= 0 || ( cursorLine >= breaks.Num() ) ) {
                 cursorPos = 0;
 			} else {
 				cursorPos = breaks[cursorLine];
@@ -349,7 +349,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 		}
 
 		if ( key == K_END )  {
-			if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) || (cursorLine < -1) || ( cursorLine >= breaks.Num() - 1 ) ) {
+			if ( ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) || (cursorLine < -1) || ( cursorLine >= breaks.Num() - 1 ) ) {
 				cursorPos = len;
 			} else {
 				cursorPos = breaks[cursorLine + 1] - 1;
@@ -366,7 +366,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 		}
 
 		if ( key == K_DOWNARROW ) {
-			if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+			if ( ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 				scroller->SetValue( scroller->GetValue() + 1.0f );
 			} else {
 				if ( cursorLine < breaks.Num() - 1 ) {
@@ -378,7 +378,7 @@ const char *idEditWindow::HandleEvent(const sysEvent_t *event, bool *updateVisua
 		}
 
 		if (key == K_UPARROW ) {
-			if ( ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+			if ( ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 				scroller->SetValue( scroller->GetValue() - 1.0f );
 			} else {
 				if ( cursorLine > 0 ) {

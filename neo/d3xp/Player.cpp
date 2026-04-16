@@ -30,7 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "Game_local.h"
-#include "../framework/Common_local.h"
 #include "PredictedValue_impl.h"
 
 idCVar flashlight_batteryDrainTimeMS( "flashlight_batteryDrainTimeMS", "30000", CVAR_INTEGER, "amount of time (in MS) it takes for full battery to drain (-1 == no battery drain)" );
@@ -3184,7 +3183,7 @@ void idPlayer::DrawHUD( idMenuHandler_HUD * _hudManager ) {
 	idPlayer * localPlayer = static_cast< idPlayer * >( gameLocal.entities[ gameLocal.GetLocalClientNum() ] );
 
 	if ( localPlayer != NULL && localPlayer->mpMessages != NULL ) {
-		localPlayer->mpMessages->Render( renderSystem, Sys_Milliseconds() );
+		localPlayer->mpMessages->Render( renderSystem, sys->Milliseconds() );
 	}
 
 
@@ -5402,7 +5401,7 @@ void idPlayer::PlayVideoDisk( const idDeclVideo * decl ) {
 		for ( int i = 0; i < c; i++ ) {
 			const shaderStage_t *stage = pdaVideoMat->GetStage( i );
 			if ( stage != NULL && stage->texture.cinematic ) {
-				stage->texture.cinematic->ResetTime( Sys_Milliseconds() );
+				stage->texture.cinematic->ResetTime( sys->Milliseconds() );
 			}
 		}
 		if ( decl->GetWave() != NULL ) {
@@ -7129,7 +7128,7 @@ idPlayer::AllowClientAuthPhysics
 bool idPlayer::AllowClientAuthPhysics() {
 	// note respawn count > 1: respawn should be called twice - once for initial spawn and once for actual respawn by game mode
 	// TODO: I don't think doom 3 will need to care about the respawn count.
-	return ( usercmd.serverGameMilliseconds > serverOverridePositionTime && commonLocal.GetUCmdMgr().HasUserCmdForPlayer( entityNumber ) );
+	return ( usercmd.serverGameMilliseconds > serverOverridePositionTime && common->GetUCmdMgr().HasUserCmdForPlayer( entityNumber ) );
 }
 
 /*

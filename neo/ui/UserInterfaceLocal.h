@@ -147,7 +147,6 @@ private:
 	idRectangle					screenRect;
 	idDeviceContextLocal		dcOld;
 	idDeviceContextOptimized	dcOptimized;
-	idDeviceContextLegacy		dcLegacy;
 
 	idList<idUserInterfaceLocal*> guis;
 	idList<idUserInterfaceLocal*> demoGuis;

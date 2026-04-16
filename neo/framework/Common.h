@@ -43,23 +43,6 @@ extern float com_engineHz_latched;
 extern int64 com_engineHz_numerator;
 extern int64 com_engineHz_denominator;
 
-// Returns the msec the frame starts on
-ID_INLINE int FRAME_TO_MSEC( int64 frame ) {
-	return (int)( ( frame * com_engineHz_numerator ) / com_engineHz_denominator );
-}
-// Rounds DOWN to the nearest frame
-ID_INLINE int MSEC_TO_FRAME_FLOOR( int msec ) {
-	return (int)( ( ( (int64)msec * com_engineHz_denominator ) + ( com_engineHz_denominator - 1 ) ) / com_engineHz_numerator );
-}
-// Rounds UP to the nearest frame
-ID_INLINE int MSEC_TO_FRAME_CEIL( int msec ) {
-	return (int)( ( ( (int64)msec * com_engineHz_denominator ) + ( com_engineHz_numerator - 1 ) ) / com_engineHz_numerator );
-}
-// Aligns msec so it starts on a frame bondary
-ID_INLINE int MSEC_ALIGN_TO_FRAME( int msec ) {
-	return FRAME_TO_MSEC( MSEC_TO_FRAME_CEIL( msec ) );
-}
-
 class idGame;
 class idRenderWorld;
 class idSoundWorld;
@@ -197,8 +180,8 @@ public:
 								// Called repeatedly as the foreground thread for rendering and game logic.
 	virtual void				Frame() = 0;
 
-	// Redraws the screen, handling games, guis, console, etc
-	// in a modal manner outside the normal frame loop
+								// Redraws the screen, handling games, guis, console, etc
+								// in a modal manner outside the normal frame loop
 	virtual void				UpdateScreen( bool captureToImage, bool releaseMouse = true ) = 0;
 
 	virtual void				UpdateLevelLoadPacifier() = 0;
@@ -254,6 +237,9 @@ public:
 								// static internal errors or cases where the system may be corrupted.
 	virtual void                FatalError( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF(1,2) = 0;
 
+								// Returns the language dictionary, which is used for localization.
+	virtual idLangDict *		GetLanguageDictionary() = 0;
+
 								// Returns key bound to the command
 	virtual const char *		KeysFromBinding( const char *bind ) = 0;
 
@@ -266,23 +252,23 @@ public:
 								// Directly sample a keystate.
 	virtual int					KeyState( int key ) = 0;
 
-	// Returns true if a multiplayer game is running.
-	// CVars and commands are checked differently in multiplayer mode.
+								// Returns true if a multiplayer game is running.
+								// CVars and commands are checked differently in multiplayer mode.
 	virtual bool				IsMultiplayer() = 0;
 	virtual bool				IsServer() = 0;
 	virtual bool				IsClient() = 0;
 
-	// Returns true if the player has ever enabled the console
+								// Returns true if the player has ever enabled the console
 	virtual bool				GetConsoleUsed() = 0;
 
-	// Returns the rate (in ms between snaps) that we want to generate snapshots
+								// Returns the rate (in ms between snaps) that we want to generate snapshots
 	virtual int					GetSnapRate() = 0;
 
 	virtual void				NetReceiveReliable( int peer, int type, idBitMsg & msg ) = 0;
 	virtual void				NetReceiveSnapshot( class idSnapShot & ss ) = 0;
 	virtual void				NetReceiveUsercmds( int peer, idBitMsg & msg ) = 0;
 
-	// Processes the given event.
+								// Processes the given event.
 	virtual	bool				ProcessEvent( const sysEvent_t * event ) = 0;
 
 	virtual bool				LoadGame( const char * saveName ) = 0;
@@ -310,8 +296,8 @@ public:
 	virtual int					GetGameFrame() = 0;
 
 	virtual void				InitializeMPMapsModes() = 0;
-	virtual const idStrList &			GetModeList() const = 0;
-	virtual const idStrList &			GetModeDisplayList() const = 0;
+	virtual const idStrList &	GetModeList() const = 0;
+	virtual const idStrList &	GetModeDisplayList() const = 0;
 	virtual const idList<mpMap_t> &		GetMapList() const = 0;
 
 	virtual void				ResetPlayerInput( int playerIndex ) = 0;
@@ -320,28 +306,47 @@ public:
 
 	virtual idUserCmdMgr &		GetUCmdMgr() = 0;
 
-	// Return true if the main windows has lost focus, this is like pause but its mainly use to trotle down the fps
+	virtual float				GetEngineHzLatched() = 0;
+	virtual int64				GetEngineHzNumerator() = 0;
+	virtual int64				GetEngineHzDenominator() = 0;
+
+								// Return true if the main windows has lost focus, this is like pause but its mainly use to trotle down the fps
 	virtual void				SetFocus( bool bstate ) = 0;
 	virtual bool				IsFocused() = 0;
 
-	// Return true if the game is paused (either by focus lost or on deman)
+								// Return true if the game is paused (either by focus lost or on deman)
 	virtual void				SetPaused( bool bstate ) = 0;
 	virtual bool				IsPaused() = 0;
-
-	// Returns true if the game is requesting legacy font rendering
-	virtual bool				IsLegacyFont() = 0;
 };
 
 extern idCommon *		common;
 
+// Returns the msec the frame starts on
+ID_INLINE int FRAME_TO_MSEC( int64 frame ) {
+	return (int)( ( frame * common->GetEngineHzNumerator() ) / common->GetEngineHzDenominator() );
+}
+
+// Rounds DOWN to the nearest frame
+ID_INLINE int MSEC_TO_FRAME_FLOOR( int msec ) {
+	return (int)( ( ( (int64)msec * common->GetEngineHzDenominator() ) + ( common->GetEngineHzDenominator() - 1 ) ) / common->GetEngineHzNumerator() );
+}
+
+// Rounds UP to the nearest frame
+ID_INLINE int MSEC_TO_FRAME_CEIL( int msec ) {
+	return (int)( ( ( (int64)msec * common->GetEngineHzDenominator() ) + ( common->GetEngineHzNumerator() - 1 ) ) / common->GetEngineHzNumerator() );
+}
+
+// Aligns msec so it starts on a frame bondary
+ID_INLINE int MSEC_ALIGN_TO_FRAME( int msec ) {
+	return FRAME_TO_MSEC( MSEC_TO_FRAME_CEIL( msec ) );
+}
+
 #define ADD_DIALOG(...) do { \
-    idSWFDialog &dlg = static_cast<idSWFDialog &>( common->Dialog() ); \
-    dlg.AddDialog(__VA_ARGS__); \
+    common->Dialog().AddDialog(__VA_ARGS__); \
 } while (0)
 
 #define ADD_DYNAMIC_DIALOG(...) do { \
-    idSWFDialog &dlg = static_cast<idSWFDialog &>( common->Dialog() ); \
-    dlg.AddDynamicDialog(__VA_ARGS__); \
+    common->Dialog().AddDynamicDialog(__VA_ARGS__); \
 } while (0)
 
 #endif /* !__COMMON_H__ */

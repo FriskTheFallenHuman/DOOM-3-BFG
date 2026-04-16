@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 const static int NUM_SYSTEM_OPTIONS_OPTIONS = 8;
 
-extern idCVar r_multiSamples;
-extern idCVar r_motionBlur;
-extern idCVar r_swapInterval;
-extern idCVar r_lightScale;
-
 /*
 ========================
 idMenuScreen_Shell_SystemOptions::Initialize
@@ -206,11 +201,11 @@ void idMenuScreen_Shell_SystemOptions::HideScreen( const mainMenuTransition_t tr
 			void Call() override {
 				common->Dialog().ClearDialog( msg );
 				if ( restart ) {
-					idStr cmdLine = Sys_GetCmdLine();
+					idStr cmdLine = sys->GetCmdLine();
 					if ( cmdLine.Find( "com_skipIntroVideos" ) < 0 ) {
 						cmdLine.Append( " +set com_skipIntroVideos 1" );
 					}
-					Sys_ReLaunch( (void*)cmdLine.c_str(), cmdLine.Length() );
+					sys->ReLaunch( (void*)cmdLine.c_str(), cmdLine.Length() );
 				}
 			}
 		private:
@@ -331,15 +326,15 @@ idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::LoadData
 ========================
 */
 void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::LoadData() {
-	originalFramerate = com_engineHz.GetInteger();
-	originalAntialias = r_multiSamples.GetInteger();
-	originalMotionBlur = r_motionBlur.GetInteger();
-	originalVsync = r_swapInterval.GetInteger();
-	originalBrightness = r_lightScale.GetFloat();
+	originalFramerate = cvarSystem->GetCVarInteger( "com_engineHz" );
+	originalAntialias = cvarSystem->GetCVarInteger( "r_multiSamples" );
+	originalMotionBlur = cvarSystem->GetCVarInteger( "r_motionBlur" );
+	originalVsync = cvarSystem->GetCVarInteger( "r_swapInterval" );
+	originalBrightness = cvarSystem->GetCVarFloat( "r_lightScale" );
 
-	const int fullscreen = r_fullscreen.GetInteger();
+	const int fullscreen = cvarSystem->GetCVarInteger( "r_fullscreen" );
 	if ( fullscreen > 0 ) {
-		R_GetModeListForDisplay( fullscreen - 1, modeList );
+		renderSystem->GetModeListForDisplay( fullscreen - 1, modeList );
 	} else {
 		modeList.Clear();
 	}
@@ -351,10 +346,10 @@ idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsRestartRequ
 ========================
 */
 bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsRestartRequired() const {
-	if ( originalAntialias != r_multiSamples.GetInteger() ) {
+	if ( originalAntialias != cvarSystem->GetCVarInteger( "r_multiSamples" ) ) {
 		return true;
 	}
-	if ( originalFramerate != com_engineHz.GetInteger() ) {
+	if ( originalFramerate != cvarSystem->GetCVarInteger( "com_engineHz" ) ) {
 		return true;
 	}
 	return false;
@@ -411,39 +406,39 @@ void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::AdjustFi
 		case SYSTEM_FIELD_FRAMERATE: {
 			static const int numValues = 2;
 			static const int values[numValues] = { 60, 120 };
-			com_engineHz.SetInteger( AdjustOption( com_engineHz.GetInteger(), values, numValues, adjustAmount ) );
+			cvarSystem->SetCVarInteger( "com_engineHz", AdjustOption( cvarSystem->GetCVarInteger( "com_engineHz" ), values, numValues, adjustAmount ) );
 			break;
 		}
 		case SYSTEM_FIELD_VSYNC: {
 			static const int numValues = 3;
 			static const int values[numValues] = { 0, 1, 2 };
-			r_swapInterval.SetInteger( AdjustOption( r_swapInterval.GetInteger(), values, numValues, adjustAmount ) );
+			cvarSystem->SetCVarInteger( "r_swapInterval", AdjustOption( cvarSystem->GetCVarInteger( "r_swapInterval" ), values, numValues, adjustAmount ) );
 			break;
 		}
 		case SYSTEM_FIELD_ANTIALIASING: {
 			static const int numValues = 5;
 			static const int values[numValues] = { 0, 2, 4, 8, 16 };
-			r_multiSamples.SetInteger( AdjustOption( r_multiSamples.GetInteger(), values, numValues, adjustAmount ) );
+			cvarSystem->SetCVarInteger( "r_multiSamples", AdjustOption( cvarSystem->GetCVarInteger( "r_multiSamples" ), values, numValues, adjustAmount ) );
 			break;
 		}
 		case SYSTEM_FIELD_MOTIONBLUR: {
 			static const int numValues = 5;
 			static const int values[numValues] = { 0, 2, 3, 4, 5 };
-			r_motionBlur.SetInteger( AdjustOption( r_motionBlur.GetInteger(), values, numValues, adjustAmount ) );
+			cvarSystem->SetCVarInteger( "r_motionBlur", AdjustOption( cvarSystem->GetCVarInteger( "r_motionBlur" ), values, numValues, adjustAmount ) );
 			break;
 		}
 		case SYSTEM_FIELD_LODBIAS: {
-			const float percent = LinearAdjust( r_lodBias.GetFloat(), -1.0f, 1.0f, 0.0f, 100.0f );
+			const float percent = LinearAdjust( cvarSystem->GetCVarFloat( "r_lodBias" ), -1.0f, 1.0f, 0.0f, 100.0f );
 			const float adjusted = percent + (float)adjustAmount * 5.0f;
 			const float clamped = idMath::ClampFloat( 0.0f, 100.0f, adjusted );
-			r_lodBias.SetFloat( LinearAdjust( clamped, 0.0f, 100.0f, -1.0f, 1.0f ) );
+			cvarSystem->SetCVarFloat( "r_lodBias", LinearAdjust( clamped, 0.0f, 100.0f, -1.0f, 1.0f ) );
 			break;
 		}
 		case SYSTEM_FIELD_BRIGHTNESS: {
-			const float percent = LinearAdjust( r_lightScale.GetFloat(), 2.0f, 4.0f, 0.0f, 100.0f );
+			const float percent = LinearAdjust( cvarSystem->GetCVarFloat( "r_lightScale" ), 2.0f, 4.0f, 0.0f, 100.0f );
 			const float adjusted = percent + (float)adjustAmount;
 			const float clamped = idMath::ClampFloat( 0.0f, 100.0f, adjusted );
-			r_lightScale.SetFloat( LinearAdjust( clamped, 0.0f, 100.0f, 2.0f, 4.0f ) );
+			cvarSystem->SetCVarFloat( "r_lightScale", LinearAdjust( clamped, 0.0f, 100.0f, 2.0f, 4.0f ) );
 			break;
 		}
 	}
@@ -458,8 +453,8 @@ idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::GetField
 idSWFScriptVar idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::GetField( const int fieldIndex ) const {
 	switch ( fieldIndex ) {
 		case SYSTEM_FIELD_FULLSCREEN: {
-			const int fullscreen = r_fullscreen.GetInteger();
-			const int vidmode = r_vidMode.GetInteger();
+			const int fullscreen = cvarSystem->GetCVarInteger( "r_fullscreen" );
+			const int vidmode = cvarSystem->GetCVarInteger( "r_vidMode" );
 			if ( fullscreen == 0 ) {
 				return "#str_swf_disabled";
 			}
@@ -473,29 +468,29 @@ idSWFScriptVar idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings
 			}
 		}
 		case SYSTEM_FIELD_FRAMERATE:
-			return va( "%d FPS", com_engineHz.GetInteger() );
+			return va( "%d FPS", cvarSystem->GetCVarInteger( "com_engineHz" ) );
 		case SYSTEM_FIELD_VSYNC:
-			if ( r_swapInterval.GetInteger() == 1 ) {
+			if ( cvarSystem->GetCVarInteger( "r_swapInterval" ) == 1 ) {
 				return "#str_swf_smart";
-			} else if ( r_swapInterval.GetInteger() == 2 ) {
+			} else if ( cvarSystem->GetCVarInteger( "r_swapInterval" ) == 2 ) {
 				return "#str_swf_enabled";
 			} else {
 				return "#str_swf_disabled";
 			}
 		case SYSTEM_FIELD_ANTIALIASING:
-			if ( r_multiSamples.GetInteger() == 0 ) {
+			if ( cvarSystem->GetCVarInteger( "r_multiSamples" ) == 0 ) {
 				return "#str_swf_disabled";
 			}
-			return va( "%dx", r_multiSamples.GetInteger() );
+			return va( "%dx", cvarSystem->GetCVarInteger( "r_multiSamples" ) );
 		case SYSTEM_FIELD_MOTIONBLUR:
-			if ( r_motionBlur.GetInteger() == 0 ) {
+			if ( cvarSystem->GetCVarInteger( "r_motionBlur" ) == 0 ) {
 				return "#str_swf_disabled";
 			}
-			return va( "%dx", idMath::IPow( 2, r_motionBlur.GetInteger() ) );
+			return va( "%dx", idMath::IPow( 2, cvarSystem->GetCVarInteger( "r_motionBlur" ) ) );
 		case SYSTEM_FIELD_LODBIAS:
-			return LinearAdjust( r_lodBias.GetFloat(), -1.0f, 1.0f, 0.0f, 100.0f );
+			return LinearAdjust( cvarSystem->GetCVarFloat( "r_lodBias" ), -1.0f, 1.0f, 0.0f, 100.0f );
 		case SYSTEM_FIELD_BRIGHTNESS:
-			return LinearAdjust( r_lightScale.GetFloat(), 2.0f, 4.0f, 0.0f, 100.0f );
+			return LinearAdjust( cvarSystem->GetCVarFloat( "r_lightScale" ), 2.0f, 4.0f, 0.0f, 100.0f );
 	}
 	return false;
 }
@@ -506,19 +501,19 @@ idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataChanged
 ========================
 */
 bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataChanged() const {
-	if ( originalFramerate != com_engineHz.GetInteger() ) {
+	if ( originalFramerate != cvarSystem->GetCVarInteger( "com_engineHz" ) ) {
 		return true;
 	}
-	if ( originalAntialias != r_multiSamples.GetInteger() ) {
+	if ( originalAntialias != cvarSystem->GetCVarInteger( "r_multiSamples" ) ) {
 		return true;
 	}
-	if ( originalMotionBlur != r_motionBlur.GetInteger() ) {
+	if ( originalMotionBlur != cvarSystem->GetCVarInteger( "r_motionBlur" ) ) {
 		return true;
 	}
-	if ( originalVsync != r_swapInterval.GetInteger() ) {
+	if ( originalVsync != cvarSystem->GetCVarInteger( "r_swapInterval" ) ) {
 		return true;
 	}
-	if ( originalBrightness != r_lightScale.GetFloat() ) {
+	if ( originalBrightness != cvarSystem->GetCVarFloat( "r_lightScale" ) ) {
 		return true;
 	}
 	return false;

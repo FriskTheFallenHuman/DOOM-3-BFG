@@ -29,6 +29,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+#include "../Game_local.h"
+
 /*
 ========================
 idSWFDialog::idSWFDialog
@@ -54,7 +56,7 @@ idSWFDialog::Init
 ========================
 */
 void idSWFDialog::Init() {
-	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s]\n", __FUNCTION__ );
+	idLib::PrintfIf( cvarSystem->GetCVarBool("popupDialog_debug"), "[%s]\n", __FUNCTION__ );
 
 	Shutdown();
 
@@ -87,7 +89,7 @@ idSWFDialog::Shutdown
 ========================
 */
 void idSWFDialog::Shutdown() {
-	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s]\n", __FUNCTION__ );
+	idLib::PrintfIf( cvarSystem->GetCVarBool("popupDialog_debug"), "[%s]\n", __FUNCTION__ );
 
 	ClearDialogs();
 
@@ -185,7 +187,7 @@ void idSWFDialog::SetRendererGlobalString( const char *name, const char *val ) {
 idSWFDialog::AddRefCallback
 ========================
 */
-void idSWFDialog::AddRefCallback( void *cb ) {
+void idSWFDialog::AddRefCallback( idDialogCallback *cb ) {
 	if ( cb != NULL ) {
 		AsSWF(cb)->AddRef();
 	}
@@ -196,7 +198,7 @@ void idSWFDialog::AddRefCallback( void *cb ) {
 idSWFDialog::ReleaseCallback
 ========================
 */
-void idSWFDialog::ReleaseCallback( void *cb ) {
+void idSWFDialog::ReleaseCallback( idDialogCallback *cb ) {
 	if ( cb != NULL ) {
 		AsSWF(cb)->Release();
 	}
@@ -207,7 +209,7 @@ void idSWFDialog::ReleaseCallback( void *cb ) {
 idSWFDialog::InvokeCallback
 ========================
 */
-void idSWFDialog::InvokeCallback( void *cb ) {
+void idSWFDialog::InvokeCallback( idDialogCallback *cb ) {
 	if ( cb != NULL ) {
 		idSWFParmList parms;
 		AsSWF(cb)->Call(NULL, parms);
@@ -315,8 +317,8 @@ bool idSWFDialog::HandleDialogEvent( const sysEvent_t *sev ) {
 			return false;
 		} else {
 			if ( dialog->HandleEvent( sev ) ) {
-				idKeyInput::ClearStates();
-				Sys_ClearEvents();
+				keyBindMgr->ClearStates();
+				sys->ClearEvents();
 			}
 		}
 
@@ -332,7 +334,7 @@ idSWFDialog::ShowSaveIndicator
 ================================================
 */
 void idSWFDialog::ShowSaveIndicator( bool show ) {
-	idLib::PrintfIf( popupDialog_debug.GetBool(), "[%s]\n", __FUNCTION__ );
+	idLib::PrintfIf( cvarSystem->GetCVarBool("popupDialog_debug"), "[%s]\n", __FUNCTION__ );
 
 	if ( show ) {
 		idStr msg = idStrId( "#str_dlg_pc_saving" ).GetLocalizedString();

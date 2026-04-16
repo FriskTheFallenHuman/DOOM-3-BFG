@@ -27,33 +27,21 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "miniz/miniz.h"
+
+#include "../Game_local.h"
 
 /*
 ========================
-idSWF::Inflate
+idSWF::DefineSound
 ========================
 */
-bool idSWF::Inflate( const byte * input, int inputSize, byte * output, int outputSize ) {
-	struct local_swf_alloc_t {
-		static void * zalloc( void * opaque, size_t items, size_t size ) {
-			return Mem_Alloc( items * size, TAG_SWF );
-		}
-		static void zfree( void * opaque, void * ptr ) {
-			Mem_Free( ptr );
-		}
-	};
-	mz_stream stream;
-	memset( &stream, 0, sizeof( stream ) );
-	stream.next_in = (Bytef *)input;
-	stream.avail_in = inputSize;
-	stream.next_out = (Bytef *)output;
-	stream.avail_out = outputSize;
-	stream.zalloc = local_swf_alloc_t::zalloc;
-	stream.zfree = local_swf_alloc_t::zfree;
-	mz_inflateInit( &stream );
-	bool success = ( mz_inflate( &stream, MZ_FINISH ) == MZ_STREAM_END );
-	mz_inflateEnd( &stream );
+void idSWF::DefineSound( idSWFBitStream & bitstream ) {
+}
 
-	return success;
+/*
+========================
+idSWFSpriteInstance::StartSound
+========================
+*/
+void idSWFSpriteInstance::StartSound( idSWFBitStream & bitstream ) {
 }

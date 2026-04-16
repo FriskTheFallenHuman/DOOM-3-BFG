@@ -567,7 +567,7 @@ void idUsercmdGenLocal::HandleJoystickAxis( int keyNum, float unclampedValue, fl
 		pressed = true;
 	}
 
-	int action = idKeyInput::GetUsercmdAction( keyNum );
+	int action = keyBindMgr->GetUsercmdAction( keyNum );
 	if ( action >= UB_ATTACK ) {
 		Key( keyNum, pressed );
 		return;
@@ -911,7 +911,7 @@ void idUsercmdGenLocal::JoystickMove2() {
 	idVec2 rightRaw( joystickAxis[ AXIS_RIGHT_X ], joystickAxis[ AXIS_RIGHT_Y ] );
 
 	// optional stick swap
-	if ( idKeyInput::GetUsercmdAction( K_JOY_STICK1_LEFT ) == UB_LOOKLEFT ) {
+	if ( keyBindMgr->GetUsercmdAction( K_JOY_STICK1_LEFT ) == UB_LOOKLEFT ) {
 		const idVec2	temp = leftRaw;
 		leftRaw = rightRaw;
 		rightRaw = temp;
@@ -1180,7 +1180,7 @@ void idUsercmdGenLocal::Key( int keyNum, bool down ) {
 	}
 	keyState[ keyNum ] = down;
 
-	int action = idKeyInput::GetUsercmdAction( keyNum );
+	int action = keyBindMgr->GetUsercmdAction( keyNum );
 
 	if ( down ) {
 		buttonState[ action ]++;

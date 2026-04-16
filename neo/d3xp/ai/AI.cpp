@@ -5118,6 +5118,7 @@ bool idAI::UpdateAnimationControllers() {
 	return true;
 }
 
+#ifndef GAME_DLL
 /***********************************************************************
 
 idAI_Vagary
@@ -5126,6 +5127,7 @@ idAI_Vagary
 
 const idEventDef AI_Vagary_ChooseObjectToThrow( "vagary_ChooseObjectToThrow", "vvfff", 'e' );
 const idEventDef AI_Vagary_ThrowObjectAtEnemy( "vagary_ThrowObjectAtEnemy", "ef" );
+#endif
 
 /***********************************************************************
 

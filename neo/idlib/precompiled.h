@@ -57,6 +57,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "../framework/CmdSystem.h"
 #include "../framework/CVarSystem.h"
 #include "../framework/Common.h"
+#include "../framework/KeyInput.h"
 #include "../framework/Unzip.h"
 #include "../framework/File.h"
 #include "../framework/File_Manifest.h"
@@ -104,7 +105,6 @@ const int MAX_EXPRESSION_REGISTERS = 4096;
 #include "../ui/ListGUI.h"
 #include "../ui/UserInterface.h"
 
-#include "../swf/SWF.h"
 
 // collision detection system
 #include "../cm/CollisionModel.h"
@@ -153,7 +153,6 @@ const int MAX_EXPRESSION_REGISTERS = 4096;
 // framework
 #include "../framework/Compressor.h"
 #include "../framework/EventLoop.h"
-#include "../framework/KeyInput.h"
 #include "../framework/EditField.h"
 #include "../framework/DebugGraph.h"
 #include "../framework/Console.h"

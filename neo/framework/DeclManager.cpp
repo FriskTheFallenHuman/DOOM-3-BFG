@@ -217,6 +217,9 @@ public:
 
 	virtual void					Touch( const idDecl * decl );
 
+	virtual void					SetDictInt( idDict *dict, const char *key, int val );
+	virtual void					SetDictStr( idDict *dict, const char *key, const char *val );
+
 public:
 	static void					MakeNameCanonical( const char *name, char *result, int maxLength );
 	idDeclLocal *				FindTypeWithoutParsing( declType_t type, const char *name, bool makeDefault = true );
@@ -1586,6 +1589,24 @@ void idDeclManagerLocal::Touch( const idDecl * decl ) {
 		// This should parse the decl as well.
 		FindType( decl->GetType(), decl->GetName() );
 	}
+}
+
+/*
+===================
+idDeclManagerLocal::SetDictInt
+===================
+*/
+void idDeclManagerLocal::SetDictInt( idDict *dict, const char *key, int val ) {
+	dict->SetInt( key, val );
+}
+
+/*
+===================
+idDeclManagerLocal::SetDictStr
+===================
+*/
+void idDeclManagerLocal::SetDictStr( idDict *dict, const char *key, const char *val ) {
+	dict->Set( key, val );
 }
 
 /*

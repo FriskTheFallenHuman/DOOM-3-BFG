@@ -642,8 +642,16 @@ extern idJoystick *			joystick;
 
 class idSys {
 public:
+	virtual const char *	GetCmdLine() = 0;
+	virtual void			ReLaunch( void * launchData, unsigned int launchDataSize ) = 0;
+
 	virtual void			DebugPrintf( VERIFY_FORMAT_STRING const char *fmt, ... ) = 0;
 	virtual void			DebugVPrintf( const char *fmt, va_list arg ) = 0;
+
+	virtual void			Sleep( int msec ) = 0;
+
+	virtual int				Milliseconds() = 0;
+	virtual uint64			Microseconds() = 0;
 
 	virtual double			GetClockTicks() = 0;
 	virtual double			ClockTicksPerSecond() = 0;
@@ -660,6 +668,13 @@ public:
 	virtual void *			DLL_GetProcAddress( uintptr_t dllHandle, const char *procName ) = 0;
 	virtual void			DLL_Unload( uintptr_t dllHandle ) = 0;
 	virtual void			DLL_GetFileName( const char *baseName, char *dllName, int maxLength ) = 0;
+
+	virtual void			GenerateEvents() = 0;
+	virtual sysEvent_t		GetEvent() = 0;
+	virtual void			ClearEvents() = 0;
+
+	virtual const char *	TimeStampToStr( ID_TIME_T timeStamp ) = 0;
+	virtual const char *	SecToStr( int sec ) = 0;
 
 	virtual sysEvent_t		GenerateMouseButtonEvent( int button, bool down ) = 0;
 	virtual sysEvent_t		GenerateMouseMoveEvent( int deltax, int deltay ) = 0;

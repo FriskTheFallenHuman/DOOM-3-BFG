@@ -156,7 +156,8 @@ public:
 	virtual idFile *		OpenFileByMode( const char *relativePath, fsMode_t mode );
 	virtual idFile *		OpenExplicitFileRead( const char *OSPath );
 	virtual idFile *		OpenExplicitFileWrite( const char *OSPath );
-	virtual idFile_Cached *		OpenExplicitPakFile( const char *OSPath );
+	virtual idFile_Cached *	OpenExplicitPakFile( const char *OSPath );
+	virtual bool			OpenPipelineFileForReading( idFile_SaveGamePipelined *pipe, idFile *file );
 	virtual void			CloseFile( idFile *f );
 	virtual void			FindDLL( const char *basename, char dllPath[ MAX_OSPATH ] );
 	virtual void			CopyFile( const char *fromOSPath, const char *toOSPath );
@@ -199,6 +200,9 @@ public:
 	}
 	virtual void			AddParticlePreload( const char *resName ) {
 		preloadList.AddParticle( resName );
+	}
+	virtual idFile_SaveGamePipelined *GetSaveGamePipelined() {
+		return new(TAG_SAVEGAMES) idFile_SaveGamePipelined();
 	}
 
 	static void				Dir_f( const idCmdArgs &args );
@@ -3307,6 +3311,15 @@ idFile_Cached *idFileSystemLocal::OpenExplicitPakFile( const char *OSPath ) {
 
 /*
 ===========
+idFileSystemLocal::OpenPipelineFileForReading
+===========
+*/
+bool idFileSystemLocal::OpenPipelineFileForReading( idFile_SaveGamePipelined *pipe, idFile *file ) {
+	return pipe->OpenForReading( file );
+}
+
+/*
+===========
 idFileSystemLocal::OpenExplicitFileWrite
 ===========
 */
@@ -3420,19 +3433,34 @@ idFileSystemLocal::FindDLL
 void idFileSystemLocal::FindDLL( const char *name, char _dllPath[ MAX_OSPATH ] ) {
 	char dllName[MAX_OSPATH];
 	sys->DLL_GetFileName( name, dllName, MAX_OSPATH );
-
+	
 	// from executable directory first - this is handy for developement
-	idStr dllPath = Sys_EXEPath( );
-	dllPath.StripFilename( );
-	dllPath.AppendPath( dllName );
-	idFile * dllFile = OpenExplicitFileRead( dllPath );
-
-	if ( dllFile ) {
-		dllPath = dllFile->GetFullPath();
-		CloseFile( dllFile );
-		dllFile = NULL;
-	} else {
-		dllPath = "";
+	// Check all it's directories for a dll not just the basics
+	idStr dllPath;
+	for ( int sp = fileSystemLocal.searchPaths.Num() - 1; sp >= 0; sp-- ) {
+		dllPath = fileSystemLocal.searchPaths[sp].path.c_str();
+		dllPath.AppendPath( fileSystemLocal.searchPaths[sp].gamedir.c_str() );
+#ifdef ID_PC_WIN
+		dllPath.SlashesToBackSlashes();
+#else
+		dllPath.BackSlashesToSlashes();
+#endif
+		//dllPath.StripFilename();
+		dllPath.AppendPath( dllName );
+#ifdef ID_PC_WIN
+		dllPath.SlashesToBackSlashes();
+#else
+		dllPath.BackSlashesToSlashes();
+#endif
+		idFile *dllFile = OpenExplicitFileRead( dllPath );
+		if ( dllFile ) {
+			dllPath = dllFile->GetFullPath();
+			CloseFile( dllFile );
+			dllFile = NULL;
+			break;
+		} else {
+			dllPath = "";
+		}
 	}
 	idStr::snPrintf( _dllPath, MAX_OSPATH, dllPath.c_str() );
 }

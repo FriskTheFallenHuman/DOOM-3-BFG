@@ -1698,28 +1698,6 @@ int idFile_InnerResource::Seek( int offset, fsOrigin_t origin ) {
 }
 #endif
 
-/*
-================================================================================================
-
-idFileLocal
-
-================================================================================================
-*/
-
-/*
-========================
-idFileLocal::~idFileLocal
-
-Destructor that will destroy (close) the managed file when this wrapper class goes out of scope.
-========================
-*/
-idFileLocal::~idFileLocal() {
-	if ( file != NULL ) {
-		delete file;
-		file = NULL;
-	}
-}
-
 static const char * testEndianNessFilename = "temp.bin";
 struct testEndianNess_t {
 	testEndianNess_t() {

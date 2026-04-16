@@ -340,7 +340,7 @@ void idEditField::CharEvent( int ch ) {
 		return;
 	}
 
-	if ( idKeyInput::GetOverstrikeMode() ) {
+	if ( keyBindMgr->GetOverstrikeMode() ) {
 		if ( cursor == MAX_EDIT_LINE - 1 ) {
 			return;
 		}
@@ -374,7 +374,7 @@ void idEditField::KeyDownEvent( int key ) {
 	int		len;
 
 	// shift-insert is paste
-	if ( ( ( key == K_INS ) || ( key == K_KP_0 ) ) && ( idKeyInput::IsDown( K_LSHIFT ) || idKeyInput::IsDown( K_RSHIFT ) ) ) {
+	if ( ( ( key == K_INS ) || ( key == K_KP_0 ) ) && ( keyBindMgr->IsDown( K_LSHIFT ) || keyBindMgr->IsDown( K_RSHIFT ) ) ) {
 		ClearAutoComplete();
 		Paste();
 		return;
@@ -392,7 +392,7 @@ void idEditField::KeyDownEvent( int key ) {
 	}
 
 	if ( key == K_RIGHTARROW ) {
-		if ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) {
+		if ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) {
 			// skip to next word
 			while( ( cursor < len ) && ( buffer[ cursor ] != ' ' ) ) {
 				cursor++;
@@ -420,7 +420,7 @@ void idEditField::KeyDownEvent( int key ) {
 	}
 
 	if ( key == K_LEFTARROW ) {
-		if ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) {
+		if ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) {
 			// skip to previous word
 			while( ( cursor > 0 ) && ( buffer[ cursor - 1 ] == ' ' ) ) {
 				cursor--;
@@ -446,7 +446,7 @@ void idEditField::KeyDownEvent( int key ) {
 		return;
 	}
 
-	if ( key == K_HOME || ( key == K_A && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) ) {
+	if ( key == K_HOME || ( key == K_A && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) ) {
 		cursor = 0;
 		scroll = 0;
 		if ( autoComplete.length ) {
@@ -456,7 +456,7 @@ void idEditField::KeyDownEvent( int key ) {
 		return;
 	}
 
-	if ( key == K_END || ( key == K_E && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) ) {
+	if ( key == K_END || ( key == K_E && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) ) {
 		cursor = len;
 		if ( cursor >= scroll + widthInChars ) {
 			scroll = cursor - widthInChars + 1;
@@ -469,7 +469,7 @@ void idEditField::KeyDownEvent( int key ) {
 	}
 
 	if ( key == K_INS ) {
-		idKeyInput::SetOverstrikeMode( !idKeyInput::GetOverstrikeMode() );
+		keyBindMgr->SetOverstrikeMode( !keyBindMgr->GetOverstrikeMode() );
 		return;
 	}
 
@@ -586,7 +586,7 @@ void idEditField::Draw( int x, int y, int width, bool showCursor ) {
 		return;		// off blink
 	}
 
-	if ( idKeyInput::GetOverstrikeMode() ) {
+	if ( keyBindMgr->GetOverstrikeMode() ) {
 		cursorChar = 11;
 	} else {
 		cursorChar = 10;

@@ -577,12 +577,12 @@ void idConsoleLocal::KeyDownEvent( int key ) {
 
 	// Execute F key bindings
 	if ( key >= K_F1 && key <= K_F12 ) {
-		idKeyInput::ExecKeyBinding( key );
+		keyBindMgr->ExecKeyBinding( key );
 		return;
 	}
 
 	// ctrl-L clears screen
-	if ( key == K_L && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+	if ( key == K_L && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 		Clear();
 		return;
 	}
@@ -620,7 +620,7 @@ void idConsoleLocal::KeyDownEvent( int key ) {
 	// command history (ctrl-p ctrl-n for unix style)
 
 	if ( ( key == K_UPARROW ) ||
-		 ( key == K_P && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) ) {
+		 ( key == K_P && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) ) {
 		idStr hist = consoleHistory.RetrieveFromHistory( true );
 		if ( !hist.IsEmpty() ) {
 			consoleField.SetBuffer( hist );
@@ -629,7 +629,7 @@ void idConsoleLocal::KeyDownEvent( int key ) {
 	}
 
 	if ( ( key == K_DOWNARROW ) ||
-		 ( key == K_N && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) ) {
+		 ( key == K_N && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) ) {
 		idStr hist = consoleHistory.RetrieveFromHistory( false );
 		if ( !hist.IsEmpty() ) {
 			consoleField.SetBuffer( hist );
@@ -665,13 +665,13 @@ void idConsoleLocal::KeyDownEvent( int key ) {
 	}
 
 	// ctrl-home = top of console
-	if ( key == K_HOME && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+	if ( key == K_HOME && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 		Top();
 		return;
 	}
 
 	// ctrl-end = bottom of console
-	if ( key == K_END && ( idKeyInput::IsDown( K_LCTRL ) || idKeyInput::IsDown( K_RCTRL ) ) ) {
+	if ( key == K_END && ( keyBindMgr->IsDown( K_LCTRL ) || keyBindMgr->IsDown( K_RCTRL ) ) ) {
 		Bottom();
 		return;
 	}
@@ -691,13 +691,13 @@ void idConsoleLocal::Scroll( ) {
 		return;
 	}
 	// console scrolling
-	if ( idKeyInput::IsDown( K_PGUP ) ) {
+	if ( keyBindMgr->IsDown( K_PGUP ) ) {
 		PageUp();
 		nextKeyEvent = CONSOLE_REPEAT;
 		return;
 	}
 
-	if ( idKeyInput::IsDown( K_PGDN ) ) {
+	if ( keyBindMgr->IsDown( K_PGDN ) ) {
 		PageDown();
 		nextKeyEvent = CONSOLE_REPEAT;
 		return;
@@ -772,7 +772,7 @@ bool	idConsoleLocal::ProcessEvent( const sysEvent_t *event, bool forceAccept ) {
 		} else {
 			consoleField.Clear();
 			keyCatching = true;
-			if ( idKeyInput::IsDown( K_LSHIFT ) || idKeyInput::IsDown( K_RSHIFT ) ) {
+			if ( keyBindMgr->IsDown( K_LSHIFT ) || keyBindMgr->IsDown( K_RSHIFT ) ) {
 				// if the shift key is down, don't open the console as much
 				SetDisplayFraction( 0.2f );
 			} else {

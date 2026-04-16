@@ -350,7 +350,6 @@ extern idCVar com_forceGenericSIMD;
 idCommonLocal::Frame
 =================
 */
-extern int g_screenshotFormat;
 void idCommonLocal::Frame() {
 	try {
 		SCOPED_PROFILE_EVENT( "Common::Frame" );

@@ -26,6 +26,9 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#ifndef __GUIMODEL_H__
+#define __GUIMODEL_H__
+
 struct guiModelSurface_t {
 	const idMaterial *	material;
 	uint64				glState;
@@ -80,3 +83,4 @@ private:
 	idList<guiModelSurface_t, TAG_MODEL>	surfaces;
 };
 
+#endif /* !__GUIMODEL_H__ */
