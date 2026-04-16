@@ -503,7 +503,7 @@ Sys_Mkdir
 ==============
 */
 void Sys_Mkdir( const char *path ) {
-	mkdir(path);
+	::CreateDirectory( path, NULL );
 }
 
 /*
@@ -551,7 +551,16 @@ Sys_Rmdir
 ========================
 */
 bool Sys_Rmdir( const char *path ) {
-	return rmdir( path ) == 0;
+	return ::RemoveDirectory( path ) != 0;
+}
+
+/*
+========================
+Sys_RemoveFile
+========================
+*/
+void Sys_RemoveFile( const char *path ) {
+	::DeleteFile( path );
 }
 
 /*
@@ -565,6 +574,64 @@ bool Sys_IsFileWritable( const char *path ) {
 		return true;
 	}
 	return ( st.st_mode & S_IWRITE ) != 0;
+}
+
+/*
+========================
+Sys_OpenOSFile
+========================
+*/
+idFileHandle Sys_OpenOSFile( const char * fileName, int mode ) {
+	idFileHandle fp;
+
+
+	DWORD dwAccess = 0;
+	DWORD dwShare = 0;
+	DWORD dwCreate = 0;
+	DWORD dwFlags = 0;
+
+	if ( mode == FS_WRITE ) {
+		dwAccess = GENERIC_READ | GENERIC_WRITE;
+		dwShare = FILE_SHARE_READ;
+		dwCreate = CREATE_ALWAYS;
+		dwFlags = FILE_ATTRIBUTE_NORMAL;
+	} else if ( mode == FS_READ ) {
+		dwAccess = GENERIC_READ;
+		dwShare = FILE_SHARE_READ;
+		dwCreate = OPEN_EXISTING;
+		dwFlags = FILE_ATTRIBUTE_NORMAL;
+	} else if ( mode == FS_APPEND ) {
+		dwAccess = GENERIC_READ | GENERIC_WRITE;
+		dwShare = FILE_SHARE_READ;
+		dwCreate = OPEN_ALWAYS;
+		dwFlags = FILE_ATTRIBUTE_NORMAL;
+					}
+
+	fp = CreateFile( fileName, dwAccess, dwShare, NULL, dwCreate, dwFlags, NULL );
+	if ( fp == INVALID_HANDLE_VALUE ) {
+		return NULL;
+				}
+	return fp;
+}
+
+/*
+========================
+Sys_CloseOSFile
+========================
+*/
+void Sys_CloseOSFile( idFileHandle fp ) {
+	if ( fp != NULL ) {
+		::CloseHandle( fp );
+	}
+}
+
+/*
+========================
+Sys_DirectFileLength
+========================
+*/
+int Sys_DirectFileLength( idFileHandle o ) {
+	return GetFileSize( o, NULL );
 }
 
 /*

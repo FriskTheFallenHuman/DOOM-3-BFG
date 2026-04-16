@@ -440,12 +440,6 @@ void			Sys_CreateConsole();
 void			Sys_DestroyConsole();
 char *			Sys_ConsoleInput();
 
-// This really isn't the right place to have this, but since this is the 'top level' include
-// and has a function signature with 'FILE' in it, it kinda needs to be here =/
-typedef HANDLE idFileHandle;
-
-
-ID_TIME_T		Sys_FileTimeStamp( idFileHandle fp );
 // NOTE: do we need to guarantee the same output on all platforms?
 const char *	Sys_TimeStampToStr( ID_TIME_T timeStamp );
 const char *	Sys_SecToStr( int sec );

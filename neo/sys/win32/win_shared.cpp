@@ -144,6 +144,24 @@ bool Sys_IsFileOnHdd( const char *filePath ) {
 
 /*
 ================
+Sys_RenameFile
+================
+*/
+bool Sys_RenameFile( const char *filePath, const char *newName ) {
+	// this gives atomic-delete-on-rename, like POSIX rename()
+	// There is a MoveFileTransacted() on vista and above, not sure if that means there
+	// is a race condition inside Sys_RenameFile...
+	const bool success = ( ::MoveFileEx( filePath, newName, MOVEFILE_REPLACE_EXISTING ) != 0 );
+
+	if ( !success ) {
+		const int err = GetLastError();
+		idLib::Warning( "RenameFile( %s, %s ) error %i", filePath, newName, err );
+	}
+	return success;
+}
+
+/*
+================
 Sys_LockMemory
 ================
 */

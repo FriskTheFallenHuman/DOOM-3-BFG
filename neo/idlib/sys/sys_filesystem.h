@@ -28,8 +28,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SYS_FILESYSTEM_H__
 #define __SYS_FILESYSTEM_H__
 
+// creates a directory at the specified path, including any parent directories that don't exist.
 void			Sys_Mkdir( const char *path );
+
+// removes the directory at the specified path.
 bool			Sys_Rmdir( const char *path );
+
+// removes the file at the specified path.
+void			Sys_RemoveFile( const char *path );
+
+// returns true if the file exists and is writable, false if it doesn't exist or is read only
 bool			Sys_IsFileWritable( const char *path );
 
 enum sysFolder_t {
@@ -45,13 +53,34 @@ sysFolder_t		Sys_IsFolder( const char *path );
 // (or other device with slow seeking)
 bool			Sys_IsFileOnHdd( const char *path );
 
+// returns true if the file was successfully renamed, false if it failed
+bool			Sys_RenameFile( const char *filePath, const char *newName );
+
+// This really isn't the right place to have this, but since this is the 'top level' include
+// and has a function signature with 'FILE' in it, it kinda needs to be here =/
+typedef HANDLE idFileHandle;
+
+// returns the file time stamp, or 0 if it failed
+ID_TIME_T		Sys_FileTimeStamp( idFileHandle fp );
+
+// Opens a file directly through the OS, bypassing the idFileSystem.
+idFileHandle	Sys_OpenOSFile( const char *fileName, int mode );
+
+// Closes the file handle opened by Sys_OpenOSFile. 
+// This is not the same as idFile::Close, which is used for files opened through the idFileSystem.
+void			Sys_CloseOSFile( idFileHandle fp );
+
+// returns the length of the file, or -1 if it failed
+int				Sys_DirectFileLength( idFileHandle o );
+
 // use fs_debug to verbose Sys_ListFiles
 // returns -1 if directory was not found (the list is cleared)
 int				Sys_ListFiles( const char * directory, const char * extension, idList<class idStr> & list );
 
+// returns the path to the executable, including the executable name
 const char *	Sys_EXEPath();
-const char *	Sys_CWD();
 
-const char *	Sys_LaunchPath();
+// returns the current working directory
+const char *	Sys_CWD();
 
 #endif /* !__SYS_FILESYSTEM_H__ */
