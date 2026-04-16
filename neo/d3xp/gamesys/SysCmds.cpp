@@ -1350,7 +1350,7 @@ static void Cmd_ReloadAnims_f( const idCmdArgs &args ) {
 		return;
 	}
 
-	animationLib.ReloadAnims();
+	animationLibLocal.ReloadAnims();
 }
 
 /*
@@ -1387,7 +1387,7 @@ static void Cmd_ListAnims_f( const idCmdArgs &args ) {
 		}
 		gameLocal.Printf( "%d anims\n", num );
 	} else {
-		animationLib.ListAnims();
+		animationLibLocal.ListAnims();
 
 		size = 0;
 		num = 0;

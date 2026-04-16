@@ -39,7 +39,11 @@ static const unsigned int B_ANIM_MD5_MAGIC = ( 'B' << 24 ) | ( 'M' << 16 ) | ( '
 
 static const int JOINT_FRAME_PAD	= 1;	// one extra to be able to read one more float than is necessary
 
-bool idAnimManager::forceExport = false;
+bool idAnimManagerLocal::forceExport = false;
+
+// the rest of the engine will only reference the "animationLibLocal" variable, while all local aspects stay hidden
+idAnimManagerLocal	animationLibLocal;
+idAnimManager *		animationLib = &animationLibLocal;
 
 /***********************************************************************
 
@@ -240,7 +244,7 @@ bool idMD5Anim::LoadAnim( const char * filename ) {
 	parser.ExpectTokenString( "{" );
 	for ( int i = 0; i < numJoints; i++ ) {
 		parser.ReadToken( &token );
-		jointInfo[ i ].nameIndex = animationLib.JointIndex( token );
+		jointInfo[ i ].nameIndex = animationLibLocal.JointIndex( token );
 
 		// parse parent num
 		jointInfo[ i ].parentNum = parser.ParseInt();
@@ -409,7 +413,7 @@ bool idMD5Anim::LoadBinary( idFile * file, ID_TIME_T sourceTimeStamp ) {
 		if ( jointName.IsEmpty() ) {
 			j.nameIndex = -1;
 		} else {
-			j.nameIndex = animationLib.JointIndex( jointName.c_str() );
+			j.nameIndex = animationLibLocal.JointIndex( jointName.c_str() );
 		}
 
 		file->ReadBig( j.parentNum );
@@ -472,7 +476,7 @@ void idMD5Anim::WriteBinary( idFile * file, ID_TIME_T sourceTimeStamp ) {
 	file->WriteBig( jointInfo.Num() );
 	for ( int i = 0; i < jointInfo.Num(); i++ ) {
 		jointAnimInfo_t & j = jointInfo[i];
-		idStr jointName = animationLib.JointName( j.nameIndex );
+		idStr jointName = animationLibLocal.JointName( j.nameIndex );
 		file->WriteString( jointName );
 		file->WriteBig( j.parentNum );
 		file->WriteBig( j.animBits );
@@ -964,7 +968,7 @@ void idMD5Anim::CheckModelHierarchy( const idRenderModel *model ) const {
 	const idMD5Joint *modelJoints = model->GetJoints();
 	for( int i = 0; i < jointInfo.Num(); i++ ) {
 		int jointNum = jointInfo[ i ].nameIndex;
-		if ( modelJoints[ i ].name != animationLib.JointName( jointNum ) ) {
+		if ( modelJoints[ i ].name != animationLibLocal.JointName( jointNum ) ) {
 			gameLocal.Error( "Model '%s''s joint names don't match anim '%s''s", model->Name(), name.c_str() );
 		}
 		int parent;
@@ -981,33 +985,33 @@ void idMD5Anim::CheckModelHierarchy( const idRenderModel *model ) const {
 
 /***********************************************************************
 
-	idAnimManager
+	idAnimManagerLocal
 
 ***********************************************************************/
 
 /*
 ====================
-idAnimManager::idAnimManager
+idAnimManagerLocal::idAnimManagerLocal
 ====================
 */
-idAnimManager::idAnimManager() {
+idAnimManagerLocal::idAnimManagerLocal() {
 }
 
 /*
 ====================
-idAnimManager::~idAnimManager
+idAnimManagerLocal::~idAnimManagerLocal
 ====================
 */
-idAnimManager::~idAnimManager() {
+idAnimManagerLocal::~idAnimManagerLocal() {
 	Shutdown();
 }
 
 /*
 ====================
-idAnimManager::Shutdown
+idAnimManagerLocal::Shutdown
 ====================
 */
-void idAnimManager::Shutdown() {
+void idAnimManagerLocal::Shutdown() {
 	animations.DeleteContents();
 	jointnames.Clear();
 	jointnamesHash.Free();
@@ -1015,10 +1019,10 @@ void idAnimManager::Shutdown() {
 
 /*
 ====================
-idAnimManager::GetAnim
+idAnimManagerLocal::GetAnim
 ====================
 */
-idMD5Anim *idAnimManager::GetAnim( const char *name ) {
+idMD5Anim *idAnimManagerLocal::GetAnim( const char *name ) {
 	idMD5Anim **animptrptr;
 	idMD5Anim *anim;
 
@@ -1049,10 +1053,10 @@ idMD5Anim *idAnimManager::GetAnim( const char *name ) {
 
 /*
 ================
-idAnimManager::Preload
+idAnimManagerLocal::Preload
 ================
 */
-void idAnimManager::Preload( const idPreloadManifest &manifest ) {
+void idAnimManagerLocal::Preload( const idPreloadManifest &manifest ) {
 	if ( manifest.NumResources() >= 0 ) {
 		common->Printf( "Preloading anims...\n" );
 		int	start = Sys_Milliseconds();
@@ -1072,10 +1076,10 @@ void idAnimManager::Preload( const idPreloadManifest &manifest ) {
 
 /*
 ================
-idAnimManager::ReloadAnims
+idAnimManagerLocal::ReloadAnims
 ================
 */
-void idAnimManager::ReloadAnims() {
+void idAnimManagerLocal::ReloadAnims() {
 	int			i;
 	idMD5Anim	**animptr;
 
@@ -1089,10 +1093,10 @@ void idAnimManager::ReloadAnims() {
 
 /*
 ================
-idAnimManager::JointIndex
+idAnimManagerLocal::JointIndex
 ================
 */
-int	idAnimManager::JointIndex( const char *name ) {
+int	idAnimManagerLocal::JointIndex( const char *name ) {
 	int i, hash;
 
 	hash = jointnamesHash.GenerateKey( name );
@@ -1109,19 +1113,19 @@ int	idAnimManager::JointIndex( const char *name ) {
 
 /*
 ================
-idAnimManager::JointName
+idAnimManagerLocal::JointName
 ================
 */
-const char *idAnimManager::JointName( int index ) const {
+const char *idAnimManagerLocal::JointName( int index ) const {
 	return jointnames[ index ];
 }
 
 /*
 ================
-idAnimManager::ListAnims
+idAnimManagerLocal::ListAnims
 ================
 */
-void idAnimManager::ListAnims() const {
+void idAnimManagerLocal::ListAnims() const {
 	int			i;
 	idMD5Anim	**animptr;
 	idMD5Anim	*anim;
@@ -1154,10 +1158,10 @@ void idAnimManager::ListAnims() const {
 
 /*
 ================
-idAnimManager::FlushUnusedAnims
+idAnimManagerLocal::FlushUnusedAnims
 ================
 */
-void idAnimManager::FlushUnusedAnims() {
+void idAnimManagerLocal::FlushUnusedAnims() {
 	int						i;
 	idMD5Anim				**animptr;
 	idList<idMD5Anim *>		removeAnims;

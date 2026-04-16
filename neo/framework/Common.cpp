@@ -81,7 +81,8 @@ int64 com_engineHz_denominator = 100LL * 60LL;
 #ifdef __DOOM_DLL__
 idGame *		game = NULL;
 idGameEdit *	gameEdit = NULL;
-idGameLeaderboard *		gameLeadBoards = NULL;
+idAnimManager *	animationLib = NULL;
+idGameLeaderboard *	gameLeadBoards = NULL;
 #endif
 
 idCommonLocal	commonLocal;
@@ -928,6 +929,7 @@ void idCommonLocal::LoadGameDLL() {
 
 	game								= gameExport.game;
 	gameEdit							= gameExport.gameEdit;
+	animationLib						= gameExport.animationLib;
 	gameLeadBoards						= gameExport.gameLeadBoards;
 
 #endif

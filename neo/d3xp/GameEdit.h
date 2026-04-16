@@ -116,4 +116,88 @@ private:
 	idList<idEntity *>		selectedEntities;
 };
 
+/*
+===============================================================================
+
+	Local implementation of the public game editor interface.
+
+===============================================================================
+*/
+
+class idGameEditLocal : public idGameEdit {
+public:
+	// These are the canonical idDict to parameter parsing routines used by both the game and tools.
+	virtual void				ParseSpawnArgsToRenderLight( const idDict *args, renderLight_t *renderLight );
+	virtual void				ParseSpawnArgsToRenderEntity( const idDict *args, renderEntity_t *renderEntity );
+	virtual void				ParseSpawnArgsToRefSound( const idDict *args, refSound_t *refSound );
+
+	// Animation system calls for non-game based skeletal rendering.
+	virtual idRenderModel *		ANIM_GetModelFromEntityDef( const char *classname );
+	virtual const idVec3 		&ANIM_GetModelOffsetFromEntityDef( const char *classname );
+	virtual idRenderModel *		ANIM_GetModelFromEntityDef( const idDict *args );
+	virtual idRenderModel *		ANIM_GetModelFromName( const char *modelName );
+	virtual const idMD5Anim *	ANIM_GetAnimFromEntityDef( const char *classname, const char *animname );
+	virtual int					ANIM_GetNumAnimsFromEntityDef( const idDict *args );
+	virtual const char *		ANIM_GetAnimNameFromEntityDef( const idDict *args, int animNum );
+	virtual const idMD5Anim *	ANIM_GetAnim( const char *fileName );
+	virtual int					ANIM_GetLength( const idMD5Anim *anim );
+	virtual int					ANIM_GetNumFrames( const idMD5Anim *anim );
+	virtual void				ANIM_CreateAnimFrame( const idRenderModel *model, const idMD5Anim *anim, int numJoints, idJointMat *frame, int time, const idVec3 &offset, bool remove_origin_offset );
+	virtual idRenderModel *		ANIM_CreateMeshForAnim( idRenderModel *model, const char *classname, const char *animname, int frame, bool remove_origin_offset );
+
+	// Articulated Figure calls for AF editor and Radiant.
+	virtual bool				AF_SpawnEntity( const char *fileName );
+	virtual void				AF_UpdateEntities( const char *fileName );
+	virtual void				AF_UndoChanges( void );
+	virtual idRenderModel *		AF_CreateMesh( const idDict &args, idVec3 &meshOrigin, idMat3 &meshAxis, bool &poseIsSet );
+
+
+	// Entity selection.
+	virtual void				ClearEntitySelection( void );
+	virtual int					GetSelectedEntities( idEntity *list[], int max );
+	virtual void				AddSelectedEntity( idEntity *ent );
+
+	// Selection methods
+	virtual void				TriggerSelected();
+
+	// Entity defs and spawning.
+	virtual const idDict *		FindEntityDefDict( const char *name, bool makeDefault = true ) const;
+	virtual void				SpawnEntityDef( const idDict &args, idEntity **ent );
+	virtual idEntity *			FindEntity( const char *name ) const;
+	virtual const char *		GetUniqueEntityName( const char *classname ) const;
+
+	// Entity methods.
+	virtual void				EntityGetOrigin( idEntity *ent, idVec3 &org ) const;
+	virtual void				EntityGetAxis( idEntity *ent, idMat3 &axis ) const;
+	virtual void				EntitySetOrigin( idEntity *ent, const idVec3 &org );
+	virtual void				EntitySetAxis( idEntity *ent, const idMat3 &axis );
+	virtual void				EntityTranslate( idEntity *ent, const idVec3 &org );
+	virtual const idDict *		EntityGetSpawnArgs( idEntity *ent ) const;
+	virtual void				EntityUpdateChangeableSpawnArgs( idEntity *ent, const idDict *dict );
+	virtual void				EntityChangeSpawnArgs( idEntity *ent, const idDict *newArgs );
+	virtual void				EntityUpdateVisuals( idEntity *ent );
+	virtual void				EntitySetModel( idEntity *ent, const char *val );
+	virtual void				EntityStopSound( idEntity *ent );
+	virtual void				EntityDelete( idEntity *ent );
+	virtual void				EntitySetColor( idEntity *ent, const idVec3 color );
+
+	// Player methods.
+	virtual bool				PlayerIsValid() const;
+	virtual void				PlayerGetOrigin( idVec3 &org ) const;
+	virtual void				PlayerGetAxis( idMat3 &axis ) const;
+	virtual void				PlayerGetViewAngles( idAngles &angles ) const;
+	virtual void				PlayerGetEyePosition( idVec3 &org ) const;
+
+	// In game map editing support.
+	virtual const idDict *		MapGetEntityDict( const char *name ) const;
+	virtual void				MapSave( const char *path = NULL ) const;
+	virtual void				MapSetEntityKeyVal( const char *name, const char *key, const char *val ) const ;
+	virtual void				MapCopyDictToEntity( const char *name, const idDict *dict ) const;
+	virtual int					MapGetUniqueMatchingKeyVals( const char *key, const char *list[], const int max ) const;
+	virtual void				MapAddEntity( const idDict *dict ) const;
+	virtual int					MapGetEntitiesMatchingClassWithString( const char *classname, const char *match, const char *list[], const int max ) const;
+	virtual void				MapRemoveEntity( const char *name ) const;
+	virtual void				MapEntityTranslate( const char *name, const idVec3 &v ) const;
+};
+
 #endif /* !__GAME_EDIT_H__ */
