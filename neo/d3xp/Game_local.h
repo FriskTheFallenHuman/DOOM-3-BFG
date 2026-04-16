@@ -104,6 +104,8 @@ void gameError( const char *fmt, ... );
 
 
 class idWeapon;
+class idGameEditLocal;
+class idAnimManagerLocal;
 
 //============================================================================
 
@@ -656,7 +658,8 @@ private:
 //============================================================================
 
 extern idGameLocal			gameLocal;
-extern idAnimManager		animationLib;
+extern idGameEditLocal		gameEditLocal;
+extern idAnimManagerLocal	animationLibLocal;
 
 //============================================================================
 
