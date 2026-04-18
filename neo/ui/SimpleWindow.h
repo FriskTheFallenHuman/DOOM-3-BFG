@@ -70,7 +70,6 @@ protected:
 	idRectangle 	textRect;
 	idVec2			origin;
 	class idFont *	font;
-	int 			fontNum;
 	float 			matScalex;
 	float 			matScaley;
 	float 			borderSize;

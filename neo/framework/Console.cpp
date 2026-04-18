@@ -168,7 +168,7 @@ idCVar idConsoleLocal::con_noPrint( "con_noPrint", "1", CVAR_BOOL|CVAR_SYSTEM|CV
 
 /*
 ==================
-idConsoleLocal::DrawSmallTextLeftAlign
+idConsoleLocal::DrawTextSmallLeftAlign
 ==================
 */
 void idConsoleLocal::DrawTextSmallLeftAlign( float x, float &y, const idVec4 &textColor, const char *text, ... ) {
@@ -190,9 +190,18 @@ void idConsoleLocal::DrawTextSmallRightAlign( float x, float &y, const idVec4 &t
 	char string[MAX_STRING_CHARS];
 	va_list argptr;
 	va_start( argptr, text );
-	int i = idStr::vsnPrintf( string, sizeof( string ), text, argptr );
+	idStr::vsnPrintf( string, sizeof( string ), text, argptr );
 	va_end( argptr );
-	renderSystem->DrawSmallStringExt( x - i * SMALLCHAR_WIDTH, y + 2, string, textColor, true, true, idStr::Length( string ) );
+
+	int visLen = 0;
+	for ( const char *p = string; *p; p++ ) {
+		if ( idStr::IsColor( p ) ) {
+			p++; continue;
+		}
+		visLen++;
+	}
+
+	renderSystem->DrawSmallStringExt( x - visLen * SMALLCHAR_WIDTH, y + 2, string, textColor, true, true, idStr::Length( string ) );
 	y += SMALLCHAR_HEIGHT + 4;
 }
 
@@ -220,9 +229,18 @@ void idConsoleLocal::DrawTextBigRightAlign( float x, float &y, const idVec4 &tex
 	char string[MAX_STRING_CHARS];
 	va_list argptr;
 	va_start( argptr, text );
-	int i = idStr::vsnPrintf( string, sizeof( string ), text, argptr );
+	idStr::vsnPrintf( string, sizeof( string ), text, argptr );
 	va_end( argptr );
-	renderSystem->DrawBigStringExt( x - i * BIGCHAR_WIDTH, y + 2, string, textColor, true, true, idStr::Length( string ) );
+
+	int visLen = 0;
+	for ( const char *p = string; *p; p++ ) {
+		if ( idStr::IsColor( p ) ) {
+			p++; continue;
+		}
+		visLen++;
+	}
+
+	renderSystem->DrawBigStringExt( x - visLen * BIGCHAR_WIDTH, y + 2, string, textColor, true, true, idStr::Length( string ) );
 	y += BIGCHAR_HEIGHT + 4;
 }
 

@@ -33,16 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 extern idCVar in_useJoystick;
 
-idVec4 idDeviceContextLocal::colorPurple;
-idVec4 idDeviceContextLocal::colorOrange;
-idVec4 idDeviceContextLocal::colorYellow;
-idVec4 idDeviceContextLocal::colorGreen;
-idVec4 idDeviceContextLocal::colorBlue;
-idVec4 idDeviceContextLocal::colorRed;
-idVec4 idDeviceContextLocal::colorBlack;
-idVec4 idDeviceContextLocal::colorWhite;
-idVec4 idDeviceContextLocal::colorNone;
-
 void idDeviceContextLocal::InitFonts() {
 	activeFont = renderSystem->RegisterFont( "" );
 }
@@ -55,15 +45,6 @@ void idDeviceContextLocal::Init() {
 	whiteImage = declManager->FindMaterial("guis/assets/white.tga");
 	whiteImage->SetSort( SS_GUI );
 	InitFonts();
-	colorPurple = idVec4(1, 0, 1, 1);
-	colorOrange = idVec4(1, 1, 0, 1);
-	colorYellow = idVec4(0, 1, 1, 1);
-	colorGreen = idVec4(0, 1, 0, 1);
-	colorBlue = idVec4(0, 0, 1, 1);
-	colorRed = idVec4(1, 0, 0, 1);
-	colorWhite = idVec4(1, 1, 1, 1);
-	colorBlack = idVec4(0, 0, 0, 1);
-	colorNone = idVec4(0, 0, 0, 0);
 	cursorImages[CURSOR_ARROW] = declManager->FindMaterial("ui/assets/guicursor_arrow.tga");
 	cursorImages[CURSOR_HAND] = declManager->FindMaterial("ui/assets/guicursor_hand.tga");
 	cursorImages[CURSOR_HAND_JOY1] = declManager->FindMaterial("ui/assets/guicursor_hand_cross.tga");
