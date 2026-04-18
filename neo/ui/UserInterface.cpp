@@ -61,12 +61,8 @@ extern idCVar sys_lang;
 
 void idUserInterfaceManagerLocal::Init() {
 	screenRect = idRectangle(0, 0, 640, 480);
-	if ( common->IsLegacyFont() ) {
-		dcLegacy.Init();
-	} else {
-		dcOld.Init();
-		dcOptimized.Init();
-	}
+	dcOld.Init();
+	dcOptimized.Init();
 	SetDrawingDC();
 
 }
@@ -74,32 +70,23 @@ void idUserInterfaceManagerLocal::Init() {
 void idUserInterfaceManagerLocal::Shutdown() {
 	guis.DeleteContents( true );
 	demoGuis.DeleteContents( true );
-	if ( common->IsLegacyFont() ) {
-		dcLegacy.Shutdown();
-	}
-	else {
-		dcOld.Shutdown();
-		dcOptimized.Shutdown();
-	}
+	dcOld.Shutdown();
+	dcOptimized.Shutdown();
 	mapParser.Clear();
 }
 
 void idUserInterfaceManagerLocal::SetDrawingDC() {
-	if ( common->IsLegacyFont() ) {
-		dc = &dcLegacy;
+	static int toggle;
+
+	// to make it more obvious that there is a difference between the old and
+	// new paths, toggle between them every frame if g_useNewGuiCode is set to 2
+	toggle++;
+
+	if ( g_useNewGuiCode.GetInteger() == 1 ||
+		( g_useNewGuiCode.GetInteger() == 2 && ( toggle & 1 ) ) ) {
+		dc = &dcOptimized;
 	} else {
-		static int toggle;
-
-		// to make it more obvious that there is a difference between the old and
-		// new paths, toggle between them every frame if g_useNewGuiCode is set to 2
-		toggle++;
-
-		if ( g_useNewGuiCode.GetInteger() == 1 ||
-			( g_useNewGuiCode.GetInteger() == 2 && ( toggle & 1 ) ) ) {
-			dc = &dcOptimized;
-		} else {
-			dc = &dcOld;
-		}
+		dc = &dcOld;
 	}
 }
 
@@ -169,12 +156,8 @@ void idUserInterfaceManagerLocal::EndLevelLoad( const char *mapName ) {
 		delete f;
 	}
 
-	if ( common->IsLegacyFont() ) {
-		dcLegacy.Init();
-	} else {
-		dcOld.Init();
-		dcOptimized.Init();
-	}
+	dcOld.Init();
+	dcOptimized.Init();
 }
 
 void idUserInterfaceManagerLocal::Reload( bool all ) {

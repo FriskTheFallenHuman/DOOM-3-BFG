@@ -1702,7 +1702,6 @@ void R_InitMaterials() {
 	tr.defaultPointLight = declManager->FindMaterial( "lights/defaultPointLight" );
 	tr.defaultProjectedLight = declManager->FindMaterial( "lights/defaultProjectedLight" );
 	tr.whiteMaterial = declManager->FindMaterial( "_white" );
-	tr.charSetMaterial = declManager->FindMaterial( "textures/bigchars" );
 }
 
 
@@ -1838,6 +1837,10 @@ void idRenderSystemLocal::Clear() {
 		Mem_Free( testImageTriangles );
 		testImageTriangles = NULL;
 	}
+
+	renderFont = NULL;
+	renderSmallFontScale = 0.0f;
+	renderBigFontScale = 0.0f;
 
 	frontEndJobList = NULL;
 }
@@ -2071,6 +2074,17 @@ void idRenderSystemLocal::Init() {
 
 	R_InitMaterials();
 
+	renderFont = RegisterFont( DEFAULT_FONT );
+	if ( renderFont ) {
+		float maxW = renderFont->GetMaxCharWidth( 1.0f );
+		if ( maxW > 0.0f ) {
+			renderSmallFontScale = ((float)(SMALLCHAR_WIDTH  - 1) / maxW) * 1.4f;
+			renderBigFontScale = (float)(BIGCHAR_WIDTH - 1) / maxW;
+		}
+		common->Printf( "render font scale: %.4f small, %.4f big\n",
+						renderSmallFontScale, renderBigFontScale );
+	}
+
 	renderModelManager->Init();
 
 	// set the identity space
@@ -2108,9 +2122,7 @@ idRenderSystemLocal::Shutdown
 void idRenderSystemLocal::Shutdown() {
 	common->Printf( "idRenderSystem::Shutdown()\n" );
 
-	if ( !common->IsLegacyFont() )  {
-		fonts.DeleteContents();
-	}
+	fonts.DeleteContents();
 
 	if ( R_IsInitialized() ) {
 		globalImages->PurgeAllImages();
@@ -2234,10 +2246,6 @@ idRenderSystemLocal::RegisterFont
 ============
 */
 idFont * idRenderSystemLocal::RegisterFont( const char * fontName ) {
-	if ( common->IsLegacyFont() ) {
-		return NULL;
-	}
-
 	idStrStatic< MAX_OSPATH > baseFontName = fontName;
 	baseFontName.Replace( "fonts/", "" );
 	for ( int i = 0; i < fonts.Num(); i++ ) {
@@ -2246,7 +2254,7 @@ idFont * idRenderSystemLocal::RegisterFont( const char * fontName ) {
 			return fonts[i];
 		}
 	}
-	idFont * newFont = new (TAG_FONT) idFont( baseFontName );
+	idFont * newFont = new (TAG_FONT) idFontLocal( baseFontName );
 	fonts.Append( newFont );
 	return newFont;
 }
@@ -2257,10 +2265,6 @@ idRenderSystemLocal::ResetFonts
 ========================
 */
 void idRenderSystemLocal::ResetFonts() {
-	if ( common->IsLegacyFont() ) {
-		return;
-	}
-
 	fonts.DeleteContents( true );
 }
 /*

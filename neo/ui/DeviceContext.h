@@ -125,7 +125,6 @@ public:
 	virtual void		InitFonts() = 0;
 	virtual idFont *	GetActiveFont() = 0;
 	virtual void		SetFont( idFont * font ) = 0;
-	virtual void		SetFont( int num ) = 0;
 	virtual int			FindFont( const char *name ) = 0;
 };
 
@@ -157,15 +156,15 @@ public:
 	virtual int			MaxCharHeight( float scale );
 	virtual int			MaxCharWidth( float scale );
 
-	virtual idRegion *	GetTextRegion(const char *text, float textScale, idRectangle rectDraw, float xStart, float yStart);
+	virtual idRegion *	GetTextRegion( const char *text, float textScale, idRectangle rectDraw, float xStart, float yStart );
 
 	virtual void		SetSize( float width, float height );
 	virtual void		SetOffset( float x, float y );
 
-	virtual const idMaterial *	GetScrollBarImage(int index);
+	virtual const idMaterial *	GetScrollBarImage( int index );
 
-	virtual void		DrawCursor(float *x, float *y, float size);
-	virtual void		SetCursor(int n);
+	virtual void		DrawCursor( float *x, float *y, float size );
+	virtual void		SetCursor( int n );
 
 	// clipping rects
 	virtual bool		ClippedCoords(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2);
@@ -175,7 +174,6 @@ public:
 
 	virtual void		SetFont( idFont * font ) { activeFont = font; }
 	virtual idFont *	GetActiveFont() { return activeFont; }
-	virtual void		SetFont( int num ) {}
 	virtual int			FindFont( const char * name ) { return 0; }
 
 	virtual void		SetOverStrike( bool b ) { overStrikeMode = b; }
@@ -187,16 +185,6 @@ public:
 	virtual int			DrawText( float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor = -1);
 	virtual void		PaintChar( float x, float y, const scaledGlyphInfo_t & glyphInfo );
 	virtual void		Clear();
-
-	static idVec4 colorPurple;
-	static idVec4 colorOrange;
-	static idVec4 colorYellow;
-	static idVec4 colorGreen;
-	static idVec4 colorBlue;
-	static idVec4 colorRed;
-	static idVec4 colorWhite;
-	static idVec4 colorBlack;
-	static idVec4 colorNone;
 
 protected:
 
@@ -222,41 +210,6 @@ protected:
 	bool				matIsIdentity;
 	idVec3				origin;
 	bool				initialized;
-};
-
-class idDeviceContextLegacy : public idDeviceContextLocal {
-public:
-	virtual void		InitFonts();
-	virtual void		Shutdown();
-	virtual void		Clear();
-
-	virtual int			DrawText( float x, float y, float scale, idVec4 color, const char *text, float adjust, int limit, int style, int cursor = -1);
-
-	virtual int			CharWidth( const char c, float scale );
-	virtual int			TextWidth( const char *text, float scale, int limit );
-	virtual int			TextHeight( const char *text, float scale, int limit );
-	virtual int			MaxCharHeight( float scale );
-	virtual int			MaxCharWidth( float scale );
-
-	virtual void		DrawEditCursor( float x, float y, float scale );
-
-	virtual void		SetFont( int num );
-	virtual int			FindFont( const char * name );
-
-protected:
-	virtual int			DrawText( const char *text, float textScale, int textAlign, idVec4 color, idRectangle rectDraw, bool wrap, int cursor = -1, bool calcOnly = false, idList<int> *breaks = NULL, int limit = 0 );
-	virtual void		PaintChar( float x, float y, float width, float height, float scale, float	s, float	t, float	s2, float t2, const idMaterial* hShader );
-	virtual void		SetFontByScale( float scale );
-
-private:
-	void				SetupFonts();
-
-	fontInfoEx_t*		activeFont;
-	fontInfo_t*			useFont;
-	idStr				fontName;
-
-	static idList<fontInfoEx_t> fonts;
-	idStr				fontLang;
 };
 
 class idDeviceContextOptimized : public idDeviceContextLocal {

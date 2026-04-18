@@ -36,7 +36,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "ImageOpts.h"
 #include "Image.h"
 #include "RenderTexture.h"
-#include "Font.h"
+#include "Font_Local.h"
 
 // everything that is needed by the backend needs
 // to be double buffered to allow it to run in
@@ -701,7 +701,6 @@ public:
 	virtual void			EndAutomaticBackgroundSwaps();
 	virtual bool			AreAutomaticBackgroundSwapsRunning( autoRenderIconType_t * usingAlternateIcon = NULL ) const;
 
-	virtual bool			RegisterFont( const char * fontName, fontInfoEx_t & font );
 	virtual idFont *		RegisterFont( const char * fontName );
 	virtual void			ResetFonts();
 	virtual void			PrintMemInfo( MemInfo_t *mi );
@@ -768,13 +767,16 @@ public:
 	// many console commands need to know which world they should operate on
 
 	const idMaterial *		whiteMaterial;
-	const idMaterial *		charSetMaterial;
 	const idMaterial *		defaultPointLight;
 	const idMaterial *		defaultProjectedLight;
 	const idMaterial *		defaultMaterial;
 	idImage *				testImage;
 	idCinematic *			testVideo;
 	int						testVideoStartTime;
+
+	idFont *                renderFont;
+	float                   renderSmallFontScale;
+	float                   renderBigFontScale;
 
 	idImage *				ambientCubeImage;	// hack for testing dependent ambient lighting
 
