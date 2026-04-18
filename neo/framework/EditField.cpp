@@ -532,7 +532,6 @@ void idEditField::Draw( int x, int y, int width, bool showCursor ) {
 	int		len;
 	int		drawLen;
 	int		prestep;
-	int		cursorChar;
 	char	str[MAX_EDIT_LINE];
 	int		size;
 
@@ -586,12 +585,6 @@ void idEditField::Draw( int x, int y, int width, bool showCursor ) {
 		return;		// off blink
 	}
 
-	if ( keyBindMgr->GetOverstrikeMode() ) {
-		cursorChar = 11;
-	} else {
-		cursorChar = 10;
-	}
-
 	// Move the cursor back to account for color codes
 	for ( int i = 0; i<cursor; i++ ) {
 		if ( idStr::IsColor( &str[i] ) ) {
@@ -600,5 +593,11 @@ void idEditField::Draw( int x, int y, int width, bool showCursor ) {
 		}
 	}
 
-	renderSystem->DrawSmallChar( x + ( cursor - prestep ) * size, y, cursorChar );
+    if ( keyBindMgr->GetOverstrikeMode() ) {
+        // Overstrike: filled underline bar
+        renderSystem->DrawFilled( colorWhite, x + (cursor - prestep) * size, y + SMALLCHAR_HEIGHT - 2, SMALLCHAR_WIDTH, 2 );
+    } else {
+        // Insert: thin vertical bar, 1px wide, full cell height
+        renderSystem->DrawFilled( colorWhite, x + (cursor - prestep) * size, y, 1, SMALLCHAR_HEIGHT );
+    }
 }

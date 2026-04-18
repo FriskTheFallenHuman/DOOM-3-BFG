@@ -46,6 +46,7 @@ public:
 
 	virtual float	GetLineHeight( float scale ) const = 0;
 	virtual float	GetAscender( float scale ) const = 0;
+	virtual float	GetDescender( float scale ) const = 0;
 	virtual float	GetMaxCharWidth( float scale ) const = 0;
 
 	virtual float	GetGlyphWidth( float scale, uint32 idx ) const = 0;

@@ -772,13 +772,16 @@ public:
 	// many console commands need to know which world they should operate on
 
 	const idMaterial *		whiteMaterial;
-	const idMaterial *		charSetMaterial;
 	const idMaterial *		defaultPointLight;
 	const idMaterial *		defaultProjectedLight;
 	const idMaterial *		defaultMaterial;
 	idImage *				testImage;
 	idCinematic *			testVideo;
 	int						testVideoStartTime;
+
+	idFont *                renderFont;
+	float                   renderSmallFontScale;
+	float                   renderBigFontScale;
 
 	idImage *				ambientCubeImage;	// hack for testing dependent ambient lighting
 

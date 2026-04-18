@@ -30,6 +30,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Font.h"
 
+static const char *DEFAULT_FONT = "Arial_Narrow";
+
 class idFontLocal : public idFont {
 public:
 	idFontLocal( const char * n );
@@ -42,6 +44,7 @@ public:
 	idFont * GetAlias() { return alias; }
 	float GetLineHeight( float scale ) const;
 	float GetAscender( float scale ) const;
+	float GetDescender( float scale ) const;
 	float GetMaxCharWidth( float scale ) const;
 
 	float GetGlyphWidth( float scale, uint32 idx ) const;

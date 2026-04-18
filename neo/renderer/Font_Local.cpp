@@ -31,8 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Font_Local.h"
 
-const char * DEFAULT_FONT = "Arial_Narrow";
-
 static const float old_scale2 = 0.6f;
 static const float old_scale1 = 0.3f;
 
@@ -331,6 +329,21 @@ float idFontLocal::GetAscender( float scale ) const {
 	}
 	if ( fontInfo != NULL ) {
 		return scale * fontInfo->ascender;
+	}
+	return 0.0f;
+}
+
+/*
+==============================
+idFontLocal::GetDescender
+==============================
+*/
+float idFontLocal::GetDescender( float scale ) const {
+	if ( alias != NULL ) {
+		return alias->GetDescender( scale );
+	}
+	if ( fontInfo != NULL ) {
+		return scale * fontInfo->descender;
 	}
 	return 0.0f;
 }
