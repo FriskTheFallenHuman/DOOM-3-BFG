@@ -29,8 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
-#include <stdint.h>
-
 const char *CleanupSourceCodeFileName( const char *fileName );
 
 // some utilities for getting debug information in runtime

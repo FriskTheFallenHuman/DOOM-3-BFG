@@ -36,20 +36,22 @@ Contains types and defines used throughout the engine.
 ================================================================================================
 */
 
-typedef unsigned	__int8		byte;		// 8 bits
-typedef unsigned	__int16		word;		// 16 bits
-typedef unsigned	__int32		dword;		// 32 bits
-typedef unsigned	__int32		uint;
-typedef unsigned	__int32		ulong;
+#include <cstdint>
 
-typedef signed		__int8		int8;
-typedef unsigned	__int8		uint8;
-typedef signed		__int16		int16;
-typedef unsigned	__int16		uint16;
-typedef signed		__int32		int32;
-typedef unsigned	__int32		uint32;
-typedef signed		__int64		int64;
-typedef unsigned	__int64		uint64;
+typedef uint8_t		byte;		// 8 bits
+typedef uint16_t	word;		// 16 bits
+typedef uint32_t	dword;		// 32 bits
+typedef uint32_t	uint;
+typedef uint32_t	ulong;
+
+typedef int8_t		int8;
+typedef uint8_t		uint8;
+typedef int16_t		int16;
+typedef uint16_t	uint16;
+typedef int32_t		int32;
+typedef uint32_t	uint32;
+typedef int64_t		int64;
+typedef uint64_t	uint64;
 
 // The C/C++ standard guarantees the size of an unsigned type is the same as the signed type.
 // The exact size in bytes of several types is guaranteed here.
