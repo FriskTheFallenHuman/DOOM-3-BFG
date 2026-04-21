@@ -371,7 +371,9 @@ idPlayerView::AngleOffset
 ===================
 */
 idAngles idPlayerView::AngleOffset() const {
-	idAngles ang( 0.0f, 0.0f, 0.0f );
+	idAngles	ang;
+
+	ang.Zero();
 
 	if ( gameLocal.slow.time < kickFinishTime ) {
 		float offset = kickFinishTime - gameLocal.slow.time;

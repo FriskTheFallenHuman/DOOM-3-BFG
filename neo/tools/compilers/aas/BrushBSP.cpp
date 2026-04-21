@@ -1044,7 +1044,7 @@ void idBrushBSP::PruneTree_r( idBrushBSPNode *node, int contents ) {
 				p->RemoveFromNode( p->nodes[0] );
 				p->RemoveFromNode( p->nodes[1] );
 				if ( nodes[!s] == node->children[!i] ) {
-					delete p;	// portal seperates both children
+					delete p;	// portal separates both children
 				}
 				else {
 					p->AddToNodes( nodes[0], nodes[1] );
@@ -1651,7 +1651,7 @@ void idBrushBSP::MergeLeafNodePortals( idBrushBSPNode *node, int skipContents ) 
 	idBrushBSPPortal *p1, *p2, *nextp1, *nextp2;
 	idWinding *newWinding, *reverse;
 
-	// pass 1: merge all portals that seperate the same leaf nodes
+	// pass 1: merge all portals that separate the same leaf nodes
 	for ( p1 = node->GetPortals(); p1; p1 = nextp1 ) {
 		s1 = (p1->GetNode(1) == node);
 		nextp1 = p1->Next(s1);
@@ -1660,7 +1660,7 @@ void idBrushBSP::MergeLeafNodePortals( idBrushBSPNode *node, int skipContents ) 
 			s2 = (p2->GetNode(1) == node);
 			nextp2 = p2->Next(s2);
 
-			// if both portals seperate the same leaf nodes
+			// if both portals separate the same leaf nodes
 			if ( p1->nodes[!s1] == p2->nodes[!s2] ) {
 
 				// add the winding of p2 to the winding of p1
@@ -1937,7 +1937,7 @@ bool idBrushBSP::TryMergeLeafNodes( idBrushBSPPortal *portal, int side ) {
 		}
 	}
 
-	// remove all portals that seperate the two nodes
+	// remove all portals that separate the two nodes
 	for ( p = node1->portals; p; p = nextp ) {
 		s = (p->nodes[1] == node1);
 		nextp = p->next[s];

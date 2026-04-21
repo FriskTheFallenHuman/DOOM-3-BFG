@@ -1912,7 +1912,7 @@ static	void OptimizeOptList( optimizeGroup_t *opt ) {
 	SplitOriginalEdgesAtCrossings( opt );
 
 #if 0
-	// seperate any discontinuous areas for individual optimization
+	// separate any discontinuous areas for individual optimization
 	// to reduce the scope of the problem
 	SeparateIslands( opt );
 #else

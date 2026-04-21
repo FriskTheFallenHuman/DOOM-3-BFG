@@ -1059,12 +1059,13 @@ void idWindow::Time() {
 			}
 		}
 	}
-
-	if ( gui->Active() ) {
-		if ( gui->GetPendingCmd().Length() > 0 ) {
-			gui->GetPendingCmd() += ";";
+	if ( gui->Active() && cmd.Length() > 0 ) {
+		// DG: can't just append the command, must separate commands with " ; "
+		idStr& pend = gui->GetPendingCmd();
+		if ( pend.Length() > 0 ) {
+			pend += " ; ";
 		}
-		gui->GetPendingCmd() += cmd;
+		pend += cmd;
 	}
 }
 
