@@ -176,7 +176,7 @@ void idAASBuild::GravSubdivLeafNode( idBrushBSPNode *node ) {
 				break;
 			}
 
-			// test if the plane through the edge of the gap seperates the gap from a floor portal
+			// test if the plane through the edge of the gap separates the gap from a floor portal
 			for ( p2 = node->GetPortals(); p2; p2 = p2->Next(s2) ) {
 				s2 = (p2->GetNode(1) == node);
 

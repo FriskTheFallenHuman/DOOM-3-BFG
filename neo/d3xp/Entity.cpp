@@ -735,20 +735,21 @@ bool idEntity::DoDormantTests() {
 			return false;
 		}
 		return true;
-	} else {
-		// the monster area is topologically connected to a player, but if
-		// the monster hasn't been woken up before, do the more precise PVS check
-		if ( !fl.hasAwakened ) {
-			if ( !gameLocal.InPlayerPVS( this ) ) {
-				return true;		// stay dormant
-			}
-		}
-
-		// wake up
-		dormantStart = 0;
-		fl.hasAwakened = true;		// only go dormant when area closed off now, not just out of PVS
-		return false;
 	}
+
+	// the monster area is topologically connected to a player, but if
+	// the monster hasn't been woken up before, do the more precise PVS check
+	if ( !fl.hasAwakened ) {
+		if ( !gameLocal.InPlayerPVS( this ) ) {
+			return true;		// stay dormant
+		}
+	}
+
+	// wake up
+	dormantStart = 0;
+	fl.hasAwakened = true;		// only go dormant when area closed off now, not just out of PVS
+
+	return false;
 }
 
 /*
@@ -4184,12 +4185,17 @@ idEntity::Event_StartSoundShader
 ================
 */
 void idEntity::Event_StartSoundShader( const char *soundName, int channel ) {
-	int length = 0;
-	if ( soundName == NULL || soundName[0] == 0 ) {
-		StopSound( channel, false );
-	} else {
-		StartSoundShader( declManager->FindSound( soundName ), (s_channelType)channel, 0, false, &length );
+	// DG: at least some map scripts in d3xp seem to use $ent.startSoundShader( "", SND_CHANNEL_whatever );
+	//     to stop a playing sound. special-casing this to avoid playing beep sound (if s_playDefaultSound 1)
+	if ( soundName == NULL || soundName[0] == '\0' ) {
+		StopSound( (s_channelType)channel, false );
+		idThread::ReturnFloat( 0.0f );
+		return;
 	}
+
+	int length;
+
+	StartSoundShader( declManager->FindSound( soundName ), (s_channelType)channel, 0, false, &length );
 	idThread::ReturnFloat( MS2SEC( length ) );
 }
 
@@ -5087,10 +5093,11 @@ bool idEntity::ClientReceiveEvent( int event, int time, const idBitMsg &msg ) {
 			StopSound( channel, false );
 			return true;
 		}
-		default: {
-			return false;
-		}
+		default:
+			break;
 	}
+
+	return false;
 }
 
 /*
@@ -5597,10 +5604,11 @@ bool idAnimatedEntity::ClientReceiveEvent( int event, int time, const idBitMsg &
 			AddLocalDamageEffect( jointNum, localOrigin, localNormal, localDir, damageDef, collisionMaterial );
 			return true;
 		}
-		default: {
-			return idEntity::ClientReceiveEvent( event, time, msg );
-		}
+		default:
+			break;
 	}
+
+	return idEntity::ClientReceiveEvent( event, time, msg );
 }
 
 /*

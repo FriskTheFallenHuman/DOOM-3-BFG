@@ -769,6 +769,7 @@ idLight::ShowEditingDialog
 ===============
 */
 void idLight::ShowEditingDialog() {
+	common->InitTool( EDITOR_LIGHT, &spawnArgs );
 }
 
 /*
@@ -1081,8 +1082,9 @@ bool idLight::ClientReceiveEvent( int event, int time, const idBitMsg &msg ) {
 			BecomeBroken( NULL );
 			return true;
 		}
-		default: {
-			return idEntity::ClientReceiveEvent( event, time, msg );
-		}
+		default:
+			break;
 	}
+
+	return idEntity::ClientReceiveEvent( event, time, msg );
 }

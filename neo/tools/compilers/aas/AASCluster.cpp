@@ -379,7 +379,7 @@ bool idAASCluster::TestPortals() {
 			continue;
 		}
 
-		// this portal may not have reachabilities to a portal that doesn't seperate the same clusters
+		// this portal may not have reachabilities to a portal that doesn't separate the same clusters
 		for ( reach = area->reach; reach; reach = reach->next ) {
 			area2 = &file->areas[ reach->toAreaNum ];
 

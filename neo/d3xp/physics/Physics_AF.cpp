@@ -633,6 +633,7 @@ void idAFConstraint_BallAndSocketJoint::Evaluate( float invTimeStep ) {
 		c1.SubVec3(0) = -( invTimeStep * ERROR_REDUCTION ) * ( a2 + master->GetWorldOrigin() - ( a1 + body1->GetWorldOrigin() ) );
 	}
 	else {
+		a2.Zero();
 		c1.SubVec3(0) = -( invTimeStep * ERROR_REDUCTION ) * ( anchor2 - ( a1 + body1->GetWorldOrigin() ) );
 	}
 
@@ -3071,7 +3072,7 @@ void idAFConstraint_Contact::ApplyFriction( float invTimeStep ) {
 		return;
 	}
 
-	// seperate friction per contact is silly but it's fast and often looks close enough
+	// separate friction per contact is silly but it's fast and often looks close enough
 	if ( af_useImpulseFriction.GetBool() ) {
 
 		impulse.SetData( 6, VECX_ALLOCA( 6 ) );
@@ -6962,7 +6963,7 @@ void idPhysics_AF::BuildTrees() {
 		}
 
 		if ( trees.Num() > 1 ) {
-			gameLocal.Warning( "Articulated figure has multiple seperate tree structures for entity '%s' type '%s'.",
+			gameLocal.Warning( "Articulated figure has multiple separate tree structures for entity '%s' type '%s'.",
 								self->name.c_str(), self->GetType()->classname );
 		}
 
@@ -7920,10 +7921,10 @@ const float	AF_VELOCITY_MAX				= 16000;
 const int	AF_VELOCITY_TOTAL_BITS		= 16;
 const int	AF_VELOCITY_EXPONENT_BITS	= idMath::BitsForInteger( idMath::BitsForFloat( AF_VELOCITY_MAX ) ) + 1;
 const int	AF_VELOCITY_MANTISSA_BITS	= AF_VELOCITY_TOTAL_BITS - 1 - AF_VELOCITY_EXPONENT_BITS;
-const float	AF_FORCE_MAX				= 1e20f;
-const int	AF_FORCE_TOTAL_BITS			= 16;
-const int	AF_FORCE_EXPONENT_BITS		= idMath::BitsForInteger( idMath::BitsForFloat( AF_FORCE_MAX ) ) + 1;
-const int	AF_FORCE_MANTISSA_BITS		= AF_FORCE_TOTAL_BITS - 1 - AF_FORCE_EXPONENT_BITS;
+//const float	AF_FORCE_MAX				= 1e20f;
+//const int	AF_FORCE_TOTAL_BITS			= 16;
+//const int	AF_FORCE_EXPONENT_BITS		= idMath::BitsForInteger( idMath::BitsForFloat( AF_FORCE_MAX ) ) + 1;
+//const int	AF_FORCE_MANTISSA_BITS		= AF_FORCE_TOTAL_BITS - 1 - AF_FORCE_EXPONENT_BITS;
 
 /*
 ================

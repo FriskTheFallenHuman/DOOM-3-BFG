@@ -565,7 +565,7 @@ const char *idMultiplayerGame::GameTime() {
 		t = s / 10;
 		s -= t * 10;
 
-		sprintf( buff, "%i:%i%i", m, t, s );
+		idStr::snPrintf( buff, sizeof( buff ), "%i:%i%i", m, t, s );
 	}
 	return &buff[0];
 }
@@ -3081,7 +3081,7 @@ idMultiplayerGame::GetTeamFlag
 ================
 */
 void idMultiplayerGame::FindTeamFlags() {
-	char * flagDefs[2] =
+	const char * flagDefs[2] =
 	{
 		"team_CTF_redflag",
 		"team_CTF_blueflag"

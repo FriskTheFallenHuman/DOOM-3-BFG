@@ -74,7 +74,7 @@ private:
 	idPlane					plane;			// portal plane
 	int						planeNum;		// number of plane this portal is on
 	idWinding *				winding;		// portal winding
-	idBrushBSPNode *		nodes[2];		// nodes this portal seperates
+	idBrushBSPNode *		nodes[2];		// nodes this portal separates
 	idBrushBSPPortal *		next[2];		// next portal in list for both nodes
 	int						flags;			// portal flags
 	int						faceNum;		// number of the face created for this portal

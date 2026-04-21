@@ -3048,7 +3048,7 @@ idDeclModelDef::NumJointsOnChannel
 int idDeclModelDef::NumJointsOnChannel( int channel ) const {
 	if ( ( channel < 0 ) || ( channel >= ANIM_NumAnimChannels ) ) {
 		gameLocal.Error( "idDeclModelDef::NumJointsOnChannel : channel out of range" );
-		return 0;
+		return 0; // unreachable, (Error() doesn't return) just to shut up compiler
 	}
 	return channelJoints[ channel ].Num();
 }
@@ -3061,7 +3061,7 @@ idDeclModelDef::GetChannelJoints
 const int * idDeclModelDef::GetChannelJoints( int channel ) const {
 	if ( ( channel < 0 ) || ( channel >= ANIM_NumAnimChannels ) ) {
 		gameLocal.Error( "idDeclModelDef::GetChannelJoints : channel out of range" );
-		return NULL;
+		return NULL; // unreachable, (Error() doesn't return) just to shut up compiler
 	}
 	return channelJoints[ channel ].Ptr();
 }
@@ -4553,15 +4553,17 @@ bool idAnimator::GetJointLocalTransform( jointHandle_t jointHandle, int currentT
 	// FIXME: overkill
 	CreateFrame( currentTime, false );
 
-	if ( jointHandle > 0 ) {
-		idJointMat m = joints[ jointHandle ];
-		m /= joints[ modelJoints[ jointHandle ].parentNum ];
-		offset = m.ToVec3();
-		axis = m.ToMat3();
-	} else {
+	if ( jointHandle == 0 ) {
 		offset = joints[ jointHandle ].ToVec3();
 		axis = joints[ jointHandle ].ToMat3();
+
+		return true;
 	}
+
+	idJointMat m = joints[ jointHandle ];
+	m /= joints[ modelJoints[ jointHandle ].parentNum ];
+	offset = m.ToVec3();
+	axis = m.ToMat3();
 
 	return true;
 }

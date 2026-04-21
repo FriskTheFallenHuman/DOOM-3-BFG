@@ -39,14 +39,14 @@ If you have questions concerning this license or the applicable additional terms
 #define TOP_PRIORITY		7
 
 bool idCompiler::punctuationValid[ 256 ];
-char *idCompiler::punctuation[] = {
+const char *idCompiler::punctuation[] = {
 	"+=", "-=", "*=", "/=", "%=", "&=", "|=", "++", "--",
 	"&&", "||", "<=", ">=", "==", "!=", "::", ";",  ",",
 	"~",  "!",  "*",  "/",  "%",  "(",   ")",  "-", "+",
 	"=",  "[",  "]",  ".",  "<",  ">" ,  "&",  "|", ":",  NULL
 };
 
-opcode_t idCompiler::opcodes[] = {
+const opcode_t idCompiler::opcodes[] = {
 	{ "<RETURN>", "RETURN", -1, false, &def_void, &def_void, &def_void },
 
 	{ "++", "UINC_F", 1, true, &def_float, &def_void, &def_void },
@@ -208,12 +208,13 @@ idCompiler::idCompiler()
 ================
 */
 idCompiler::idCompiler() {
-	char	**ptr;
+	const char	**ptr;
 	int		id;
 
 	// make sure we have the right # of opcodes in the table
 	assert( ( sizeof( opcodes ) / sizeof( opcodes[ 0 ] ) ) == ( NUM_OPCODES + 1 ) );
 
+	eof	= true;
 	parserPtr = &parser;
 
 	callthread			= false;
@@ -364,6 +365,7 @@ idCompiler::Divide
 ID_INLINE float idCompiler::Divide( float numerator, float denominator ) {
 	if ( denominator == 0 ) {
 		Error( "Divide by zero" );
+		return 0;
 	}
 
 	return numerator / denominator;
@@ -629,8 +631,8 @@ Emits an opcode to push the variable onto the stack.
 ============
 */
 bool idCompiler::EmitPush( idVarDef *expression, const idTypeDef *funcArg ) {
-	opcode_t *op;
-	opcode_t *out;
+	const opcode_t *op;
+	const opcode_t *out;
 
 	out = NULL;
 	for( op = &opcodes[ OP_PUSH_F ]; op->name && !strcmp( op->name, "<PUSH>" ); op++ ) {
@@ -980,7 +982,7 @@ idVarDef *idCompiler::EmitFunctionParms( int op, idVarDef *func, int startarg, i
 	} else if ( ( op == OP_OBJECTCALL ) || ( op == OP_OBJTHREAD ) ) {
 		EmitOpcode( op, object, VirtualFunctionConstant( func ) );
 
-		// need arg size seperate since script object may be NULL
+		// need arg size separate since script object may be NULL
 		statement_t &statement = gameLocal.program.GetStatement( gameLocal.program.NumStatements() - 1 );
 		statement.c = SizeConstant( func->value.functionPtr->parmTotal );
 		// DG: before changes I did to ParseFunctionDef(), func->value.functionPtr->parmTotal was 0
@@ -1041,9 +1043,10 @@ idVarDef *idCompiler::EmitFunctionParms( int op, idVarDef *func, int startarg, i
 			break;
 
 		default :
+			Error( "Invalid return type for function '%s'", func->Name() );
 			// shut up compiler
 			resultOp = OP_STORE_OBJ;
-			Error( "Invalid return type for function '%s'", func->Name() );
+			break;
 		}
 	}
 
@@ -1184,7 +1187,7 @@ idVarDef *idCompiler::LookupDef( const char *name, const idVarDef *baseobj ) {
 	idVarDef	*field;
 	etype_t		type_b;
 	etype_t		type_c;
-	opcode_t	*op;
+	const opcode_t	*op;
 
 	// check if we're accessing a field
 	if ( baseobj && ( baseobj->Type() == ev_object ) ) {
@@ -1336,9 +1339,11 @@ idVarDef *idCompiler::GetTerm() {
 			break;
 
 		default :
+			Error( "type mismatch for ~" );
+
 			// shut up compiler
 			op = OP_COMP_F;
-			Error( "type mismatch for ~" );
+			break;
 		}
 
 		return EmitOpcode( op, e, 0 );
@@ -1368,18 +1373,22 @@ idVarDef *idCompiler::GetTerm() {
 			break;
 
 		case ev_function :
+			Error( "Invalid type for !" );
+
 			// shut up compiler
 			op = OP_NOT_F;
-			Error( "Invalid type for !" );
 			break;
+
 		case ev_object :
 			op = OP_NOT_ENT;
 			break;
 
 		default :
+			Error( "type mismatch for !" );
+
 			// shut up compiler
 			op = OP_NOT_F;
-			Error( "type mismatch for !" );
+			break;
 		}
 
 		return EmitOpcode( op, e, 0 );
@@ -1407,9 +1416,11 @@ idVarDef *idCompiler::GetTerm() {
 				op = OP_NEG_V;
 				break;
 			default :
+				Error( "type mismatch for -" );
+
 				// shut up compiler
 				op = OP_NEG_F;
-				Error( "type mismatch for -" );
+				break;
 			}
 			return EmitOpcode( &opcodes[ op ], e, 0 );
 		}
@@ -1478,8 +1489,8 @@ idCompiler::GetExpression
 ==============
 */
 idVarDef *idCompiler::GetExpression( int priority ) {
-	opcode_t		*op;
-	opcode_t		*oldop;
+	const opcode_t		*op;
+	const opcode_t		*oldop;
 	idVarDef		*e;
 	idVarDef		*e2;
 	const idVarDef	*oldtype;
@@ -1692,7 +1703,7 @@ void idCompiler::ParseReturnStatement() {
 	idVarDef	*e;
 	etype_t 	type_a;
 	etype_t 	type_b;
-	opcode_t	*op;
+	const opcode_t	*op;
 
 	if ( CheckToken( ";" ) ) {
 		if ( scope->TypeDef()->ReturnType()->Type() != ev_void ) {

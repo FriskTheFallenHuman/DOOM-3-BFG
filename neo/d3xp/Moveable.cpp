@@ -1342,14 +1342,14 @@ idExplodingBarrel::ClientReceiveEvent
 bool idExplodingBarrel::ClientReceiveEvent( int event, int time, const idBitMsg &msg ) {
 
 	switch( event ) {
-		case EVENT_EXPLODE: {
+		case EVENT_EXPLODE:
 			if ( gameLocal.realClientTime - msg.ReadInt() < spawnArgs.GetInt( "explode_lapse", "1000" ) ) {
 				ExplodingEffects( );
 			}
 			return true;
-		}
-		default: {
-			return idBarrel::ClientReceiveEvent( event, time, msg );
-		}
+		default:
+			break;
 	}
+
+	return idBarrel::ClientReceiveEvent( event, time, msg );
 }

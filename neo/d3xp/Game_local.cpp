@@ -71,7 +71,7 @@ idCVar net_usercmd_timing_debug( "net_usercmd_timing_debug", "0", CVAR_BOOL, "Pr
 
 
 // List of all defs used by the player that will stay on the fast timeline
-static char* fastEntityList[] = {
+static const char* fastEntityList[] = {
 	"player_doommarine",
 		"weapon_chainsaw",
 		"weapon_fists",
@@ -246,8 +246,8 @@ void idGameLocal::Clear() {
 	lastAIAlertTime = 0;
 	spawnArgs.Clear();
 	gravity.Set( 0, 0, -1 );
-	playerPVS.h = (unsigned int)-1;
-	playerConnectedAreas.h = (unsigned int)-1;
+	playerPVS.h = -1;
+	playerConnectedAreas.h = -1;
 	gamestate = GAMESTATE_UNINITIALIZED;
 	skipCinematic = false;
 	influenceActive = false;
@@ -3320,13 +3320,13 @@ bool idGameLocal::SpawnEntityDef( const idDict &args, idEntity **ent, bool setDe
 
 		cls = idClass::GetClass( spawn );
 		if ( !cls ) {
-			Warning( "Could not spawn '%s'.  Class '%s' not found%s.", classname, spawn, error.c_str() );
+			Warning( "Could not spawn '%s'.  Class '%s' not found %s.", classname, spawn, error.c_str() );
 			return false;
 		}
 
 		obj = cls->CreateInstance();
 		if ( !obj ) {
-			Warning( "Could not spawn '%s'. Instance could not be created%s.", classname, error.c_str() );
+			Warning( "Could not spawn '%s'. Instance could not be created %s.", classname, error.c_str() );
 			return false;
 		}
 
@@ -3746,6 +3746,11 @@ void idGameLocal::KillBox( idEntity *ent, bool catch_teleport ) {
 			}
 		} else if ( !catch_teleport ) {
 			hit->Damage( ent, ent, vec3_origin, "damage_telefrag", 1.0f, INVALID_JOINT );
+		}
+
+		if ( !common->IsMultiplayer() ) {
+			// let the mapper know about it
+			Warning( "'%s' telefragged '%s'", ent->name.c_str(), hit->name.c_str() );
 		}
 	}
 }

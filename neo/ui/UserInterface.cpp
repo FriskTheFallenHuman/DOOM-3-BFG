@@ -324,8 +324,6 @@ bool idUserInterfaceLocal::InitFromFile( const char *qpath, bool rebuild, bool c
 		return false;
 	}
 
-	int sz = sizeof( idWindow );
-	sz = sizeof( idSimpleWindow );
 	loading = true;
 
 	if ( rebuild ) {
@@ -386,6 +384,8 @@ bool idUserInterfaceLocal::InitFromFile( const char *qpath, bool rebuild, bool c
 		desktop->backColor = idVec4( 0.0f, 0.0f, 0.0f, 1.0f );
 		desktop->SetupFromState();
 		common->Warning( "Couldn't load gui: '%s'", source.c_str() );
+		loading = false;
+		return false;
 	}
 	interactive = desktop->Interactive();
 	if ( uiManagerLocal.guis.Find( this ) == NULL ) {

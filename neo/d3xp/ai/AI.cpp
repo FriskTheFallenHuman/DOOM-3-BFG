@@ -2692,16 +2692,12 @@ idAI::DeadMove
 */
 void idAI::DeadMove() {
 	idVec3				delta;
-	monsterMoveResult_t	moveResult;
-
-	idVec3 org = physicsObj.GetOrigin();
 
 	GetMoveDelta( viewAxis, viewAxis, delta );
 	physicsObj.SetDelta( delta );
 
 	RunPhysics();
 
-	moveResult = physicsObj.GetMoveResult();
 	AI_ONGROUND = physicsObj.OnGround();
 }
 
@@ -2835,11 +2831,9 @@ void idAI::SlideMove() {
 	idVec3				delta;
 	idVec3				goalDelta;
 	float				goalDist;
-	monsterMoveResult_t	moveResult;
 	idVec3				newDest;
 
 	idVec3 oldorigin = physicsObj.GetOrigin();
-	idMat3 oldaxis = viewAxis;
 
 	AI_BLOCKED = false;
 
@@ -2888,7 +2882,7 @@ void idAI::SlideMove() {
 	vel += goalDelta * MS2SEC( gameLocal.time - gameLocal.previousTime );
 
 	// cap our speed
-	vel = vel.Truncate( fly_speed );
+	vel.Truncate( fly_speed );
 	vel.z = z;
 	physicsObj.SetLinearVelocity( vel );
 	physicsObj.UseVelocityMove( true );
@@ -2909,7 +2903,6 @@ void idAI::SlideMove() {
 		gameRenderWorld->DebugLine( colorCyan, oldorigin, physicsObj.GetOrigin(), 5000 );
 	}
 
-	moveResult = physicsObj.GetMoveResult();
 	if ( !af_push_moveables && attack.Length() && TestMelee() ) {
 		DirectDamage( attack, enemy.GetEntity() );
 	} else {
@@ -3856,7 +3849,6 @@ void idAI::UpdateEnemyPosition() {
 	int				enemyAreaNum;
 	int				areaNum;
 	aasPath_t		path;
-	predictedPath_t predictedPath;
 	idVec3			enemyPos;
 	bool			onGround;
 
@@ -4996,7 +4988,7 @@ bool idAI::UpdateAnimationControllers() {
 	// Getting the joint positions causes the joints to be updated.  The IK gets joint positions itself (which
 	// are already up to date because of getting the joints in this function) and then sets their positions, which
 	// forces the heirarchy to be updated again next time we get a joint or present the model.  If IK is enabled,
-	// or if we have a seperate head, we end up transforming the joints twice per frame.  Characters with no
+	// or if we have a separate head, we end up transforming the joints twice per frame.  Characters with no
 	// head entity and no ik will only transform their joints once.  Set g_debuganim to the current entity number
 	// in order to see how many times an entity transforms the joints per frame.
 	idActor::UpdateAnimationControllers();
