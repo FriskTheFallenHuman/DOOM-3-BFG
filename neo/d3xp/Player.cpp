@@ -7803,9 +7803,9 @@ bool idPlayer::CanGive( const char *statname, const char *value ) {
 			return false;
 		}
 		return true;
-	} else {
-		return inventory.CanGive( this, spawnArgs, statname, value );
 	}
+
+	return inventory.CanGive( this, spawnArgs, statname, value );
 }
 
 /*
@@ -7886,11 +7886,10 @@ idPlayer::RouteGuiMouse
 */
 void idPlayer::RouteGuiMouse( idUserInterface *gui ) {
 	sysEvent_t ev;
-	const char *command;
 
 	if ( usercmd.mx != oldMouseX || usercmd.my != oldMouseY ) {
 		ev = sys->GenerateMouseMoveEvent( usercmd.mx - oldMouseX, usercmd.my - oldMouseY );
-		command = gui->HandleEvent( &ev, gameLocal.fast.time );
+		gui->HandleEvent( &ev, gameLocal.fast.time );
 		oldMouseX = usercmd.mx;
 		oldMouseY = usercmd.my;
 	}
@@ -10210,7 +10209,7 @@ bool idPlayer::ClientReceiveEvent( int event, int time, const idBitMsg &msg ) {
 				// happens if the event and the spectate change are written on the server during the same frame (fraglimit)
 				return true;
 			}
-			return idActor::ClientReceiveEvent( event, time, msg );
+			break;
 		}
 		case EVENT_FORCE_ORIGIN: {
 
@@ -10230,11 +10229,11 @@ bool idPlayer::ClientReceiveEvent( int event, int time, const idBitMsg &msg ) {
 			physicsObj.SetKnockBack( knockbacktime );
 			return true;
 		}
-		default: {
-			return idActor::ClientReceiveEvent( event, time, msg );
-		}
+		default:
+			break;
 	}
-//	return false;
+
+	return idActor::ClientReceiveEvent( event, time, msg );
 }
 
 /*
