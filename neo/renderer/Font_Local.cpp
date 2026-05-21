@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "Font_Local.h"
+#include "tr_local.h"
 
 // stb_truetype — single-header TrueType rasterizer (replaces FreeType)
 // We define STBTT_STATIC so that all stb symbols are file-local and won't
@@ -900,7 +901,7 @@ bool idFontLocal::LoadFromTrueTypeFont() {
 	}
 
 	idStr fontTextureName = va( "newfonts/%s/48.tga", GetName() );
-	renderSystem->WriteImage( TYPE_TGA, fontTextureName.c_str(), imageBuff, FONT_SIZE, FONT_SIZE, false, "fs_basepath" );
+	R_WriteImage( TYPE_TGA, fontTextureName.c_str(), imageBuff, FONT_SIZE, FONT_SIZE, false, "fs_basepath" );
 
 	Mem_Free( imageBuff );
 	Mem_Free( out );

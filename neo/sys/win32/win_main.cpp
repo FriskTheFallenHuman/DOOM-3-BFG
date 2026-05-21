@@ -1241,7 +1241,6 @@ void Sys_Init() {
 
 	common->Printf( "%s\n", win32.sys_cpustring.GetString() );
 	common->Printf( "%d MB System Memory\n", Sys_GetSystemRam() );
-	common->Printf( "%d MB Video Memory\n", Sys_GetVideoRam() );
 	if ( ( win32.cpuid & CPUID_SSE ) == 0 ) {
 		common->Error( "SSE not supported!" );
 	}
