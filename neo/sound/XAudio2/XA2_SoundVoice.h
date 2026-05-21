@@ -88,7 +88,6 @@ private:
 	void					SetSampleRate( uint32 newSampleRate, uint32 operationSet );
 
 	IXAudio2SourceVoice *	pSourceVoice;
-	XAUDIO2FX_REVERB_PARAMETERS suitReverb;
 };
 
 #endif

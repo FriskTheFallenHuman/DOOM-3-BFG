@@ -404,7 +404,7 @@ void idPlayerView::SingleView( const renderView_t *view, idMenuHandler_HUD * hud
 	}
 
 	// place the sound origin for the player
-	gameSoundWorld->PlaceListener( view->vieworg, view->viewaxis, player->entityNumber + 1, player->hud ? player->hud->GetlocationName() : "Undefined" );
+	gameSoundWorld->PlaceListener( view->vieworg, view->viewaxis, player->entityNumber + 1 );
 
 	// if the objective system is up, don't do normal drawing
 	if ( player->objectiveSystemOpen ) {

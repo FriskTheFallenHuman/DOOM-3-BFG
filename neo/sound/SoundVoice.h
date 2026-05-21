@@ -47,8 +47,7 @@ public:
 					numChannels( 0 ),
 					sampleRate( 0 ),
 					paused( true ),
-					hasVUMeter( false ),
-					chains( 1 ) {
+					hasVUMeter( false ) {
 				}
 
 	virtual void	Create( const idSoundSample * leadinSample, const idSoundSample * loopingSample, const int _channel ) {}
@@ -95,7 +94,6 @@ protected:
 	bool		paused;
 
 	int			channel;
-	int			chains;
 };
 
 #endif /* !__SOUNDVOICE_H__ */

@@ -61,8 +61,6 @@ idSoundWorldLocal::idSoundWorldLocal() {
 	listener.id = -1;
 	listener.area = 0;
 
-	EAXarea = -1;
-
 	shakeAmp = 0.0f;
 	currentCushionDB = DB_SILENCE;
 
@@ -153,7 +151,7 @@ float idSoundWorldLocal::CurrentShakeAmplitude() {
 idSoundWorldLocal::PlaceListener
 ========================
 */
-void idSoundWorldLocal::PlaceListener( const idVec3 &origin, const idMat3 &axis, const int id, const char *locationName ) {
+void idSoundWorldLocal::PlaceListener( const idVec3 & origin, const idMat3 & axis, const int id ) {
 	if ( writeDemo ) {
 		writeDemo->WriteInt( DS_SOUND );
 		writeDemo->WriteInt( SCMD_PLACE_LISTENER );
@@ -169,22 +167,12 @@ void idSoundWorldLocal::PlaceListener( const idVec3 &origin, const idMat3 &axis,
 	listener.axis = axis;
 	listener.pos = origin;
 	listener.id = id;
-	listener.name = locationName;
 
 	if ( renderWorld ) {
 		listener.area = renderWorld->PointInArea( origin );	// where are we?
 	} else {
 		listener.area = 0;
 	}
-}
-
-/*
-========================
-idSoundWorldLocal::ClearEAX
-========================
-*/
-void idSoundWorldLocal::ClearEAX() {
-	EAXarea = -1;
 }
 
 /*
@@ -289,35 +277,6 @@ idSoundWorldLocal::Update
 ========================
 */
 void idSoundWorldLocal::Update() {
-	// Check here if the player has change environment and re-set the effect slot
-	if ( soundSystemLocal.efxloaded ) {
-		int EnvironmentID = -1;
-		idSoundEffect * effect = NULL;
-		if ( EAXarea != listener.area ) {
-			idStr defaultStr( "default" );
-			idStr listenerAreaStr( listener.area );
-			soundSystemLocal.EFXDatabase.FindEffect( listenerAreaStr, &effect, &EnvironmentID );
-
-			if ( !effect ) {
-				soundSystemLocal.EFXDatabase.FindEffect( listener.name, &effect, &EnvironmentID );
-			}
-
-			if ( !effect ) {
-				soundSystemLocal.EFXDatabase.FindEffect( defaultStr, &effect, &EnvironmentID );
-			}
-		} else {
-			EnvironmentID = listener.id;
-		}
-
-		// only update if change in settings
-		if ( listener.id != EnvironmentID ) {
-			soundSystemLocal.hardware->UpdateEAXEffect( effect );
-			if ( soundSystemLocal.hardware->IsReverbSupported() ) {
-				EAXarea = listener.area;
-			}
-			listener.id = EnvironmentID;
-		}
-	}
 
 	// ------------------
 	// Update emitters
@@ -834,7 +793,7 @@ void idSoundWorldLocal::ProcessDemoCommand( idDemoFile * readDemo ) {
 			readDemo->ReadMat3( axis );
 			readDemo->ReadInt( listenerId );
 
-			PlaceListener( origin, axis, listenerId, "Undefined" );
+			PlaceListener( origin, axis, listenerId );
 		};
 		break;
 	case SCMD_ALLOC_EMITTER:

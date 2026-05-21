@@ -406,7 +406,7 @@ void idCommonLocal::ExecuteMapChange() {
 	}
 
 	renderSystem->EndLevelLoad();
-	soundSystem->EndLevelLoad( currentMapName );
+	soundSystem->EndLevelLoad();
 	declManager->EndLevelLoad();
 	uiManager->EndLevelLoad( currentMapName );
 	fileSystem->EndLevelLoad();

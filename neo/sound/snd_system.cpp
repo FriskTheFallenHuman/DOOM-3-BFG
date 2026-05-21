@@ -208,9 +208,6 @@ idSoundSystemLocal::Shutdown
 */
 void idSoundSystemLocal::Shutdown() {
 	hardware->Shutdown();
-	// EAX or not, the list needs to be cleared
-	EFXDatabase.Clear();
-	efxloaded = false;
 	FreeStreamBuffers();
 	samples.DeleteContents( true );
 	sampleHash.Free();
@@ -488,13 +485,6 @@ void idSoundSystemLocal::BeginLevelLoad() {
 		samples[i]->FreeData();
 		samples[i]->ResetLevelLoadReferenced();
 	}
-
-	// Make sure there are no efx data remained
-	if ( efxloaded ) {
-		EFXDatabase.UnloadFile();
-		efxloaded = false;
-		hardware->ShutdownReverbSystem();
-	}
 }
 
 
@@ -558,7 +548,7 @@ void idSoundSystemLocal::Preload( idPreloadManifest & manifest ) {
 idSoundSystemLocal::EndLevelLoad
 ========================
 */
-void idSoundSystemLocal::EndLevelLoad( const char * mapstring ) {
+void idSoundSystemLocal::EndLevelLoad() {
 
 	insideLevelLoad = false;
 
@@ -604,22 +594,6 @@ void idSoundSystemLocal::EndLevelLoad( const char * mapstring ) {
 
 		samples[ preloadSort[ i ].idx ]->LoadResource();
 	}
-
-	idStr efxname( "efxs/" );
-	idStr mapname( mapstring );
-
-	mapname.SetFileExtension( ".efx" );
-	mapname.StripPath();
-	efxname += mapname;
-
-	efxloaded = EFXDatabase.LoadFile( efxname );
-	if ( efxloaded ) {
-		common->Printf( "sound: found %s\n", efxname.c_str() );
-	} else {
-		common->Printf( "sound: missing %s\n", efxname.c_str() );
-		hardware->ShutdownReverbSystem();
-	}
-
 	int	end = Sys_Milliseconds();
 
 	common->Printf( "%5i sounds loaded in %5.1f seconds\n", loadCount, (end-start) * 0.001 );

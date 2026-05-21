@@ -87,8 +87,6 @@ typedef enum {
 	SCMD_FADE
 } soundDemoCommand_t;
 
-#include "EFXFile.h"
-
 #include "SoundVoiceBase.h"
 #include "SoundVoice.h"
 #include "SoundSample.h"
@@ -138,7 +136,6 @@ struct listener_t {
 	idVec3	pos;		// position in meters
 	int		id;			// the entity number, used to detect when a sound is local
 	int		area;		// area number the listener is in
-	idStr	name;		// the name of the area the player is in
 };
 
 class idSoundFade {
@@ -239,10 +236,7 @@ public:
 	virtual float			CurrentShakeAmplitude();
 
 	// where is the camera
-	virtual void			PlaceListener( const idVec3 &origin, const idMat3 &axis, const int listenerId, const char *locationName );
-
-	// clear any EAX effect that is currently active
-	virtual void			ClearEAX();
+	virtual void			PlaceListener( const idVec3 &origin, const idMat3 &axis, const int listenerId );
 
 	// fade all sounds in the world with a given shader soundClass
 	// to is in Db, over is in seconds
@@ -302,7 +296,6 @@ public:
 	float				shakeAmp;			// last calculated shake amplitude
 
 	listener_t			listener;
-	int					EAXarea;
 	idList<idSoundEmitterLocal *, TAG_AUDIO>	emitters;
 
 	idSoundEmitter *	localSound;			// for PlayShaderDirectly()
@@ -446,7 +439,7 @@ public:
 	virtual	void			BeginLevelLoad();
 
 	// We might want to defer the loading of new sounds to this point
-	virtual	void			EndLevelLoad( const char * mapstring );
+	virtual	void			EndLevelLoad();
 
 	// prints memory info
 	virtual void			PrintMemInfo( MemInfo_t *mi );
@@ -481,9 +474,6 @@ public:
 		idSoundSample * sample;
 		int bufferNumber;
 	};
-
-	idEFXFile				EFXDatabase;
-	bool					efxloaded;
 
 	// Get a stream buffer from the free pool, returns NULL if none are available
 	bufferContext_t *			ObtainStreamBufferContext();
