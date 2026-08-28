@@ -448,6 +448,10 @@ small chars are drawn at native screen resolution
 =====================
 */
 void idRenderSystemLocal::DrawSmallChar( int x, int y, int ch ) {
+	int row, col;
+	float frow, fcol;
+	float size;
+
 	ch &= 255;
 
 	if ( ch == ' ' ) {
@@ -458,26 +462,17 @@ void idRenderSystemLocal::DrawSmallChar( int x, int y, int ch ) {
 		return;
 	}
 
-    if ( renderFont && renderSmallFontScale > 0.0f ) {
-        scaledGlyphInfo_t glyph;
-        renderFont->GetScaledGlyph( renderSmallFontScale, (uint32)ch, glyph );
+	row = ch >> 4;
+	col = ch & 15;
 
-        if ( glyph.material && glyph.width > 0.0f && glyph.height > 0.0f ) {
-            // Center glyph horizontally in the cell
-            //float hPad = ( SMALLCHAR_WIDTH  - glyph.width  ) * 1.0f;
-            float descender = renderFont->GetDescender( renderSmallFontScale );
-            float drawX = x - idMath::Floor( descender + glyph.left );
-            // Align to baseline: top of cell + ascender
-            float ascender = renderFont->GetAscender( renderSmallFontScale );
-            float drawY = y + ascender - glyph.top;
+	frow = row * 0.0625f;
+	fcol = col * 0.0625f;
+	size = 0.0625f;
 
-            DrawStretchPic( drawX, drawY,
-                            glyph.width, glyph.height,
-                            glyph.s1, glyph.t1, glyph.s2, glyph.t2,
-                            glyph.material );
-            return;
-        }
-    }
+	DrawStretchPic( x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT,
+					   fcol, frow,
+					   fcol + size, frow + size,
+					   charSetMaterial );
 }
 
 /*
@@ -490,47 +485,34 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void idRenderSystemLocal::DrawSmallStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor, bool shadow, int maxChars ) {
+void idRenderSystemLocal::DrawSmallStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor ) {
 	idVec4		color;
-
-	if ( maxChars <= 0 ) {
-		maxChars = 32767; // do them all!
-	}
-
-	// draw the drop shadow
-    if ( shadow ) {
-        color.Set( 0, 0, 0, setColor[3] );
-        SetColor( color );
-        const unsigned char *s = (const unsigned char *)string;
-        int xx = x, cnt = 0;
-        while ( *s && cnt < maxChars ) {
-            if ( idStr::IsColor( (const char*)s ) ) { s += 2; continue; }
-            DrawSmallChar( xx + 2, y + 2, *s );
-            xx += SMALLCHAR_WIDTH; s++; cnt++;
-        }
-    }
+	const unsigned char	*s;
+	int			xx;
 
 	// draw the colored text
-    SetColor( setColor );
-    const unsigned char *s = (const unsigned char *)string;
-    int xx = x, cnt = 0;
-    while ( *s && cnt < maxChars ) {
-        if ( idStr::IsColor( (const char*)s ) ) {
-            if ( !forceColor ) {
-                if ( *(s+1) == C_COLOR_DEFAULT ) {
-                    SetColor( setColor );
-                } else {
-                    color = idStr::ColorForIndex( *(s+1) );
-                    color[3] = setColor[3];
-                    SetColor( color );
-                }
-            }
-            s += 2; continue;
-        }
-        DrawSmallChar( xx, y, *s );
-        xx += SMALLCHAR_WIDTH; s++; cnt++;
-    }
-    SetColor( colorWhite );
+	s = (const unsigned char*)string;
+	xx = x;
+	SetColor( setColor );
+	while ( *s ) {
+		if ( idStr::IsColor( (const char*)s ) ) {
+			if ( !forceColor ) {
+				if ( *(s+1) == C_COLOR_DEFAULT ) {
+					SetColor( setColor );
+				} else {
+					color = idStr::ColorForIndex( *(s+1) );
+					color[3] = setColor[3];
+					SetColor( color );
+				}
+			}
+			s += 2;
+			continue;
+		}
+		DrawSmallChar( xx, y, *s );
+		xx += SMALLCHAR_WIDTH;
+		s++;
+	}
+	SetColor( colorWhite );
 }
 
 /*
@@ -539,6 +521,10 @@ idRenderSystemLocal::DrawBigChar
 =====================
 */
 void idRenderSystemLocal::DrawBigChar( int x, int y, int ch ) {
+	int row, col;
+	float frow, fcol;
+	float size;
+
 	ch &= 255;
 
 	if ( ch == ' ' ) {
@@ -549,26 +535,17 @@ void idRenderSystemLocal::DrawBigChar( int x, int y, int ch ) {
 		return;
 	}
 
-    if ( renderFont && renderBigFontScale > 0.0f ) {
-        scaledGlyphInfo_t glyph;
-        renderFont->GetScaledGlyph( renderBigFontScale, (uint32)ch, glyph );
+	row = ch >> 4;
+	col = ch & 15;
 
-        if ( glyph.material && glyph.width > 0.0f && glyph.height > 0.0f ) {
-            // Center glyph horizontally in the cell
-            //float hPad = ( BIGCHAR_WIDTH  - glyph.width  ) * 0.5f;
-            float descender = renderFont->GetDescender( renderBigFontScale );
-            float drawX = x - idMath::Floor( descender + glyph.left );
-            // Align to baseline: top of cell + ascender
-            float ascender = renderFont->GetAscender( renderBigFontScale );
-            float drawY = y + ascender - glyph.top;
+	frow = row * 0.0625f;
+	fcol = col * 0.0625f;
+	size = 0.0625f;
 
-            DrawStretchPic( drawX, drawY,
-                            glyph.width, glyph.height,
-                            glyph.s1, glyph.t1, glyph.s2, glyph.t2,
-                            glyph.material );
-            return;
-        }
-    }
+	DrawStretchPic( x, y, BIGCHAR_WIDTH, BIGCHAR_HEIGHT,
+					   fcol, frow,
+					   fcol + size, frow + size,
+					   charSetMaterial );
 }
 
 /*
@@ -581,47 +558,34 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void idRenderSystemLocal::DrawBigStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor, bool shadow, int maxChars ) {
+void idRenderSystemLocal::DrawBigStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor ) {
 	idVec4		color;
-
-	if ( maxChars <= 0 ) {
-		maxChars = 32767; // do them all!
-	}
-
-	// draw the drop shadow
-    if ( shadow ) {
-        color.Set( 0, 0, 0, setColor[3] );
-        SetColor( color );
-        const unsigned char *s = (const unsigned char *)string;
-        int xx = x, cnt = 0;
-        while ( *s && cnt < maxChars ) {
-            if ( idStr::IsColor( (const char*)s ) ) { s += 2; continue; }
-            DrawBigChar( xx + 2, y + 2, *s );
-            xx += BIGCHAR_WIDTH; s++; cnt++;
-        }
-    }
+	const char	*s;
+	int			xx;
 
 	// draw the colored text
-    SetColor( setColor );
-    const unsigned char *s = (const unsigned char *)string;
-    int xx = x, cnt = 0;
-    while ( *s && cnt < maxChars ) {
-        if ( idStr::IsColor( (const char*)s ) ) {
-            if ( !forceColor ) {
-                if ( *(s+1) == C_COLOR_DEFAULT ) {
-                    SetColor( setColor );
-                } else {
-                    color = idStr::ColorForIndex( *(s+1) );
-                    color[3] = setColor[3];
-                    SetColor( color );
-                }
-            }
-            s += 2; continue;
-        }
-        DrawBigChar( xx, y, *s );
-        xx += BIGCHAR_WIDTH; s++; cnt++;
-    }
-    SetColor( colorWhite );
+	s = string;
+	xx = x;
+	SetColor( setColor );
+	while ( *s ) {
+		if ( idStr::IsColor( s ) ) {
+			if ( !forceColor ) {
+				if ( *(s+1) == C_COLOR_DEFAULT ) {
+					SetColor( setColor );
+				} else {
+					color = idStr::ColorForIndex( *(s+1) );
+					color[3] = setColor[3];
+					SetColor( color );
+				}
+			}
+			s += 2;
+			continue;
+		}
+		DrawBigChar( xx, y, *s );
+		xx += BIGCHAR_WIDTH;
+		s++;
+	}
+	SetColor( colorWhite );
 }
 
 //======================================================================================

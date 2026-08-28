@@ -81,8 +81,7 @@ int64 com_engineHz_denominator = 100LL * 60LL;
 #ifdef __DOOM_DLL__
 idGame *		game = NULL;
 idGameEdit *	gameEdit = NULL;
-idAnimManager *	animationLib = NULL;
-idGameLeaderboard *	gameLeadBoards = NULL;
+idGameLeaderboard *		gameLeadBoards = NULL;
 #endif
 
 idCommonLocal	commonLocal;
@@ -137,7 +136,11 @@ idCommonLocal::idCommonLocal() :
 
 	gameDLL = 0;
 
+	loadGUI = NULL;
+	nextLoadTip = 0;
+	isHellMap = false;
 	wipeForced = false;
+	defaultLoadscreen = false;
 
 	menuSoundWorld = NULL;
 
@@ -929,7 +932,6 @@ void idCommonLocal::LoadGameDLL() {
 
 	game								= gameExport.game;
 	gameEdit							= gameExport.gameEdit;
-	animationLib						= gameExport.animationLib;
 	gameLeadBoards						= gameExport.gameLeadBoards;
 
 #endif
@@ -1322,6 +1324,10 @@ void idCommonLocal::Shutdown() {
 
 	printf( "CleanupShell();\n" );
 	CleanupShell();
+
+	printf( "delete loadGUI;\n" );
+	delete loadGUI;
+	loadGUI = NULL;
 
 	printf( "delete renderWorld;\n" );
 	renderSystem->FreeRenderWorld( renderWorld );

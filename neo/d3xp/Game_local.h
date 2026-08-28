@@ -104,8 +104,6 @@ void gameError( const char *fmt, ... );
 
 
 class idWeapon;
-class idGameEditLocal;
-class idAnimManagerLocal;
 
 //============================================================================
 
@@ -115,9 +113,6 @@ const int ENTITY_PVS_SIZE			= ((MAX_GENTITIES+31)>>5);
 const int NUM_RENDER_PORTAL_BITS	= idMath::BitsForInteger( PS_BLOCK_ALL );
 
 const int MAX_EVENT_PARAM_SIZE		= 128;
-
-static const int		LOAD_TIP_CHANGE_INTERVAL = 12000;
-static const int		LOAD_TIP_COUNT = 26;
 
 typedef struct entityNetEvent_s {
 	int						spawnId;
@@ -333,12 +328,6 @@ public:
 
 	bool					quickSlowmoReset;
 
-	idSWF *					loadGUI;
-	int						nextLoadTip;
-	bool					isHellMap;
-	bool					defaultLoadscreen;
-	idStaticList<int, LOAD_TIP_COUNT>	loadTipList;
-
 	virtual void			SelectTimeGroup( int timeGroup );
 	virtual int				GetTimeGroupTime( int timeGroup );
 
@@ -538,11 +527,6 @@ public:
 	virtual void					Shell_UpdateClientCountdown( int countdown );
 	virtual void					Shell_UpdateLeaderboard( const idLeaderboardCallback * callback );
 	virtual void					Shell_SetGameComplete();
-	virtual bool					Shell_IsLoadingActive() const;
-	virtual void					Shell_LoadingShell( const char *mapName, bool & hellMap );
-	virtual void					Shell_RenderLoadingShell();
-	virtual void					Shell_ClearLoadingShell();
-	virtual void					Shell_UpdateLoadingShell();
 
 	void					Shell_ClearRepeater();
 
@@ -658,8 +642,7 @@ private:
 //============================================================================
 
 extern idGameLocal			gameLocal;
-extern idGameEditLocal		gameEditLocal;
-extern idAnimManagerLocal	animationLibLocal;
+extern idAnimManager		animationLib;
 
 //============================================================================
 

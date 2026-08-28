@@ -36,7 +36,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "ImageOpts.h"
 #include "Image.h"
 #include "RenderTexture.h"
-#include "Font_Local.h"
+#include "Font.h"
 
 // everything that is needed by the backend needs
 // to be double buffered to allow it to run in
@@ -714,9 +714,9 @@ public:
 	virtual void			DrawStretchTri ( const idVec2 & p1, const idVec2 & p2, const idVec2 & p3, const idVec2 & t1, const idVec2 & t2, const idVec2 & t3, const idMaterial *material );
 	virtual idDrawVert *	AllocTris( int numVerts, const triIndex_t * indexes, int numIndexes, const idMaterial * material );
 	virtual void			DrawSmallChar( int x, int y, int ch );
-	virtual void			DrawSmallStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor, bool shadow, int maxChars );
+	virtual void			DrawSmallStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor );
 	virtual void			DrawBigChar( int x, int y, int ch );
-	virtual void			DrawBigStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor, bool shadow, int maxChars );
+	virtual void			DrawBigStringExt( int x, int y, const char *string, const idVec4 &setColor, bool forceColor );
 
 	virtual void			WriteDemoPics();
 	virtual void			DrawDemoPics();
@@ -767,16 +767,13 @@ public:
 	// many console commands need to know which world they should operate on
 
 	const idMaterial *		whiteMaterial;
+	const idMaterial *		charSetMaterial;
 	const idMaterial *		defaultPointLight;
 	const idMaterial *		defaultProjectedLight;
 	const idMaterial *		defaultMaterial;
 	idImage *				testImage;
 	idCinematic *			testVideo;
 	int						testVideoStartTime;
-
-	idFont *                renderFont;
-	float                   renderSmallFontScale;
-	float                   renderBigFontScale;
 
 	idImage *				ambientCubeImage;	// hack for testing dependent ambient lighting
 

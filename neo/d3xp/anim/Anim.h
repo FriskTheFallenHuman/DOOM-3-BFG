@@ -566,29 +566,28 @@ private:
 /*
 ==============================================================================================
 
-	idAnimManagerLocal
+	idAnimManager
 
 ==============================================================================================
 */
 
-class idAnimManagerLocal : public idAnimManager {
+class idAnimManager {
 public:
-								idAnimManagerLocal();
-								~idAnimManagerLocal();
+								idAnimManager();
+								~idAnimManager();
 
 	static bool					forceExport;
 
-	virtual void				Shutdown();
-	virtual idMD5Anim *			GetAnim( const char *name );
-	virtual void				ReloadAnims();
-	virtual void				ListAnims() const;
-	virtual int					JointIndex( const char *name );
-	virtual const char *		JointName( int index ) const;
-
-	virtual void				ClearAnimsInUse() {}
-	virtual void				FlushUnusedAnims( void );
-
+	void						Shutdown();
+	idMD5Anim *					GetAnim( const char *name );
 	void						Preload( const idPreloadManifest &manifest );
+	void						ReloadAnims();
+	void						ListAnims() const;
+	int							JointIndex( const char *name );
+	const char *				JointName( int index ) const;
+
+	void						ClearAnimsInUse();
+	void						FlushUnusedAnims();
 
 private:
 	idHashTable<idMD5Anim *>	animations;

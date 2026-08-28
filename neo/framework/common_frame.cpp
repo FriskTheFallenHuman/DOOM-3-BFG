@@ -211,10 +211,8 @@ void idCommonLocal::Draw() {
 		Sys_Sleep( com_sleepDraw.GetInteger() );
 	}
 
-	if ( insideExecuteMapChange ) {
-		if ( game ) {
-			game->Shell_RenderLoadingShell();
-		}
+	if ( loadGUI != NULL ) {
+		loadGUI->Render( renderSystem, Sys_Milliseconds() );
 	} else if ( game && game->Shell_IsActive() ) {
 		bool gameDraw = game->Draw( game->GetLocalClientNum() );
 		if ( !gameDraw ) {
@@ -257,8 +255,7 @@ void idCommonLocal::Draw() {
 		// draw the wipe material on top of this if it hasn't completed yet
 		DrawWipeModel();
 
-		bool isLoadingGUI = (game != NULL && game->Shell_IsLoadingActive());
-		Dialog().Render( isLoadingGUI );
+		Dialog().Render( loadGUI != NULL );
 
 		// draw the half console / notify console on top of everything
 		console->Draw( false );
@@ -723,9 +720,8 @@ void idCommonLocal::Frame() {
 		// an ERP_DROP was thrown
 
 		// kill loading gui
-		if ( game ) {
-			game->Shell_ClearLoadingShell();
-		}
+		delete loadGUI;
+		loadGUI = NULL;
 
 		// drop back to main menu
 		LeaveGame();

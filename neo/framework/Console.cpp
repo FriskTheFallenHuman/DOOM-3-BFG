@@ -41,11 +41,8 @@ If you have questions concerning this license or the applicable additional terms
 
 struct overlayText_t {
 	idStr			text;
-	idVec4			textColor;
 	justify_t		justify;
-	textSize_t		size;
 	int				time;
-	bool			showbackground = false;
 };
 
 // the console will query the cvar and command systems for
@@ -63,7 +60,7 @@ public:
 	virtual	void		Print( const char *text );
 	virtual	void		Draw( bool forceFullScreen );
 
-	virtual void		PrintOverlay( idOverlayHandle & handle, justify_t justify, VERIFY_FORMAT_STRING const char * text, idVec4 & textColor, bool showbackground, textSize_t size, ... );
+	virtual void		PrintOverlay( idOverlayHandle &handle, justify_t justify, const char *text, ... );
 
 	virtual idDebugGraph *	CreateGraph( int numItems );
 	virtual void			DestroyGraph( idDebugGraph * graph );
@@ -89,10 +86,8 @@ private:
 	void				SetDisplayFraction( float frac );
 	void				UpdateDisplayFraction();
 
-	void				DrawTextSmallLeftAlign( float x, float &y, const idVec4 &textColor, const char *text, ... );
-	void				DrawTextSmallRightAlign( float x, float &y, const idVec4 &textColor, const char *text, ... );
-	void				DrawTextBigLeftAlign( float x, float &y, const idVec4 &textColor, const char *text, ... );
-	void				DrawTextBigRightAlign( float x, float &y, const idVec4 &textColor, const char *text, ... );
+	void				DrawTextLeftAlign( float x, float &y, const char *text, ... );
+	void				DrawTextRightAlign( float x, float &y, const char *text, ... );
 
 	float				DrawFPS( float y );
 	float				DrawMemoryUsage( float y );
@@ -168,81 +163,36 @@ idCVar idConsoleLocal::con_noPrint( "con_noPrint", "1", CVAR_BOOL|CVAR_SYSTEM|CV
 
 /*
 ==================
-idConsoleLocal::DrawTextSmallLeftAlign
+idConsoleLocal::DrawTextLeftAlign
 ==================
 */
-void idConsoleLocal::DrawTextSmallLeftAlign( float x, float &y, const idVec4 &textColor, const char *text, ... ) {
+void idConsoleLocal::DrawTextLeftAlign( float x, float &y, const char *text, ... ) {
 	char string[MAX_STRING_CHARS];
 	va_list argptr;
 	va_start( argptr, text );
 	idStr::vsnPrintf( string, sizeof( string ), text, argptr );
 	va_end( argptr );
-	renderSystem->DrawSmallStringExt( x, y + 2, string, textColor, true, true, idStr::Length( string ) );
+	renderSystem->DrawSmallStringExt( x, y + 2, string, colorWhite, true );
 	y += SMALLCHAR_HEIGHT + 4;
 }
 
 /*
 ==================
-idConsoleLocal::DrawTextSmallRightAlign
+idConsoleLocal::DrawTextRightAlign
 ==================
 */
-void idConsoleLocal::DrawTextSmallRightAlign( float x, float &y, const idVec4 &textColor, const char *text, ... ) {
+void idConsoleLocal::DrawTextRightAlign( float x, float &y, const char *text, ... ) {
 	char string[MAX_STRING_CHARS];
 	va_list argptr;
 	va_start( argptr, text );
-	idStr::vsnPrintf( string, sizeof( string ), text, argptr );
+	int i = idStr::vsnPrintf( string, sizeof( string ), text, argptr );
 	va_end( argptr );
-
-	int visLen = 0;
-	for ( const char *p = string; *p; p++ ) {
-		if ( idStr::IsColor( p ) ) {
-			p++; continue;
-		}
-		visLen++;
-	}
-
-	renderSystem->DrawSmallStringExt( x - visLen * SMALLCHAR_WIDTH, y + 2, string, textColor, true, true, idStr::Length( string ) );
+	renderSystem->DrawSmallStringExt( x - i * SMALLCHAR_WIDTH, y + 2, string, colorWhite, true );
 	y += SMALLCHAR_HEIGHT + 4;
 }
 
-/*
-==================
-idConsoleLocal::DrawTextBigLeftAlign
-==================
-*/
-void idConsoleLocal::DrawTextBigLeftAlign( float x, float &y, const idVec4 &textColor, const char *text, ... ) {
-	char string[MAX_STRING_CHARS];
-	va_list argptr;
-	va_start( argptr, text );
-	idStr::vsnPrintf( string, sizeof( string ), text, argptr );
-	va_end( argptr );
-	renderSystem->DrawBigStringExt( x, y + 2, string, textColor, true, true, idStr::Length( string ) );
-	y += BIGCHAR_HEIGHT + 4;
-}
 
-/*
-==================
-idConsoleLocal::DrawTextBigRightAlign
-==================
-*/
-void idConsoleLocal::DrawTextBigRightAlign( float x, float &y, const idVec4 &textColor, const char *text, ... ) {
-	char string[MAX_STRING_CHARS];
-	va_list argptr;
-	va_start( argptr, text );
-	idStr::vsnPrintf( string, sizeof( string ), text, argptr );
-	va_end( argptr );
 
-	int visLen = 0;
-	for ( const char *p = string; *p; p++ ) {
-		if ( idStr::IsColor( p ) ) {
-			p++; continue;
-		}
-		visLen++;
-	}
-
-	renderSystem->DrawBigStringExt( x - visLen * BIGCHAR_WIDTH, y + 2, string, textColor, true, true, idStr::Length( string ) );
-	y += BIGCHAR_HEIGHT + 4;
-}
 
 /*
 ==================
@@ -276,7 +226,9 @@ float idConsoleLocal::DrawFPS( float y ) {
 		fps = ( fps + 500 ) / 1000;
 
 		const char * s = va( "%ifps", fps );
-		CREATE_OVERLAY( fps1, s, JUSTIFY_RIGHT, colorWhite, TEXTSIZE_LARGE, false );
+		int w = strlen( s ) * BIGCHAR_WIDTH;
+
+		renderSystem->DrawBigStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, s, colorWhite, true );
 	}
 
 	y += BIGCHAR_HEIGHT + 4;
@@ -289,7 +241,8 @@ float idConsoleLocal::DrawFPS( float y ) {
 	// print the resolution scale so we can tell when we are at reduced resolution
 	idStr resolutionText;
 	resolutionScale.GetConsoleText( resolutionText );
-	CREATE_OVERLAY( resScale, resolutionText.c_str(), JUSTIFY_RIGHT, colorWhite, TEXTSIZE_LARGE, false );
+	int w = resolutionText.Length() * BIGCHAR_WIDTH;
+	renderSystem->DrawBigStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, resolutionText.c_str(), colorWhite, true );
 
 	const int gameThreadTotalTime = commonLocal.GetGameThreadTotalTime();
 	const int gameThreadGameTime = commonLocal.GetGameThreadGameTime();
@@ -300,27 +253,41 @@ float idConsoleLocal::DrawFPS( float y ) {
 	const int rendererGPUTime = commonLocal.GetRendererGPUMicroseconds();
 	const int maxTime = 16;
 
+	y += SMALLCHAR_HEIGHT + 4;
 	idStr timeStr;
-	timeStr.Format( "G+RF: %4d", gameThreadTotalTime );
-	CREATE_OVERLAY( grf, timeStr, JUSTIFY_RIGHT, gameThreadTotalTime > maxTime ? colorRed : colorWhite, TEXTSIZE_LARGE, false );
+	timeStr.Format( "%sG+RF: %4d", gameThreadTotalTime > maxTime ? S_COLOR_RED : "", gameThreadTotalTime );
+	w = timeStr.LengthWithoutColors() * SMALLCHAR_WIDTH;
+	renderSystem->DrawSmallStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, timeStr.c_str(), colorWhite, false );
+	y += SMALLCHAR_HEIGHT + 4;
 
-	timeStr.Format( "G: %4d", gameThreadGameTime );
-	CREATE_OVERLAY( gthread, timeStr, JUSTIFY_RIGHT, gameThreadGameTime > maxTime ? colorRed : colorWhite, TEXTSIZE_LARGE, false );
+	timeStr.Format( "%sG: %4d", gameThreadGameTime > maxTime ? S_COLOR_RED : "", gameThreadGameTime );
+	w = timeStr.LengthWithoutColors() * SMALLCHAR_WIDTH;
+	renderSystem->DrawSmallStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, timeStr.c_str(), colorWhite, false );
+	y += SMALLCHAR_HEIGHT + 4;
 
-	timeStr.Format( "RF: %4d", gameThreadRenderTime );
-	CREATE_OVERLAY( gthreadrf, timeStr, JUSTIFY_RIGHT, gameThreadRenderTime > maxTime ? colorRed : colorWhite, TEXTSIZE_LARGE, false );
+	timeStr.Format( "%sRF: %4d", gameThreadRenderTime > maxTime ? S_COLOR_RED : "", gameThreadRenderTime );
+	w = timeStr.LengthWithoutColors() * SMALLCHAR_WIDTH;
+	renderSystem->DrawSmallStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, timeStr.c_str(), colorWhite, false );
+	y += SMALLCHAR_HEIGHT + 4;
 
-	timeStr.Format( "RB: %4.1f", rendererBackEndTime / 1000.0f );
-	CREATE_OVERLAY( rb, timeStr, JUSTIFY_RIGHT, rendererBackEndTime > maxTime * 1000 ? colorRed : colorWhite, TEXTSIZE_LARGE, false );
+	timeStr.Format( "%sRB: %4.1f", rendererBackEndTime > maxTime * 1000 ? S_COLOR_RED : "", rendererBackEndTime / 1000.0f );
+	w = timeStr.LengthWithoutColors() * SMALLCHAR_WIDTH;
+	renderSystem->DrawSmallStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, timeStr.c_str(), colorWhite, false );
+	y += SMALLCHAR_HEIGHT + 4;
 
-	timeStr.Format( "SV: %4.1f", rendererShadowsTime / 1000.0f );
-	CREATE_OVERLAY( rbsv, timeStr, JUSTIFY_RIGHT, rendererShadowsTime > maxTime * 1000 ? colorRed : colorWhite, TEXTSIZE_LARGE, false );
+	timeStr.Format( "%sSV: %4.1f", rendererShadowsTime > maxTime * 1000 ? S_COLOR_RED : "", rendererShadowsTime / 1000.0f );
+	w = timeStr.LengthWithoutColors() * SMALLCHAR_WIDTH;
+	renderSystem->DrawSmallStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, timeStr.c_str(), colorWhite, false );
+	y += SMALLCHAR_HEIGHT + 4;
 
-	timeStr.Format( "IDLE: %4.1f", rendererGPUIdleTime / 1000.0f );
-	CREATE_OVERLAY( rbgpu, timeStr, JUSTIFY_RIGHT, rendererGPUIdleTime > maxTime * 1000 ? colorRed : colorWhite, TEXTSIZE_LARGE, false );
+	timeStr.Format( "%sIDLE: %4.1f", rendererGPUIdleTime > maxTime * 1000 ? S_COLOR_RED : "", rendererGPUIdleTime / 1000.0f );
+	w = timeStr.LengthWithoutColors() * SMALLCHAR_WIDTH;
+	renderSystem->DrawSmallStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, timeStr.c_str(), colorWhite, false );
+	y += SMALLCHAR_HEIGHT + 4;
 
-	timeStr.Format( "GPU: %4.1f", rendererGPUTime / 1000.0f );
-	CREATE_OVERLAY( rbgputime, timeStr, JUSTIFY_RIGHT, rendererGPUTime > maxTime * 1000 ? colorRed : colorWhite, TEXTSIZE_LARGE, false );
+	timeStr.Format( "%sGPU: %4.1f", rendererGPUTime > maxTime * 1000 ? S_COLOR_RED : "", rendererGPUTime / 1000.0f );
+	w = timeStr.LengthWithoutColors() * SMALLCHAR_WIDTH;
+	renderSystem->DrawSmallStringExt( LOCALSAFE_RIGHT - w, idMath::Ftoi( y ) + 2, timeStr.c_str(), colorWhite, false );
 
 	return y + BIGCHAR_HEIGHT + 4;
 }
@@ -1030,8 +997,7 @@ void idConsoleLocal::DrawNotify() {
 				currentColor = idStr::ColorIndex(text_p[x]>>8);
 				renderSystem->SetColor( idStr::ColorForIndex( currentColor ) );
 			}
-			int length = idStr::Length( va( "%c", text_p[x] & 0xff ) );
-			renderSystem->DrawSmallStringExt( LOCALSAFE_LEFT + (x+1)*SMALLCHAR_WIDTH, v, va( "%c", text_p[x] & 0xff ), idStr::ColorForIndex( currentColor ), false, true, length );
+			renderSystem->DrawSmallChar( LOCALSAFE_LEFT + (x+1)*SMALLCHAR_WIDTH, v, text_p[x] & 0xff );
 		}
 
 		v += SMALLCHAR_HEIGHT;
@@ -1196,7 +1162,7 @@ void idConsoleLocal::Draw( bool forceFullScreen ) {
 idConsoleLocal::PrintOverlay
 ========================
 */
-void idConsoleLocal::PrintOverlay( idOverlayHandle & handle, justify_t justify, VERIFY_FORMAT_STRING const char * text, idVec4 & textColor,bool showbackground, textSize_t size, ... ) {
+void idConsoleLocal::PrintOverlay( idOverlayHandle &handle, justify_t justify, const char *text, ... ) {
 	if ( handle.index >= 0 && handle.index < overlayText.Num() ) {
 		if ( overlayText[handle.index].time == handle.time ) {
 			return;
@@ -1205,17 +1171,14 @@ void idConsoleLocal::PrintOverlay( idOverlayHandle & handle, justify_t justify, 
 
 	char string[MAX_PRINT_MSG];
 	va_list argptr;
-	va_start( argptr, size );
+	va_start( argptr, text );
 	idStr::vsnPrintf( string, sizeof( string ), text, argptr );
 	va_end( argptr );
 
 	overlayText_t &overlay = overlayText.Alloc();
 	overlay.text = string;
-	overlay.textColor = textColor;
 	overlay.justify = justify;
-	overlay.size = size;
 	overlay.time = Sys_Milliseconds();
-	overlay.showbackground = showbackground;
 
 	handle.index = overlayText.Num() - 1;
 	handle.time = overlay.time;
@@ -1243,22 +1206,19 @@ void idConsoleLocal::DrawOverlayText( float & leftY, float & rightY, float & cen
 			}
 		}
 
+		idVec4 bgColor( 0.0f, 0.0f, 0.0f, 0.75f );
+
 		const float width = maxWidth * SMALLCHAR_WIDTH;
 		const float height = numLines * ( SMALLCHAR_HEIGHT + 4 );
-
-		if ( overlayText[i].showbackground ) {
-			idVec4 bgColor( 0.0f, 0.0f, 0.0f, 0.75f );
-
-			const float bgAdjust = - 0.5f * SMALLCHAR_WIDTH;
-			if ( overlayText[i].justify == JUSTIFY_LEFT ) {
-				renderSystem->DrawFilled( bgColor, LOCALSAFE_LEFT + bgAdjust, leftY, width, height );
-			} else if ( overlayText[i].justify == JUSTIFY_RIGHT ) {
-				renderSystem->DrawFilled( bgColor, LOCALSAFE_RIGHT - width + bgAdjust, rightY, width, height );
-			} else if ( overlayText[i].justify == JUSTIFY_CENTER_LEFT || overlayText[i].justify == JUSTIFY_CENTER_RIGHT ) {
-				renderSystem->DrawFilled( bgColor, LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH - width + bgAdjust ) * 0.5f, centerY, width, height );
-			} else {
-				assert( false );
-			}
+		const float bgAdjust = - 0.5f * SMALLCHAR_WIDTH;
+		if ( overlayText[i].justify == JUSTIFY_LEFT ) {
+			renderSystem->DrawFilled( bgColor, LOCALSAFE_LEFT + bgAdjust, leftY, width, height );
+		} else if ( overlayText[i].justify == JUSTIFY_RIGHT ) {
+			renderSystem->DrawFilled( bgColor, LOCALSAFE_RIGHT - width + bgAdjust, rightY, width, height );
+		} else if ( overlayText[i].justify == JUSTIFY_CENTER_LEFT || overlayText[i].justify == JUSTIFY_CENTER_RIGHT ) {
+			renderSystem->DrawFilled( bgColor, LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH - width + bgAdjust ) * 0.5f, centerY, width, height );
+		} else {
+			assert( false );
 		}
 
 		idStr singleLine;
@@ -1267,30 +1227,16 @@ void idConsoleLocal::DrawOverlayText( float & leftY, float & rightY, float & cen
 			for ( int k = j; k < text.Length() && text[k] != '\n'; k++ ) {
 				singleLine.Append( text[k] );
 			}
-			if ( overlayText[i].size == TEXTSIZE_SMALL ) {
-				if ( overlayText[i].justify == JUSTIFY_LEFT ) {
-					DrawTextSmallLeftAlign( LOCALSAFE_LEFT, leftY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else if ( overlayText[i].justify == JUSTIFY_RIGHT ) {
-					DrawTextSmallRightAlign( LOCALSAFE_RIGHT, rightY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else if ( overlayText[i].justify == JUSTIFY_CENTER_LEFT ) {
-					DrawTextSmallLeftAlign( LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH - width ) * 0.5f, centerY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else if ( overlayText[i].justify == JUSTIFY_CENTER_RIGHT ) {
-					DrawTextSmallRightAlign( LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH + width ) * 0.5f, centerY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else {
-					assert( false );
-				}	
+			if ( overlayText[i].justify == JUSTIFY_LEFT ) {
+				DrawTextLeftAlign( LOCALSAFE_LEFT, leftY, "%s", singleLine.c_str() );
+			} else if ( overlayText[i].justify == JUSTIFY_RIGHT ) {
+				DrawTextRightAlign( LOCALSAFE_RIGHT, rightY, "%s", singleLine.c_str() );
+			} else if ( overlayText[i].justify == JUSTIFY_CENTER_LEFT ) {
+				DrawTextLeftAlign( LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH - width ) * 0.5f, centerY, "%s", singleLine.c_str() );
+			} else if ( overlayText[i].justify == JUSTIFY_CENTER_RIGHT ) {
+				DrawTextRightAlign( LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH + width ) * 0.5f, centerY, "%s", singleLine.c_str() );
 			} else {
-				if ( overlayText[i].justify == JUSTIFY_LEFT ) {
-					DrawTextBigLeftAlign( LOCALSAFE_LEFT, leftY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else if ( overlayText[i].justify == JUSTIFY_RIGHT ) {
-					DrawTextBigRightAlign( LOCALSAFE_RIGHT, rightY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else if ( overlayText[i].justify == JUSTIFY_CENTER_LEFT ) {
-					DrawTextBigLeftAlign( LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH - width ) * 0.5f, centerY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else if ( overlayText[i].justify == JUSTIFY_CENTER_RIGHT ) {
-					DrawTextBigRightAlign( LOCALSAFE_LEFT + ( LOCALSAFE_WIDTH + width ) * 0.5f, centerY, overlayText[i].textColor, "%s", singleLine.c_str() );
-				} else {
-					assert( false );
-				}	
+				assert( false );
 			}
 		}
 	}
